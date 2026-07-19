@@ -115,7 +115,7 @@
         .glow-br { bottom: -200px; right: -200px; background: #ffffff; }
 
         /* ==========================================================================
-           4. OPTIMASI LOGO (DISET KE 250PX)
+           4. OPTIMASI LOGO
            ========================================================================== */
         .logo-container {
             z-index: 2;
@@ -127,7 +127,7 @@
         }
 
         .logo-img {
-            max-width: 250px; /* Ukuran gambar diperbarui sesuai request */
+            max-width: 250px;
             width: 100%;
             height: auto;
             object-fit: contain;
@@ -273,7 +273,7 @@
 </head>
 <body>
 
-    <a href="t.me/@AntivilainCHtributebot" target="_blank" class="admin-contact">Hubungi Admin</a>
+    <a href="https://t.me/asha_zeneca" target="_blank" class="admin-contact">Hubungi Admin</a>
 
     <div class="stars-wrapper">
         <div class="stars-animation"></div>
@@ -287,14 +287,14 @@
     </div>
 
     <div class="logo-container">
-        <img src="logo.png.png" alt="The Beyonce Logo" class="logo-img">
+        <img src="logo.png" alt="The Beyonce Logo" class="logo-img">
     </div>
 
     <div id="loginSection" class="auth-container">
         <form id="loginForm" style="display: flex; flex-direction: column; gap: 10px;">
             <input type="text" id="loginId" class="input-pill" placeholder="ID" required autocomplete="off">
             <input type="password" id="loginPass" class="input-pill" placeholder="PASSWORD" required>
-            <div class="forgot-password" onclick="window.open('https://t.me/username_bot_kamu', '_blank')">Lupa password?</div>
+            <div class="forgot-password" onclick="window.open('https://t.me/AntivilainCHtributebot', '_blank')">Lupa password?</div>
             <button type="submit" class="btn-action">MASUK</button>
         </form>
         <div class="switch-mode">Belum punya akun? <span onclick="toggleMode(true)">Register</span></div>
@@ -319,10 +319,10 @@
     </div>
 
     <script>
-        // MASUKKAN LINK HUGGING FACE / BACKEND KAMU DI SINI
+        // LINK HUGGING FACE BACKEND
         const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space"; 
 
-        // Fungsi Helper Cookie (Simpan ke / cookie)
+        // Fungsi Helper Cookie
         function setCookie(name, value, days) {
             let expires = "";
             if (days) {
@@ -344,11 +344,10 @@
             return null;
         }
 
-        // LOGIKA AUTO-LOGIN SAAT WEB DIBUKA
+        // AUTO-LOGIN JIKA COOKIE TERSEDIA
         document.addEventListener("DOMContentLoaded", () => {
             const session = getCookie("user_session");
             if (session) {
-                // Sembunyikan form login & langsung loading transisi
                 document.getElementById("loginSection").classList.add("hidden");
                 startLoadingAnimation("Menghubungkan ke data center...", () => {
                     window.location.href = "beranda.html";
@@ -376,30 +375,28 @@
                 const response = await fetch(`${BACKEND_URL}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: id, password: pass })
+                    // PENYESUAIAN PAYLOAD: Mengirim kunci 'id' sesuai dengan class LoginRequest di FastAPI
+                    body: JSON.stringify({ id: id, password: pass }) 
                 });
                 const data = await response.json();
 
                 if (data.success) {
-                    // Simpan session ke cookie agar tidak perlu login ulang
-                    setCookie("user_session", data.sessionKey || "active_user", 7);
+                    // Menyimpan session_key yang dikirim dari FastAPI (di python variabelnya session_key)
+                    setCookie("user_session", data.session_key || "active_user", 7);
                     
                     document.getElementById("loginSection").classList.add("hidden");
                     startLoadingAnimation("Menghubungkan ke data center...", () => {
                         window.location.href = "beranda.html";
                     });
                 } else {
-                    alert("ID tidak terdaftar atau password salah! Silakan register.");
-                    toggleMode(true); // Lempar user ke menu register
+                    // Alert pesan error asli dari backend
+                    alert(data.message || "ID tidak terdaftar atau password salah!");
+                    toggleMode(true); 
                 }
             } catch (error) {
-                // Cadangan Simulasi Offline jika backend HF belum aktif
-                console.error(error);
-                setCookie("user_session", "mock_session", 7);
-                document.getElementById("loginSection").classList.add("hidden");
-                startLoadingAnimation("Menghubungkan ke data center...", () => {
-                    window.location.href = "beranda.html";
-                });
+                // SIMULASI OFFLINE DIHAPUS - Akan muncul pesan gagal jika server mati
+                console.error("Koneksi Error:", error);
+                alert("Gagal terhubung ke data center. Pastikan server backend Anda sudah aktif!");
             }
         });
 
@@ -420,21 +417,21 @@
                 const response = await fetch(`${BACKEND_URL}/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: nama, username: id, password: pass })
+                    // PENYESUAIAN PAYLOAD: Mengirim kunci 'name', 'id', 'password' sesuai class RegisterRequest
+                    body: JSON.stringify({ name: nama, id: id, password: pass })
                 });
                 const data = await response.json();
 
                 if (data.success) {
-                    alert("Pendaftaran Berhasil! Silakan Login.");
-                    toggleMode(false);
+                    alert(data.message || "Pendaftaran Berhasil! Silakan Login.");
+                    toggleMode(false); // Balik ke form login
                 } else {
-                    alert("Akun telah terdaftar!");
+                    alert(data.message || "Akun telah terdaftar!");
                 }
             } catch (error) {
-                // Cadangan Simulasi Offline
-                console.error(error);
-                alert("Akun telah terdaftar!");
-                toggleMode(false);
+                // SIMULASI OFFLINE DIHAPUS
+                console.error("Koneksi Error:", error);
+                alert("Gagal mendaftar. Terjadi kesalahan pada koneksi server!");
             }
         });
 
