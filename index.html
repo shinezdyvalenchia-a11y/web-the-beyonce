@@ -173,7 +173,6 @@
             letter-spacing: 1px;
         }
 
-        /* Link Lupa Password di Bawah Input Password */
         .forgot-password {
             text-align: right;
             font-size: 12px;
@@ -287,7 +286,7 @@
     </div>
 
     <div class="logo-container">
-        <img src="logo.png" alt="The Beyonce Logo" class="logo-img">
+        <img src="logo.png.png" alt="The Beyonce Logo" class="logo-img">
     </div>
 
     <div id="loginSection" class="auth-container">
@@ -319,10 +318,8 @@
     </div>
 
     <script>
-        // LINK HUGGING FACE BACKEND
         const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space"; 
 
-        // Fungsi Helper Cookie
         function setCookie(name, value, days) {
             let expires = "";
             if (days) {
@@ -333,39 +330,6 @@
             document.cookie = name + "=" + (value || "") + expires + "; path=/; Secure; SameSite=Strict";
         }
 
-        function getCookie(name) {
-            let nameEQ = name + "=";
-            let ca = document.cookie.split(';');
-            for(let i=0; i < ca.length; i++) {
-                let c = ca[i];
-                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-            }
-            return null;
-        }
-
-        // AUTO-LOGIN JIKA COOKIE TERSEDIA
-        document.addEventListener("DOMContentLoaded", () => {
-            const session = getCookie("user_session");
-            if (session) {
-                document.getElementById("loginSection").classList.add("hidden");
-                startLoadingAnimation("Menghubungkan ke data center...", () => {
-                    window.location.href = "beranda.html";
-                });
-            }
-        });
-
-        function toggleMode(toRegister) {
-            if (toRegister) {
-                document.getElementById("loginSection").classList.add("hidden");
-                document.getElementById("registerSection").classList.remove("hidden");
-            } else {
-                document.getElementById("registerSection").classList.add("hidden");
-                document.getElementById("loginSection").classList.remove("hidden");
-            }
-        }
-
-        // PROSES LOGIN (/login)
         document.getElementById("loginForm").addEventListener("submit", async (e) => {
             e.preventDefault();
             const id = document.getElementById("loginId").value;
@@ -375,32 +339,24 @@
                 const response = await fetch(`${BACKEND_URL}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    // PENYESUAIAN PAYLOAD: Mengirim kunci 'id' sesuai dengan class LoginRequest di FastAPI
                     body: JSON.stringify({ id: id, password: pass }) 
                 });
                 const data = await response.json();
 
                 if (data.success) {
-                    // Menyimpan session_key yang dikirim dari FastAPI (di python variabelnya session_key)
-                    setCookie("user_session", data.session_key || "active_user", 7);
-                    
+                    setCookie("user_session", data.session_key, 7);
                     document.getElementById("loginSection").classList.add("hidden");
                     startLoadingAnimation("Menghubungkan ke data center...", () => {
                         window.location.href = "beranda.html";
                     });
                 } else {
-                    // Alert pesan error asli dari backend
-                    alert(data.message || "ID tidak terdaftar atau password salah!");
-                    toggleMode(true); 
+                    alert("Sistem Menolak: " + (data.message || "Akun tidak ditemukan. Silakan Register!"));
                 }
             } catch (error) {
-                // SIMULASI OFFLINE DIHAPUS - Akan muncul pesan gagal jika server mati
-                console.error("Koneksi Error:", error);
                 alert("Gagal terhubung ke data center. Pastikan server backend Anda sudah aktif!");
             }
         });
 
-        // PROSES REGISTER (/register)
         document.getElementById("registerForm").addEventListener("submit", async (e) => {
             e.preventDefault();
             const nama = document.getElementById("regNama").value;
@@ -417,25 +373,82 @@
                 const response = await fetch(`${BACKEND_URL}/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    // PENYESUAIAN PAYLOAD: Mengirim kunci 'name', 'id', 'password' sesuai class RegisterRequest
                     body: JSON.stringify({ name: nama, id: id, password: pass })
                 });
                 const data = await response.json();
 
                 if (data.success) {
                     alert(data.message || "Pendaftaran Berhasil! Silakan Login.");
-                    toggleMode(false); // Balik ke form login
+                    toggleMode(false); 
                 } else {
-                    alert(data.message || "Akun telah terdaftar!");
+                    alert("Sistem Menolak: " + (data.message || "Akun (ID) sudah terdaftar!"));
                 }
             } catch (error) {
-                // SIMULASI OFFLINE DIHAPUS
-                console.error("Koneksi Error:", error);
                 alert("Gagal mendaftar. Terjadi kesalahan pada koneksi server!");
             }
         });
 
-        // ANIMASI LOADING BAR
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for(let i=0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        function eraseCookie(name) {   
+            document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
+
+        // LOGIKA ANTI-BYPASS: Pengecekan session dikirim ke backend
+        document.addEventListener("DOMContentLoaded", async () => {
+            const session = getCookie("user_session");
+            if (session) {
+                document.getElementById("loginSection").classList.add("hidden");
+                const loadingArea = document.getElementById("loadingArea");
+                const statusLabel = document.getElementById("loadingStatus");
+                loadingArea.classList.remove("hidden");
+                statusLabel.innerText = "Memvalidasi sesi login...";
+
+                try {
+                    const response = await fetch(`${BACKEND_URL}/check-session`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ session_key: session })
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        startLoadingAnimation("Menghubungkan ke data center...", () => {
+                            window.location.href = "beranda.html";
+                        });
+                    } else {
+                        eraseCookie("user_session");
+                        loadingArea.classList.add("hidden");
+                        document.getElementById("loginSection").classList.remove("hidden");
+                        alert("Sesi tidak valid atau telah kedaluwarsa. Silakan login kembali.");
+                    }
+                } catch (error) {
+                    eraseCookie("user_session");
+                    loadingArea.classList.add("hidden");
+                    document.getElementById("loginSection").classList.remove("hidden");
+                }
+            }
+        });
+
+        function toggleMode(toRegister) {
+            if (toRegister) {
+                document.getElementById("loginSection").classList.add("hidden");
+                document.getElementById("registerSection").classList.remove("hidden");
+            } else {
+                document.getElementById("registerSection").classList.add("hidden");
+                document.getElementById("loginSection").classList.remove("hidden");
+            }
+        }
+
         function startLoadingAnimation(statusText, callback) {
             const loadingArea = document.getElementById("loadingArea");
             const progressBar = document.getElementById("loadingProgress");
