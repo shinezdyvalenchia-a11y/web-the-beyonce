@@ -347,7 +347,7 @@
                     setCookie("user_session", data.session_key, 7);
                     document.getElementById("loginSection").classList.add("hidden");
                     startLoadingAnimation("Menghubungkan ke data center...", () => {
-                        window.location.href = "beranda.html";
+                        window.location.href = "beranda";
                     });
                 } else {
                     alert("Sistem Menolak: " + (data.message || "Akun tidak ditemukan. Silakan Register!"));
@@ -423,7 +423,7 @@
 
                     if (data.success) {
                         startLoadingAnimation("Menghubungkan ke data center...", () => {
-                            window.location.href = "beranda.html";
+                            window.location.href = "beranda";
                         });
                     } else {
                         eraseCookie("user_session");
