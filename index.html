@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Beyonce - Auth</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #000000;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; 
+            padding: 5vh 20px 20px 20px; 
+            gap: 10px; 
+            position: relative;
+        }
+
+        /* ==========================================================================
+           1. LINK PENGADUAN ADMIN (POJOK KANAN ATAS)
+           ========================================================================== */
+        .admin-contact {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            z-index: 3;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .admin-contact:hover {
+            color: #ffffff;
+            border-color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ==========================================================================
+           2. LAYERING BINTANG (60 FPS SMOOTH)
+           ========================================================================== */
+        .stars-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .stars-animation {
+            position: absolute;
+            top: -400px;
+            left: 0;
+            width: 100%;
+            height: calc(100% + 400px);
+            background-image: 
+                radial-gradient(1px 1px at 25px 40px, #ffffff, transparent),
+                radial-gradient(1.5px 1.5px at 75px 120px, #ffffff, transparent),
+                radial-gradient(1px 1px at 150px 60px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(2px 2px at 220px 300px, #ffffff, transparent),
+                radial-gradient(1px 1px at 310px 180px, rgba(255,255,255,0.9), transparent),
+                radial-gradient(1.5px 1.5px at 380px 20px, #ffffff, transparent);
+            background-size: 400px 400px;
+            animation: driftStars 25s linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes driftStars {
+            from { transform: translateY(0); }
+            to { transform: translateY(400px); }
+        }
+
+        /* ==========================================================================
+           3. CAHAYA 4 SUDUT
+           ========================================================================== */
+        .corner-glows {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .glow {
+            position: absolute;
+            width: 450px;       
+            height: 450px;      
+            border-radius: 50%; 
+            filter: blur(140px);
+            opacity: 0.45;       
+        }
+
+        .glow-tl { top: -200px; left: -200px; background: #ff007f; }
+        .glow-tr { top: -200px; right: -200px; background: #ff7700; }
+        .glow-bl { bottom: -200px; left: -200px; background: #0088ff; }
+        .glow-br { bottom: -200px; right: -200px; background: #ffffff; }
+
+        /* ==========================================================================
+           4. OPTIMASI LOGO (DISET KE 250PX)
+           ========================================================================== */
+        .logo-container {
+            z-index: 2;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, transparent 65%);
+            padding: 5px;
+            border-radius: 50%;
+        }
+
+        .logo-img {
+            max-width: 250px; /* Ukuran gambar diperbarui sesuai request */
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.35)); 
+        }
+
+        /* ==========================================================================
+           5. FORM UI (COMPACT & RESPONSIF)
+           ========================================================================== */
+        .auth-container {
+            z-index: 2;
+            width: 100%;
+            max-width: 360px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+        }
+
+        .input-pill {
+            width: 100%;
+            padding: 11px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #fff;
+            font-size: 14px;
+            border-radius: 50px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .input-pill:focus {
+            outline: none;
+            border-color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+        }
+
+        .input-pill::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        /* Link Lupa Password di Bawah Input Password */
+        .forgot-password {
+            text-align: right;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            margin-top: -4px;
+            padding-right: 15px;
+            transition: color 0.2s;
+        }
+
+        .forgot-password:hover {
+            color: #ffffff;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 12px;
+            background: #ffffff;
+            border: 1px solid #ffffff;
+            color: #000000;
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 1px;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+        }
+
+        .btn-action:hover {
+            background: transparent;
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(255,255,255,0.4);
+        }
+
+        .switch-mode {
+            text-align: center;
+            margin-top: 6px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 0.5px;
+        }
+
+        .switch-mode span {
+            color: #0088ff;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
+        .switch-mode span:hover {
+            color: #ff007f;
+        }
+
+        .loading-container {
+            z-index: 2;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            margin-top: 15px;
+            position: relative;
+        }
+
+        .loading-text {
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+
+        .bar-outer {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 1px;
+            overflow: hidden;
+        }
+
+        .bar-inner {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(to right, #0088ff, #ff007f);
+            box-shadow: 0 0 10px #ff007f;
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="https://t.me/username_bot_kamu" target="_blank" class="admin-contact">Hubungi Admin</a>
+
+    <div class="stars-wrapper">
+        <div class="stars-animation"></div>
+    </div>
+
+    <div class="corner-glows">
+        <div class="glow glow-tl"></div>
+        <div class="glow glow-tr"></div>
+        <div class="glow glow-bl"></div>
+        <div class="glow glow-br"></div>
+    </div>
+
+    <div class="logo-container">
+        <img src="logo.png.png" alt="The Beyonce Logo" class="logo-img">
+    </div>
+
+    <div id="loginSection" class="auth-container">
+        <form id="loginForm" style="display: flex; flex-direction: column; gap: 10px;">
+            <input type="text" id="loginId" class="input-pill" placeholder="ID" required autocomplete="off">
+            <input type="password" id="loginPass" class="input-pill" placeholder="PASSWORD" required>
+            <div class="forgot-password" onclick="window.open('https://t.me/username_bot_kamu', '_blank')">Lupa password?</div>
+            <button type="submit" class="btn-action">MASUK</button>
+        </form>
+        <div class="switch-mode">Belum punya akun? <span onclick="toggleMode(true)">Register</span></div>
+    </div>
+
+    <div id="registerSection" class="auth-container hidden">
+        <form id="registerForm" style="display: flex; flex-direction: column; gap: 10px;">
+            <input type="text" id="regNama" class="input-pill" placeholder="NAMA LENGKAP" required autocomplete="off">
+            <input type="text" id="regId" class="input-pill" placeholder="BUAT ID" required autocomplete="off">
+            <input type="password" id="regPass" class="input-pill" placeholder="PASSWORD" required>
+            <input type="password" id="regConfirmPass" class="input-pill" placeholder="VERIFIKASI PASSWORD" required>
+            <button type="submit" class="btn-action">DAFTAR KAN</button>
+        </form>
+        <div class="switch-mode">Punya akun? <span onclick="toggleMode(false)">Login</span></div>
+    </div>
+
+    <div id="loadingArea" class="loading-container hidden">
+        <div id="loadingStatus" class="loading-text">Loading Resources...</div>
+        <div class="bar-outer">
+            <div id="loadingProgress" class="bar-inner"></div>
+        </div>
+    </div>
+
+    <script>
+        // MASUKKAN LINK HUGGING FACE / BACKEND KAMU DI SINI
+        const BACKEND_URL = "https://username-space.hf.space"; 
+
+        // Fungsi Helper Cookie (Simpan ke / cookie)
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                let date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/; Secure; SameSite=Strict";
+        }
+
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for(let i=0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        // LOGIKA AUTO-LOGIN SAAT WEB DIBUKA
+        document.addEventListener("DOMContentLoaded", () => {
+            const session = getCookie("user_session");
+            if (session) {
+                // Sembunyikan form login & langsung loading transisi
+                document.getElementById("loginSection").classList.add("hidden");
+                startLoadingAnimation("Menghubungkan ke data center...", () => {
+                    window.location.href = "beranda.html";
+                });
+            }
+        });
+
+        function toggleMode(toRegister) {
+            if (toRegister) {
+                document.getElementById("loginSection").classList.add("hidden");
+                document.getElementById("registerSection").classList.remove("hidden");
+            } else {
+                document.getElementById("registerSection").classList.add("hidden");
+                document.getElementById("loginSection").classList.remove("hidden");
+            }
+        }
+
+        // PROSES LOGIN (/login)
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const id = document.getElementById("loginId").value;
+            const pass = document.getElementById("loginPass").value;
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: id, password: pass })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    // Simpan session ke cookie agar tidak perlu login ulang
+                    setCookie("user_session", data.sessionKey || "active_user", 7);
+                    
+                    document.getElementById("loginSection").classList.add("hidden");
+                    startLoadingAnimation("Menghubungkan ke data center...", () => {
+                        window.location.href = "beranda.html";
+                    });
+                } else {
+                    alert("ID tidak terdaftar atau password salah! Silakan register.");
+                    toggleMode(true); // Lempar user ke menu register
+                }
+            } catch (error) {
+                // Cadangan Simulasi Offline jika backend HF belum aktif
+                console.error(error);
+                setCookie("user_session", "mock_session", 7);
+                document.getElementById("loginSection").classList.add("hidden");
+                startLoadingAnimation("Menghubungkan ke data center...", () => {
+                    window.location.href = "beranda.html";
+                });
+            }
+        });
+
+        // PROSES REGISTER (/register)
+        document.getElementById("registerForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const nama = document.getElementById("regNama").value;
+            const id = document.getElementById("regId").value;
+            const pass = document.getElementById("regPass").value;
+            const confirmPass = document.getElementById("regConfirmPass").value;
+
+            if (pass !== confirmPass) {
+                alert("Verifikasi password tidak cocok!");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: nama, username: id, password: pass })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alert("Pendaftaran Berhasil! Silakan Login.");
+                    toggleMode(false);
+                } else {
+                    alert("Akun telah terdaftar!");
+                }
+            } catch (error) {
+                // Cadangan Simulasi Offline
+                console.error(error);
+                alert("Akun telah terdaftar!");
+                toggleMode(false);
+            }
+        });
+
+        // ANIMASI LOADING BAR
+        function startLoadingAnimation(statusText, callback) {
+            const loadingArea = document.getElementById("loadingArea");
+            const progressBar = document.getElementById("loadingProgress");
+            const statusLabel = document.getElementById("loadingStatus");
+
+            loadingArea.classList.remove("hidden");
+            statusLabel.innerText = statusText;
+
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(callback, 200);
+                } else {
+                    width += Math.floor(Math.random() * 12) + 3;
+                    if (width > 100) width = 100;
+                    progressBar.style.width = width + "%";
+                }
+            }, 70);
+        }
+    </script>
+</body>
+</html>
