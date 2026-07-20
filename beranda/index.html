@@ -88,7 +88,9 @@
         .close-sidebar-btn:hover { color: #ff007f; }
 
         .menu-list {
-            list-style: none; padding: 20px 12px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto;
+            list-style: none; padding: 20px 12px; display: flex; flex-direction: column; gap: 8px; 
+            overflow-y: auto; flex-grow: 1; /* Pastikan menu mengambil sisa ruang */
+            -webkit-overflow-scrolling: touch; /* Biar smooth saat swipe di HP */
         }
         .menu-item {
             display: flex; align-items: center; padding: 12px 16px;
@@ -270,6 +272,9 @@
             <li><a href="../temen-mabar/" class="menu-item">Temen Mabar</a></li>
             <li><a href="../medsos-saver/" class="menu-item">Medsos Saver</a></li>
             <li><a href="../koleksi-kartu/" class="menu-item">Koleksi Kartu</a></li>
+            <!-- Tambahan Baru -->
+            <li><a href="../bio-member/" class="menu-item">Bio Member</a></li>
+            <li><a href="../link-shortcut/" class="menu-item">LinkShortCut</a></li>
         </ul>
     </aside>
 
@@ -390,7 +395,8 @@
                 });
                 const data = await response.json();
 
-                let rawReply = data.reply || `${userId}, Maaf, server terputus.`;
+                // Mengambil reply dari server, atau pesan error dari server jika gagal
+                let rawReply = data.reply || data.message || `${userId}, Gagal memproses respon dari server.`;
                 let finalAnswer = rawReply;
 
                 if (rawReply.includes(",")) {
@@ -408,7 +414,8 @@
                 document.getElementById(uniqueMsgId).querySelector('.msg-bubble').innerHTML = finalAnswer.replace(/\n/g, "<br>");
 
             } catch (error) {
-                document.getElementById(uniqueMsgId).querySelector('.msg-bubble').innerText = "Gagal terhubung ke data center Hugging Face.";
+                // Ini HANYA berjalan jika internet mati total / URL Backend salah
+                document.getElementById(uniqueMsgId).querySelector('.msg-bubble').innerText = "Koneksi terputus: Gagal terhubung ke server Backend.";
             }
             
             chatContainer.scrollTop = chatContainer.scrollHeight;
