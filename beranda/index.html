@@ -63,12 +63,22 @@
         .sidebar-overlay.active { display: block; opacity: 1; }
 
         .sidebar {
-            width: 260px; background: rgba(10, 10, 15, 0.35); 
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            width: 260px; 
+            /* Ganti background semi-transparan dengan warna lebih solid untuk meringankan beban GPU */
+            background: rgba(10, 10, 15, 0.92); 
+            backdrop-filter: blur(8px); 
+            -webkit-backdrop-filter: blur(8px);
             border-right: 1px solid rgba(255, 255, 255, 0.08);
             display: flex; flex-direction: column;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 99999; position: relative; box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
+            transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 99999; position: relative; 
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
+            
+            /* MAGIS GPU ACCELERATION: Memaksa HP render pakai Chipset Graphics */
+            will-change: transform;
+            transform: translateZ(0);
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
         
         .sidebar.collapsed { transform: translateX(-100%); margin-right: -260px; }
@@ -91,6 +101,10 @@
             list-style: none; padding: 20px 12px; display: flex; flex-direction: column; gap: 8px; 
             overflow-y: auto; flex-grow: 1; /* Pastikan menu mengambil sisa ruang */
             -webkit-overflow-scrolling: touch; /* Biar smooth saat swipe di HP */
+            
+            /* OPTIMASI SCROLL: Isolasi render list agar tidak mengganggu elemen di luarnya */
+            contain: content;
+            overscroll-behavior-y: contain; 
         }
         .menu-item {
             display: flex; align-items: center; padding: 12px 16px;
@@ -201,6 +215,11 @@
             .sidebar {
                 position: fixed !important; top: 0 !important; left: 0 !important;
                 height: 100vh !important; width: 280px !important; margin-right: 0 !important;
+                /* Di HP, hilangkan backdrop-filter total saat slide agar 100% lancar */
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                background: #0a0a0f !important;
+                box-shadow: 10px 0 30px rgba(0, 0, 0, 0.8);
             }
             .sidebar.collapsed { transform: translateX(-100%) !important; }
             .sidebar:not(.collapsed) { transform: translateX(0) !important; }
