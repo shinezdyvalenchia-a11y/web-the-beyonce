@@ -345,8 +345,9 @@
 </head>
 <body>
 
-    <!-- VIDEO BACKGROUND (Path langsung karena 1 folder dengan index.html) -->
-    <video class="bg-video" autoplay loop muted playsinline>
+    <!-- VIDEO BACKGROUND (Support WebM & MP4 Fallback) -->
+    <video class="bg-video" autoplay loop muted playsinline preload="auto">
+        <source src="latargacha.webm" type="video/webm">
         <source src="latargacha.mp4" type="video/mp4">
     </video>
     <div class="bg-overlay"></div>
@@ -367,7 +368,7 @@
         <!-- CENTER CONTENT -->
         <main class="main-content-area">
             
-            <!-- SLIDE 1: BANNER GACHA (Ramping & Tanpa Foto Preview) -->
+            <!-- SLIDE 1: BANNER GACHA -->
             <div id="gachaView" class="banner-card">
                 <span class="series-badge">Featured Banner</span>
                 <h1 class="series-title">Cyberpunk Idol</h1>
@@ -432,6 +433,17 @@
     </div>
 
     <script>
+        // Force autoplay video background saat load
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.querySelector('.bg-video');
+            if (video) {
+                video.muted = true;
+                video.play().catch(err => {
+                    console.log("Autoplay terhalang kebijakan browser:", err);
+                });
+            }
+        });
+
         function switchTab(tabName) {
             const tabs = document.querySelectorAll('.tab-btn');
             const gachaView = document.getElementById('gachaView');
