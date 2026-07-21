@@ -3,478 +3,449 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gacha Skin - Kitty Tenacity</title>
+    <title>Gacha - The Beyonce</title>
     <style>
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            margin: 0; padding: 0; box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             user-select: none;
         }
 
         body {
-            background-color: #000;
-            color: #fff;
-            height: 100vh;
-            height: 100dvh;
-            overflow: hidden;
-            position: relative;
+            background-color: #87CEEB; /* Biru langit default */
+            color: #333; /* Text gelap untuk tema terang */
+            height: 100vh; height: 100dvh;
+            overflow: hidden; position: relative;
         }
 
-        /* ==========================================
-           1. BACKGROUND VIDEO (FULLSCREEN)
-           ========================================== */
+        /* 1. BACKGROUND */
         .bg-video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 1;
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; object-fit: cover; z-index: 1;
         }
-
         .bg-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.65) 100%);
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            /* Gradient awan transparan ke biru */
+            background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(135,206,235,0.7) 100%);
             z-index: 2;
         }
 
-        /* ==========================================
-           2. MAIN CONTAINER LAYOUT
-           ========================================== */
+        /* 2. LAYOUT UTAMA */
         .gacha-viewport {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 20px 40px;
+            position: relative; z-index: 10;
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 15px 30px;
         }
 
-        /* ==========================================
-           3. TOP BAR (TABS & CLOSE)
-           ========================================== */
+        /* 3. TOP BAR */
         .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
+            display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 10px;
         }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(0,0,0,0.8);
-            color: #ffd700;
-        }
-
+        .logo-img { height: 40px; object-fit: contain; }
+        
         .top-tabs {
-            display: flex;
-            gap: 15px;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 6px 16px;
-            border-radius: 30px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex; gap: 8px;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 5px 10px; border-radius: 30px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            overflow-x: auto; /* Biar bisa digeser di HP */
+            scrollbar-width: none;
         }
-
         .tab-btn {
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-            font-weight: 600;
-            padding: 8px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            background: transparent; border: none;
+            color: #555; font-size: 13px; font-weight: 700;
+            padding: 8px 15px; border-radius: 20px; cursor: pointer; transition: 0.3s;
+            white-space: nowrap;
         }
-
-        .tab-btn:hover {
-            color: #fff;
-        }
-
         .tab-btn.active {
-            background: linear-gradient(135deg, #0088ff, #ff007f);
-            color: #fff;
-            box-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
+            background: #fff; color: #0088ff;
+            box-shadow: 0 4px 10px rgba(0, 136, 255, 0.2);
+        }
+        .nav-btn {
+            background: rgba(255,255,255,0.8); border: none;
+            color: #0088ff; width: 36px; height: 36px;
+            border-radius: 50%; font-size: 18px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .close-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-size: 18px;
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .close-btn:hover {
-            background: #ff007f;
-            transform: scale(1.1);
-        }
-
-        /* ==========================================
-           4. CENTER CARD (DIKECILKAN KANAN-KIRI)
-           ========================================== */
+        /* 4. AREA KONTEN (CARD TRANSPARAN PUTIH) */
         .main-content-area {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 0;
+            flex-grow: 1; display: flex; align-items: center; justify-content: center; padding: 10px 0;
         }
-
-        /* Card Ramping Kompak */
         .banner-card {
-            width: 100%;
-            max-width: 550px;
-            height: auto;
-            min-height: 220px;
-            background: rgba(15, 15, 25, 0.65);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(12px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 12px;
-            text-align: center;
-            align-items: center;
-        }
-
-        .series-badge {
-            background: rgba(255, 215, 0, 0.2);
-            border: 1px solid #ffd700;
-            color: #ffd700;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .series-title {
-            font-size: 26px;
-            font-weight: 800;
-            line-height: 1.1;
-            background: linear-gradient(to right, #ffffff, #ff7700);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .series-desc {
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.4;
-            max-width: 420px;
-        }
-
-        .guarantee-box {
-            background: rgba(255, 0, 127, 0.2);
-            border: 1px solid rgba(255, 0, 127, 0.5);
-            padding: 6px 14px;
+            width: 100%; max-width: 600px;
+            background: rgba(255, 255, 255, 0.75);
             border-radius: 20px;
-            font-size: 11px;
-            color: #ff99dd;
-            margin-top: 4px;
-        }
-
-        /* Slide 2: Shop View */
-        .shop-container {
-            display: none;
-            width: 100%;
-            max-width: 650px;
-            height: 320px;
-            background: rgba(15, 15, 20, 0.75);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0, 136, 255, 0.2);
             padding: 20px;
-            overflow-y: auto;
+            display: flex; flex-direction: row; align-items: center; gap: 20px;
+        }
+        .preview-media {
+            width: 200px; height: 250px; border-radius: 12px; object-fit: cover;
+            border: 3px solid #fff; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background: #e0f2fe;
+        }
+        .banner-info {
+            display: flex; flex-direction: column; gap: 8px; flex: 1;
+        }
+        .series-badge {
+            background: #e0f7fa; color: #00acc1; padding: 4px 10px;
+            border-radius: 12px; font-size: 10px; font-weight: 800; width: fit-content;
+        }
+        .series-title {
+            font-size: 22px; font-weight: 800; color: #0277bd; line-height: 1.2;
+        }
+        .series-desc { font-size: 11px; color: #555; line-height: 1.4; }
+        .prize-pool {
+            font-size: 10px; color: #666; background: rgba(255,255,255,0.6);
+            padding: 8px; border-radius: 8px; border: 1px dashed #b3e5fc;
         }
 
+        /* SHOP GRID */
+        .shop-container {
+            display: none; width: 100%; max-width: 650px; height: 300px;
+            background: rgba(255, 255, 255, 0.8); border-radius: 16px;
+            backdrop-filter: blur(10px); padding: 15px; overflow-y: auto;
+        }
         .shop-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px;
         }
-
         .shop-item {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
+            background: #fff; border-radius: 12px; padding: 10px;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #e1f5fe;
         }
-
-        .shop-item-title {
-            font-size: 11px;
-            font-weight: 600;
-            text-align: center;
-        }
-
         .shop-buy-btn {
-            background: #0088ff;
-            border: none;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
+            background: #0088ff; color: white; border: none; padding: 6px;
+            border-radius: 8px; font-size: 11px; width: 100%; font-weight: bold; cursor: pointer;
         }
 
-        /* ==========================================
-           5. BOTTOM BAR
-           ========================================== */
+        /* 5. BOTTOM BAR & CURRENCY */
         .bottom-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
+            display: flex; justify-content: space-between; align-items: center; width: 100%;
+            background: rgba(255,255,255,0.6); padding: 10px 20px; border-radius: 20px;
+            backdrop-filter: blur(10px); box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
         }
-
-        .bottom-left-tools {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
+        .bottom-left-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .action-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: white;
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-size: 12px;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
+            background: #fff; border: 1px solid #b3e5fc; color: #0277bd;
+            padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer;
         }
-
-        .currency-display {
-            display: flex;
-            gap: 10px;
-        }
-
         .currency-chip {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 6px 12px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            font-weight: bold;
+            background: #fff; padding: 4px 10px; border-radius: 20px;
+            display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 800;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e1f5fe;
         }
+        .curr-img { width: 18px; height: 18px; object-fit: contain; }
 
-        .currency-icon {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-        }
-
-        .icon-once { background: #ff007f; box-shadow: 0 0 6px #ff007f; }
-        .icon-tb { background: #ffd700; box-shadow: 0 0 6px #ffd700; }
-
-        .spin-actions {
-            display: flex;
-            gap: 12px;
-        }
-
+        /* TOMBOL SPIN */
+        .spin-actions { display: flex; gap: 10px; }
         .spin-btn {
-            background: #ffffff;
-            color: #000;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 24px;
-            font-weight: 800;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: all 0.2s ease;
+            background: linear-gradient(135deg, #00b4db, #0083b0);
+            color: #fff; border: none; padding: 8px 20px; border-radius: 20px;
+            font-weight: 800; font-size: 13px; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 131, 176, 0.4); border: 2px solid #fff;
         }
+        .spin-btn:active { transform: scale(0.95); }
+        .spin-cost { font-size: 10px; display: flex; align-items: center; gap: 4px; color: #e0f2fe; margin-top: 2px; }
 
-        .spin-btn:hover {
-            background: #ffd700;
-            transform: translateY(-2px);
+        /* 6. OVERLAY ANIMASI & HASIL GACHA */
+        .overlay-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 100;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
         }
-
-        .spin-cost {
-            font-size: 10px;
-            font-weight: 600;
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+        .gacha-video-anim { width: 300px; border-radius: 20px; display: none; }
+        .result-box {
+            background: #fff; padding: 20px; border-radius: 16px; text-align: center;
+            display: none; flex-direction: column; align-items: center; gap: 15px;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .result-img { width: 150px; height: 200px; object-fit: cover; border-radius: 8px; border: 2px solid #0088ff; }
 
+        /* RESPONSIVE HP (OPTIMASI TOTAL) */
         @media screen and (max-width: 768px) {
-            .gacha-viewport { padding: 15px; }
-            .header-title { display: none; }
-            .bottom-bar { flex-direction: column-reverse; gap: 12px; }
+            .gacha-viewport { padding: 10px; }
+            .top-bar { flex-wrap: wrap; }
+            .logo-img { height: 30px; }
+            .banner-card { flex-direction: column; padding: 15px; gap: 10px; text-align: center; }
+            .preview-media { width: 100%; height: 160px; }
+            .bottom-bar { flex-direction: column; gap: 10px; padding: 15px 10px; }
+            .bottom-left-tools { width: 100%; justify-content: center; }
             .spin-actions { width: 100%; justify-content: center; }
-            .bottom-left-tools { width: 100%; justify-content: space-between; }
+            .spin-btn { flex: 1; padding: 10px 10px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- VIDEO BACKGROUND (Support WebM & MP4 Fallback) -->
+    <!-- VIDEO BACKGROUND -->
     <video class="bg-video" autoplay loop muted playsinline preload="auto">
         <source src="latargacha.webm" type="video/webm">
         <source src="latargacha.mp4" type="video/mp4">
     </video>
     <div class="bg-overlay"></div>
 
-    <!-- MAIN VIEWPORT -->
     <div class="gacha-viewport">
-        
-        <!-- TOP BAR -->
+        <!-- HEADER -->
         <header class="top-bar">
-            <div class="header-title">KITTY GACHA</div>
+            <img src="thebeyonce.png" alt="Logo" class="logo-img" onerror="this.src=''; this.alt='[Logo]'">
             <nav class="top-tabs">
-                <button class="tab-btn active" onclick="switchTab('gacha')">✨ Banner Gacha</button>
-                <button class="tab-btn" onclick="switchTab('shop')">🛒 Toko Skin</button>
+                <button class="tab-btn active" onclick="switchTab('member')">📸 Gacha Member</button>
+                <button class="tab-btn" onclick="switchTab('web')">✈️ Gacha Web</button>
+                <button class="tab-btn" onclick="switchTab('shop')">🛒 Toko</button>
             </nav>
-            <button class="close-btn" onclick="window.history.back()">✕</button>
+            <div style="display:flex; gap:8px;">
+                <button class="nav-btn" onclick="alert('Pindah ke Tab Misi')">📋</button>
+                <button class="nav-btn" onclick="window.history.back()">✕</button>
+            </div>
         </header>
 
-        <!-- CENTER CONTENT -->
+        <!-- KONTEN TENGAH -->
         <main class="main-content-area">
             
-            <!-- SLIDE 1: BANNER GACHA -->
-            <div id="gachaView" class="banner-card">
-                <span class="series-badge">Featured Banner</span>
-                <h1 class="series-title">Cyberpunk Idol</h1>
-                <p class="series-desc">
-                    Koleksi Skin eksklusif edisi terbatas! Dapatkan latar profil neon dan efek bubble chat khusus.
-                </p>
-                <div class="guarantee-box">
-                    ✦ Jaminan 1 Item Rare/Epic tiap 10x Spin!
+            <!-- TAB 1: GACHA MEMBER -->
+            <div id="viewMember" class="banner-card">
+                <video class="preview-media" autoplay loop muted playsinline>
+                    <source src="previewgachamember.webm" type="video/webm">
+                </video>
+                <div class="banner-info">
+                    <span class="series-badge">Photocard Eksklusif</span>
+                    <h1 class="series-title">Koleksi Portrait Member</h1>
+                    <p class="series-desc">Gacha untuk mendapatkan foto HD portrait spesial dari para member kesayanganmu. Tiap roll berpeluang dapat Rare/SSR Photo!</p>
+                    <div class="prize-pool">
+                        ✈️ <b>Pool:</b> Foto Member (1-8 Varian per orang), atau zong 5-10 TB Coins.
+                    </div>
                 </div>
             </div>
 
-            <!-- SLIDE 2: SHOP -->
-            <div id="shopView" class="shop-container">
+            <!-- TAB 2: GACHA WEB -->
+            <div id="viewWeb" class="banner-card" style="display: none;">
+                <img class="preview-media" src="previewgacha.png" alt="Preview Web" onerror="this.style.background='#ccc'">
+                <div class="banner-info">
+                    <span class="series-badge">Tema Web Ekstra</span>
+                    <h1 class="series-title">365 Nichi no Kamihikouki</h1>
+                    <p class="series-desc">Koleksi border avatar, background profil, dan bubble chat bertema langit biru, awan, dan pesawat kertas impian.</p>
+                    <div class="prize-pool">
+                        ✈️ <b>Pool:</b> 3 Skin Web Utama (Border, Latar, Bubble), sisanya 5/10/20 TB Coin.
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: SHOP -->
+            <div id="viewShop" class="shop-container">
                 <div class="shop-grid">
                     <div class="shop-item">
-                        <div class="shop-item-title">Latar Teater Red</div>
-                        <button class="shop-buy-btn">100 TB</button>
+                        <b>Border Awan</b>
+                        <button class="shop-buy-btn" onclick="buyItem('Border Awan', 150)">Beli 150 TB</button>
                     </div>
                     <div class="shop-item">
-                        <div class="shop-item-title">Frame Cyberpunk</div>
-                        <button class="shop-buy-btn">250 TB</button>
-                    </div>
-                    <div class="shop-item">
-                        <div class="shop-item-title">Bubble Neon Pink</div>
-                        <button class="shop-buy-btn">150 TB</button>
+                        <b>Bubble Biru</b>
+                        <button class="shop-buy-btn" onclick="buyItem('Bubble Biru', 100)">Beli 100 TB</button>
                     </div>
                 </div>
             </div>
 
         </main>
 
-        <!-- BOTTOM BAR -->
+        <!-- FOOTER -->
         <footer class="bottom-bar">
             <div class="bottom-left-tools">
-                <button class="action-btn">Rincian</button>
-                <button class="action-btn">Riwayat</button>
+                <button class="action-btn" onclick="cekRiwayat()">⏳ Riwayat</button>
+                <button class="action-btn" onclick="alert('Buka panel misi harian')">🎁 Klaim Token</button>
 
-                <div class="currency-display">
-                    <div class="currency-chip">
-                        <span class="currency-icon icon-once"></span>
-                        <span id="onceCount">10</span> ONCE
-                    </div>
-                    <div class="currency-chip">
-                        <span class="currency-icon icon-tb"></span>
-                        <span id="tbCount">250</span> TB
-                    </div>
+                <!-- CURRENCY -->
+                <div class="currency-chip">
+                    <img src="ONCETOKEN.PNG" class="curr-img" alt="ONCE">
+                    <span id="onceCount">...</span>
+                </div>
+                <div class="currency-chip">
+                    <img src="TBCOIN.PNG" class="curr-img" alt="TB">
+                    <span id="tbCount">...</span>
                 </div>
             </div>
 
             <div class="spin-actions" id="spinButtons">
-                <button class="spin-btn" onclick="doSpin(1)">
+                <button class="spin-btn" onclick="tarikGacha(1)">
                     SPIN 1x
-                    <span class="spin-cost"><span class="currency-icon icon-once"></span> 1 ONCE</span>
+                    <span class="spin-cost"><img src="ONCETOKEN.PNG" class="curr-img"> 1</span>
                 </button>
-                <button class="spin-btn" onclick="doSpin(10)">
+                <button class="spin-btn" onclick="tarikGacha(10)">
                     SPIN 10x
-                    <span class="spin-cost"><span class="currency-icon icon-once"></span> 10 ONCE</span>
+                    <span class="spin-cost"><img src="ONCETOKEN.PNG" class="curr-img"> 10</span>
                 </button>
             </div>
         </footer>
+    </div>
 
+    <!-- OVERLAY LOADING / ANIMASI GACHA -->
+    <div id="overlay" class="overlay-screen">
+        <h2 id="loadingText" style="color:white; display:none;">Memproses Server... ✈️</h2>
+        
+        <!-- Box Hasil -->
+        <div id="resultBox" class="result-box">
+            <h2 id="resultTitle" style="color:#0277bd;">Selamat!</h2>
+            <!-- Ini img tag yang source-nya diisi dari backend -->
+            <img id="resultImage" class="result-img" src="" alt="Hasil">
+            <p id="resultDesc">Kamu mendapatkan [Nama Item]</p>
+            <button class="action-btn" style="background:#0277bd; color:white;" onclick="tutupOverlay()">Tutup</button>
+        </div>
     </div>
 
     <script>
-        // Force autoplay video background saat load
+        let currentTab = 'member'; // Default tab
+
+        // 1. KETIKA WEB DIBUKA -> AMBIL DATA TOKEN DARI BACKEND
         document.addEventListener('DOMContentLoaded', () => {
+            // Animasi bg video
             const video = document.querySelector('.bg-video');
-            if (video) {
-                video.muted = true;
-                video.play().catch(err => {
-                    console.log("Autoplay terhalang kebijakan browser:", err);
-                });
-            }
+            if(video) { video.muted = true; video.play().catch(e=>console.log(e)); }
+
+            // Pura-pura fetch /token ke Apps Script
+            simulasiFetchBackend('/token', null, (response) => {
+                document.getElementById('onceCount').innerText = response.once;
+                document.getElementById('tbCount').innerText = response.tb;
+            });
         });
 
-        function switchTab(tabName) {
+        // 2. FUNGSI SWITCH TAB
+        function switchTab(tab) {
+            currentTab = tab;
             const tabs = document.querySelectorAll('.tab-btn');
-            const gachaView = document.getElementById('gachaView');
-            const shopView = document.getElementById('shopView');
-            const spinButtons = document.getElementById('spinButtons');
-
             tabs.forEach(btn => btn.classList.remove('active'));
 
-            if (tabName === 'gacha') {
+            document.getElementById('viewMember').style.display = 'none';
+            document.getElementById('viewWeb').style.display = 'none';
+            document.getElementById('viewShop').style.display = 'none';
+            document.getElementById('spinButtons').style.display = 'flex'; // Default muncul
+
+            if (tab === 'member') {
                 tabs[0].classList.add('active');
-                gachaView.style.display = 'flex';
-                shopView.style.display = 'none';
-                spinButtons.style.display = 'flex';
-            } else {
+                document.getElementById('viewMember').style.display = 'flex';
+            } else if (tab === 'web') {
                 tabs[1].classList.add('active');
-                gachaView.style.display = 'none';
-                shopView.style.display = 'block';
-                spinButtons.style.display = 'none';
+                document.getElementById('viewWeb').style.display = 'flex';
+            } else if (tab === 'shop') {
+                tabs[2].classList.add('active');
+                document.getElementById('viewShop').style.display = 'block';
+                document.getElementById('spinButtons').style.display = 'none'; // Sembunyikan spin di shop
             }
         }
 
-        function doSpin(amount) {
-            let onceElem = document.getElementById('onceCount');
-            let currentOnce = parseInt(onceElem.innerText);
-
-            if (currentOnce >= amount) {
-                onceElem.innerText = currentOnce - amount;
-                alert(`Spin ${amount}x Berhasil!`);
-            } else {
-                alert("ONCE Token kurang!");
+        // 3. FUNGSI GACHA UTAMA (BISA MEMBER / WEB)
+        function tarikGacha(jumlah) {
+            const once = parseInt(document.getElementById('onceCount').innerText);
+            if (once < jumlah) {
+                alert("ONCE Token tidak cukup! Selesaikan misi untuk dapat token.");
+                return;
             }
+
+            // Kurangi token di tampilan dlu
+            document.getElementById('onceCount').innerText = once - jumlah;
+
+            // Tampilkan Overlay Loading/Animasi
+            const overlay = document.getElementById('overlay');
+            const loadingText = document.getElementById('loadingText');
+            const resultBox = document.getElementById('resultBox');
+            
+            overlay.style.display = 'flex';
+            loadingText.style.display = 'block';
+            resultBox.style.display = 'none';
+
+            // Tentukan endpoint berdasarkan Tab yang aktif
+            const endpoint = currentTab === 'member' ? '/gachamember' : '/gacha';
+
+            // Lempar ke Backend (Simulasi)
+            simulasiFetchBackend(endpoint, { roll: jumlah }, (hasil) => {
+                // Sembunyikan loading
+                loadingText.style.display = 'none';
+                
+                // Tampilkan Kotak Hasil dari data backend
+                resultBox.style.display = 'flex';
+                document.getElementById('resultTitle').innerText = hasil.judul;
+                document.getElementById('resultDesc').innerText = hasil.pesan;
+                
+                // Nah, disini web NAMPILIN gambar berdasar URL dari backend
+                const imgEl = document.getElementById('resultImage');
+                if(hasil.tipe === 'zonk') {
+                    imgEl.src = 'TBCOIN.PNG'; 
+                    imgEl.style.width = '80px'; imgEl.style.height = '80px'; imgEl.style.border = 'none';
+                } else {
+                    imgEl.src = hasil.url_gambar; // <-- Ini yg dari G-Drive
+                    imgEl.style.width = '150px'; imgEl.style.height = '200px'; imgEl.style.border = '2px solid #0088ff';
+                }
+            });
+        }
+
+        // 4. FUNGSI BELI SHOP
+        function buyItem(nama, harga) {
+            if(confirm(`Yakin beli ${nama} seharga ${harga} TB?`)) {
+                // Pura-pura fetch /buyshop
+                alert("Request /buyshop dikirim ke backend...");
+            }
+        }
+
+        // 5. FUNGSI RIWAYAT
+        function cekRiwayat() {
+            document.getElementById('overlay').style.display = 'flex';
+            document.getElementById('loadingText').style.display = 'block';
+            document.getElementById('loadingText').innerText = "Memuat Riwayat... ⏳";
+            document.getElementById('resultBox').style.display = 'none';
+
+            setTimeout(() => {
+                document.getElementById('loadingText').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+                alert("Riwayat berhasil ditarik dari backend (nanti dibikin pop-up tabelnya).");
+            }, 1500);
+        }
+
+        function tutupOverlay() {
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // ==========================================
+        // DUMMY BACKEND (PURA-PURA APP SCRIPT)
+        // ==========================================
+        function simulasiFetchBackend(url, data, callback) {
+            // Simulasi delay jaringan 1.5 detik
+            setTimeout(() => {
+                let response = {};
+
+                if (url === '/token') {
+                    response = { once: 50, tb: 420 };
+                } 
+                else if (url === '/gachamember') {
+                    // Ngacak pura-pura dapet zonk atau dapet member
+                    let isZonk = Math.random() > 0.5; 
+                    if(isZonk) {
+                        response = { tipe: 'zonk', judul: 'Aww Zonk!', pesan: 'Dapat 10 TB Coins!', url_gambar: '' };
+                        document.getElementById('tbCount').innerText = parseInt(document.getElementById('tbCount').innerText) + 10;
+                    } else {
+                        // Kalo win, backend kirim link foto g-drive! (Ini contoh pake link dummy)
+                        response = { 
+                            tipe: 'win', judul: 'SSR Member!', 
+                            pesan: 'Kamu dapat Member: Zee (Casual)', 
+                            url_gambar: 'https://placehold.co/150x200/0277bd/ffffff?text=FOTO+MEMBER' 
+                        };
+                    }
+                }
+                else if (url === '/gacha') {
+                    response = { 
+                        tipe: 'win', judul: 'Skin Web!', 
+                        pesan: 'Dapat Bubble Chat Awan!', 
+                        url_gambar: 'https://placehold.co/150x150/87CEEB/ffffff?text=BUBBLE' 
+                    };
+                }
+
+                callback(response);
+            }, 1500);
         }
     </script>
 </body>
