@@ -64,7 +64,6 @@
 
         .sidebar {
             width: 260px; 
-            /* Ganti background semi-transparan dengan warna lebih solid untuk meringankan beban GPU */
             background: rgba(10, 10, 15, 0.92); 
             backdrop-filter: blur(8px); 
             -webkit-backdrop-filter: blur(8px);
@@ -73,8 +72,6 @@
             transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
             z-index: 99999; position: relative; 
             box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
-            
-            /* MAGIS GPU ACCELERATION: Memaksa HP render pakai Chipset Graphics */
             will-change: transform;
             transform: translateZ(0);
             -webkit-backface-visibility: hidden;
@@ -99,10 +96,8 @@
 
         .menu-list {
             list-style: none; padding: 20px 12px; display: flex; flex-direction: column; gap: 8px; 
-            overflow-y: auto; flex-grow: 1; /* Pastikan menu mengambil sisa ruang */
-            -webkit-overflow-scrolling: touch; /* Biar smooth saat swipe di HP */
-            
-            /* OPTIMASI SCROLL: Isolasi render list agar tidak mengganggu elemen di luarnya */
+            overflow-y: auto; flex-grow: 1; 
+            -webkit-overflow-scrolling: touch; 
             contain: content;
             overscroll-behavior-y: contain; 
         }
@@ -215,7 +210,6 @@
             .sidebar {
                 position: fixed !important; top: 0 !important; left: 0 !important;
                 height: 100vh !important; width: 280px !important; margin-right: 0 !important;
-                /* Di HP, hilangkan backdrop-filter total saat slide agar 100% lancar */
                 backdrop-filter: none !important;
                 -webkit-backdrop-filter: none !important;
                 background: #0a0a0f !important;
@@ -247,11 +241,9 @@
             .chat-container { padding: 15px 15px 120px 15px !important; width: 100% !important; }
             .msg-bubble { max-width: 92% !important; font-size: 14px !important; }
 
-            /* PERBAIKAN INPUT AREA DI HP AGAR TIDAK TENGGELAM */
             .input-area-container {
                 left: 0 !important; right: 0 !important; bottom: 0 !important;
                 width: 100% !important; 
-                /* Ditambah env(safe-area-inset-bottom) agar menghindar dari navigation bar system HP */
                 padding: 10px 15px calc(25px + env(safe-area-inset-bottom)) 15px !important;
                 background: linear-gradient(to top, rgba(0,0,0,0.95) 70%, transparent); 
             }
@@ -291,7 +283,6 @@
             <li><a href="../temen-mabar/" class="menu-item">Temen Mabar</a></li>
             <li><a href="../medsos-saver/" class="menu-item">Medsos Saver</a></li>
             <li><a href="../koleksi-kartu/" class="menu-item">Koleksi Kartu</a></li>
-            <!-- Tambahan Baru -->
             <li><a href="../bio-member/" class="menu-item">Bio Member</a></li>
             <li><a href="../link-shortcut/" class="menu-item">LinkShortCut</a></li>
         </ul>
@@ -321,7 +312,7 @@
         <!-- Chat Area -->
         <div class="chat-container" id="chatContainer">
             <div class="message ai">
-                <div class="msg-bubble">Halo! Aku Asisten AI **Kitty Tenacity**. Pilih otak andalanku (Gemini / GPT) di bawah, lalu tanyakan apa saja!</div>
+                <div class="msg-bubble">Halo! Aku Asisten AI **Kitty Tenacity**. Pilih otak andalanku di bawah, lalu tanyakan apa saja!</div>
                 <div class="msg-meta">System</div>
             </div>
         </div>
@@ -332,9 +323,11 @@
                 <input type="text" id="userInput" class="chat-input" placeholder="Tanya Kitty sesuatu..." autocomplete="off">
                 
                 <select id="modelSelect" class="model-selector">
+                    <option value="auto" selected>Auto (Random)</option>
+                    <option value="claude">Claude 4.5 Haiku</option>
                     <option value="gemini">Gemini 2.5 Flash</option>
                     <option value="gpt">GPT 5 Mini</option>
-                    <option value="auto">Auto (Random)</option>
+                    <option value="ultrakitty">UltraKitty (Pro Engine)</option>
                 </select>
                 
                 <button class="send-btn" onclick="sendMessage()">➤</button>
@@ -379,12 +372,22 @@
 
             if (!messageText) return;
 
+            // Logika khusus mode "auto" (Hanya memilih antara claude, gemini, dan gpt)
             if (selectedModel === "auto") {
-                selectedModel = Math.random() > 0.5 ? "gemini" : "gpt";
+                const autoChoices = ["claude", "gemini", "gpt"];
+                selectedModel = autoChoices[Math.floor(Math.random() * autoChoices.length)];
+            }
+
+            // Menentukan Nama AI yang tampil di chat
+            let displayNameModel = "";
+            switch(selectedModel) {
+                case "claude": displayNameModel = "Claude 4.5 Haiku"; break;
+                case "gemini": displayNameModel = "Gemini 2.5 Flash"; break;
+                case "gpt": displayNameModel = "GPT 5 Mini"; break;
+                case "ultrakitty": displayNameModel = "UltraKitty (Pro Engine)"; break;
             }
 
             const userId = getUserId();
-            const displayNameModel = selectedModel === "gemini" ? "Gemini 2.5 Flash" : "GPT 5 Mini";
 
             const userHtml = `
                 <div class="message user">
@@ -406,12 +409,20 @@
 
             const formattedPayload = `/${selectedModel} ${userId}, ${messageText}`;
 
+            // Sistem Timeout Fetch - Khusus ultrakitty 120 detik, sisanya 60 detik (standar lama)
+            const controller = new AbortController();
+            const timeoutDuration = (selectedModel === "ultrakitty") ? 120000 : 60000;
+            const timeoutId = setTimeout(() => controller.abort(), timeoutDuration);
+
             try {
                 const response = await fetch(`${BACKEND_URL}/chat`, { 
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: formattedPayload }) 
+                    body: JSON.stringify({ message: formattedPayload }),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId); // Hapus timer jika respons sukses sebelum waktu habis
+                
                 const data = await response.json();
 
                 // Mengambil reply dari server, atau pesan error dari server jika gagal
@@ -433,8 +444,11 @@
                 document.getElementById(uniqueMsgId).querySelector('.msg-bubble').innerHTML = finalAnswer.replace(/\n/g, "<br>");
 
             } catch (error) {
-                // Ini HANYA berjalan jika internet mati total / URL Backend salah
-                document.getElementById(uniqueMsgId).querySelector('.msg-bubble').innerText = "Koneksi terputus: Gagal terhubung ke server Backend.";
+                if (error.name === 'AbortError') {
+                    document.getElementById(uniqueMsgId).querySelector('.msg-bubble').innerText = `Waktu habis (Timeout ${timeoutDuration/1000}s). Server tidak merespon.`;
+                } else {
+                    document.getElementById(uniqueMsgId).querySelector('.msg-bubble').innerText = "Koneksi terputus: Gagal terhubung ke server Backend.";
+                }
             }
             
             chatContainer.scrollTop = chatContainer.scrollHeight;
