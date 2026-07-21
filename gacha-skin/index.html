@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gacha Skin - Kitty Tenacity</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ==========================================
+           1. BACKGROUND VIDEO & FALLBACK IMAGE
+           ========================================== */
+        .bg-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.75) 100%);
+            z-index: 2;
+        }
+
+        /* ==========================================
+           2. MAIN CONTAINER LAYOUT
+           ========================================== */
+        .gacha-viewport {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px 40px;
+        }
+
+        /* ==========================================
+           3. TOP BAR (TABS & CLOSE)
+           ========================================== */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+            color: #ffd700;
+        }
+
+        /* Top Center Tabs (Slide 1: Gacha, Slide 2: Shop) */
+        .top-tabs {
+            display: flex;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 6px 16px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #0088ff, #ff007f);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
+        }
+
+        .close-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: #ff007f;
+            transform: scale(1.1);
+        }
+
+        /* ==========================================
+           4. CENTER PREVIEW CARD (SERIES SKIN)
+           ========================================== */
+        .main-content-area {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        /* Slide 1: Gacha Banner Container */
+        .banner-card {
+            width: 100%;
+            max-width: 900px;
+            height: 420px;
+            background: linear-gradient(135deg, rgba(20, 20, 30, 0.85), rgba(40, 20, 50, 0.75));
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), inset 0 0 30px rgba(255, 255, 255, 0.05);
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .banner-left {
+            width: 50%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 15px;
+            z-index: 2;
+        }
+
+        .series-badge {
+            display: inline-block;
+            align-self: flex-start;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #ffd700;
+            color: #ffd700;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .series-title {
+            font-size: 36px;
+            font-weight: 800;
+            line-height: 1.1;
+            background: linear-gradient(to right, #ffffff, #ff7700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .series-desc {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+        }
+
+        .guarantee-box {
+            background: rgba(255, 0, 127, 0.15);
+            border-left: 3px solid #ff007f;
+            padding: 8px 12px;
+            border-radius: 0 8px 8px 0;
+            font-size: 12px;
+            color: #ff99dd;
+        }
+
+        .banner-right {
+            width: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .skin-preview-img {
+            max-height: 110%;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 0 20px rgba(255, 0, 127, 0.5));
+            transition: transform 0.5s ease;
+        }
+
+        .banner-card:hover .skin-preview-img {
+            transform: scale(1.03) translateY(-5px);
+        }
+
+        .skin-info-overlay {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            text-align: right;
+        }
+
+        .skin-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #ffffff;
+        }
+
+        .skin-stars {
+            color: #ffd700;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        /* Slide 2: Shop View (Hidden Default) */
+        .shop-container {
+            display: none;
+            width: 100%;
+            max-width: 900px;
+            height: 420px;
+            background: rgba(15, 15, 20, 0.85);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+        }
+
+        .shop-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+        .shop-item:hover {
+            border-color: #0088ff;
+            background: rgba(0, 136, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .shop-item-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+
+        .shop-item-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .shop-buy-btn {
+            background: #0088ff;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        /* ==========================================
+           5. BOTTOM BAR (CURRENCY & SPIN BUTTONS)
+           ========================================== */
+        .bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .bottom-left-tools {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: 0.2s;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Currency Container */
+        .currency-display {
+            display: flex;
+            gap: 12px;
+            margin-left: 10px;
+        }
+
+        .currency-chip {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .currency-icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+        }
+
+        .icon-once { background: #ff007f; box-shadow: 0 0 8px #ff007f; }
+        .icon-tb { background: #ffd700; box-shadow: 0 0 8px #ffd700; }
+
+        /* Wish / Spin Buttons */
+        .spin-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .spin-btn {
+            background: linear-gradient(135deg, #ffffff, #e0e0e0);
+            color: #000;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .spin-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            background: linear-gradient(135deg, #ffffff, #ffd700);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+        }
+
+        .spin-cost {
+            font-size: 11px;
+            font-weight: 600;
+            color: #444;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 2px;
+        }
+
+        /* Responsive Mobile Adjustment */
+        @media screen and (max-width: 768px) {
+            .gacha-viewport { padding: 15px; }
+            .header-title { display: none; }
+            .top-bar { justify-content: center; position: relative; }
+            .close-btn { position: absolute; right: 0; }
+            
+            .banner-card {
+                flex-direction: column;
+                height: 100%;
+                max-height: 480px;
+            }
+            .banner-left { width: 100%; padding: 20px; gap: 8px; }
+            .banner-right { width: 100%; height: 200px; }
+            .series-title { font-size: 24px; }
+            
+            .bottom-bar { flex-direction: column-reverse; gap: 15px; }
+            .spin-actions { width: 100%; justify-content: center; }
+            .bottom-left-tools { width: 100%; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- VIDEO BACKGROUND (Dengan Fallback Gambar latargach.png) -->
+    <video class="bg-video" autoplay loop muted playsinline poster="latargach.png">
+        <source src="latargacha.mp4" type="video/mp4">
+    </video>
+    <div class="bg-overlay"></div>
+
+    <!-- MAIN VIEWPORT -->
+    <div class="gacha-viewport">
+        
+        <!-- 1. TOP BAR -->
+        <header class="top-bar">
+            <div class="header-title">KITTY GACHA</div>
+            
+            <!-- 2 SLIDE / TABS DITENGAH -->
+            <nav class="top-tabs">
+                <button class="tab-btn active" onclick="switchTab('gacha')">✨ Banner Gacha</button>
+                <button class="tab-btn" onclick="switchTab('shop')">🛒 Toko Skin</button>
+            </nav>
+
+            <button class="close-btn" onclick="window.history.back()">✕</button>
+        </header>
+
+        <!-- 2. CENTER CONTENT (PREVIEW CARD) -->
+        <main class="main-content-area">
+            
+            <!-- SLIDE 1: BANNER GACHA -->
+            <div id="gachaView" class="banner-card">
+                <div class="banner-left">
+                    <span class="series-badge">SSR Series Featured</span>
+                    <h1 class="series-title">Cyberpunk Idol</h1>
+                    <p class="series-desc">
+                        Koleksi Skin eksklusif edisi terbatas! Dapatkan tampilan latar profil neon dan efek bubble chat khusus.
+                    </p>
+                    <div class="guarantee-box">
+                        ✦ Dijamin mendapat 1 Item Rare/Epic tiap 10x Spin!
+                    </div>
+                </div>
+
+                <div class="banner-right">
+                    <!-- Foto preview skin utama/karakter -->
+                    <img src="../kitty.png.png" alt="Skin Preview" class="skin-preview-img" onerror="this.src='https://via.placeholder.com/300x400?text=Skin+Preview'">
+                    
+                    <div class="skin-info-overlay">
+                        <div class="skin-name">Neon Beyonce #01</div>
+                        <div class="skin-stars">★★★★★ (SSR)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 2: SHOP (TOKO) -->
+            <div id="shopView" class="shop-container">
+                <div class="shop-grid">
+                    <div class="shop-item">
+                        <img src="../kitty.png.png" class="shop-item-img" onerror="this.src='https://via.placeholder.com/80'">
+                        <div class="shop-item-title">Latar Teater Red</div>
+                        <button class="shop-buy-btn">100 TB</button>
+                    </div>
+                    <div class="shop-item">
+                        <img src="../kitty.png.png" class="shop-item-img" onerror="this.src='https://via.placeholder.com/80'">
+                        <div class="shop-item-title">Frame Cyberpunk</div>
+                        <button class="shop-buy-btn">250 TB</button>
+                    </div>
+                    <div class="shop-item">
+                        <img src="../kitty.png.png" class="shop-item-img" onerror="this.src='https://via.placeholder.com/80'">
+                        <div class="shop-item-title">Bubble Neon Pink</div>
+                        <button class="shop-buy-btn">150 TB</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- 3. BOTTOM BAR -->
+        <footer class="bottom-bar">
+            <div class="bottom-left-tools">
+                <button class="action-btn">Rincian</button>
+                <button class="action-btn">Riwayat</button>
+
+                <!-- Koin & Token Display -->
+                <div class="currency-display">
+                    <div class="currency-chip" title="ONCE Token (Untuk Gacha)">
+                        <span class="currency-icon icon-once"></span>
+                        <span id="onceCount">10</span> ONCE
+                    </div>
+                    <div class="currency-chip" title="TB Coin (Untuk Belanja Shop)">
+                        <span class="currency-icon icon-tb"></span>
+                        <span id="tbCount">250</span> TB
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tombol Spin -->
+            <div class="spin-actions" id="spinButtons">
+                <button class="spin-btn" onclick="doSpin(1)">
+                    SPIN 1x
+                    <span class="spin-cost"><span class="currency-icon icon-once" style="width: 10px; height: 10px;"></span> 1 ONCE</span>
+                </button>
+                <button class="spin-btn" onclick="doSpin(10)">
+                    SPIN 10x
+                    <span class="spin-cost"><span class="currency-icon icon-once" style="width: 10px; height: 10px;"></span> 10 ONCE</span>
+                </button>
+            </div>
+        </footer>
+
+    </div>
+
+    <script>
+        // Logika Pindah Slide (Gacha vs Shop)
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const gachaView = document.getElementById('gachaView');
+            const shopView = document.getElementById('shopView');
+            const spinButtons = document.getElementById('spinButtons');
+
+            tabs.forEach(btn => btn.classList.remove('active'));
+
+            if (tabName === 'gacha') {
+                tabs[0].classList.add('active');
+                gachaView.style.display = 'flex';
+                shopView.style.display = 'none';
+                spinButtons.style.display = 'flex';
+            } else {
+                tabs[1].classList.add('active');
+                gachaView.style.display = 'none';
+                shopView.style.display = 'block';
+                spinButtons.style.display = 'none'; // Sembunyikan tombol spin saat di toko
+            }
+        }
+
+        // Dummy fungsi Spin
+        function doSpin(amount) {
+            let onceElem = document.getElementById('onceCount');
+            let currentOnce = parseInt(onceElem.innerText);
+
+            if (currentOnce >= amount) {
+                onceElem.innerText = currentOnce - amount;
+                alert(`Selamat! Kamu melakukan Spin ${amount}x. (Sistem acak skin bisa kita sambung nanti)`);
+            } else {
+                alert("ONCE Token tidak cukup! Selesaikan Quest harian untuk dapat Token.");
+            }
+        }
+    </script>
+</body>
+</html>
