@@ -27,7 +27,7 @@
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
             background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(135,206,235,0.7) 100%);
-            z-index: 2;
+            z-index: 2; transition: opacity 0.5s ease;
         }
 
         /* 2. LAYOUT UTAMA */
@@ -35,12 +35,11 @@
             position: relative; z-index: 10;
             width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: space-between;
-            padding: 10px 15px;
-            overflow-y: auto;
-            transition: opacity 0.5s ease; /* Transisi buat ilangin menu pas spin */
+            padding: 10px 15px; overflow-y: auto;
+            transition: opacity 0.5s ease;
         }
 
-        /* 3. TOP BAR RAPI */
+        /* 3. TOP BAR */
         .top-bar { display: flex; flex-direction: column; gap: 8px; width: 100%; }
         .top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .logo-img { height: 32px; object-fit: contain; max-width: 120px; }
@@ -73,10 +72,10 @@
             padding: 6px 0; overflow: hidden; width: 100%;
         }
 
-        .sub-tab-bar { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; z-index: 5; }
+        .sub-tab-bar { display: flex; justify-content: center; gap: 6px; margin-bottom: 8px; z-index: 5; flex-wrap: wrap; }
         .sub-btn {
             background: rgba(255,255,255,0.65); border: 1px solid #b3e5fc;
-            padding: 4px 12px; border-radius: 15px; font-size: 11px; font-weight: bold;
+            padding: 4px 10px; border-radius: 15px; font-size: 10px; font-weight: bold;
             color: #0277bd; cursor: pointer; transition: 0.3s;
         }
         .sub-btn.active { background: #0277bd; color: #fff; }
@@ -112,24 +111,42 @@
             padding: 6px; border-radius: 6px; border: 1px dashed #b3e5fc;
         }
 
-        /* SHOP CONTAINER */
+        /* SHOP CONTAINER & SUB TABS */
         .shop-container {
-            display: none; width: 100%; max-width: 600px; height: 300px;
+            display: none; width: 100%; max-width: 600px; height: 340px;
             background: rgba(255, 255, 255, 0.85); border-radius: 16px;
-            backdrop-filter: blur(10px); padding: 12px; overflow-y: auto;
+            backdrop-filter: blur(10px); padding: 10px; overflow-y: auto;
         }
-        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(125px, 1fr)); gap: 8px; }
+        
+        /* CARD STYLES FOR SHOP */
         .shop-item {
             background: #fff; border-radius: 10px; padding: 8px;
-            display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center;
+            display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #e1f5fe;
         }
         .shop-item-img { width: 100%; height: 70px; object-fit: cover; border-radius: 6px; border: 1px solid #e1f5fe; }
-        .shop-item-title { font-size: 11px; font-weight: bold; color: #0277bd; line-height: 1.1; }
+        .shop-item-title { font-size: 10.5px; font-weight: bold; color: #0277bd; line-height: 1.1; }
         .shop-buy-btn {
             background: #0088ff; color: white; border: none; padding: 5px 8px;
-            border-radius: 6px; font-size: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-top: auto;
+            border-radius: 6px; font-size: 9.5px; width: 100%; font-weight: bold; cursor: pointer; margin-top: auto;
+            display: flex; align-items: center; justify-content: center; gap: 3px;
         }
+
+        /* DEDICATED STYLES FOR OMEGA CARDS */
+        .card-omega-spesial {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border: 1.5px solid #ffb74d; box-shadow: 0 3px 10px rgba(230, 81, 0, 0.15);
+        }
+        .card-omega-spesial .shop-item-title { color: #d84315; }
+        .btn-omega-spesial { background: linear-gradient(135deg, #f57c00, #e65100); }
+
+        .card-omega-regular {
+            background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+            border: 1.5px solid #4fc3f7; box-shadow: 0 3px 10px rgba(2, 119, 189, 0.15);
+        }
+        .card-omega-regular .shop-item-title { color: #0277bd; }
+        .btn-omega-regular { background: linear-gradient(135deg, #0288d1, #01579b); }
 
         /* 5. BOTTOM BAR & CURRENCY */
         .bottom-bar {
@@ -149,15 +166,12 @@
         }
         .curr-img { width: 16px; height: 16px; object-fit: contain; min-width: 16px; }
 
-        /* AREA SKIP ANIMASI & SPIN */
         .spin-section { display: flex; flex-direction: column; gap: 6px; width: 100%; }
         .skip-anim-container {
             display: flex; align-items: center; justify-content: center; gap: 6px;
             font-size: 11px; font-weight: bold; color: #0277bd;
         }
-        .skip-anim-container input[type="checkbox"] {
-            accent-color: #0088ff; width: 14px; height: 14px; cursor: pointer;
-        }
+        .skip-anim-container input[type="checkbox"] { accent-color: #0088ff; width: 14px; height: 14px; cursor: pointer; }
         .spin-actions { display: flex; gap: 8px; width: 100%; }
         .spin-btn {
             flex: 1; background: linear-gradient(135deg, #00b4db, #0083b0);
@@ -176,7 +190,6 @@
             display: none; flex-direction: column; align-items: center; justify-content: center;
         }
         
-        /* Animasi Keren Token */
         .loading-wrapper {
             display: none; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
         }
@@ -186,14 +199,11 @@
         }
         .spinner-ring {
             position: absolute; width: 100%; height: 100%;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top: 4px solid #00b4db;
-            border-radius: 50%;
-            animation: putarRing 1s linear infinite;
+            border: 4px solid rgba(255, 255, 255, 0.1); border-top: 4px solid #00b4db;
+            border-radius: 50%; animation: putarRing 1s linear infinite;
         }
         .spinner-token {
-            width: 40px; height: 40px; object-fit: contain;
-            animation: detakToken 1.5s ease-in-out infinite;
+            width: 40px; height: 40px; object-fit: contain; animation: detakToken 1.5s ease-in-out infinite;
         }
         .loading-text { color: #fff; font-size: 14px; font-weight: bold; letter-spacing: 1px; animation: kedip 1.5s infinite; }
 
@@ -204,8 +214,12 @@
         /* RESULT BOX */
         .result-box {
             background: #fff; padding: 16px; border-radius: 16px; text-align: center;
-            display: none; flex-direction: column; align-items: center; gap: 12px;
+            display: none; flex-direction: column; align-items: center; gap: 10px;
             max-width: 85%; animation: popIn 0.3s ease-out;
+        }
+        .jiko-text {
+            font-size: 11px; font-style: italic; color: #555; background: #f5f5f5;
+            padding: 6px 10px; border-radius: 8px; border-left: 3px solid #0088ff; max-width: 100%;
         }
         @keyframes popIn { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
@@ -241,7 +255,7 @@
             <nav class="top-tabs">
                 <button class="tab-btn active" onclick="switchMainTab('member')">📸 Member</button>
                 <button class="tab-btn" onclick="switchMainTab('web')">✈️ Skin Web</button>
-                <button class="tab-btn" onclick="switchMainTab('shop')">🛒 Toko</button>
+                <button class="tab-btn" onclick="switchMainTab('shop')">🛒 Toko Penukaran</button>
             </nav>
         </header>
 
@@ -256,7 +270,6 @@
                 </div>
 
                 <div id="swipeArea" class="swipe-container">
-                    <!-- SLIDE 1 -->
                     <div class="swipe-slide">
                         <div class="banner-card">
                             <img class="preview-portrait" src="https://placehold.co/120x160/87CEEB/ffffff?text=Portrait" alt="Preview Portrait">
@@ -268,7 +281,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- SLIDE 2 -->
                     <div class="swipe-slide">
                         <div class="banner-card">
                             <video class="preview-landscape" autoplay loop muted playsinline>
@@ -296,9 +308,18 @@
                 </div>
             </div>
 
-            <!-- TAB 3: TOKO -->
+            <!-- TAB 3: TOKO PENUKARAN (SHOP) -->
             <div id="viewShop" class="shop-container">
-                <div class="shop-grid">
+                
+                <!-- SUB NAV DILALUI DI SHOP -->
+                <div class="sub-tab-bar" style="margin-bottom: 10px;">
+                    <button id="shopTabMain" class="sub-btn active" onclick="switchShopSubTab('main')">Item & Fitur</button>
+                    <button id="shopTabSpesial" class="sub-btn" onclick="switchShopSubTab('spesial')">🌌 Omega Spesial (2💎)</button>
+                    <button id="shopTabOmega" class="sub-btn" onclick="switchShopSubTab('omega')">🌠 Tier Omega (1💎)</button>
+                </div>
+
+                <!-- SHOP GRID 1: ITEM UTAMA & PENUKARAN BIASA -->
+                <div id="shopGridMain" class="shop-grid">
                     <div class="shop-item">
                         <img src="preview_border.png" class="shop-item-img" alt="Border">
                         <span class="shop-item-title">Border 365 Nichi</span>
@@ -330,6 +351,13 @@
                         <button class="shop-buy-btn" style="background:#f57c00;" onclick="craftOmega()">Craft (120 Kristal)</button>
                     </div>
                 </div>
+
+                <!-- SHOP GRID 2: TIER OMEGA SPESIAL (26 MEMBERS) -->
+                <div id="shopGridSpesial" class="shop-grid" style="display: none;"></div>
+
+                <!-- SHOP GRID 3: TIER OMEGA (51 MEMBERS) -->
+                <div id="shopGridOmega" class="shop-grid" style="display: none;"></div>
+
             </div>
         </main>
 
@@ -340,16 +368,16 @@
                 <button class="action-btn" onclick="window.location.href='/thebeyonce48/gacha-skin/misi'">🎁 Klaim Token</button>
 
                 <div class="currency-chip">
-                    <img src="ONCETOKEN.PNG" class="curr-img" alt="T" onerror="this.src='https://placehold.co/16x16/0088ff/ffffff?text=T'">
+                    <img src="ONCETOKEN.PNG" class="curr-img" alt="T">
                     <span id="onceCount">100</span>
                 </div>
                 <div class="currency-chip" id="chipSecondary">
-                    <img id="imgSecondary" src="TBCOIN.PNG" class="curr-img" alt="C" onerror="this.src='https://placehold.co/16x16/ffaa00/ffffff?text=C'">
+                    <img id="imgSecondary" src="TBCOIN.PNG" class="curr-img" alt="C">
                     <span id="valSecondary">500</span>
                 </div>
-                <div class="currency-chip" id="chipTertiary" style="display: none;">
-                    <img src="KRISTAL_OMEGA.PNG" class="curr-img" alt="O" onerror="this.src='https://placehold.co/16x16/ff5500/ffffff?text=O'">
-                    <span id="valTertiary">2</span>
+                <div class="currency-chip" id="chipTertiary">
+                    <img src="KRISTAL_OMEGA.PNG" class="curr-img" alt="O">
+                    <span id="valTertiary">5</span>
                 </div>
             </div>
 
@@ -379,66 +407,164 @@
 
     <!-- OVERLAY GELAP UNTUK ANIMASI & HASIL -->
     <div id="overlay" class="overlay-screen">
-        
-        <!-- ANIMASI LOADING BARU -->
         <div id="loadingAnim" class="loading-wrapper">
             <div class="spinner-ring-container">
                 <div class="spinner-ring"></div>
-                <img src="ONCETOKEN.PNG" class="spinner-token" onerror="this.src='https://placehold.co/40x40/0088ff/ffffff?text=T'">
+                <img src="ONCETOKEN.PNG" class="spinner-token">
             </div>
             <p class="loading-text">Membuka Gacha... ✈️</p>
         </div>
         
-        <!-- BOX HASIL -->
         <div id="resultBox" class="result-box">
             <h2 id="resultTitle" style="color:#0277bd; font-size:18px;">Selamat!</h2>
             <div id="mediaContainer"></div>
-            <p id="resultDesc" style="font-size:12px;">Kamu mendapatkan item!</p>
+            <p id="resultDesc" style="font-size:12px; font-weight:bold; color:#0277bd;"></p>
+            <div id="jikoContainer" class="jiko-text">"Salam kehangatan dari Oshi!"</div>
             <button class="action-btn" style="background:#0277bd; color:white; padding:6px 16px; margin-top:8px;" onclick="tutupOverlay()">Tutup</button>
         </div>
     </div>
 
     <script>
+        // DATA MEMBER OMEGA SPESIAL (26 Member - 2 Kristal Omega)
+        const OMEGA_SPESIAL_LIST = [
+            {"nama": "Dedek Kitty (Spesial)", "kode": "DKTY", "jiko": "Kecil-kecil cabe rawit, selalu bikin gemas!"},
+            {"nama": "Ci Shani (Spesial)", "kode": "CSHN", "jiko": "Semanis cokelat, sehangat mentari pagi."},
+            {"nama": "Ci Gre (Spesial)", "kode": "CGRC", "jiko": "Senyumku akan menerangi hari-harimu!"},
+            {"nama": "Ci Feni (Spesial)", "kode": "CFNI", "jiko": "Siap menghiburmu dengan sejuta pesona!"},
+            {"nama": "Ci Eli (Spesial)", "kode": "CELI", "jiko": "Penyemangat hari dengan tawa ceria."},
+            {"nama": "Full Color: Christy", "kode": "FCHR", "jiko": "Penuh warna dan energi tak terbatas!"},
+            {"nama": "Full Color: Shani", "kode": "FSHN", "jiko": "Keanggunan dalam balutan warna indah."},
+            {"nama": "Full Color: Gracia", "kode": "FGRC", "jiko": "Cahaya bersinar di setiap langkah."},
+            {"nama": "Full Color: Chika", "kode": "FCHK", "jiko": "Selalu ceria dan penuh kejutan!"},
+            {"nama": "Full Color: Feni", "kode": "FFNI", "jiko": "Penuh gaya, penuh warna!"},
+            {"nama": "Full Color: Jinan", "kode": "FJIN", "jiko": "Tenang namun memikat hati."},
+            {"nama": "Full Color: Fiony", "kode": "FFIO", "jiko": "Lembut dan manis bagai keajaiban."},
+            {"nama": "Full Color: Marsha", "kode": "FMAR", "jiko": "Siap membawamu ke dunia penuh warna."},
+            {"nama": "Full Color: Zee", "kode": "FAAZ", "jiko": "Siap melompat lebih tinggi!"},
+            {"nama": "Prime: Feni", "kode": "PFNI", "jiko": "Perform maksimal untukmu!"},
+            {"nama": "Prime: Christy", "kode": "PCHR", "jiko": "Bintang utama di atas panggung."},
+            {"nama": "Prime: Lulu", "kode": "PLLU", "jiko": "Kehangatan tulus di tiap aksi."},
+            {"nama": "Prime: Gracia", "kode": "PGRC", "jiko": "Pesona tak tertandingi!"},
+            {"nama": "Prime: Oniel", "kode": "PONL", "jiko": "Semangat membara tiada henti."},
+            {"nama": "Prime: Fiony", "kode": "PFNY", "jiko": "Indah bagaikan Bunga Mekar."},
+            {"nama": "Prime: Marsha", "kode": "PMSH", "jiko": "Sentuhan ajaib untuk hari bahagiamu."},
+            {"nama": "Prime: Freya", "kode": "PFYR", "jiko": "Freya siap menyemangati harimu!"},
+            {"nama": "Prime: Gita", "kode": "PGTS", "jiko": "Tenang, elegan, dan menawan."},
+            {"nama": "Prime: Aurelia", "kode": "PLAI", "jiko": "Kecantikan alami yang memukau."},
+            {"nama": "Prime: Jessi", "kode": "PJCC", "jiko": "Selalu hadir membawa tawa."},
+            {"nama": "Prime: Muthe", "kode": "PMUT", "jiko": "Manis dan menggemaskan!"}
+        ];
+
+        // DATA MEMBER OMEGA REGULAR (51 Member - 1 Kristal Omega)
+        const OMEGA_LIST = [
+            {"nama": "SSK: Angelina Christy", "kode": "SCHR"}, {"nama": "SSK: Marsha Lenathea", "kode": "SMAR"},
+            {"nama": "SSK: Amanda Sukma", "kode": "SAMA"}, {"nama": "SSK: Flora Shafiq", "kode": "SFLO"},
+            {"nama": "SSK: Indira Seruni", "kode": "SIND"}, {"nama": "SSK: Mutiara Azzahra", "kode": "SMUT"},
+            {"nama": "SSK: Letycia Moreen", "kode": "SMOR"}, {"nama": "SSK: Jesslyn Elly", "kode": "SLYN"},
+            {"nama": "SSK: Greesella Adhalia", "kode": "SGRE"}, {"nama": "SSK: Jazzlyn Trisha", "kode": "STRI"},
+            {"nama": "SSK: Shabilqis Naila", "kode": "SNAL"}, {"nama": "SSK: Michelle Alexandra", "kode": "SLIL"},
+            {"nama": "SSK: Nayla Suji", "kode": "SNAY"}, {"nama": "SSK: Cynthia Yaputera", "kode": "SCYN"},
+            {"nama": "SSK: Oline Manuel", "kode": "SOLI"}, {"nama": "SSK: Danella Piawahan", "kode": "SDAN"},
+            {"nama": "SSK: Freya Jayawardana", "kode": "SFRE"}, {"nama": "SSK: Abigail Rachel", "kode": "SARA"},
+            {"nama": "SSK: Fiony Alveria", "kode": "SFIO"}, {"nama": "SSK: Jessica Chandra", "kode": "SJES"},
+            {"nama": "SSK: Catherina Vallencia", "kode": "SERI"}, {"nama": "SSK: Raisha Syifa", "kode": "SRAI"},
+            {"nama": "SSK: Michelle Levia", "kode": "SMIC"}, {"nama": "SSK: Regina Wilian", "kode": "SELN"},
+            {"nama": "SSK: Cornelia Vanisa", "kode": "SONI"}, {"nama": "SSK: Gita Sekar Andarini", "kode": "SGIT"},
+            {"nama": "SSK: Feni Fitriyanti", "kode": "SFEN"}, {"nama": "SSK: Victoria Kimberly", "kode": "SKIM"},
+            {"nama": "SSK: Aurellia", "kode": "SLIA"}, {"nama": "SSK: Michelle Levia", "kode": "SLEV"},
+            {"nama": "SSK: Cathleen Nixie", "kode": "SCAT"}, {"nama": "SSK: Delynn Asizi", "kode": "SDEL"},
+            {"nama": "SSK: Regina Putri", "kode": "SREG"}, {"nama": "SSK: Kathrina Irene", "kode": "SKAT"},
+            {"nama": "SSK: Anindya Ramadhani", "kode": "SANI"}, {"nama": "SSK: Aurel Alana", "kode": "SLAN"},
+            {"nama": "SSK: Ribka Budiman", "kode": "SRIB"}, {"nama": "SSK: Indah Cahya", "kode": "SIDH"},
+            {"nama": "SSK: Febriola Sinambela", "kode": "SOLL"}, {"nama": "SSK: Chelsea Davina", "kode": "SCHE"},
+            {"nama": "SSK: Grace Octaviani", "kode": "SGRC"}, {"nama": "SSK: Shania Gracia", "kode": "SGRA"},
+            {"nama": "SSK: Fritzy Rosmerian", "kode": "SFRI"}, {"nama": "SSK: Alya Amanda", "kode": "SALY"},
+            {"nama": "SSK: Callista Alifia", "kode": "SCAL"}, {"nama": "SSK: Lulu Salsabila", "kode": "SLUL"},
+            {"nama": "SSK: Desy Natalia", "kode": "SDAI"}, {"nama": "SSK: Nina Tutachia", "kode": "SNAC"},
+            {"nama": "SSK: Gendis Mayrannisa", "kode": "SGEN"}, {"nama": "SSK: Helisma Putri", "kode": "SELI"},
+            {"nama": "SSK: Gabriela Abigail", "kode": "SELL"}
+        ];
+
         let currentMainTab = 'member';
         let currentSubMemberIndex = 0;
-
-        let userBalance = { onceToken: 100, tbCoin: 500, kristal: 45, kristalOmega: 2 };
+        let userBalance = { onceToken: 100, tbCoin: 500, kristal: 45, kristalOmega: 5 };
 
         document.addEventListener('DOMContentLoaded', () => {
             const video = document.querySelector('.bg-video');
             if(video) { video.muted = true; video.play().catch(e=>console.log(e)); }
             setupSwipeGestures();
+            renderShopOmegaItems();
             updateCurrencyUI();
         });
+
+        // RENDER 77 MEMBER KE DALAM KATALOG TOKO
+        function renderShopOmegaItems() {
+            const gridSpesial = document.getElementById('shopGridSpesial');
+            const gridOmega = document.getElementById('shopGridOmega');
+
+            // Render Omega Spesial (2 Kristal)
+            gridSpesial.innerHTML = OMEGA_SPESIAL_LIST.map(item => `
+                <div class="shop-item card-omega-spesial">
+                    <video class="shop-item-img" autoplay loop muted playsinline style="object-fit:cover;">
+                        <source src="preview_${item.kode}.webm" type="video/webm">
+                        <source src="previewgachamember.webm" type="video/webm">
+                    </video>
+                    <span class="shop-item-title">${item.nama}</span>
+                    <button class="shop-buy-btn btn-omega-spesial" onclick="tukarSkinOmega('${item.nama}', '${item.kode}', 2, 'OMEGA SPESIAL', '${item.jiko || ''}')">
+                        Tukar 2 <img src="KRISTAL_OMEGA.PNG" style="width:11px; height:11px;">
+                    </button>
+                </div>
+            `).join('');
+
+            // Render Omega Regular (1 Kristal)
+            gridOmega.innerHTML = OMEGA_LIST.map(item => `
+                <div class="shop-item card-omega-regular">
+                    <video class="shop-item-img" autoplay loop muted playsinline style="object-fit:cover;">
+                        <source src="preview_${item.kode}.webm" type="video/webm">
+                        <source src="previewgachamember.webm" type="video/webm">
+                    </video>
+                    <span class="shop-item-title">${item.nama}</span>
+                    <button class="shop-buy-btn btn-omega-regular" onclick="tukarSkinOmega('${item.nama}', '${item.kode}', 1, 'OMEGA', 'Terima kasih telah mendukung oshi!')">
+                        Tukar 1 <img src="KRISTAL_OMEGA.PNG" style="width:11px; height:11px;">
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function switchShopSubTab(tab) {
+            document.getElementById('shopTabMain').classList.toggle('active', tab === 'main');
+            document.getElementById('shopTabSpesial').classList.toggle('active', tab === 'spesial');
+            document.getElementById('shopTabOmega').classList.toggle('active', tab === 'omega');
+
+            document.getElementById('shopGridMain').style.display = (tab === 'main') ? 'grid' : 'none';
+            document.getElementById('shopGridSpesial').style.display = (tab === 'spesial') ? 'grid' : 'none';
+            document.getElementById('shopGridOmega').style.display = (tab === 'omega') ? 'grid' : 'none';
+        }
 
         function updateCurrencyUI() {
             document.getElementById('onceCount').innerText = userBalance.onceToken;
             const imgSec = document.getElementById('imgSecondary');
             const valSec = document.getElementById('valSecondary');
-            const chipTert = document.getElementById('chipTertiary');
             const valTert = document.getElementById('valTertiary');
+
+            valTert.innerText = userBalance.kristalOmega;
 
             if (currentMainTab === 'member' && currentSubMemberIndex === 1) {
                 imgSec.src = 'KRISTAL.PNG';
                 valSec.innerText = userBalance.kristal;
-                chipTert.style.display = 'flex';
-                valTert.innerText = userBalance.kristalOmega;
             } else {
                 imgSec.src = 'TBCOIN.PNG';
                 valSec.innerText = userBalance.tbCoin;
-                chipTert.style.display = 'none';
             }
 
             const cost1x = document.getElementById('cost1x');
             const cost10x = document.getElementById('cost10x');
-            const tokenImg = `<img src="ONCETOKEN.PNG" class="curr-img" onerror="this.src='https://placehold.co/12x12/ffffff/0088ff?text=T'">`;
+            const tokenImg = `<img src="ONCETOKEN.PNG" class="curr-img">`;
             
             if (currentMainTab === 'web') {
-                cost1x.innerHTML = `${tokenImg} 5`;
-                cost10x.innerHTML = `${tokenImg} 50`;
+                cost1x.innerHTML = `${tokenImg} 5`; cost10x.innerHTML = `${tokenImg} 50`;
             } else {
-                cost1x.innerHTML = `${tokenImg} 1`;
-                cost10x.innerHTML = `${tokenImg} 10`;
+                cost1x.innerHTML = `${tokenImg} 1`; cost10x.innerHTML = `${tokenImg} 10`;
             }
         }
 
@@ -485,10 +611,33 @@
             }, {passive: true});
         }
 
-        // LOGIKA GACHA BARU DENGAN SKIP ANIMASI
+        // PENUKARAN OMEGA MEMBER DI SHOP
+        function tukarSkinOmega(nama, kode, hargaKristal, tier, jikoText) {
+            if (userBalance.kristalOmega < hargaKristal) {
+                alert(`Kristal Omega kamu tidak cukup! Butuh ${hargaKristal} Kristal Omega.`);
+                return;
+            }
+
+            if (confirm(`Yakin ingin menukar ${hargaKristal} Kristal Omega untuk ${nama}?`)) {
+                userBalance.kristalOmega -= hargaKristal;
+                updateCurrencyUI();
+
+                // Dapatkan video previewWebM sesuai kode member
+                let mediaVideo = `preview_${kode}.webm`;
+
+                let dataHasil = {
+                    title: `SUKSES PENUKARAN TIER ${tier}! 🎉`,
+                    desc: `${nama}`,
+                    mediaUrl: mediaVideo,
+                    jiko: jikoText
+                };
+
+                tampilkanHasilModal(dataHasil);
+            }
+        }
+
         function tarikGacha(jumlahRoll) {
             let costNeeded = (currentMainTab === 'web') ? jumlahRoll * 5 : jumlahRoll;
-            
             if (userBalance.onceToken < costNeeded) {
                 alert(`ONCE Token tidak cukup! Kamu butuh ${costNeeded} ONCE Token.`);
                 return;
@@ -500,26 +649,22 @@
             const isSkip = document.getElementById('skipAnimasiCheck').checked;
             
             if (isSkip) {
-                // Langsung munculin hasil kalau di-skip
                 eksekusiHasilGacha();
             } else {
-                // Tampilkan Animasi Muter & Hilangkan UI Sementara
                 const uiMain = document.getElementById('uiMain');
                 const bgOverlay = document.getElementById('bgOverlay');
-                
-                uiMain.style.opacity = '0'; // Hilangkan menu
-                bgOverlay.style.opacity = '0'; // Hilangkan overlay gradient biar bg bersih
+                uiMain.style.opacity = '0';
+                bgOverlay.style.opacity = '0';
                 
                 document.getElementById('overlay').style.display = 'flex';
-                document.getElementById('overlay').style.background = 'rgba(0,0,0,0.6)'; // Gelap transparan
+                document.getElementById('overlay').style.background = 'rgba(0,0,0,0.6)';
                 document.getElementById('loadingAnim').style.display = 'flex';
                 document.getElementById('resultBox').style.display = 'none';
 
-                // Tunggu 3 detik animasi selesai
                 setTimeout(() => {
                     uiMain.style.opacity = '1';
                     bgOverlay.style.opacity = '1';
-                    document.getElementById('overlay').style.background = 'rgba(0,0,0,0.85)'; // Balikin gelap pekat buat hasil
+                    document.getElementById('overlay').style.background = 'rgba(0,0,0,0.85)';
                     eksekusiHasilGacha();
                 }, 3000);
             }
@@ -529,9 +674,9 @@
             document.getElementById('loadingAnim').style.display = 'none';
             let dummyData = {
                 title: currentSubMemberIndex === 1 ? "MSO RESULT!" : "GACHA RESULT!",
-                desc: currentSubMemberIndex === 1 ? "Kamu dapat Member Omega (Landscape Video)" : "Dapat Member Portrait!",
-                mediaType: currentSubMemberIndex === 1 ? "video" : "image",
-                mediaUrl: currentSubMemberIndex === 1 ? "previewgachamember.webm" : "https://placehold.co/120x160/0088ff/ffffff?text=MEMBER+PHOTO"
+                desc: currentSubMemberIndex === 1 ? "Kamu dapat Member Omega!" : "Dapat Member Regular!",
+                mediaUrl: currentSubMemberIndex === 1 ? "previewgachamember.webm" : "https://placehold.co/120x160/0088ff/ffffff?text=MEMBER+PHOTO",
+                jiko: "Semoga harimu semakin berwarna bersama Oshi!"
             };
             tampilkanHasilModal(dummyData);
         }
@@ -543,9 +688,10 @@
 
             document.getElementById('resultTitle').innerText = data.title;
             document.getElementById('resultDesc').innerText = data.desc;
+            document.getElementById('jikoContainer').innerText = `"${data.jiko}"`;
 
-            if (data.mediaType === "video") {
-                mediaBox.innerHTML = `<video class="preview-landscape" autoplay loop muted playsinline style="width:200px; height:120px;"><source src="${data.mediaUrl}" type="video/webm"></video>`;
+            if (data.mediaUrl.endsWith('.webm')) {
+                mediaBox.innerHTML = `<video class="preview-landscape" autoplay loop muted playsinline style="width:220px; height:130px; border-radius:12px; border:2px solid #fff;"><source src="${data.mediaUrl}" type="video/webm"><source src="previewgachamember.webm" type="video/webm"></video>`;
             } else {
                 mediaBox.innerHTML = `<img class="preview-portrait" src="${data.mediaUrl}" style="width:120px; height:160px;">`;
             }
@@ -554,10 +700,7 @@
             resultBox.style.display = 'flex';
         }
 
-        function tutupOverlay() {
-            document.getElementById('overlay').style.display = 'none';
-        }
-
+        function tutupOverlay() { document.getElementById('overlay').style.display = 'none'; }
         function buyItem(nama, harga, tipe) { alert(`Pembelian ${nama} seharga ${harga} ${tipe} Coin diproses!`); }
         function buyToken(hargaTB, dapetToken) {
             if (userBalance.tbCoin >= hargaTB) {
