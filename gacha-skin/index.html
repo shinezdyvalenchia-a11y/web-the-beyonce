@@ -324,19 +324,19 @@
                         <img src="preview_border.png" class="shop-item-img" alt="Border">
                         <span class="shop-item-title">Border 365 Nichi</span>
                         <p style="font-size:9px; color:#666;">Skin melingkar</p>
-                        <button class="shop-buy-btn" onclick="buyItem('Border 365 Nichi', 120, 'TB')">120 TB Coin</button>
+                        <button class="shop-buy-btn" onclick="buyItem('Border 365 Nichi', 310, 'TB')">310 TB Coin</button>
                     </div>
                     <div class="shop-item">
                         <img src="preview_altar.png" class="shop-item-img" alt="Altar">
                         <span class="shop-item-title">365 Nichi Altar</span>
                         <p style="font-size:9px; color:#666;">Latar profil</p>
-                        <button class="shop-buy-btn" onclick="buyItem('365 Nichi Altar', 250, 'TB')">250 TB Coin</button>
+                        <button class="shop-buy-btn" onclick="buyItem('365 Nichi Altar', 500, 'TB')">500 TB Coin</button>
                     </div>
                     <div class="shop-item">
                         <img src="preview_chat.png" class="shop-item-img" alt="Chat Skin">
                         <span class="shop-item-title">365 Nichi Chat</span>
                         <p style="font-size:9px; color:#666;">Skin chat</p>
-                        <button class="shop-buy-btn" onclick="buyItem('365 Nichi Chat Skin', 210, 'TB')">210 TB Coin</button>
+                        <button class="shop-buy-btn" onclick="buyItem('365 Nichi Chat Skin', 450, 'TB')">450 TB Coin</button>
                     </div>
                     <div class="shop-item">
                         <img src="ONCETOKEN.PNG" class="shop-item-img" style="object-fit: contain; padding: 4px;" alt="ONCE Token">
@@ -611,74 +611,157 @@
             }, {passive: true});
         }
 
-        // PENUKARAN OMEGA MEMBER DI SHOP
-        function tukarSkinOmega(nama, kode, hargaKristal, tier, jikoText) {
-            if (userBalance.kristalOmega < hargaKristal) {
-                alert(`Kristal Omega kamu tidak cukup! Butuh ${hargaKristal} Kristal Omega.`);
-                return;
-            }
+        // PENUKARAN OMEGA MEMBER DI SHOP MENGGUNAKAN API FETCH
+        async function tukarSkinOmega(nama, kode, hargaKristal, tier, jikoText) {
+            const userId = "USER_TELEGRAM_ID"; // Ganti dengan ID User
 
-            if (confirm(`Yakin ingin menukar ${hargaKristal} Kristal Omega untuk ${nama}?`)) {
-                userBalance.kristalOmega -= hargaKristal;
-                updateCurrencyUI();
+            if (!confirm(`Yakin ingin menukar ${hargaKristal} Kristal Omega untuk ${nama}?`)) return;
 
-                // Dapatkan video previewWebM sesuai kode member
-                let mediaVideo = `preview_${kode}.webm`;
+            try {
+                const response = await fetch('/api/shop/buy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        item_code: kode
+                    })
+                });
 
-                let dataHasil = {
+                const resData = await response.json();
+
+                if (!response.ok) {
+                    alert("Transaksi Gagal: " + (resData.detail || "Gagal memproses penukaran."));
+                    return;
+                }
+
+                if (resData.updated_balance) {
+                    userBalance.kristalOmega = resData.updated_balance.kristal_omega;
+                    updateCurrencyUI();
+                }
+
+                tampilkanHasilModal({
                     title: `SUKSES PENUKARAN TIER ${tier}! 🎉`,
                     desc: `${nama}`,
-                    mediaUrl: mediaVideo,
+                    mediaUrl: `preview_${kode}.webm`,
                     jiko: jikoText
-                };
+                });
 
-                tampilkanHasilModal(dataHasil);
+            } catch (err) {
+                alert("Terjadi kesalahan koneksi ke server.");
             }
         }
 
-        function tarikGacha(jumlahRoll) {
-            let costNeeded = (currentMainTab === 'web') ? jumlahRoll * 5 : jumlahRoll;
-            if (userBalance.onceToken < costNeeded) {
-                alert(`ONCE Token tidak cukup! Kamu butuh ${costNeeded} ONCE Token.`);
-                return;
+        // FUNGSI GACHA MENGGUNAKAN API FETCH
+        async function tarikGacha(jumlahRoll) {
+            const isSkip = document.getElementById('skipAnimasiCheck').checked;
+            const userId = "USER_TELEGRAM_ID"; // Ganti dengan ID user Telegram / Session user
+
+            let bannerType = "reguler";
+            if (currentMainTab === 'member') {
+                bannerType = (currentSubMemberIndex === 1) ? "mso" : "reguler";
+            } else if (currentMainTab === 'web') {
+                bannerType = "skin_web";
             }
 
-            userBalance.onceToken -= costNeeded;
-            updateCurrencyUI();
-
-            const isSkip = document.getElementById('skipAnimasiCheck').checked;
+            const uiMain = document.getElementById('uiMain');
+            const bgOverlay = document.getElementById('bgOverlay');
             
-            if (isSkip) {
-                eksekusiHasilGacha();
-            } else {
-                const uiMain = document.getElementById('uiMain');
-                const bgOverlay = document.getElementById('bgOverlay');
+            if (!isSkip) {
                 uiMain.style.opacity = '0';
                 bgOverlay.style.opacity = '0';
-                
                 document.getElementById('overlay').style.display = 'flex';
-                document.getElementById('overlay').style.background = 'rgba(0,0,0,0.6)';
+                document.getElementById('overlay').style.background = 'rgba(0,0,0,0.85)';
                 document.getElementById('loadingAnim').style.display = 'flex';
                 document.getElementById('resultBox').style.display = 'none';
+            }
 
-                setTimeout(() => {
+            try {
+                const response = await fetch('/api/gacha/roll', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        banner_type: bannerType,
+                        roll_count: jumlahRoll
+                    })
+                });
+
+                const resData = await response.json();
+
+                if (!response.ok) {
+                    alert("Gagal Roll: " + (resData.detail || "Terjadi kesalahan"));
+                    document.getElementById('overlay').style.display = 'none';
                     uiMain.style.opacity = '1';
                     bgOverlay.style.opacity = '1';
-                    document.getElementById('overlay').style.background = 'rgba(0,0,0,0.85)';
-                    eksekusiHasilGacha();
-                }, 3000);
+                    return;
+                }
+
+                if (resData.remaining_balance) {
+                    userBalance.onceToken = resData.remaining_balance.once_token;
+                    userBalance.tbCoin = resData.remaining_balance.tb_coin;
+                    userBalance.kristalOmega = resData.remaining_balance.kristal_omega;
+                    updateCurrencyUI();
+                }
+
+                const lastResult = resData.results[0];
+                const dataHasil = {
+                    title: `SELAMAT! (${resData.results.length}x Roll)`,
+                    desc: lastResult.name,
+                    mediaUrl: lastResult.media_url || (currentSubMemberIndex === 1 ? "previewgachamember.webm" : "https://placehold.co/120x160/0088ff/ffffff?text=MEMBER+PHOTO"),
+                    jiko: lastResult.jiko || "Terima kasih telah melakukan gacha!"
+                };
+
+                if (!isSkip) {
+                    setTimeout(() => {
+                        uiMain.style.opacity = '1';
+                        bgOverlay.style.opacity = '1';
+                        document.getElementById('loadingAnim').style.display = 'none';
+                        tampilkanHasilModal(dataHasil);
+                    }, 1500);
+                } else {
+                    tampilkanHasilModal(dataHasil);
+                }
+
+            } catch (err) {
+                alert("Gagal terhubung ke server backend.");
+                document.getElementById('overlay').style.display = 'none';
+                uiMain.style.opacity = '1';
+                bgOverlay.style.opacity = '1';
             }
         }
 
-        function eksekusiHasilGacha() {
-            document.getElementById('loadingAnim').style.display = 'none';
-            let dummyData = {
-                title: currentSubMemberIndex === 1 ? "MSO RESULT!" : "GACHA RESULT!",
-                desc: currentSubMemberIndex === 1 ? "Kamu dapat Member Omega!" : "Dapat Member Regular!",
-                mediaUrl: currentSubMemberIndex === 1 ? "previewgachamember.webm" : "https://placehold.co/120x160/0088ff/ffffff?text=MEMBER+PHOTO",
-                jiko: "Semoga harimu semakin berwarna bersama Oshi!"
-            };
-            tampilkanHasilModal(dummyData);
+        // FUNGSI BELI ITEM DI SHOP MENGGUNAKAN API FETCH
+        async function buyItem(nama, harga, tipe) {
+            const userId = "USER_TELEGRAM_ID";
+            if (!confirm(`Yakin ingin membeli ${nama} seharga ${harga} ${tipe} Coin?`)) return;
+
+            try {
+                const response = await fetch('/api/shop/buy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        item_code: nama // Menggunakan nama sebagai identifier atau sesuaikan dengan API
+                    })
+                });
+
+                const resData = await response.json();
+
+                if (!response.ok) {
+                    alert("Transaksi Gagal: " + (resData.detail || "Saldo tidak cukup atau item tidak ditemukan."));
+                    return;
+                }
+
+                if (resData.updated_balance) {
+                    userBalance.tbCoin = resData.updated_balance.tb_coin;
+                    userBalance.onceToken = resData.updated_balance.once_token;
+                    updateCurrencyUI();
+                }
+
+                alert(`Pembelian ${nama} berhasil diproses! 🎉`);
+            } catch (err) {
+                alert("Terjadi kesalahan koneksi ke server.");
+            }
         }
 
         function tampilkanHasilModal(data) {
@@ -701,7 +784,7 @@
         }
 
         function tutupOverlay() { document.getElementById('overlay').style.display = 'none'; }
-        function buyItem(nama, harga, tipe) { alert(`Pembelian ${nama} seharga ${harga} ${tipe} Coin diproses!`); }
+        
         function buyToken(hargaTB, dapetToken) {
             if (userBalance.tbCoin >= hargaTB) {
                 if (confirm(`Yakin menukar ${hargaTB} TB Coin untuk ${dapetToken} ONCE Token?`)) {
@@ -710,6 +793,7 @@
                 }
             } else { alert("TB Coin belum cukup! (Butuh " + hargaTB + " TB Coin)"); }
         }
+        
         function craftOmega() {
             if (userBalance.kristal >= 120) {
                 if (confirm("Tukar 120 Kristal menjadi 1 Kristal Omega?")) {
@@ -718,6 +802,7 @@
                 }
             } else { alert("Kristal belum cukup! (Butuh 120 Kristal)"); }
         }
+        
         function cekRiwayat() { alert("Membuka Riwayat..."); }
     </script>
 </body>
