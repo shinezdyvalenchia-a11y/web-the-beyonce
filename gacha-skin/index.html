@@ -425,6 +425,22 @@
     </div>
 
     <script>
+        // FUNGSI UTAMA UNTUK MENGAMBIL SESSION COOKIE DARI BROWSER / URL / LOCALSTORAGE
+        function getSessionCookie() {
+            // 1. Ambil dari document.cookie jika tersedia
+            const match = document.cookie.match(new RegExp('(^| )' + 'session_cookie' + '=([^;]+)')) || 
+                          document.cookie.match(new RegExp('(^| )' + 'session' + '=([^;]+)'));
+            if (match) return decodeURIComponent(match[2]);
+
+            // 2. Ambil dari URL Parameter jika dilewatkan lewat Link (?session_cookie=... atau ?session=...)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('session_cookie')) return urlParams.get('session_cookie');
+            if (urlParams.has('session')) return urlParams.get('session');
+
+            // 3. Ambil dari LocalStorage
+            return localStorage.getItem('session_cookie') || localStorage.getItem('session') || '';
+        }
+
         // DATA MEMBER OMEGA SPESIAL (26 Member - 2 Kristal Omega)
         const OMEGA_SPESIAL_LIST = [
             {"nama": "Dedek Kitty (Spesial)", "kode": "DKTY", "jiko": "Kecil-kecil cabe rawit, selalu bikin gemas!"},
@@ -611,9 +627,14 @@
             }, {passive: true});
         }
 
-        // PENUKARAN OMEGA MEMBER DI SHOP MENGGUNAKAN API FETCH
+        // PENUKARAN OMEGA MEMBER DI SHOP MENGGUNAKAN API FETCH (DENGAN SESSION COOKIE)
         async function tukarSkinOmega(nama, kode, hargaKristal, tier, jikoText) {
-            const userId = "USER_TELEGRAM_ID"; // Ganti dengan ID User
+            const sessionCookie = getSessionCookie();
+
+            if (!sessionCookie) {
+                alert("Session cookie tidak ditemukan. Harap pastikan Anda sudah login.");
+                return;
+            }
 
             if (!confirm(`Yakin ingin menukar ${hargaKristal} Kristal Omega untuk ${nama}?`)) return;
 
@@ -622,7 +643,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        user_id: userId,
+                        session_cookie: sessionCookie,
                         item_code: kode
                     })
                 });
@@ -651,10 +672,15 @@
             }
         }
 
-        // FUNGSI GACHA MENGGUNAKAN API FETCH
+        // FUNGSI GACHA MENGGUNAKAN API FETCH (DENGAN SESSION COOKIE)
         async function tarikGacha(jumlahRoll) {
             const isSkip = document.getElementById('skipAnimasiCheck').checked;
-            const userId = "USER_TELEGRAM_ID"; // Ganti dengan ID user Telegram / Session user
+            const sessionCookie = getSessionCookie();
+
+            if (!sessionCookie) {
+                alert("Session cookie tidak ditemukan. Harap login kembali.");
+                return;
+            }
 
             let bannerType = "reguler";
             if (currentMainTab === 'member') {
@@ -680,7 +706,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        user_id: userId,
+                        session_cookie: sessionCookie,
                         banner_type: bannerType,
                         roll_count: jumlahRoll
                     })
@@ -730,9 +756,15 @@
             }
         }
 
-        // FUNGSI BELI ITEM DI SHOP MENGGUNAKAN API FETCH
+        // FUNGSI BELI ITEM DI SHOP MENGGUNAKAN API FETCH (DENGAN SESSION COOKIE)
         async function buyItem(nama, harga, tipe) {
-            const userId = "USER_TELEGRAM_ID";
+            const sessionCookie = getSessionCookie();
+
+            if (!sessionCookie) {
+                alert("Session cookie tidak ditemukan. Harap pastikan Anda telah login.");
+                return;
+            }
+
             if (!confirm(`Yakin ingin membeli ${nama} seharga ${harga} ${tipe} Coin?`)) return;
 
             try {
@@ -740,8 +772,8 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        user_id: userId,
-                        item_code: nama // Menggunakan nama sebagai identifier atau sesuaikan dengan API
+                        session_cookie: sessionCookie,
+                        item_code: nama
                     })
                 });
 
