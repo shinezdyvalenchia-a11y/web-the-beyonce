@@ -425,7 +425,7 @@
     </div>
 
     <script>
-        // FUNGSI PENCARIAN TOKEN BRUTAL (Tinggal jalan)
+        // FUNGSI PENCARIAN TOKEN SESSION
         function getSessionCookie() {
             const possibleKeys = [
                 'session_cookie', 'session', 'session_id', 'user_id', 
@@ -639,7 +639,7 @@
             }, {passive: true});
         }
 
-        // FUNGSI TUKAR OMEGA (SUDAH DIPERBAIKI CREDENTIALS)
+        // FUNGSI TUKAR OMEGA (AMAL/PERBAIKAN CORS)
         async function tukarSkinOmega(nama, kode, hargaKristal, tier, jikoText) {
             const sessionCookie = getSessionCookie();
             if (!confirm(`Yakin ingin menukar ${hargaKristal} Kristal Omega untuk ${nama}?`)) return;
@@ -647,7 +647,6 @@
             try {
                 const response = await fetch('https://shinezzzz-gokgokgogkgokgok.hf.space/api/shop/buy', {
                     method: 'POST',
-                    credentials: 'include', 
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         session_cookie: sessionCookie,
@@ -679,7 +678,7 @@
             }
         }
 
-        // FUNGSI GACHA (SUDAH DIPERBAIKI CREDENTIALS)
+        // FUNGSI GACHA (AMAL/PERBAIKAN CORS)
         async function tarikGacha(jumlahRoll) {
             const isSkip = document.getElementById('skipAnimasiCheck').checked;
             const sessionCookie = getSessionCookie();
@@ -706,7 +705,6 @@
             try {
                 const response = await fetch('https://shinezzzz-gokgokgogkgokgok.hf.space/api/gacha/roll', {
                     method: 'POST',
-                    credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         session_cookie: sessionCookie,
@@ -759,7 +757,7 @@
             }
         }
 
-        // FUNGSI BUY ITEM (SUDAH DIPERBAIKI CREDENTIALS)
+        // FUNGSI BUY ITEM (AMAL/PERBAIKAN CORS)
         async function buyItem(nama, harga, tipe) {
             const sessionCookie = getSessionCookie();
             if (!confirm(`Yakin ingin membeli ${nama} seharga ${harga} ${tipe} Coin?`)) return;
@@ -767,7 +765,6 @@
             try {
                 const response = await fetch('https://shinezzzz-gokgokgogkgokgok.hf.space/api/shop/buy', {
                     method: 'POST',
-                    credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         session_cookie: sessionCookie,
