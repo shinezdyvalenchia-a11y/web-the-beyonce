@@ -131,7 +131,6 @@
             border-radius: 6px; font-size: 9.5px; width: 100%; font-weight: bold; cursor: pointer; margin-top: auto;
             display: flex; align-items: center; justify-content: center; gap: 3px;
         }
-        /* Style saat tombol disabled */
         .shop-buy-btn:disabled {
             background: #999 !important;
             cursor: not-allowed;
@@ -414,6 +413,13 @@
                 </div>
 
                 <div id="shopGridMain" class="shop-grid">
+                    <!-- Item Baru: Profil Altar -->
+                    <div class="shop-item">
+                        <img src="preview_altar.png" class="shop-item-img" alt="Profil Altar" onerror="this.src='https://placehold.co/100x70?text=Profil+Altar'">
+                        <span class="shop-item-title">Profil Altar</span>
+                        <p style="font-size:9px; color:#666;">Background profil</p>
+                        <button class="shop-buy-btn" data-kode="PROFIL_ALTAR" onclick="prosesBeli('PROFIL_ALTAR', 'Profil Altar', 'Yakin ingin membeli Profil Altar seharga 600 TB Coin?')">600 TB Coin</button>
+                    </div>
                     <div class="shop-item">
                         <img src="preview_border.png" class="shop-item-img" alt="Border" onerror="this.src='https://placehold.co/100x70?text=Border'">
                         <span class="shop-item-title">Border 365 Nichi</span>
@@ -608,7 +614,7 @@
         let currentMainTab = 'member';
         let currentSubMemberIndex = 0;
         let userBalance = { onceToken: 0, tbCoin: 0, kristal: 0, kristalOmega: 0 };
-        let userOwnedItems = []; // Array nyimpen item yang udah dimiliki
+        let userOwnedItems = [];
 
         async function fetchUserStatus() {
             const session = getSessionCookie();
@@ -628,7 +634,6 @@
                     userBalance.kristal = resData.data.kristal ?? userBalance.kristal;
                     userBalance.kristalOmega = resData.data.kristal_omega ?? resData.data.kristalOmega ?? userBalance.kristalOmega;
                     
-                    // Ambil daftar item yang udah dipunya (sesuaikan sama key backend, misal owned_items atau owned)
                     if (resData.data.owned_items) {
                         userOwnedItems = resData.data.owned_items;
                     } else if (resData.data.owned) {
@@ -643,7 +648,6 @@
             }
         }
 
-        // Fungsi mengecek tombol mana yang udah kebeli lalu matikan (disabled)
         function updateShopOwnedStatus() {
             document.querySelectorAll('.shop-buy-btn').forEach(btn => {
                 const kodeItem = btn.getAttribute('data-kode');
@@ -693,7 +697,6 @@
                 </div>
             `).join('');
             
-            // Re-apply status button jika dirender ulang
             updateShopOwnedStatus();
         }
 
@@ -812,7 +815,6 @@
                     }]
                 });
 
-                // Update data setelah beli (biar tombolnya langsung ganti status kalau sukses)
                 await fetchUserStatus();
 
             } catch (err) {
@@ -990,7 +992,6 @@
                 }
 
                 alert(`Transaksi ${namaItem} berhasil diproses! 🎉`);
-                // Tarik data ulang untuk disable tombol jika item baru aja di beli
                 await fetchUserStatus();
 
             } catch (err) {
