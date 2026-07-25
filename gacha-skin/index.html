@@ -131,6 +131,13 @@
             border-radius: 6px; font-size: 9.5px; width: 100%; font-weight: bold; cursor: pointer; margin-top: auto;
             display: flex; align-items: center; justify-content: center; gap: 3px;
         }
+        /* Style saat tombol disabled */
+        .shop-buy-btn:disabled {
+            background: #999 !important;
+            cursor: not-allowed;
+            box-shadow: none !important;
+            color: #e0e0e0;
+        }
 
         .card-omega-spesial {
             background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
@@ -206,7 +213,11 @@
         }
         .loading-text { color: #fff; font-size: 14px; font-weight: bold; letter-spacing: 1px; animation: kedip 1.5s infinite; }
 
-        /* RESULT BOX & GRID 10 KARTU GACHA */
+        @keyframes putarRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes detakToken { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+        @keyframes kedip { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        /* RESULT BOX & GRID KARTU GACHA */
         .result-box {
             background: #fff; padding: 16px; border-radius: 18px; text-align: center;
             display: none; flex-direction: column; align-items: center; gap: 12px;
@@ -214,7 +225,6 @@
             max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        /* GRID SYSTEM UNTUK HASIL 10 KARTU */
         .gacha-grid-container {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -263,7 +273,6 @@
             justify-content: center;
         }
 
-        /* SAMPUL KARTU DEPAN (SAMPUL) */
         .flip-card-front {
             background: linear-gradient(135deg, #0088ff 0%, #0277bd 100%);
             color: white;
@@ -275,7 +284,6 @@
             opacity: 0.9;
         }
 
-        /* BAGIAN BELAKANG (FOTO MEMBER YANG DIDAPAT) */
         .flip-card-back {
             background: #fff;
             transform: rotateY(180deg);
@@ -305,9 +313,6 @@
         }
 
         @keyframes popIn { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes putarRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes detakToken { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-        @keyframes kedip { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
         @media screen and (max-width: 600px) {
             .banner-card { flex-direction: column; text-align: center; padding: 12px; gap: 8px; }
@@ -317,7 +322,6 @@
             .series-title { font-size: 15px; }
             .series-desc { font-size: 9.5px; }
             
-            /* Responsive Grid 10 Kartu di Mobile */
             .gacha-grid-container {
                 grid-template-columns: repeat(5, 1fr);
                 gap: 5px;
@@ -382,7 +386,7 @@
                             <div class="banner-info">
                                 <span class="series-badge" style="background:#fff3e0; color:#e65100;">Tier Omega & Spesial</span>
                                 <h1 class="series-title">Gacha MSO Series</h1>
-                                <p class="series-desc">Koleksi skin ekslusif beranimasi oshi mu dan photocard webnya.</p>
+                                <p class="series-desc">Koleksi skin eksklusif beranimasi oshi mu dan photocard webnya.</p>
                                 <div class="prize-pool">💎 <b>Pool:</b> 5 cristal, 30 coin, 20 coin, 5 coin.</div>
                             </div>
                         </div>
@@ -411,34 +415,34 @@
 
                 <div id="shopGridMain" class="shop-grid">
                     <div class="shop-item">
-                        <img src="preview_border.png" class="shop-item-img" alt="Border" onerror="this.src='https://placehold.co/100x100?text=Border'">
+                        <img src="preview_border.png" class="shop-item-img" alt="Border" onerror="this.src='https://placehold.co/100x70?text=Border'">
                         <span class="shop-item-title">Border 365 Nichi</span>
                         <p style="font-size:9px; color:#666;">Skin melingkar</p>
-                        <button class="shop-buy-btn" onclick="prosesBeli('BORDER_365', 'Border 365 Nichi', 310, 'tbCoin')">310 TB Coin</button>
+                        <button class="shop-buy-btn" data-kode="BORDER_365" onclick="prosesBeli('BORDER_365', 'Border 365 Nichi', 'Yakin ingin membeli Border 365 Nichi seharga 310 TB Coin?')">310 TB Coin</button>
                     </div>
                     <div class="shop-item">
-                        <img src="preview_altar.png" class="shop-item-img" alt="Altar" onerror="this.src='https://placehold.co/100x100?text=Altar'">
+                        <img src="preview_altar.png" class="shop-item-img" alt="Altar" onerror="this.src='https://placehold.co/100x70?text=Altar'">
                         <span class="shop-item-title">365 Nichi Altar</span>
                         <p style="font-size:9px; color:#666;">Latar profil</p>
-                        <button class="shop-buy-btn" onclick="prosesBeli('ALTAR_365', '365 Nichi Altar', 500, 'tbCoin')">500 TB Coin</button>
+                        <button class="shop-buy-btn" data-kode="ALTAR_365" onclick="prosesBeli('ALTAR_365', '365 Nichi Altar', 'Yakin ingin membeli 365 Nichi Altar seharga 500 TB Coin?')">500 TB Coin</button>
                     </div>
                     <div class="shop-item">
-                        <img src="preview_chat.png" class="shop-item-img" alt="Chat Skin" onerror="this.src='https://placehold.co/100x100?text=Chat'">
+                        <img src="preview_chat.png" class="shop-item-img" alt="Chat Skin" onerror="this.src='https://placehold.co/100x70?text=Chat+Skin'">
                         <span class="shop-item-title">365 Nichi Chat</span>
                         <p style="font-size:9px; color:#666;">Skin chat</p>
-                        <button class="shop-buy-btn" onclick="prosesBeli('CHAT_365', '365 Nichi Chat Skin', 450, 'tbCoin')">450 TB Coin</button>
+                        <button class="shop-buy-btn" data-kode="CHAT_365" onclick="prosesBeli('CHAT_365', '365 Nichi Chat Skin', 'Yakin ingin membeli 365 Nichi Chat Skin seharga 450 TB Coin?')">450 TB Coin</button>
                     </div>
                     <div class="shop-item">
-                        <img src="ONCETOKEN.PNG" class="shop-item-img" alt="ONCE Token" onerror="this.src='https://placehold.co/100x100?text=Token'">
+                        <img src="ONCETOKEN.PNG" class="shop-item-img" alt="ONCE Token" onerror="this.src='https://placehold.co/100x70?text=Token'">
                         <span class="shop-item-title">2x ONCE Token</span>
                         <p style="font-size:9px; color:#666;">Tukar koin</p>
-                        <button class="shop-buy-btn" onclick="prosesBeli('TUKAR_TOKEN_ONCE', '2x ONCE Token', 50, 'tbCoin')">50 TB Coin</button>
+                        <button class="shop-buy-btn" data-kode="TUKAR_TOKEN_ONCE" onclick="prosesBeli('TUKAR_TOKEN_ONCE', '2x ONCE Token', 'Yakin ingin menukar 50 TB Coin untuk 2x ONCE Token?')">50 TB Coin</button>
                     </div>
                     <div class="shop-item" style="border:1px solid #ffe0b2; background:#fffde7;">
-                        <img src="KRISTAL_OMEGA.PNG" class="shop-item-img" style="border-color: #ffe0b2; background: #fff8e1;" alt="Kristal Omega" onerror="this.src='https://placehold.co/100x100?text=Kristal'">
+                        <img src="KRISTAL_OMEGA.PNG" class="shop-item-img" style="border-color: #ffe0b2; background: #fff8e1;" alt="Kristal Omega" onerror="this.src='https://placehold.co/100x70?text=Kristal'">
                         <span class="shop-item-title" style="color:#e65100;">1x Kristal Omega</span>
                         <p style="font-size:9px; color:#666;">Craft dari Kristal</p>
-                        <button class="shop-buy-btn" style="background:#f57c00;" onclick="prosesBeli('CRAFT_KRISTAL_OMEGA', '1x Kristal Omega', 120, 'kristal')">Craft (120 Kristal)</button>
+                        <button class="shop-buy-btn" style="background:#f57c00;" data-kode="CRAFT_KRISTAL_OMEGA" onclick="prosesBeli('CRAFT_KRISTAL_OMEGA', '1x Kristal Omega', 'Tukar 120 Kristal menjadi 1 Kristal Omega?')">Craft (120 Kristal)</button>
                     </div>
                 </div>
 
@@ -453,16 +457,16 @@
                 <button class="action-btn" onclick="window.location.href='/thebeyonce48/gacha-skin/misi'">🎁 Klaim Token</button>
 
                 <div class="currency-chip">
-                    <img src="ONCETOKEN.PNG" class="curr-img" alt="T" onerror="this.src='https://placehold.co/16x16?text=T'">
-                    <span id="onceCount">100</span>
+                    <img src="ONCETOKEN.PNG" class="curr-img" alt="T" onerror="this.style.display='none'">
+                    <span id="onceCount">0</span>
                 </div>
                 <div class="currency-chip" id="chipSecondary">
-                    <img id="imgSecondary" src="TBCOIN.PNG" class="curr-img" alt="C" onerror="this.src='https://placehold.co/16x16?text=C'">
-                    <span id="valSecondary">500</span>
+                    <img id="imgSecondary" src="TBCOIN.PNG" class="curr-img" alt="C" onerror="this.style.display='none'">
+                    <span id="valSecondary">0</span>
                 </div>
                 <div class="currency-chip" id="chipTertiary">
-                    <img src="KRISTAL_OMEGA.PNG" class="curr-img" alt="O" onerror="this.src='https://placehold.co/16x16?text=O'">
-                    <span id="valTertiary">5</span>
+                    <img src="KRISTAL_OMEGA.PNG" class="curr-img" alt="O" onerror="this.style.display='none'">
+                    <span id="valTertiary">0</span>
                 </div>
             </div>
 
@@ -476,13 +480,13 @@
                     <button class="spin-btn" onclick="tarikGacha(1)">
                         SPIN 1x
                         <span class="spin-cost" id="cost1x">
-                            <img src="ONCETOKEN.PNG" class="curr-img" onerror="this.src='https://placehold.co/10x10?text=T'"> 1
+                            <img src="ONCETOKEN.PNG" class="curr-img"> 1
                         </span>
                     </button>
                     <button class="spin-btn" onclick="tarikGacha(10)">
                         SPIN 10x
                         <span class="spin-cost" id="cost10x">
-                            <img src="ONCETOKEN.PNG" class="curr-img" onerror="this.src='https://placehold.co/10x10?text=T'"> 10
+                            <img src="ONCETOKEN.PNG" class="curr-img"> 10
                         </span>
                     </button>
                 </div>
@@ -495,7 +499,7 @@
         <div id="loadingAnim" class="loading-wrapper">
             <div class="spinner-ring-container">
                 <div class="spinner-ring"></div>
-                <img src="ONCETOKEN.PNG" class="spinner-token" onerror="this.src='https://placehold.co/40x40?text=T'">
+                <img src="ONCETOKEN.PNG" class="spinner-token" onerror="this.style.display='none'">
             </div>
             <p class="loading-text">Membuka Gacha... ✈️</p>
         </div>
@@ -511,118 +515,186 @@
     </div>
 
     <script>
-        // ================= STATE & DATA =================
-        let currentMainTab = 'member';
-        let currentSubMemberIndex = 0;
-        let userBalance = { onceToken: 100, tbCoin: 500, kristal: 45, kristalOmega: 5 };
-
-        // Fitur Web-Only: Menyimpan dan memuat state dari LocalStorage agar balance tidak hilang
-        function loadLocalState() {
-            const saved = localStorage.getItem('gacha_local_balance');
-            if (saved) {
-                try {
-                    userBalance = JSON.parse(saved);
-                } catch (e) { console.error("Gagal load state lokal"); }
-            }
-        }
-        function saveLocalState() {
-            localStorage.setItem('gacha_local_balance', JSON.stringify(userBalance));
-        }
+        const API_BASE = 'https://shinezzzz-gokgokgogkgokgok.hf.space';
 
         function getSessionCookie() {
-            const possibleKeys = ['session_cookie', 'session', 'user_id', 'token'];
+            const possibleKeys = [
+                'session_cookie', 'session', 'session_id', 'user_id', 
+                'token', 'access_token', 'user_session', 'auth_token'
+            ];
+
             const urlParams = new URLSearchParams(window.location.search);
             for (let key of possibleKeys) {
                 if (urlParams.has(key) && urlParams.get(key)) return urlParams.get(key);
-                if (localStorage.getItem(key)) return localStorage.getItem(key);
             }
-            return "DUMMY_WEB_SESSION"; // Fallback agar logic web tetap jalan untuk testing
+            for (let key of possibleKeys) {
+                const val = localStorage.getItem(key);
+                if (val) return val;
+            }
+            for (let key of possibleKeys) {
+                const val = sessionStorage.getItem(key);
+                if (val) return val;
+            }
+            if (document.cookie) {
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    const parts = cookie.trim().split('=');
+                    if (possibleKeys.includes(parts[0]) && parts[1]) {
+                        return decodeURIComponent(parts[1]);
+                    }
+                }
+            }
+            return ""; 
         }
 
         const OMEGA_SPESIAL_LIST = [
             {"nama": "Dedek Kitty (Spesial)", "kode": "DKTY", "jiko": "Kecil-kecil cabe rawit, selalu bikin gemas!"},
-            {"nama": "Ci Shani (Spesial)", "kode": "CSHN", "jiko": "Semanis cokelat, sehangat mentari pagi."}
+            {"nama": "Ci Shani (Spesial)", "kode": "CSHN", "jiko": "Semanis cokelat, sehangat mentari pagi."},
+            {"nama": "Ci Gre (Spesial)", "kode": "CGRC", "jiko": "Senyumku akan menerangi hari-harimu!"},
+            {"nama": "Ci Feni (Spesial)", "kode": "CFNI", "jiko": "Siap menghiburmu dengan sejuta pesona!"},
+            {"nama": "Ci Eli (Spesial)", "kode": "CELI", "jiko": "Penyemangat hari dengan tawa ceria."},
+            {"nama": "Full Color: Christy", "kode": "FCHR", "jiko": "Penuh warna dan energi tak terbatas!"},
+            {"nama": "Full Color: Shani", "kode": "FSHN", "jiko": "Keanggunan dalam balutan warna indah."},
+            {"nama": "Full Color: Gracia", "kode": "FGRC", "jiko": "Cahaya bersinar di setiap langkah."},
+            {"nama": "Full Color: Chika", "kode": "FCHK", "jiko": "Selalu ceria dan penuh kejutan!"},
+            {"nama": "Full Color: Feni", "kode": "FFNI", "jiko": "Penuh gaya, penuh warna!"},
+            {"nama": "Full Color: Jinan", "kode": "FJIN", "jiko": "Tenang namun memikat hati."},
+            {"nama": "Full Color: Fiony", "kode": "FFIO", "jiko": "Lembut dan manis bagai keajaiban."},
+            {"nama": "Full Color: Marsha", "kode": "FMAR", "jiko": "Siap membawamu ke dunia penuh warna."},
+            {"nama": "Full Color: Zee", "kode": "FAAZ", "jiko": "Siap melompat lebih tinggi!"},
+            {"nama": "Prime: Feni", "kode": "PFNI", "jiko": "Perform maksimal untukmu!"},
+            {"nama": "Prime: Christy", "kode": "PCHR", "jiko": "Bintang utama di atas panggung."},
+            {"nama": "Prime: Lulu", "kode": "PLLU", "jiko": "Kehangatan tulus di tiap aksi."},
+            {"nama": "Prime: Gracia", "kode": "PGRC", "jiko": "Pesona tak tertandingi!"},
+            {"nama": "Prime: Oniel", "kode": "PONL", "jiko": "Semangat membara tiada henti."},
+            {"nama": "Prime: Fiony", "kode": "PFNY", "jiko": "Indah bagaikan Bunga Mekar."},
+            {"nama": "Prime: Marsha", "kode": "PMSH", "jiko": "Sentuhan ajaib untuk hari bahagiamu."},
+            {"nama": "Prime: Freya", "kode": "PFYR", "jiko": "Freya siap menyemangati harimu!"},
+            {"nama": "Prime: Gita", "kode": "PGTS", "jiko": "Tenang, elegan, dan menawan."},
+            {"nama": "Prime: Aurelia", "kode": "PLAI", "jiko": "Kecantikan alami yang memukau."},
+            {"nama": "Prime: Jessi", "kode": "PJCC", "jiko": "Selalu hadir membawa tawa."},
+            {"nama": "Prime: Muthe", "kode": "PMUT", "jiko": "Manis dan menggemaskan!"}
         ];
 
         const OMEGA_LIST = [
-            {"nama": "SSK: Angelina Christy", "kode": "SCHR"}, 
-            {"nama": "SSK: Marsha Lenathea", "kode": "SMAR"}
+            {"nama": "SSK: Angelina Christy", "kode": "SCHR"}, {"nama": "SSK: Marsha Lenathea", "kode": "SMAR"},
+            {"nama": "SSK: Amanda Sukma", "kode": "SAMA"}, {"nama": "SSK: Flora Shafiq", "kode": "SFLO"},
+            {"nama": "SSK: Indira Seruni", "kode": "SIND"}, {"nama": "SSK: Mutiara Azzahra", "kode": "SMUT"},
+            {"nama": "SSK: Letycia Moreen", "kode": "SMOR"}, {"nama": "SSK: Jesslyn Elly", "kode": "SLYN"},
+            {"nama": "SSK: Greesella Adhalia", "kode": "SGRE"}, {"nama": "SSK: Jazzlyn Trisha", "kode": "STRI"},
+            {"nama": "SSK: Shabilqis Naila", "kode": "SNAL"}, {"nama": "SSK: Michelle Alexandra", "kode": "SLIL"},
+            {"nama": "SSK: Nayla Suji", "kode": "SNAY"}, {"nama": "SSK: Cynthia Yaputera", "kode": "SCYN"},
+            {"nama": "SSK: Oline Manuel", "kode": "SOLI"}, {"nama": "SSK: Danella Piawahan", "kode": "SDAN"},
+            {"nama": "SSK: Freya Jayawardana", "kode": "SFRE"}, {"nama": "SSK: Abigail Rachel", "kode": "SARA"},
+            {"nama": "SSK: Fiony Alveria", "kode": "SFIO"}, {"nama": "SSK: Jessica Chandra", "kode": "SJES"},
+            {"nama": "SSK: Catherina Vallencia", "kode": "SERI"}, {"nama": "SSK: Raisha Syifa", "kode": "SRAI"},
+            {"nama": "SSK: Michelle Levia", "kode": "SMIC"}, {"nama": "SSK: Regina Wilian", "kode": "SELN"},
+            {"nama": "SSK: Cornelia Vanisa", "kode": "SONI"}, {"nama": "SSK: Gita Sekar Andarini", "kode": "SGIT"},
+            {"nama": "SSK: Feni Fitriyanti", "kode": "SFEN"}, {"nama": "SSK: Victoria Kimberly", "kode": "SKIM"},
+            {"nama": "SSK: Aurellia", "kode": "SLIA"}, {"nama": "SSK: Michelle Levia", "kode": "SLEV"},
+            {"nama": "SSK: Cathleen Nixie", "kode": "SCAT"}, {"nama": "SSK: Delynn Asizi", "kode": "SDEL"},
+            {"nama": "SSK: Regina Putri", "kode": "SREG"}, {"nama": "SSK: Kathrina Irene", "kode": "SKAT"},
+            {"nama": "SSK: Anindya Ramadhani", "kode": "SANI"}, {"nama": "SSK: Aurel Alana", "kode": "SLAN"},
+            {"nama": "SSK: Ribka Budiman", "kode": "SRIB"}, {"nama": "SSK: Indah Cahya", "kode": "SIDH"},
+            {"nama": "SSK: Febriola Sinambela", "kode": "SOLL"}, {"nama": "SSK: Chelsea Davina", "kode": "SCHE"},
+            {"nama": "SSK: Grace Octaviani", "kode": "SGRC"}, {"nama": "SSK: Shania Gracia", "kode": "SGRA"},
+            {"nama": "SSK: Fritzy Rosmerian", "kode": "SFRI"}, {"nama": "SSK: Alya Amanda", "kode": "SALY"},
+            {"nama": "SSK: Callista Alifia", "kode": "SCAL"}, {"nama": "SSK: Lulu Salsabila", "kode": "SLUL"},
+            {"nama": "SSK: Desy Natalia", "kode": "SDAI"}, {"nama": "SSK: Nina Tutachia", "kode": "SNAC"},
+            {"nama": "SSK: Gendis Mayrannisa", "kode": "SGEN"}, {"nama": "SSK: Helisma Putri", "kode": "SELI"},
+            {"nama": "SSK: Gabriela Abigail", "kode": "SELL"}
         ];
 
-        // ================= INISIALISASI =================
-        document.addEventListener('DOMContentLoaded', () => {
-            const video = document.querySelector('.bg-video');
-            if(video) { video.muted = true; video.play().catch(e=>console.log(e)); }
-            
-            // 1. Load data lokal terlebih dahulu
-            loadLocalState();
-            // 2. Render UI dengan data lokal agar langsung terisi
-            updateCurrencyUI();
-            
-            setupSwipeGestures();
-            renderShopOmegaItems();
-            
-            // 3. Coba ambil dari backend (jika nyambung akan mengupdate lokal)
-            fetchUserStatus();
-        });
+        let currentMainTab = 'member';
+        let currentSubMemberIndex = 0;
+        let userBalance = { onceToken: 0, tbCoin: 0, kristal: 0, kristalOmega: 0 };
+        let userOwnedItems = []; // Array nyimpen item yang udah dimiliki
 
-        // ================= FUNGSI BACKEND / FALLBACK =================
         async function fetchUserStatus() {
             const session = getSessionCookie();
+            if (!session) return;
+
             try {
-                const response = await fetch('https://shinezzzz-gokgokgogkgokgok.hf.space/api/user/status', {
+                const response = await fetch(`${API_BASE}/api/user/status`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ session_cookie: session })
                 });
 
-                if (response.ok) {
-                    const resData = await response.json();
-                    if (resData.status === 'success' && resData.data) {
-                        userBalance.onceToken = resData.data.once_token ?? userBalance.onceToken;
-                        userBalance.tbCoin = resData.data.tb_coin ?? userBalance.tbCoin;
-                        userBalance.kristal = resData.data.kristal ?? userBalance.kristal;
-                        userBalance.kristalOmega = resData.data.kristal_omega ?? userBalance.kristalOmega;
-                        
-                        saveLocalState();
-                        updateCurrencyUI();
+                const resData = await response.json();
+                if (response.ok && resData.status === 'success' && resData.data) {
+                    userBalance.onceToken = resData.data.once_token ?? resData.data.onceToken ?? userBalance.onceToken;
+                    userBalance.tbCoin = resData.data.tb_coin ?? resData.data.tbCoin ?? userBalance.tbCoin;
+                    userBalance.kristal = resData.data.kristal ?? userBalance.kristal;
+                    userBalance.kristalOmega = resData.data.kristal_omega ?? resData.data.kristalOmega ?? userBalance.kristalOmega;
+                    
+                    // Ambil daftar item yang udah dipunya (sesuaikan sama key backend, misal owned_items atau owned)
+                    if (resData.data.owned_items) {
+                        userOwnedItems = resData.data.owned_items;
+                    } else if (resData.data.owned) {
+                        userOwnedItems = resData.data.owned;
                     }
+
+                    updateCurrencyUI();
+                    updateShopOwnedStatus();
                 }
             } catch (err) {
-                console.warn("Backend offline/tidak merespon. Menjalankan mode simulasi Web.");
-                // Jika error, biarkan menggunakan userBalance dari loadLocalState()
-                updateCurrencyUI();
+                console.error("Gagal menarik status dari server:", err);
             }
         }
 
-        // ================= UI & LOGIC WEB =================
+        // Fungsi mengecek tombol mana yang udah kebeli lalu matikan (disabled)
+        function updateShopOwnedStatus() {
+            document.querySelectorAll('.shop-buy-btn').forEach(btn => {
+                const kodeItem = btn.getAttribute('data-kode');
+                if (kodeItem && userOwnedItems.includes(kodeItem)) {
+                    btn.innerText = 'Sudah Dimiliki';
+                    btn.disabled = true;
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.querySelector('.bg-video');
+            if(video) { video.muted = true; video.play().catch(e=>console.log(e)); }
+            setupSwipeGestures();
+            renderShopOmegaItems();
+            updateCurrencyUI();
+            fetchUserStatus();
+        });
+
         function renderShopOmegaItems() {
             const gridSpesial = document.getElementById('shopGridSpesial');
             const gridOmega = document.getElementById('shopGridOmega');
 
             gridSpesial.innerHTML = OMEGA_SPESIAL_LIST.map(item => `
                 <div class="shop-item card-omega-spesial">
-                    <video class="shop-item-img" autoplay loop muted playsinline style="object-fit:cover;" onerror="this.outerHTML='<img class=shop-item-img src=preview_member.png>'">
+                    <video class="shop-item-img" autoplay loop muted playsinline style="object-fit:cover;">
                         <source src="preview_${item.kode}.webm" type="video/webm">
+                        <source src="previewgachamember.webm" type="video/webm">
                     </video>
                     <span class="shop-item-title">${item.nama}</span>
-                    <button class="shop-buy-btn btn-omega-spesial" onclick="tukarSkinOmega('${item.nama}', '${item.kode}', 2, 'OMEGA SPESIAL', '${item.jiko || ''}')">
-                        Tukar 2 <img src="KRISTAL_OMEGA.PNG" style="width:11px; height:11px;" onerror="this.style.display='none'">
+                    <button class="shop-buy-btn btn-omega-spesial" data-kode="${item.kode}" onclick="tukarSkinOmega('${item.nama}', '${item.kode}', 2, 'OMEGA SPESIAL', '${item.jiko || ''}')">
+                        Tukar 2 <img src="KRISTAL_OMEGA.PNG" style="width:11px; height:11px;">
                     </button>
                 </div>
             `).join('');
 
             gridOmega.innerHTML = OMEGA_LIST.map(item => `
                 <div class="shop-item card-omega-regular">
-                    <video class="shop-item-img" autoplay loop muted playsinline style="object-fit:cover;" onerror="this.outerHTML='<img class=shop-item-img src=preview_member.png>'">
+                    <video class="shop-item-img" autoplay loop muted playsinline style="object-fit:cover;">
                         <source src="preview_${item.kode}.webm" type="video/webm">
+                        <source src="previewgachamember.webm" type="video/webm">
                     </video>
                     <span class="shop-item-title">${item.nama}</span>
-                    <button class="shop-buy-btn btn-omega-regular" onclick="tukarSkinOmega('${item.nama}', '${item.kode}', 1, 'OMEGA', 'Terima kasih telah mendukung oshi!')">
-                        Tukar 1 <img src="KRISTAL_OMEGA.PNG" style="width:11px; height:11px;" onerror="this.style.display='none'">
+                    <button class="shop-buy-btn btn-omega-regular" data-kode="${item.kode}" onclick="tukarSkinOmega('${item.nama}', '${item.kode}', 1, 'OMEGA', 'Terima kasih telah mendukung oshi!')">
+                        Tukar 1 <img src="KRISTAL_OMEGA.PNG" style="width:11px; height:11px;">
                     </button>
                 </div>
             `).join('');
+            
+            // Re-apply status button jika dirender ulang
+            updateShopOwnedStatus();
         }
 
         function switchShopSubTab(tab) {
@@ -653,7 +725,7 @@
 
             const cost1x = document.getElementById('cost1x');
             const cost10x = document.getElementById('cost10x');
-            const tokenImg = `<img src="ONCETOKEN.PNG" class="curr-img" onerror="this.style.display='none'">`;
+            const tokenImg = `<img src="ONCETOKEN.PNG" class="curr-img">`;
             
             if (currentMainTab === 'web') {
                 cost1x.innerHTML = `${tokenImg} 5`; cost10x.innerHTML = `${tokenImg} 50`;
@@ -705,55 +777,58 @@
             }, {passive: true});
         }
 
-        // ================= TRANSAKSI MOCK/REAL =================
         async function tukarSkinOmega(nama, kode, hargaKristal, tier, jikoText) {
+            const sessionCookie = getSessionCookie();
             if (!confirm(`Yakin ingin menukar ${hargaKristal} Kristal Omega untuk ${nama}?`)) return;
 
-            // Validasi lokal sebelum memanggil backend
-            if (userBalance.kristalOmega < hargaKristal) {
-                alert("Kristal Omega tidak cukup!");
-                return;
-            }
-
             try {
-                const response = await fetch('https://shinezzzz-gokgokgogkgokgok.hf.space/api/shop/buy', {
+                const response = await fetch(`${API_BASE}/api/shop/buy`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ session_cookie: getSessionCookie(), item_code: kode })
+                    body: JSON.stringify({
+                        session_cookie: sessionCookie,
+                        item_code: kode
+                    })
                 });
 
-                if (response.ok) {
-                    const resData = await response.json();
-                    if (resData.updated_balance) {
-                        userBalance.kristalOmega = resData.updated_balance.kristal_omega;
-                    }
-                } else {
-                    throw new Error("Backend reject");
+                const resData = await response.json();
+
+                if (!response.ok) {
+                    alert("Transaksi Gagal: " + (resData.detail || "Gagal memproses penukaran."));
+                    return;
                 }
+
+                if (resData.updated_balance) {
+                    userBalance.kristalOmega = resData.updated_balance.kristal_omega ?? userBalance.kristalOmega;
+                    updateCurrencyUI();
+                }
+
+                tampilkanHasilModal({
+                    title: `SUKSES PENUKARAN TIER ${tier}! 🎉`,
+                    results: [{
+                        name: nama,
+                        media_url: `preview_${kode}.webm`,
+                        jiko: jikoText
+                    }]
+                });
+
+                // Update data setelah beli (biar tombolnya langsung ganti status kalau sukses)
+                await fetchUserStatus();
+
             } catch (err) {
-                console.warn("Backend error, menggunakan mode simulasi.");
-                userBalance.kristalOmega -= hargaKristal;
+                alert("Terjadi kesalahan koneksi ke server.");
             }
-
-            saveLocalState();
-            updateCurrencyUI();
-
-            tampilkanHasilModal({
-                title: `SUKSES PENUKARAN TIER ${tier}! 🎉`,
-                results: [{ name: nama, media_url: `preview_${kode}.webm`, jiko: jikoText }]
-            });
         }
 
         async function tarikGacha(jumlahRoll) {
             const isSkip = document.getElementById('skipAnimasiCheck').checked;
-            
-            // Tentukan Biaya Lokal
-            let hargaRoll = (currentMainTab === 'web') ? 5 : 1;
-            let totalBiaya = hargaRoll * jumlahRoll;
+            const sessionCookie = getSessionCookie();
 
-            if (userBalance.onceToken < totalBiaya) {
-                alert("Token tidak cukup untuk melakukan gacha!");
-                return;
+            let bannerType = "reguler";
+            if (currentMainTab === 'member') {
+                bannerType = (currentSubMemberIndex === 1) ? "mso" : "reguler";
+            } else if (currentMainTab === 'web') {
+                bannerType = "skin_web";
             }
 
             const uiMain = document.getElementById('uiMain');
@@ -768,100 +843,60 @@
                 document.getElementById('resultBox').style.display = 'none';
             }
 
-            let dataHasil = null;
-
             try {
-                let bannerType = (currentMainTab === 'member') ? (currentSubMemberIndex === 1 ? "mso" : "reguler") : "skin_web";
-                const response = await fetch('https://shinezzzz-gokgokgogkgokgok.hf.space/api/gacha/roll', {
+                const response = await fetch(`${API_BASE}/api/gacha/roll`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        session_cookie: getSessionCookie(), banner_type: bannerType, roll_count: jumlahRoll
+                        session_cookie: sessionCookie,
+                        banner_type: bannerType,
+                        roll_count: jumlahRoll
                     })
                 });
 
-                if (response.ok) {
-                    const resData = await response.json();
-                    if (resData.remaining_balance) {
-                        userBalance.onceToken = resData.remaining_balance.once_token;
-                        userBalance.tbCoin = resData.remaining_balance.tb_coin;
-                        userBalance.kristalOmega = resData.remaining_balance.kristal_omega;
-                    }
-                    dataHasil = { title: `SELAMAT! HASIL (${resData.results.length}x Roll)`, results: resData.results };
-                } else {
-                    throw new Error("Backend gagal memproses");
-                }
-            } catch (err) {
-                console.warn("Backend error saat Gacha, masuk ke mode simulasi web.");
-                // SIMULASI TRANSAKSI LOKAL
-                userBalance.onceToken -= totalBiaya;
-                
-                // MOCK DATA GACHA
-                const mockResults = Array.from({length: jumlahRoll}).map((_, i) => ({
-                    name: "Member Mystery #" + (i+1),
-                    media_url: currentSubMemberIndex === 1 ? 'previewgachamember.webm' : 'preview_member.png',
-                    jiko: "Wow, kamu dapat karakter langka (Simulasi)!"
-                }));
-                dataHasil = { title: `SIMULASI HASIL (${jumlahRoll}x Roll)`, results: mockResults };
-            }
+                const resData = await response.json();
 
-            saveLocalState();
-            updateCurrencyUI();
-
-            if (!isSkip) {
-                setTimeout(() => {
+                if (!response.ok) {
+                    alert("Gagal Roll: " + (resData.detail || "Terjadi kesalahan, mungkin sesi habis."));
+                    document.getElementById('overlay').style.display = 'none';
                     uiMain.style.opacity = '1';
                     bgOverlay.style.opacity = '1';
-                    document.getElementById('loadingAnim').style.display = 'none';
-                    tampilkanHasilModal(dataHasil);
-                }, 1200);
-            } else {
-                tampilkanHasilModal(dataHasil);
-            }
-        }
-
-        async function prosesBeli(itemCode, namaItem, harga, tipeMataUang) {
-            if (!confirm(`Yakin ingin membeli ${namaItem} seharga ${harga}?`)) return;
-
-            // Pengecekan saldo lokal
-            if (userBalance[tipeMataUang] < harga) {
-                alert(`Saldo ${tipeMataUang} tidak mencukupi!`);
-                return;
-            }
-
-            try {
-                const response = await fetch('https://shinezzzz-gokgokgogkgokgok.hf.space/api/shop/buy', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ session_cookie: getSessionCookie(), item_code: itemCode })
-                });
-
-                if (response.ok) {
-                    const resData = await response.json();
-                    if (resData.updated_balance) {
-                        userBalance.tbCoin = resData.updated_balance.tb_coin ?? userBalance.tbCoin;
-                        userBalance.onceToken = resData.updated_balance.once_token ?? userBalance.onceToken;
-                        userBalance.kristal = resData.updated_balance.kristal ?? userBalance.kristal;
-                        userBalance.kristalOmega = resData.updated_balance.kristal_omega ?? userBalance.kristalOmega;
-                    }
-                } else {
-                    throw new Error("Backend reject transaksi");
+                    return;
                 }
-            } catch (err) {
-                console.warn("Backend error saat Beli Item, mode simulasi web dieksekusi.");
-                // SIMULASI PEMBELIAN LOKAL
-                userBalance[tipeMataUang] -= harga;
-                // Khusus jika beli token ONCE atau craft kristal
-                if (itemCode === 'TUKAR_TOKEN_ONCE') userBalance.onceToken += 2;
-                if (itemCode === 'CRAFT_KRISTAL_OMEGA') userBalance.kristalOmega += 1;
-            }
 
-            saveLocalState();
-            updateCurrencyUI();
-            alert(`Transaksi ${namaItem} berhasil diproses! 🎉`);
+                if (resData.remaining_balance) {
+                    userBalance.onceToken = resData.remaining_balance.once_token ?? userBalance.onceToken;
+                    userBalance.tbCoin = resData.remaining_balance.tb_coin ?? userBalance.tbCoin;
+                    userBalance.kristalOmega = resData.remaining_balance.kristal_omega ?? userBalance.kristalOmega;
+                    updateCurrencyUI();
+                }
+
+                const dataHasil = {
+                    title: `SELAMAT! HASIL (${resData.results ? resData.results.length : 0}x Roll)`,
+                    results: resData.results || []
+                };
+
+                if (!isSkip) {
+                    setTimeout(() => {
+                        uiMain.style.opacity = '1';
+                        bgOverlay.style.opacity = '1';
+                        document.getElementById('loadingAnim').style.display = 'none';
+                        tampilkanHasilModal(dataHasil);
+                    }, 1200);
+                } else {
+                    tampilkanHasilModal(dataHasil);
+                }
+
+                fetchUserStatus();
+
+            } catch (err) {
+                alert("Gagal terhubung ke server backend.");
+                document.getElementById('overlay').style.display = 'none';
+                uiMain.style.opacity = '1';
+                bgOverlay.style.opacity = '1';
+            }
         }
 
-        // ================= RENDER HASIL GACHA =================
         function tampilkanHasilModal(data) {
             const overlay = document.getElementById('overlay');
             const resultBox = document.getElementById('resultBox');
@@ -872,21 +907,22 @@
             gridContainer.innerHTML = '';
 
             const results = data.results || [];
-            jikoBox.innerText = `"${results[0]?.jiko || 'Selamat atas koleksi member barumu!'}"`;
+
+            jikoBox.innerText = `"${results[0]?.jiko || 'Selamat atas koleksi barumu!'}"`;
 
             results.forEach((item, index) => {
                 const mediaUrl = item.media_url || (currentSubMemberIndex === 1 ? 'previewgachamember.webm' : 'preview_member.png');
                 const isVideo = mediaUrl.endsWith('.webm');
 
                 let mediaHtml = isVideo 
-                    ? `<video autoplay loop muted playsinline onerror="this.outerHTML='<img src=\\'https://placehold.co/120x160?text=Error\\'>'"><source src="${mediaUrl}" type="video/webm"></video>`
-                    : `<img src="${mediaUrl}" onerror="this.src='https://placehold.co/120x160/0088ff/ffffff?text=MEMBER'">`;
+                    ? `<video autoplay loop muted playsinline><source src="${mediaUrl}" type="video/webm"></video>`
+                    : `<img src="${mediaUrl}" onerror="this.src='https://placehold.co/120x160/0088ff/ffffff?text=ITEM'">`;
 
                 const cardHtml = `
                     <div class="flip-card" id="card-${index}" onclick="this.classList.toggle('flipped')">
                         <div class="flip-card-inner">
                             <div class="flip-card-front">
-                                <img src="thebeyonce.png" onerror="this.src='https://placehold.co/60x60?text=Card'" alt="Logo">
+                                <img src="thebeyonce.png" onerror="this.src='ONCETOKEN.PNG'" alt="Logo">
                                 <span style="font-size: 8px; margin-top:4px;">#${index+1}</span>
                             </div>
                             <div class="flip-card-back">
@@ -917,13 +953,49 @@
                         if (card) card.classList.add('flipped');
                     }, index * 150); 
                 });
-            }, 500); 
+            }, 1200); 
         }
 
         function tutupOverlay() { 
             document.getElementById('overlay').style.display = 'none'; 
-            document.getElementById('uiMain').style.opacity = '1';
-            document.getElementById('bgOverlay').style.opacity = '1';
+        }
+
+        async function prosesBeli(itemCode, namaItem, konfirmasiPesan) {
+            const sessionCookie = getSessionCookie();
+            if (!confirm(konfirmasiPesan)) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/shop/buy`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_cookie: sessionCookie,
+                        item_code: itemCode
+                    })
+                });
+
+                const resData = await response.json();
+
+                if (!response.ok) {
+                    alert("Transaksi Gagal: " + (resData.detail || "Saldo tidak cukup atau item tidak ditemukan."));
+                    return;
+                }
+
+                if (resData.updated_balance) {
+                    userBalance.tbCoin = resData.updated_balance.tb_coin ?? userBalance.tbCoin;
+                    userBalance.onceToken = resData.updated_balance.once_token ?? userBalance.onceToken;
+                    userBalance.kristal = resData.updated_balance.kristal ?? userBalance.kristal;
+                    userBalance.kristalOmega = resData.updated_balance.kristal_omega ?? userBalance.kristalOmega;
+                    updateCurrencyUI();
+                }
+
+                alert(`Transaksi ${namaItem} berhasil diproses! 🎉`);
+                // Tarik data ulang untuk disable tombol jika item baru aja di beli
+                await fetchUserStatus();
+
+            } catch (err) {
+                alert("Terjadi kesalahan koneksi ke server backend.");
+            }
         }
     </script>
 </body>
