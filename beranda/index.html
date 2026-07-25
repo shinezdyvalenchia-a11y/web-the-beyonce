@@ -398,13 +398,14 @@
             setInterval(pollNewChats, 3000);
         });
 
-        // 2. Fungsi Ambil Status /statuschat
+        // 2. Fungsi Ambil Status /statuschat (Menggunakan season_key)
         async function loadStatusChat() {
             try {
+                const sessionKey = getCookie("user_session") || currentUserData.userId;
                 const response = await fetch(`${BACKEND_URL}/statuschat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: currentUserData.userId })
+                    body: JSON.stringify({ season_key: sessionKey })
                 });
                 const data = await response.json();
                 
@@ -419,7 +420,7 @@
                     
                     // Update State Profil
                     currentUserData.username = p.username || "User";
-                    currentUserData.skinKode = p.inventory || p.skinKode || ""; // Asumsi inventory = kode skin
+                    currentUserData.skinKode = p.inventory || p.skinKode || ""; 
                     if(p.linkProfil) currentUserData.linkProfil = p.linkProfil;
                     
                     // Update UI Profil Kanan Atas
@@ -429,7 +430,7 @@
                     
                     if(currentUserData.skinKode) {
                         const borderEl = document.getElementById("profileBorder");
-                        borderEl.src = currentUserData.skinKode + ".png"; // File di folder sama berdasar kode
+                        borderEl.src = currentUserData.skinKode + ".png"; 
                         borderEl.style.display = "block";
                     }
                 }
@@ -444,9 +445,8 @@
                 const response = await fetch(`${BACKEND_URL}/historychat`, { method: 'GET' });
                 const data = await response.json();
                 
-                // Asumsi data.history adalah array dari {id, chat, skin, waktu, linkProfil, username, senderId}
                 if(data.history && Array.isArray(data.history)) {
-                    document.getElementById("chatContainer").innerHTML = ""; // Bersihkan
+                    document.getElementById("chatContainer").innerHTML = ""; 
                     data.history.forEach(msg => {
                         renderChatHTML(msg, msg.senderId === currentUserData.userId);
                         lastMessageId = msg.id || lastMessageId;
@@ -457,9 +457,9 @@
             }
         }
 
-        // 4. Polling Chat Baru (Otomatis memperbarui dari backend)
+        // 4. Polling Chat Baru
         async function pollNewChats() {
-            if(activeMode === "tanya") return; // Hanya tarik chat global jika di mode chat
+            if(activeMode === "tanya") return; 
             try {
                 const response = await fetch(`${BACKEND_URL}/getnewchats?lastId=${lastMessageId}`, { method: 'GET' });
                 const data = await response.json();
@@ -478,7 +478,6 @@
             const sideClass = isSelf ? "user" : "ai";
             const displayName = isSelf ? "Kamu" : (msgData.username || "System");
             
-            // Format waktu & skin
             const timeHTML = `<span class="msg-time">${msgData.waktu || getCurrentTime()}</span>`;
             const bgStyle = msgData.skin ? `background-image: url('${msgData.skin}.png'); background-color: rgba(255,255,255,0.7);` : "";
             const borderHTML = msgData.skin ? `<img src="${msgData.skin}.png" class="msg-border" onerror="this.style.display='none'">` : "";
@@ -538,28 +537,26 @@
             return session ? session.substring(0, 10) : Math.floor(1000000000 + Math.random() * 9000000000).toString();
         }
 
-        // 5. Fungsi Kirim Pesan (Mendukung Payload Baru)
+        // 5. Fungsi Kirim Pesan
         async function sendMessage() {
             const inputField = document.getElementById("userInput");
             const messageText = inputField.value.trim();
             if (!messageText) return;
             
             const chatContainer = document.getElementById("chatContainer");
-            inputField.value = ""; // Kosongkan input
+            inputField.value = ""; 
 
             if (activeMode === "chat") {
-                // MODE CHAT GLOBAL
                 const waktuKirim = getCurrentTime();
                 const payloadGlobal = {
                     id: currentUserData.userId,
                     chat: messageText,
-                    skin: currentUserData.skinKode, // Border & Skin Chat
+                    skin: currentUserData.skinKode, 
                     waktu: waktuKirim,
                     linkProfil: currentUserData.linkProfil,
                     username: currentUserData.username
                 };
 
-                // Render lokal agar terasa instan
                 renderChatHTML(payloadGlobal, true);
                 
                 try {
@@ -573,7 +570,6 @@
                 }
 
             } else {
-                // MODE TANYA AI (Logika Original)
                 let selectedModel = document.getElementById("modelSelect").value;
                 if (selectedModel === "auto") {
                     const autoChoices = ["claude", "gemini", "gpt"];
@@ -581,11 +577,9 @@
                 }
                 let displayNameModel = selectedModel === 'ultrakitty' ? "UltraKitty Pro" : (selectedModel.charAt(0).toUpperCase() + selectedModel.slice(1));
 
-                // Render User
                 const userPayload = { chat: messageText, waktu: getCurrentTime(), linkProfil: currentUserData.linkProfil, skin: currentUserData.skinKode };
                 renderChatHTML(userPayload, true);
 
-                // Render Loading AI
                 const uniqueMsgId = "ai-msg-" + Date.now();
                 const aiLoadingHtml = `
                     <div class="message ai" id="${uniqueMsgId}">
