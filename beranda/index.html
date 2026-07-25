@@ -129,7 +129,7 @@
         .profile-name { font-weight: 800; font-size: 13px; color: #fff; line-height: 1.2; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
         .profile-username { font-weight: 700; font-size: 10px; color: rgba(255,255,255,0.8); }
         
-        /* AVATAR DENGAN BORDER SKIN */
+        /* AVATAR DENGAN BORDER SKIN (Foto crop bulat dulu, border menimpa) */
         .avatar-container { position: relative; width: 38px; height: 38px; }
         .profile-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; }
         .profile-border { position: absolute; top: -4px; left: -4px; width: calc(100% + 8px); height: calc(100% + 8px); pointer-events: none; object-fit: contain; z-index: 2;}
@@ -179,7 +179,7 @@
         .msg-bubble {
             padding: 12px 18px; font-size: 14px; line-height: 1.5; word-break: break-word;
             background: rgba(255, 255, 255, 0.85);
-            background-size: cover; background-position: center;
+            background-size: 100% 100%; background-position: center; background-repeat: no-repeat;
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.7);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -367,27 +367,35 @@
         const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space"; 
         let activeMode = "chat"; 
         
+        // MENYIMPAN DATA USER UTAMA DARI HASIL /statuschat
         let currentUserData = {
-            userId: getUserId(),
+            userId: "",
             username: "User",
             skinKode: "", 
-            linkProfil: "../kitty.png.png"
+            linkProfil: "../kitty.png.png",
+            kristal: 0,
+            tbCoin: 0,
+            onceToken: 0,
+            kristalOmega: 0
         };
         
         let lastMessageId = ""; 
 
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             if (window.location.protocol !== 'file:') {
                 if (!getCookie("user_session")) window.location.href = "../"; 
             }
-            loadStatusChat();
-            loadHistoryChat();
+            
+            // Urutan Penting: Load status dulu agar 'id' tersimpan, baru load history & poll
+            await loadStatusChat();
+            await loadHistoryChat();
             setInterval(pollNewChats, 3000);
         });
 
+        // 1. FUNGSI LOAD STATUS (Minta Data via season_key, simpan id & skin ke frontend)
         async function loadStatusChat() {
             try {
-                const sessionKey = getCookie("user_session") || currentUserData.userId;
+                const sessionKey = getCookie("user_session") || "";
                 const response = await fetch(`${BACKEND_URL}/statuschat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -395,25 +403,38 @@
                 });
                 const data = await response.json();
                 
-                if (data.status === "success" && data.profile) {
-                    const p = data.profile;
+                if (data.status === "success" || data.profile || data.id) {
+                    const p = data.profile || data;
                     
-                    document.getElementById("valKristal").innerText = p.kristal || 0;
-                    document.getElementById("valTbCoin").innerText = p.tbCoin || 0;
-                    document.getElementById("valOnceToken").innerText = p.onceToken || 0;
-                    document.getElementById("valKristalOmega").innerText = p.kristalOmega || 0;
-                    
+                    // SIMPAN DATA UTAMA UNTUK PATOKAN FRONTEND
+                    currentUserData.userId = String(p.id || p.userId || p.telegram_id || "");
                     currentUserData.username = p.username || "User";
-                    currentUserData.skinKode = p.inventory || p.skinKode || ""; 
-                    if(p.linkProfil) currentUserData.linkProfil = p.linkProfil;
+                    currentUserData.skinKode = p.skin || p.skinKode || p.skinWeb || p.inventory || ""; 
+                    currentUserData.linkProfil = p.linkProfil || p.link_profil || "../kitty.png.png";
                     
+                    // SIMPAN & UPDATE INVENTORY
+                    currentUserData.kristal = p.kristal || 0;
+                    currentUserData.tbCoin = p.tbCoin || 0;
+                    currentUserData.onceToken = p.onceToken || 0;
+                    currentUserData.kristalOmega = p.kristalOmega || 0;
+
+                    document.getElementById("valKristal").innerText = currentUserData.kristal;
+                    document.getElementById("valTbCoin").innerText = currentUserData.tbCoin;
+                    document.getElementById("valOnceToken").innerText = currentUserData.onceToken;
+                    document.getElementById("valKristalOmega").innerText = currentUserData.kristalOmega;
+                    
+                    // UPDATE PROFILE HEADER UI
                     document.getElementById("profileName").innerText = currentUserData.username;
                     document.getElementById("profileUsername").innerText = "@" + currentUserData.username;
                     document.getElementById("userAvatar").src = currentUserData.linkProfil;
                     
+                    // UPDATE BORDER AVATAR PROFILE
                     if(currentUserData.skinKode) {
                         const borderEl = document.getElementById("profileBorder");
-                        borderEl.src = currentUserData.skinKode + ".png"; 
+                        const skinUrl = currentUserData.skinKode.includes('/') || currentUserData.skinKode.endsWith('.png') 
+                            ? currentUserData.skinKode 
+                            : currentUserData.skinKode + ".png";
+                        borderEl.src = skinUrl; 
                         borderEl.style.display = "block";
                     }
                 }
@@ -422,6 +443,7 @@
             }
         }
 
+        // 2. FUNGSI LOAD HISTORY CHAT (Server Kirim 30 Chat Terakhir)
         async function loadHistoryChat() {
             try {
                 const response = await fetch(`${BACKEND_URL}/historychat`, { method: 'GET' });
@@ -430,8 +452,11 @@
                 if(data.history && Array.isArray(data.history)) {
                     document.getElementById("chatContainer").innerHTML = ""; 
                     data.history.forEach(msg => {
-                        renderChatHTML(msg, msg.senderId === currentUserData.userId);
-                        lastMessageId = msg.id || lastMessageId;
+                        // Cek apakah ID pengirim sama dengan ID user yang disimpan dari /status
+                        const senderId = String(msg.id || msg.senderId || "");
+                        const isSelf = senderId === currentUserData.userId && currentUserData.userId !== "";
+                        renderChatHTML(msg, isSelf);
+                        lastMessageId = msg.msgId || msg.id || lastMessageId;
                     });
                 }
             } catch (error) {
@@ -439,6 +464,7 @@
             }
         }
 
+        // 3. FUNGSI POLL NEW CHATS
         async function pollNewChats() {
             if(activeMode === "tanya") return; 
             try {
@@ -446,34 +472,53 @@
                 const data = await response.json();
                 if(data.newChats && data.newChats.length > 0) {
                     data.newChats.forEach(msg => {
-                        renderChatHTML(msg, msg.senderId === currentUserData.userId);
-                        lastMessageId = msg.id;
+                        const senderId = String(msg.id || msg.senderId || "");
+                        const isSelf = senderId === currentUserData.userId && currentUserData.userId !== "";
+                        renderChatHTML(msg, isSelf);
+                        lastMessageId = msg.msgId || msg.id || lastMessageId;
                     });
                 }
             } catch (error) { /* Silent fail */ }
         }
 
+        // 4. FUNGSI RENDER CHAT DENGAN MEKANISME SKIN & BORDER
         function renderChatHTML(msgData, isSelf) {
             const chatContainer = document.getElementById("chatContainer");
             const sideClass = isSelf ? "user" : "ai";
-            const displayName = isSelf ? "Kamu" : (msgData.username || "System");
+            const displayName = isSelf ? "Kamu" : (msgData.username || "User");
             
-            const timeHTML = `<span class="msg-time">${msgData.waktu || getCurrentTime()}</span>`;
-            const bgStyle = msgData.skin ? `background-image: url('${msgData.skin}.png'); background-color: rgba(255,255,255,0.7);` : "";
-            const borderHTML = msgData.skin ? `<img src="${msgData.skin}.png" class="msg-border" onerror="this.style.display='none'">` : "";
+            const waktuDisplay = msgData.jam || msgData.waktu || getCurrentTime();
+            const timeHTML = `<span class="msg-time">${waktuDisplay}</span>`;
+            
+            // PERSIAPAN MEKANISME SKIN CHAT (Base Skin Ditimpa Teks)
+            const skinCode = msgData.skin || "";
+            let bgStyle = "";
+            if (skinCode) {
+                const skinUrl = skinCode.includes('/') || skinCode.endsWith('.png') ? skinCode : `${skinCode}.png`;
+                bgStyle = `background-image: url('${skinUrl}'); color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.8);`;
+            }
+
+            // PERSIAPAN MEKANISME BORDER AVATAR (Foto Crop Bulat Dulu, Ditempeli Border)
+            let borderHTML = "";
+            if (skinCode) {
+                const borderUrl = skinCode.includes('/') || skinCode.endsWith('.png') ? skinCode : `${skinCode}.png`;
+                borderHTML = `<img src="${borderUrl}" class="msg-border" onerror="this.style.display='none'">`;
+            }
+
+            const avatarUrl = msgData.linkProfil || msgData.link_profil || '../kitty.png.png';
             
             const html = `
                 <div class="message ${sideClass}">
                     <div class="msg-header">
                         <div class="msg-avatar-wrapper">
-                            <img src="${msgData.linkProfil || '../kitty.png.png'}" class="msg-avatar" onerror="this.src='../kitty.png.png'">
+                            <img src="${avatarUrl}" class="msg-avatar" onerror="this.src='../kitty.png.png'">
                             ${borderHTML}
                         </div>
                         <div class="msg-name-time">
                             <span class="msg-name">${displayName}</span>${timeHTML}
                         </div>
                     </div>
-                    <div class="msg-bubble" style="${bgStyle}">${msgData.chat}</div>
+                    <div class="msg-bubble" style="${bgStyle}">${msgData.chat || msgData.message || ''}</div>
                 </div>`;
             
             chatContainer.insertAdjacentHTML('beforeend', html);
@@ -510,11 +555,7 @@
             } return null;
         }
 
-        function getUserId() {
-            const session = getCookie("user_session");
-            return session ? session.substring(0, 10) : Math.floor(1000000000 + Math.random() * 9000000000).toString();
-        }
-
+        // 5. FUNGSI KIRIM PESAN GLOBAL / AI
         async function sendMessage() {
             const inputField = document.getElementById("userInput");
             const messageText = inputField.value.trim();
@@ -525,15 +566,19 @@
 
             if (activeMode === "chat") {
                 const waktuKirim = getCurrentTime();
+                
+                // MEKANISME PESAN GLOBAL KE TELEGRAM GROUPS / BACKEND
                 const payloadGlobal = {
                     id: currentUserData.userId,
                     chat: messageText,
                     skin: currentUserData.skinKode, 
+                    jam: waktuKirim,
                     waktu: waktuKirim,
                     linkProfil: currentUserData.linkProfil,
                     username: currentUserData.username
                 };
 
+                // Render lokal di kanan (USER)
                 renderChatHTML(payloadGlobal, true);
                 
                 try {
@@ -547,6 +592,7 @@
                 }
 
             } else {
+                // MEKANISME CHAT AI (/mode,id,isi chat)
                 let selectedModel = document.getElementById("modelSelect").value;
                 if (selectedModel === "auto") {
                     const autoChoices = ["claude", "gemini", "gpt"];
@@ -554,9 +600,11 @@
                 }
                 let displayNameModel = selectedModel === 'ultrakitty' ? "UltraKitty Pro" : (selectedModel.charAt(0).toUpperCase() + selectedModel.slice(1));
 
-                const userPayload = { chat: messageText, waktu: getCurrentTime(), linkProfil: currentUserData.linkProfil, skin: currentUserData.skinKode };
+                // Render chat user sendiri
+                const userPayload = { chat: messageText, jam: getCurrentTime(), linkProfil: currentUserData.linkProfil, skin: currentUserData.skinKode };
                 renderChatHTML(userPayload, true);
 
+                // Render Bubble AI (Loading)
                 const uniqueMsgId = "ai-msg-" + Date.now();
                 const aiLoadingHtml = `
                     <div class="message ai" id="${uniqueMsgId}">
@@ -572,8 +620,9 @@
                 chatContainer.insertAdjacentHTML('beforeend', aiLoadingHtml);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
 
-                // PERBAIKAN DI SINI (Ditambahkan backtick)
-                const formattedPayload = `/${selectedModel} ${currentUserData.userId},${messageText}`;
+                // FORMATTING PESAN WAJIB UNTUK AI: /mode,id,isi chat
+                const formattedPayload = `/${selectedModel},${currentUserData.userId},${messageText}`;
+                
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 60000);
 
@@ -581,7 +630,7 @@
                     const response = await fetch(`${BACKEND_URL}/chat`, { 
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message: formattedPayload }),
+                        body: JSON.stringify({ message: formattedPayload, mode: selectedModel, id: currentUserData.userId, chat: messageText }),
                         signal: controller.signal
                     });
                     clearTimeout(timeoutId); 
@@ -590,6 +639,7 @@
                     let rawReply = data.reply || data.message || `${currentUserData.userId}, Gagal memproses respon.`;
                     let finalAnswer = rawReply;
 
+                    // Mengupas ID balasan dari format backend jika ada
                     if (rawReply.includes(",")) {
                         const firstCommaIndex = rawReply.indexOf(',');
                         const responseId = rawReply.substring(0, firstCommaIndex).trim();
