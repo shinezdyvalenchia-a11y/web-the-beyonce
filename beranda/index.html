@@ -152,7 +152,7 @@
            ========================================== */
         .chat-container {
             flex-grow: 1; overflow-y: auto; 
-            padding: 100px 20px 140px 20px; /* Ditambah padding top untuk inventory */
+            padding: 100px 20px 140px 20px;
             display: flex; flex-direction: column; gap: 15px;
             scroll-behavior: smooth;
         }
@@ -167,7 +167,6 @@
         .msg-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
         .message.user .msg-header { flex-direction: row-reverse; }
         
-        /* Avatar dalam chat untuk Skin border */
         .msg-avatar-wrapper { position: relative; width: 26px; height: 26px; flex-shrink: 0;}
         .msg-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
         .msg-border { position: absolute; top: -3px; left: -3px; width: calc(100% + 6px); height: calc(100% + 6px); pointer-events: none; z-index: 2; object-fit: contain;}
@@ -180,7 +179,7 @@
         .msg-bubble {
             padding: 12px 18px; font-size: 14px; line-height: 1.5; word-break: break-word;
             background: rgba(255, 255, 255, 0.85);
-            background-size: cover; background-position: center; /* Untuk Skin Chat */
+            background-size: cover; background-position: center;
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.7);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -251,7 +250,6 @@
         }
         .send-btn:hover { transform: scale(1.05); }
 
-        /* Responsif HP */
         @media screen and (max-width: 768px) {
             .left-sidebar { width: 75px; padding: 10px 4px; }
             .side-item { width: 65px; height: 55px; font-size: 9px; }
@@ -283,7 +281,7 @@
         <source src="latarglobal.webm" type="video/webm">
     </video>
 
-    <!-- Cahaya Tipis agar menyatu dengan latar -->
+    <!-- Cahaya Tipis -->
     <div class="corner-glows">
         <div class="glow glow-tl"></div><div class="glow glow-tr"></div>
         <div class="glow glow-bl"></div><div class="glow glow-br"></div>
@@ -307,7 +305,6 @@
     <main class="main-content">
         <!-- Top Bar -->
         <header class="top-bar">
-            <!-- Logo & Inventory di Tengah Atas -->
             <div class="top-center-container">
                 <div class="top-center-logo">
                     <img src="../logo.png.png" alt="Beyonce" class="logo-main" onerror="this.src='logo.png.png'">
@@ -323,14 +320,13 @@
                 </div>
             </div>
 
-            <!-- Kanan Atas: Profil & Navigasi -->
+            <!-- Kanan Atas -->
             <div class="top-right-area">
                 <a href="../profil/" class="profile-card">
                     <div class="profile-info">
                         <span class="profile-name" id="profileName">Loading...</span>
                         <span class="profile-username" id="profileUsername">@loading</span>
                     </div>
-                    <!-- Avatar dengan Layer Skin Border -->
                     <div class="avatar-container">
                         <img src="../kitty.png.png" alt="Avatar" class="profile-pic" id="userAvatar">
                         <img src="" alt="" class="profile-border" id="profileBorder" style="display: none;">
@@ -344,9 +340,7 @@
         </header>
 
         <!-- Area Chat -->
-        <div class="chat-container" id="chatContainer">
-            <!-- Tempat Chat Dirender -->
-        </div>
+        <div class="chat-container" id="chatContainer"></div>
 
         <!-- Input Area Dock -->
         <div class="input-dock-wrapper">
@@ -363,20 +357,16 @@
 
             <div class="input-dock">
                 <input type="text" id="userInput" class="chat-input" placeholder="Ketik pesan..." autocomplete="off">
-                
-                <!-- Tombol Mode: Chat (Default) atau Tanya AI -->
                 <button type="button" class="mode-toggle-btn" id="modeToggleBtn" onclick="toggleMode()">Chat</button>
-                
                 <button class="send-btn" onclick="sendMessage()">➤</button>
             </div>
         </div>
     </main>
 
-   <script>
+    <script>
         const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space"; 
-        let activeMode = "chat"; // "chat" (Global) atau "tanya" (AI)
+        let activeMode = "chat"; 
         
-        // State Pengguna Global
         let currentUserData = {
             userId: getUserId(),
             username: "User",
@@ -384,21 +374,17 @@
             linkProfil: "../kitty.png.png"
         };
         
-        let lastMessageId = ""; // Untuk auto-update webhook polling
+        let lastMessageId = ""; 
 
-        // 1. Inisialisasi Saat Startup/Refresh
         document.addEventListener("DOMContentLoaded", () => {
             if (window.location.protocol !== 'file:') {
                 if (!getCookie("user_session")) window.location.href = "../"; 
             }
             loadStatusChat();
             loadHistoryChat();
-            
-            // Polling untuk menerima webhook chat baru dari backend secara otomatis tiap 3 detik
             setInterval(pollNewChats, 3000);
         });
 
-        // 2. Fungsi Ambil Status /statuschat (Menggunakan season_key)
         async function loadStatusChat() {
             try {
                 const sessionKey = getCookie("user_session") || currentUserData.userId;
@@ -412,18 +398,15 @@
                 if (data.status === "success" && data.profile) {
                     const p = data.profile;
                     
-                    // Update Inventory
                     document.getElementById("valKristal").innerText = p.kristal || 0;
                     document.getElementById("valTbCoin").innerText = p.tbCoin || 0;
                     document.getElementById("valOnceToken").innerText = p.onceToken || 0;
                     document.getElementById("valKristalOmega").innerText = p.kristalOmega || 0;
                     
-                    // Update State Profil
                     currentUserData.username = p.username || "User";
                     currentUserData.skinKode = p.inventory || p.skinKode || ""; 
                     if(p.linkProfil) currentUserData.linkProfil = p.linkProfil;
                     
-                    // Update UI Profil Kanan Atas
                     document.getElementById("profileName").innerText = currentUserData.username;
                     document.getElementById("profileUsername").innerText = "@" + currentUserData.username;
                     document.getElementById("userAvatar").src = currentUserData.linkProfil;
@@ -439,7 +422,6 @@
             }
         }
 
-        // 3. Fungsi Ambil History /historychat
         async function loadHistoryChat() {
             try {
                 const response = await fetch(`${BACKEND_URL}/historychat`, { method: 'GET' });
@@ -457,7 +439,6 @@
             }
         }
 
-        // 4. Polling Chat Baru
         async function pollNewChats() {
             if(activeMode === "tanya") return; 
             try {
@@ -469,10 +450,9 @@
                         lastMessageId = msg.id;
                     });
                 }
-            } catch (error) { /* Silent fail for polling */ }
+            } catch (error) { /* Silent fail */ }
         }
 
-        // Fungsi Render UI Chat
         function renderChatHTML(msgData, isSelf) {
             const chatContainer = document.getElementById("chatContainer");
             const sideClass = isSelf ? "user" : "ai";
@@ -490,8 +470,7 @@
                             ${borderHTML}
                         </div>
                         <div class="msg-name-time">
-                            <span class="msg-name">${displayName}</span>
-                            ${timeHTML}
+                            <span class="msg-name">${displayName}</span>${timeHTML}
                         </div>
                     </div>
                     <div class="msg-bubble" style="${bgStyle}">${msgData.chat}</div>
@@ -506,7 +485,6 @@
             return d.getHours().toString().padStart(2, '0') + ":" + d.getMinutes().toString().padStart(2, '0');
         }
 
-        // Toggle Mode
         function toggleMode() {
             const btn = document.getElementById("modeToggleBtn");
             const popup = document.getElementById("modelPopup");
@@ -537,7 +515,6 @@
             return session ? session.substring(0, 10) : Math.floor(1000000000 + Math.random() * 9000000000).toString();
         }
 
-        // 5. Fungsi Kirim Pesan
         async function sendMessage() {
             const inputField = document.getElementById("userInput");
             const messageText = inputField.value.trim();
@@ -595,7 +572,8 @@
                 chatContainer.insertAdjacentHTML('beforeend', aiLoadingHtml);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
 
-                const formattedPayload = `/${selectedModel} ${currentUserData.userId}, ${messageText}`;
+                // PERBAIKAN DI SINI (Ditambahkan backtick)
+                const formattedPayload = `/${selectedModel} ${currentUserData.userId},${messageText}`;
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 60000);
 
