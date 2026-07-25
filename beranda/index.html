@@ -3,332 +3,369 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kitty Tenacity - AI Chat</title>
+    <title>Kitty Tenacity - Translucent AI Chat</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: #000000;
-            color: #ffffff;
-            height: 100vh; /* Fallback browser jadul */
-            height: 100dvh; /* SOLUSI ANTI TENGGELAM DI HP */
+            background-color: #000;
+            color: #2c3e50;
+            height: 100vh;
+            height: 100dvh;
             display: flex;
             overflow: hidden;
             position: relative;
         }
 
         /* ==========================================
-           1. ANIMASI BINTANG & CAHAYA
+           1. BACKGROUND VIDEO & CAHAYA TIPIS
            ========================================== */
-        .stars-wrapper {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            overflow: hidden; z-index: 0; pointer-events: none;
+        .video-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: -2;
         }
-        .stars-animation {
-            position: absolute; top: -400px; left: 0; width: 100%; height: calc(100% + 400px);
-            background-image: 
-                radial-gradient(1px 1px at 25px 40px, #ffffff, transparent),
-                radial-gradient(1.5px 1.5px at 75px 120px, #ffffff, transparent),
-                radial-gradient(2px 2px at 220px 300px, #ffffff, transparent),
-                radial-gradient(1.5px 1.5px at 380px 20px, #ffffff, transparent);
-            background-size: 400px 400px;
-            animation: driftStars 25s linear infinite;
-        }
-        @keyframes driftStars { from { transform: translateY(0); } to { transform: translateY(400px); } }
 
         .corner-glows {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; pointer-events: none; overflow: hidden;
+            z-index: -1; pointer-events: none; overflow: hidden;
         }
-        .glow { position: absolute; width: 500px; height: 500px; border-radius: 50%; filter: blur(140px); opacity: 0.3; }
-        .glow-tl { top: -200px; left: -200px; background: #ff007f; }
-        .glow-tr { top: -200px; right: -200px; background: #ff7700; }
-        .glow-bl { bottom: -200px; left: -200px; background: #0088ff; }
-        .glow-br { bottom: -200px; right: -200px; background: #ffffff; }
+        .glow { position: absolute; width: 50vw; height: 50vw; max-width: 500px; max-height: 500px; border-radius: 50%; filter: blur(140px); opacity: 0.15; }
+        .glow-tl { top: -10%; left: -10%; background: #ff007f; }
+        .glow-tr { top: -10%; right: -10%; background: #ff7700; }
+        .glow-bl { bottom: -10%; left: -10%; background: #0088ff; }
+        .glow-br { bottom: -10%; right: -10%; background: #ffffff; opacity: 0.1; }
 
         /* ==========================================
-           2. SIDEBAR & OVERLAY
+           2. SIDEBAR KIRI
            ========================================== */
-        .sidebar-overlay {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.6); z-index: 99998; backdrop-filter: blur(3px);
-            opacity: 0; transition: opacity 0.3s ease;
+        .left-sidebar {
+            width: 90px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px 5px; gap: 12px; z-index: 25;
+            overflow-y: auto; flex-shrink: 0;
         }
-        .sidebar-overlay.active { display: block; opacity: 1; }
+        .left-sidebar::-webkit-scrollbar { display: none; }
 
-        .sidebar {
-            width: 260px; 
-            background: rgba(10, 10, 15, 0.92); 
-            backdrop-filter: blur(8px); 
-            -webkit-backdrop-filter: blur(8px);
-            border-right: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex; flex-direction: column;
-            transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
-            z-index: 99999; position: relative; 
-            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
-            will-change: transform;
-            transform: translateZ(0);
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
+        .side-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-decoration: none; color: #fff; font-weight: 700; font-size: 10px;
+            background: rgba(255, 255, 255, 0.2); width: 70px; height: 60px; border-radius: 16px;
+            transition: 0.3s; border: 1px solid rgba(255, 255, 255, 0.3); text-align: center;
+            gap: 4px;
         }
-        
-        .sidebar.collapsed { transform: translateX(-100%); margin-right: -260px; }
-
-        .sidebar-header {
-            padding: 25px 20px; display: flex; align-items: center; gap: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08); background: rgba(255, 255, 255, 0.02);
-        }
-
-        .logo-kitty { width: 32px; height: 32px; object-fit: contain; }
-        .brand-text { font-weight: bold; font-size: 15px; background: linear-gradient(to right, #0088ff, #ff007f); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.5px; white-space: nowrap; }
-
-        .close-sidebar-btn {
-            display: none; background: transparent; border: none; color: rgba(255,255,255,0.6);
-            font-size: 24px; margin-left: auto; cursor: pointer; transition: 0.2s;
-        }
-        .close-sidebar-btn:hover { color: #ff007f; }
-
-        .menu-list {
-            list-style: none; padding: 20px 12px; display: flex; flex-direction: column; gap: 8px; 
-            overflow-y: auto; flex-grow: 1; 
-            -webkit-overflow-scrolling: touch; 
-            contain: content;
-            overscroll-behavior-y: contain; 
-        }
-        .menu-item {
-            display: flex; align-items: center; padding: 12px 16px;
-            color: rgba(255, 255, 255, 0.65); text-decoration: none;
-            border-radius: 12px; font-size: 14px; transition: all 0.3s ease; border: 1px solid transparent;
-        }
-        .menu-item:hover {
-            color: #ffffff; background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(255, 255, 255, 0.1); transform: translateX(2px);
-        }
-        .menu-item.active { 
-            color: #ffffff; background: linear-gradient(90deg, rgba(0, 136, 255, 0.15), transparent);
-            border-left: 4px solid #0088ff; border-color: rgba(0, 136, 255, 0.2) rgba(0, 136, 255, 0.1) rgba(0, 136, 255, 0.1) rgba(0, 136, 255, 1);
-            font-weight: 600;
-        }
+        .side-item:hover { background: rgba(255, 255, 255, 0.4); transform: scale(1.05); }
+        .side-item.active { background: rgba(255, 255, 255, 0.85); color: #1a5cff; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+        .side-icon { font-size: 20px; }
 
         /* ==========================================
-           3. MAIN CHAT AREA
+           3. MAIN CONTAINER, TOP AREA & INVENTORY
            ========================================== */
         .main-content {
             flex-grow: 1; display: flex; flex-direction: column;
-            z-index: 5; position: relative; height: 100%; width: 100%;
+            position: relative; height: 100%; overflow: hidden; z-index: 10;
         }
 
-        .navbar {
-            display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
-            padding: 5px 30px; background: rgba(0, 0, 0, 0.25);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            padding: 15px 25px; z-index: 20; width: 100%;
         }
 
-        .nav-left { display: flex; align-items: center; gap: 20px; }
-        .logo-beyonce { max-height: 90px; width: auto; object-fit: contain; filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.35)); }
-
-        .nav-center { display: flex; justify-content: center; gap: 12px; }
-        .nav-btn {
-            display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 16px; border-radius: 20px;
-            color: white; text-decoration: none; font-size: 13px; font-weight: 500; transition: all 0.3s ease; white-space: nowrap;
+        .top-center-container {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
         }
-        .nav-btn:hover { background: rgba(255, 255, 255, 0.12); border-color: #ff007f; }
 
-        .nav-right { display: flex; align-items: center; gap: 12px; justify-content: flex-end; }
-        .toggle-btn {
-            background: transparent; border: none; color: white;
-            font-size: 22px; cursor: pointer; padding: 5px; transition: color 0.2s;
+        .top-center-logo {
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            padding: 6px 20px; border-radius: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
-        .toggle-btn:hover { color: #0088ff; }
+        .logo-main { height: 45px; width: auto; border-radius: 50%; object-fit: contain; }
+        .logo-sub { height: 30px; width: auto; border-radius: 50%; object-fit: contain; }
+        .brand-text { font-weight: 800; font-size: 18px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
 
-        .chat-container {
-            flex-grow: 1; overflow-y: auto; padding: 40px 15% 120px 15%; 
-            display: flex; flex-direction: column; gap: 30px; scroll-behavior: smooth;
+        /* INVENTORY UI */
+        .inventory-bar {
+            display: flex; gap: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 4px 15px; border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        .chat-container::-webkit-scrollbar { width: 6px; }
-        .chat-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .inv-item { display: flex; align-items: center; gap: 4px; color: #fff; font-size: 11px; font-weight: 800; }
+        .inv-item img { width: 16px; height: 16px; object-fit: contain; }
 
-        .message { display: flex; flex-direction: column; max-width: 100%; animation: fadeIn 0.3s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .top-right-area {
+            display: flex; flex-direction: column; align-items: flex-end; gap: 8px; margin-left: auto;
+        }
+        .profile-card {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            padding: 6px 14px; border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            text-decoration: none; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: 0.2s;
+        }
+        .profile-card:hover { background: rgba(255, 255, 255, 0.5); }
+        .profile-info { display: flex; flex-direction: column; text-align: right; }
+        .profile-name { font-weight: 800; font-size: 13px; color: #fff; line-height: 1.2; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+        .profile-username { font-weight: 700; font-size: 10px; color: rgba(255,255,255,0.8); }
+        
+        /* AVATAR DENGAN BORDER SKIN */
+        .avatar-container { position: relative; width: 38px; height: 38px; }
+        .profile-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; }
+        .profile-border { position: absolute; top: -4px; left: -4px; width: calc(100% + 8px); height: calc(100% + 8px); pointer-events: none; object-fit: contain; z-index: 2;}
 
-        .message.user { align-items: flex-end; }
-        .message.ai { align-items: flex-start; }
-
-        .msg-bubble { padding: 15px 20px; font-size: 15px; line-height: 1.6; word-break: break-word; max-width: 85%; }
-        .user .msg-bubble { background: rgba(255, 255, 255, 0.08); border-radius: 20px 20px 4px 20px; border: 1px solid rgba(255,255,255,0.05); }
-        .ai .msg-bubble { background: transparent; border-radius: 20px 20px 20px 4px; border-left: 3px solid #0088ff; padding-left: 15px; }
-        .msg-meta { font-size: 11px; color: rgba(255, 255, 255, 0.4); margin-top: 5px; }
+        .sub-nav-links {
+            display: flex; gap: 6px;
+        }
+        .sub-nav-btn {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 4px 10px; border-radius: 15px;
+            color: #fff; font-size: 11px; font-weight: 700;
+            text-decoration: none; transition: 0.2s;
+        }
+        .sub-nav-btn:hover { background: rgba(255, 255, 255, 0.5); }
 
         /* ==========================================
-           4. INPUT AREA
+           4. CHAT CONTAINER & SKIN BUBBLE
            ========================================== */
-        .input-area-container {
-            position: absolute; bottom: 30px; left: 15%; right: 15%;
-            display: flex; flex-direction: column; gap: 10px; z-index: 10;
+        .chat-container {
+            flex-grow: 1; overflow-y: auto; 
+            padding: 100px 20px 140px 20px; /* Ditambah padding top untuk inventory */
+            display: flex; flex-direction: column; gap: 15px;
+            scroll-behavior: smooth;
+        }
+        .chat-container::-webkit-scrollbar { display: none; }
+
+        .message { display: flex; flex-direction: column; max-width: 75%; animation: slideUp 0.3s ease forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .message.user { align-self: flex-end; align-items: flex-end; }
+        .message.ai { align-self: flex-start; align-items: flex-start; }
+
+        .msg-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .message.user .msg-header { flex-direction: row-reverse; }
+        
+        /* Avatar dalam chat untuk Skin border */
+        .msg-avatar-wrapper { position: relative; width: 26px; height: 26px; flex-shrink: 0;}
+        .msg-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .msg-border { position: absolute; top: -3px; left: -3px; width: calc(100% + 6px); height: calc(100% + 6px); pointer-events: none; z-index: 2; object-fit: contain;}
+
+        .msg-name-time { display: flex; flex-direction: column; }
+        .message.user .msg-name-time { align-items: flex-end; }
+        .msg-name { font-size: 11px; font-weight: 800; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .msg-time { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.7); }
+
+        .msg-bubble {
+            padding: 12px 18px; font-size: 14px; line-height: 1.5; word-break: break-word;
+            background: rgba(255, 255, 255, 0.85);
+            background-size: cover; background-position: center; /* Untuk Skin Chat */
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            color: #2c3e50; font-weight: 700; position: relative;
+        }
+        .user .msg-bubble { border-radius: 20px 20px 4px 20px; border-right: 4px solid #ff7700; }
+        .ai .msg-bubble { border-radius: 20px 20px 20px 4px; border-left: 4px solid #1a5cff; }
+
+        /* ==========================================
+           5. INPUT DOCK & MODE SELECTION
+           ========================================== */
+        .input-dock-wrapper {
+            position: absolute; bottom: 20px; left: 20px; right: 20px;
+            max-width: 800px; margin: 0 auto;
+            display: flex; flex-direction: column; gap: 8px; z-index: 30;
         }
 
-        .input-wrapper {
-            background: rgba(25, 25, 30, 0.82); border: 1px solid rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(25px); border-radius: 35px;
-            padding: 8px 15px 8px 25px; display: flex; align-items: center; gap: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        .model-popup-selector {
+            display: none; background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            padding: 8px 15px; border-radius: 20px; gap: 10px; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); animation: fadeIn 0.2s ease;
+        }
+        .model-popup-selector.active { display: flex; }
+        .model-label { font-size: 12px; font-weight: 800; color: #1a5cff; }
+        .model-select {
+            background: rgba(255, 255, 255, 0.8); border: none;
+            padding: 6px 12px; border-radius: 12px; font-weight: 700;
+            color: #333; outline: none; cursor: pointer; font-size: 12px;
+            flex-grow: 1;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .input-dock {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            border-radius: 35px; padding: 6px 6px 6px 20px;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
         }
 
         .chat-input {
-            flex-grow: 1; background: transparent; border: none; color: white;
-            font-size: 15px; outline: none; padding: 12px 0; min-width: 0; 
+            flex-grow: 1; background: transparent; border: none;
+            font-size: 14.5px; font-weight: 700; color: #2c3e50;
+            outline: none; padding: 10px 0; min-width: 0;
         }
+        .chat-input::placeholder { color: #666; font-weight: 400; }
 
-        .model-selector {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white; padding: 10px 15px; border-radius: 20px; font-size: 13px;
-            outline: none; cursor: pointer; transition: 0.2s; flex-shrink: 0; 
+        .mode-toggle-btn {
+            background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(255, 255, 255, 0.8);
+            padding: 9px 14px; border-radius: 20px; font-weight: 800;
+            color: #1a5cff; outline: none; cursor: pointer; font-size: 12px;
+            white-space: nowrap; transition: 0.2s;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
         }
-        .model-selector option { background: #121212; color: white; }
+        .mode-toggle-btn.tanya-active { background: #1a5cff; color: #fff; }
 
         .send-btn {
-            background: #ffffff; border: none; color: #000000;
-            width: 45px; height: 45px; border-radius: 50%; flex-shrink: 0; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: 0.2s; font-size: 18px;
+            background: linear-gradient(135deg, #ff7700, #ff007f);
+            border: none; color: white; width: 44px; height: 44px;
+            border-radius: 50%; flex-shrink: 0; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; box-shadow: 0 4px 10px rgba(255, 119, 0, 0.4);
+            transition: 0.2s;
         }
-        .send-btn:hover { background: #0088ff; color: #fff; transform: scale(1.05); }
+        .send-btn:hover { transform: scale(1.05); }
 
-        .hidden { display: none !important; }
-
-        /* ==========================================
-           5. PERBAIKAN MOBILE (MAX-WIDTH: 768px)
-           ========================================== */
+        /* Responsif HP */
         @media screen and (max-width: 768px) {
-            .sidebar {
-                position: fixed !important; top: 0 !important; left: 0 !important;
-                height: 100vh !important; width: 280px !important; margin-right: 0 !important;
-                backdrop-filter: none !important;
-                -webkit-backdrop-filter: none !important;
-                background: #0a0a0f !important;
-                box-shadow: 10px 0 30px rgba(0, 0, 0, 0.8);
-            }
-            .sidebar.collapsed { transform: translateX(-100%) !important; }
-            .sidebar:not(.collapsed) { transform: translateX(0) !important; }
-            
-            .close-sidebar-btn { display: block !important; }
-
-            .main-content { width: 100% !important; max-width: 100% !important; }
-
-            .navbar {
-                display: flex !important; flex-direction: column !important;
-                padding: 10px 15px !important; gap: 10px !important; align-items: flex-start !important; width: 100% !important;
-            }
-            .nav-left { width: 100% !important; justify-content: flex-start !important; gap: 15px !important; }
-            .logo-beyonce { max-height: 45px !important; }
-
-            .nav-center {
-                width: 100% !important; justify-content: flex-start !important;
-                overflow-x: auto !important; white-space: nowrap !important; padding: 5px 0 !important;
-                gap: 8px !important; display: flex !important; -webkit-overflow-scrolling: touch !important;
-            }
-            .nav-center::-webkit-scrollbar { display: none !important; }
-            .nav-btn { padding: 6px 14px !important; font-size: 12px !important; flex-shrink: 0 !important; }
-            .nav-right { display: none !important; }
-
-            .chat-container { padding: 15px 15px 120px 15px !important; width: 100% !important; }
-            .msg-bubble { max-width: 92% !important; font-size: 14px !important; }
-
-            .input-area-container {
-                left: 0 !important; right: 0 !important; bottom: 0 !important;
-                width: 100% !important; 
-                padding: 10px 15px calc(25px + env(safe-area-inset-bottom)) 15px !important;
-                background: linear-gradient(to top, rgba(0,0,0,0.95) 70%, transparent); 
-            }
-            
-            .input-wrapper { padding: 6px 6px 6px 15px !important; gap: 6px !important; border-radius: 30px !important; }
-            .chat-input { font-size: 14px !important; }
-            .model-selector { padding: 8px 6px !important; font-size: 11px !important; }
-            .send-btn { width: 38px !important; height: 38px !important; font-size: 15px !important; }
+            .left-sidebar { width: 75px; padding: 10px 4px; }
+            .side-item { width: 65px; height: 55px; font-size: 9px; }
+            .side-icon { font-size: 17px; }
+            .top-bar { padding: 10px 15px; }
+            .top-center-container { gap: 4px; }
+            .top-center-logo { padding: 4px 12px; gap: 8px; }
+            .logo-main { height: 35px; }
+            .logo-sub { height: 24px; }
+            .brand-text { font-size: 14px; }
+            .inventory-bar { padding: 3px 10px; gap: 6px; }
+            .inv-item { font-size: 9px; }
+            .profile-card { padding: 4px 10px; }
+            .profile-name { font-size: 11px; }
+            .profile-username { font-size: 9px; }
+            .avatar-container { width: 30px; height: 30px; }
+            .sub-nav-btn { font-size: 10px; padding: 3px 8px; }
+            .input-dock-wrapper { left: 10px; right: 10px; bottom: 10px; }
+            .input-dock { padding: 5px 5px 5px 15px; }
+            .mode-toggle-btn { padding: 8px 10px; font-size: 11px; }
+            .send-btn { width: 38px; height: 38px; font-size: 14px; }
         }
     </style>
 </head>
-<body id="pageBody" class="hidden">
+<body>
 
-    <div class="stars-wrapper"><div class="stars-animation"></div></div>
+    <!-- Latar Belakang Video -->
+    <video class="video-bg" autoplay loop muted playsinline>
+        <source src="latarglobal.webm" type="video/webm">
+    </video>
+
+    <!-- Cahaya Tipis agar menyatu dengan latar -->
     <div class="corner-glows">
         <div class="glow glow-tl"></div><div class="glow glow-tr"></div>
         <div class="glow glow-bl"></div><div class="glow glow-br"></div>
     </div>
 
-    <!-- OVERLAY UNTUK MENUTUP SIDEBAR DI HP -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
-    <!-- SIDEBAR DASHBOARD -->
-    <aside class="sidebar collapsed" id="sidebarMenu">
-        <div class="sidebar-header">
-            <img src="../kitty.png.png" alt="kitty" class="logo-kitty" onerror="this.src='kitty.png.png'">
-            <span class="brand-text">Kitty Tenacity</span>
-            <!-- Tombol Tutup Khusus HP -->
-            <button class="close-sidebar-btn" onclick="toggleSidebar()">✖</button>
-        </div>
-        <ul class="menu-list">
-            <li><a href="#" class="menu-item active">Beranda (AI Chat)</a></li>
-            <li><a href="../gacha-skin/" class="menu-item">Gacha Skin</a></li>
-            <li><a href="../live-jkt48/" class="menu-item">Live JKT48</a></li>
-            <li><a href="../game/" class="menu-item">Game</a></li>
-            <li><a href="../grup/" class="menu-item">Grup</a></li>
-            <li><a href="../temen-mabar/" class="menu-item">Temen Mabar</a></li>
-            <li><a href="../medsos-saver/" class="menu-item">Medsos Saver</a></li>
-            <li><a href="../koleksi-kartu/" class="menu-item">Koleksi Kartu</a></li>
-            <li><a href="../bio-member/" class="menu-item">Bio Member</a></li>
-            <li><a href="../link-shortcut/" class="menu-item">LinkShortCut</a></li>
-        </ul>
+    <!-- SIDEBAR KIRI -->
+    <aside class="left-sidebar">
+        <a href="#" class="side-item active"><span class="side-icon">💬</span>Beranda</a>
+        <a href="../gacha-skin/" class="side-item"><span class="side-icon">🎁</span>Gacha</a>
+        <a href="../live-jkt48/" class="side-item"><span class="side-icon">🎤</span>Live JKT</a>
+        <a href="../game/" class="side-item"><span class="side-icon">🎮</span>Game</a>
+        <a href="../grup/" class="side-item"><span class="side-icon">👥</span>Grup</a>
+        <a href="../temen-mabar/" class="side-item"><span class="side-icon">⚔️</span>Mabar</a>
+        <a href="../medsos-saver/" class="side-item"><span class="side-icon">📥</span>Saver</a>
+        <a href="../koleksi-kartu/" class="side-item"><span class="side-icon">🃏</span>Kartu</a>
+        <a href="../bio-member/" class="side-item"><span class="side-icon">📖</span>Bio</a>
+        <a href="../link-shortcut/" class="side-item"><span class="side-icon">🔗</span>Shortcut</a>
     </aside>
 
     <!-- CONTAINER UTAMA -->
     <main class="main-content">
-        <!-- Header / Navbar -->
-        <header class="navbar">
-            <div class="nav-left">
-                <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-                <img src="../logo.png.png" alt="The Beyonce" class="logo-beyonce" onerror="this.src='logo.png.png'">
-            </div>
-            
-            <div class="nav-center">
-                <a href="../profil/" target="_blank" class="nav-btn">👤 Profil Saya</a>
-                <a href="../cari-pengguna/" target="_blank" class="nav-btn">🔍 Cari Pengguna Lain</a>
-                <a href="../teman/" target="_blank" class="nav-btn">👥 Teman</a>
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <!-- Logo & Inventory di Tengah Atas -->
+            <div class="top-center-container">
+                <div class="top-center-logo">
+                    <img src="../logo.png.png" alt="Beyonce" class="logo-main" onerror="this.src='logo.png.png'">
+                    <img src="../kitty.png.png" alt="Kitty" class="logo-sub" onerror="this.src='kitty.png.png'">
+                    <span class="brand-text">Kitty Tenacity</span>
+                </div>
+                <!-- INVENTORY -->
+                <div class="inventory-bar" id="inventoryBar">
+                    <div class="inv-item"><img src="KRISTAL.PNG" alt="K"> <span id="valKristal">0</span></div>
+                    <div class="inv-item"><img src="TBCOIN.PNG" alt="C"> <span id="valTbCoin">0</span></div>
+                    <div class="inv-item"><img src="ONCETOKEN.PNG" alt="T"> <span id="valOnceToken">0</span></div>
+                    <div class="inv-item"><img src="KRISTAL_OMEGA.PNG" alt="O"> <span id="valKristalOmega">0</span></div>
+                </div>
             </div>
 
-            <div class="nav-right">
-                <img src="../kitty.png.png" alt="kitty" class="logo-kitty" onerror="this.src='kitty.png.png'">
-                <span class="brand-text">Kitty Tenacity</span>
+            <!-- Kanan Atas: Profil & Navigasi -->
+            <div class="top-right-area">
+                <a href="../profil/" class="profile-card">
+                    <div class="profile-info">
+                        <span class="profile-name" id="profileName">Loading...</span>
+                        <span class="profile-username" id="profileUsername">@loading</span>
+                    </div>
+                    <!-- Avatar dengan Layer Skin Border -->
+                    <div class="avatar-container">
+                        <img src="../kitty.png.png" alt="Avatar" class="profile-pic" id="userAvatar">
+                        <img src="" alt="" class="profile-border" id="profileBorder" style="display: none;">
+                    </div>
+                </a>
+                <div class="sub-nav-links">
+                    <a href="../teman/" class="sub-nav-btn">👥 Teman</a>
+                    <a href="../cari-pengguna/" class="sub-nav-btn">🔍 Cari User</a>
+                </div>
             </div>
         </header>
 
-        <!-- Chat Area -->
+        <!-- Area Chat -->
         <div class="chat-container" id="chatContainer">
-            <div class="message ai">
-                <div class="msg-bubble">Halo! Aku Asisten AI **Kitty Tenacity**. Pilih otak andalanku di bawah, lalu tanyakan apa saja!</div>
-                <div class="msg-meta">System</div>
-            </div>
+            <!-- Tempat Chat Dirender -->
         </div>
 
-        <!-- Input Menu -->
-        <div class="input-area-container">
-            <div class="input-wrapper">
-                <input type="text" id="userInput" class="chat-input" placeholder="Tanya Kitty sesuatu..." autocomplete="off">
-                
-                <select id="modelSelect" class="model-selector">
+        <!-- Input Area Dock -->
+        <div class="input-dock-wrapper">
+            <div class="model-popup-selector" id="modelPopup">
+                <span class="model-label">🧠 Pilih Model:</span>
+                <select id="modelSelect" class="model-select">
                     <option value="auto" selected>Auto (Random)</option>
-                    <option value="claude">Claude 4.5 Haiku</option>
-                    <option value="gemini">Gemini 2.5 Flash</option>
-                    <option value="gpt">GPT 5 Mini</option>
-                    <option value="ultrakitty">UltraKitty (Pro Engine)</option>
+                    <option value="claude">Claude</option>
+                    <option value="gemini">Gemini</option>
+                    <option value="gpt">GPT</option>
+                    <option value="ultrakitty">UltraKitty Pro</option>
                 </select>
+            </div>
+
+            <div class="input-dock">
+                <input type="text" id="userInput" class="chat-input" placeholder="Ketik pesan..." autocomplete="off">
+                
+                <!-- Tombol Mode: Chat (Default) atau Tanya AI -->
+                <button type="button" class="mode-toggle-btn" id="modeToggleBtn" onclick="toggleMode()">Chat</button>
                 
                 <button class="send-btn" onclick="sendMessage()">➤</button>
             </div>
@@ -337,6 +374,156 @@
 
     <script>
         const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space"; 
+        let activeMode = "chat"; // "chat" (Global) atau "tanya" (AI)
+        
+        // State Pengguna Global
+        let currentUserData = {
+            userId: getUserId(),
+            username: "User",
+            skinKode: "", 
+            linkProfil: "../kitty.png.png"
+        };
+        
+        let lastMessageId = ""; // Untuk auto-update webhook polling
+
+        // 1. Inisialisasi Saat Startup/Refresh
+        document.addEventListener("DOMContentLoaded", () => {
+            if (window.location.protocol !== 'file:') {
+                if (!getCookie("user_session")) window.location.href = "../"; 
+            }
+            loadStatusChat();
+            loadHistoryChat();
+            
+            // Polling untuk menerima webhook chat baru dari backend secara otomatis tiap 3 detik
+            setInterval(pollNewChats, 3000);
+        });
+
+        // 2. Fungsi Ambil Status /statuschat
+        async function loadStatusChat() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/statuschat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: currentUserData.userId })
+                });
+                const data = await response.json();
+                
+                if (data.status === "success" && data.profile) {
+                    const p = data.profile;
+                    
+                    // Update Inventory
+                    document.getElementById("valKristal").innerText = p.kristal || 0;
+                    document.getElementById("valTbCoin").innerText = p.tbCoin || 0;
+                    document.getElementById("valOnceToken").innerText = p.onceToken || 0;
+                    document.getElementById("valKristalOmega").innerText = p.kristalOmega || 0;
+                    
+                    // Update State Profil
+                    currentUserData.username = p.username || "User";
+                    currentUserData.skinKode = p.inventory || p.skinKode || ""; // Asumsi inventory = kode skin
+                    if(p.linkProfil) currentUserData.linkProfil = p.linkProfil;
+                    
+                    // Update UI Profil Kanan Atas
+                    document.getElementById("profileName").innerText = currentUserData.username;
+                    document.getElementById("profileUsername").innerText = "@" + currentUserData.username;
+                    document.getElementById("userAvatar").src = currentUserData.linkProfil;
+                    
+                    if(currentUserData.skinKode) {
+                        const borderEl = document.getElementById("profileBorder");
+                        borderEl.src = currentUserData.skinKode + ".png"; // File di folder sama berdasar kode
+                        borderEl.style.display = "block";
+                    }
+                }
+            } catch (error) {
+                console.error("Gagal load status chat:", error);
+            }
+        }
+
+        // 3. Fungsi Ambil History /historychat
+        async function loadHistoryChat() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/historychat`, { method: 'GET' });
+                const data = await response.json();
+                
+                // Asumsi data.history adalah array dari {id, chat, skin, waktu, linkProfil, username, senderId}
+                if(data.history && Array.isArray(data.history)) {
+                    document.getElementById("chatContainer").innerHTML = ""; // Bersihkan
+                    data.history.forEach(msg => {
+                        renderChatHTML(msg, msg.senderId === currentUserData.userId);
+                        lastMessageId = msg.id || lastMessageId;
+                    });
+                }
+            } catch (error) {
+                console.error("Gagal load history:", error);
+            }
+        }
+
+        // 4. Polling Chat Baru (Otomatis memperbarui dari backend)
+        async function pollNewChats() {
+            if(activeMode === "tanya") return; // Hanya tarik chat global jika di mode chat
+            try {
+                const response = await fetch(`${BACKEND_URL}/getnewchats?lastId=${lastMessageId}`, { method: 'GET' });
+                const data = await response.json();
+                if(data.newChats && data.newChats.length > 0) {
+                    data.newChats.forEach(msg => {
+                        renderChatHTML(msg, msg.senderId === currentUserData.userId);
+                        lastMessageId = msg.id;
+                    });
+                }
+            } catch (error) { /* Silent fail for polling */ }
+        }
+
+        // Fungsi Render UI Chat
+        function renderChatHTML(msgData, isSelf) {
+            const chatContainer = document.getElementById("chatContainer");
+            const sideClass = isSelf ? "user" : "ai";
+            const displayName = isSelf ? "Kamu" : (msgData.username || "System");
+            
+            // Format waktu & skin
+            const timeHTML = `<span class="msg-time">${msgData.waktu || getCurrentTime()}</span>`;
+            const bgStyle = msgData.skin ? `background-image: url('${msgData.skin}.png'); background-color: rgba(255,255,255,0.7);` : "";
+            const borderHTML = msgData.skin ? `<img src="${msgData.skin}.png" class="msg-border" onerror="this.style.display='none'">` : "";
+            
+            const html = `
+                <div class="message ${sideClass}">
+                    <div class="msg-header">
+                        <div class="msg-avatar-wrapper">
+                            <img src="${msgData.linkProfil || '../kitty.png.png'}" class="msg-avatar" onerror="this.src='../kitty.png.png'">
+                            ${borderHTML}
+                        </div>
+                        <div class="msg-name-time">
+                            <span class="msg-name">${displayName}</span>
+                            ${timeHTML}
+                        </div>
+                    </div>
+                    <div class="msg-bubble" style="${bgStyle}">${msgData.chat}</div>
+                </div>`;
+            
+            chatContainer.insertAdjacentHTML('beforeend', html);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function getCurrentTime() {
+            const d = new Date();
+            return d.getHours().toString().padStart(2, '0') + ":" + d.getMinutes().toString().padStart(2, '0');
+        }
+
+        // Toggle Mode
+        function toggleMode() {
+            const btn = document.getElementById("modeToggleBtn");
+            const popup = document.getElementById("modelPopup");
+            
+            if (activeMode === "chat") {
+                activeMode = "tanya";
+                btn.innerText = "Tanya AI";
+                btn.classList.add("tanya-active");
+                popup.classList.add("active");
+            } else {
+                activeMode = "chat";
+                btn.innerText = "Chat";
+                btn.classList.remove("tanya-active");
+                popup.classList.remove("active");
+            }
+        }
 
         function getCookie(name) {
             let nameEQ = name + "="; let ca = document.cookie.split(';');
@@ -351,123 +538,105 @@
             return session ? session.substring(0, 10) : Math.floor(1000000000 + Math.random() * 9000000000).toString();
         }
 
-        function toggleSidebar() {
-            const sidebar = document.getElementById("sidebarMenu");
-            const overlay = document.getElementById("sidebarOverlay");
-            
-            sidebar.classList.toggle("collapsed");
-            
-            if (!sidebar.classList.contains("collapsed")) {
-                overlay.classList.add("active");
-            } else {
-                overlay.classList.remove("active");
-            }
-        }
-
+        // 5. Fungsi Kirim Pesan (Mendukung Payload Baru)
         async function sendMessage() {
             const inputField = document.getElementById("userInput");
-            const chatContainer = document.getElementById("chatContainer");
             const messageText = inputField.value.trim();
-            let selectedModel = document.getElementById("modelSelect").value;
-
             if (!messageText) return;
-
-            // Logika khusus mode "auto" (Hanya memilih antara claude, gemini, dan gpt)
-            if (selectedModel === "auto") {
-                const autoChoices = ["claude", "gemini", "gpt"];
-                selectedModel = autoChoices[Math.floor(Math.random() * autoChoices.length)];
-            }
-
-            // Menentukan Nama AI yang tampil di chat
-            let displayNameModel = "";
-            switch(selectedModel) {
-                case "claude": displayNameModel = "Claude 4.5 Haiku"; break;
-                case "gemini": displayNameModel = "Gemini 2.5 Flash"; break;
-                case "gpt": displayNameModel = "GPT 5 Mini"; break;
-                case "ultrakitty": displayNameModel = "UltraKitty (Pro Engine)"; break;
-            }
-
-            const userId = getUserId();
-
-            const userHtml = `
-                <div class="message user">
-                    <div class="msg-bubble">${messageText}</div>
-                    <div class="msg-meta">Kamu</div>
-                </div>`;
-            chatContainer.insertAdjacentHTML('beforeend', userHtml);
-            inputField.value = "";
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            const uniqueMsgId = "ai-msg-" + Date.now();
-            const aiLoadingHtml = `
-                <div class="message ai" id="${uniqueMsgId}">
-                    <div class="msg-bubble"><em>Memikirkan jawaban...</em></div>
-                    <div class="msg-meta">${displayNameModel}</div>
-                </div>`;
-            chatContainer.insertAdjacentHTML('beforeend', aiLoadingHtml);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            const formattedPayload = `/${selectedModel} ${userId}, ${messageText}`;
-
-            // Sistem Timeout Fetch - Khusus ultrakitty 120 detik, sisanya 60 detik (standar lama)
-            const controller = new AbortController();
-            const timeoutDuration = (selectedModel === "ultrakitty") ? 120000 : 60000;
-            const timeoutId = setTimeout(() => controller.abort(), timeoutDuration);
-
-            try {
-                const response = await fetch(`${BACKEND_URL}/chat`, { 
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: formattedPayload }),
-                    signal: controller.signal
-                });
-                clearTimeout(timeoutId); // Hapus timer jika respons sukses sebelum waktu habis
-                
-                const data = await response.json();
-
-                // Mengambil reply dari server, atau pesan error dari server jika gagal
-                let rawReply = data.reply || data.message || `${userId}, Gagal memproses respon dari server.`;
-                let finalAnswer = rawReply;
-
-                if (rawReply.includes(",")) {
-                    const firstCommaIndex = rawReply.indexOf(',');
-                    const responseId = rawReply.substring(0, firstCommaIndex).trim();
-                    const responseText = rawReply.substring(firstCommaIndex + 1).trim();
-                    
-                    if (responseId === userId) {
-                        finalAnswer = responseText;
-                    } else {
-                        finalAnswer = "Sistem menolak jawaban karena ID antrean tidak cocok.";
-                    }
-                }
-
-                document.getElementById(uniqueMsgId).querySelector('.msg-bubble').innerHTML = finalAnswer.replace(/\n/g, "<br>");
-
-            } catch (error) {
-                if (error.name === 'AbortError') {
-                    document.getElementById(uniqueMsgId).querySelector('.msg-bubble').innerText = `Waktu habis (Timeout ${timeoutDuration/1000}s). Server tidak merespon.`;
-                } else {
-                    document.getElementById(uniqueMsgId).querySelector('.msg-bubble').innerText = "Koneksi terputus: Gagal terhubung ke server Backend.";
-                }
-            }
             
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            const chatContainer = document.getElementById("chatContainer");
+            inputField.value = ""; // Kosongkan input
+
+            if (activeMode === "chat") {
+                // MODE CHAT GLOBAL
+                const waktuKirim = getCurrentTime();
+                const payloadGlobal = {
+                    id: currentUserData.userId,
+                    chat: messageText,
+                    skin: currentUserData.skinKode, // Border & Skin Chat
+                    waktu: waktuKirim,
+                    linkProfil: currentUserData.linkProfil,
+                    username: currentUserData.username
+                };
+
+                // Render lokal agar terasa instan
+                renderChatHTML(payloadGlobal, true);
+                
+                try {
+                    await fetch(`${BACKEND_URL}/chat`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payloadGlobal)
+                    });
+                } catch(e) {
+                    console.error("Gagal mengirim chat global", e);
+                }
+
+            } else {
+                // MODE TANYA AI (Logika Original)
+                let selectedModel = document.getElementById("modelSelect").value;
+                if (selectedModel === "auto") {
+                    const autoChoices = ["claude", "gemini", "gpt"];
+                    selectedModel = autoChoices[Math.floor(Math.random() * autoChoices.length)];
+                }
+                let displayNameModel = selectedModel === 'ultrakitty' ? "UltraKitty Pro" : (selectedModel.charAt(0).toUpperCase() + selectedModel.slice(1));
+
+                // Render User
+                const userPayload = { chat: messageText, waktu: getCurrentTime(), linkProfil: currentUserData.linkProfil, skin: currentUserData.skinKode };
+                renderChatHTML(userPayload, true);
+
+                // Render Loading AI
+                const uniqueMsgId = "ai-msg-" + Date.now();
+                const aiLoadingHtml = `
+                    <div class="message ai" id="${uniqueMsgId}">
+                        <div class="msg-header">
+                            <div class="msg-avatar-wrapper"><img src="../kitty.png.png" class="msg-avatar"></div>
+                            <div class="msg-name-time">
+                                <span class="msg-name">${displayNameModel}</span>
+                                <span class="msg-time">${getCurrentTime()}</span>
+                            </div>
+                        </div>
+                        <div class="msg-bubble"><em>Memproses...</em></div>
+                    </div>`;
+                chatContainer.insertAdjacentHTML('beforeend', aiLoadingHtml);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                const formattedPayload = `/${selectedModel} ${currentUserData.userId}, ${messageText}`;
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 60000);
+
+                try {
+                    const response = await fetch(`${BACKEND_URL}/chat`, { 
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: formattedPayload }),
+                        signal: controller.signal
+                    });
+                    clearTimeout(timeoutId); 
+                    
+                    const data = await response.json();
+                    let rawReply = data.reply || data.message || `${currentUserData.userId}, Gagal memproses respon.`;
+                    let finalAnswer = rawReply;
+
+                    if (rawReply.includes(",")) {
+                        const firstCommaIndex = rawReply.indexOf(',');
+                        const responseId = rawReply.substring(0, firstCommaIndex).trim();
+                        const responseText = rawReply.substring(firstCommaIndex + 1).trim();
+                        if (responseId === currentUserData.userId) { finalAnswer = responseText; }
+                    }
+
+                    document.getElementById(uniqueMsgId).querySelector('.msg-bubble').innerHTML = finalAnswer.replace(/\n/g, "<br>");
+                } catch (error) {
+                    const el = document.getElementById(uniqueMsgId).querySelector('.msg-bubble');
+                    if (error.name === 'AbortError') { el.innerText = "Waktu habis. Server sibuk."; } 
+                    else { el.innerText = "Koneksi terputus ke server utama."; }
+                }
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
         }
 
         document.getElementById("userInput").addEventListener("keypress", function(e) {
             if (e.key === 'Enter') sendMessage();
-        });
-
-        document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("sidebarMenu").classList.add("collapsed");
-            document.getElementById("sidebarOverlay").classList.remove("active");
-
-            if (window.location.protocol === 'file:') {
-                document.getElementById("pageBody").classList.remove("hidden");
-            } else {
-                if (!getCookie("user_session")) window.location.href = "../"; 
-                else document.getElementById("pageBody").classList.remove("hidden");
-            }
         });
     </script>
 </body>
