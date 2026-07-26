@@ -150,8 +150,8 @@
         /* BORDER ATAS DIKECILKAN agar gak menutupi UI/Kotak Profil */
         .profile-border {
             position: absolute;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 138%; height: 138%; /* Turun dari 155% ke 138% */
+            top: 54%; left: 50%; transform: translate(-50%, -50%);
+            width: 120%; height: 138%; /* Turun dari 155% ke 138% */
             pointer-events: none; object-fit: contain; z-index: 2;
             mix-blend-mode: multiply;
             filter: contrast(1.15) brightness(1.05);
@@ -210,8 +210,8 @@
         
         /* BORDER CHAT TETAP 155% KARENA UDAH MANTAP */
         .msg-border {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 155%; height: 155%; pointer-events: none; z-index: 2; object-fit: contain;
+            position: absolute; top: 51%; left: 49%; transform: translate(-50%, -50%);
+            width: 135%; height: 120%; pointer-events: none; z-index: 2; object-fit: contain;
             mix-blend-mode: multiply;
             filter: contrast(1.15) brightness(1.05);
         }
@@ -561,15 +561,15 @@
                 // MENGGUNAKAN SETTINGAN TERBAIK (ANTI-GEPENG) 
                 bgStyle = `
                     border-style: solid !important;
-                    border-width: 30px 60px 30px 90px !important; 
+                    border-width: 45px 50px 45px 80px !important; 
                     border-image-source: url('${chatSkinUrl}') !important;
-                    border-image-slice: 40 75 40 115 fill !important; 
+                    border-image-slice: 70 90 60 130 fill !important; 
                     border-image-repeat: stretch !important;
                     background: transparent !important; 
                     box-shadow: none !important; 
                     color: #4a3b32 !important; 
                     border-radius: 0 !important; 
-                    padding: 0px 10px !important; 
+                    padding: 5px 205px !important; 
                     min-height: 80px !important; 
                     min-width: 170px !important; 
                     display: flex !important;
