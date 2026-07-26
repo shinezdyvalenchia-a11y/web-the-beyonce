@@ -142,12 +142,12 @@
             border-radius: 50%; object-fit: cover;
             border: 2px solid rgba(255,255,255,0.8);
         }
+        /* PERBAIKAN BORDER: Ukuran disesuaikan, efek nge-crop paksa dihilangkan */
         .profile-border {
             position: absolute;
             top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 145%; height: 145%;
+            width: 140%; height: 140%;
             pointer-events: none; object-fit: contain; z-index: 2;
-            mix-blend-mode: multiply; /* Menghilangkan background putih pada JPG */
         }
 
         .sub-row { margin-top: -5px; flex-wrap: wrap; gap: 10px; }
@@ -199,10 +199,11 @@
             flex-shrink: 0; border-radius: 50%;
         }
         .msg-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        
+        /* PERBAIKAN BORDER CHAT: Dibuat normal tanpa filter aneh-aneh */
         .msg-border {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 145%; height: 145%; pointer-events: none; z-index: 2; object-fit: contain;
-            mix-blend-mode: multiply; /* Menghilangkan background putih pada JPG */
+            width: 140%; height: 140%; pointer-events: none; z-index: 2; object-fit: contain;
         }
 
         .msg-name-time { display: flex; flex-direction: column; }
@@ -210,10 +211,11 @@
         .msg-name { font-size: 12px; font-weight: 800; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
         .msg-time { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.75); }
 
+        /* PERBAIKAN CHAT BUBBLE: Size diganti ke 100% 100% biar gak kepotong (cover) */
         .msg-bubble {
             padding: 12px 18px; font-size: 14px; line-height: 1.5; word-break: break-word;
             background: rgba(255, 255, 255, 0.85);
-            background-size: cover; background-position: center;
+            background-size: 100% 100%; background-position: center; background-repeat: no-repeat;
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.7);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
@@ -302,7 +304,6 @@
             .brand-logo { padding: 4px 10px; gap: 6px; border-radius: 20px; }
             .logo-main { height: 26px; } .logo-sub { height: 18px; } .brand-text { font-size: 12px; }
 
-            /* PERBAIKAN UI PROFIL UNTUK HP - DIPERBESAR AGAR LEBIH PAS */
             .profile-card { padding: 6px 12px; gap: 10px; } 
             .profile-name { font-size: 13px; } 
             .profile-username { font-size: 10px; } 
@@ -358,7 +359,6 @@
                 <div class="left-group">
                     <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
                     <div class="brand-logo">
-                        <!-- Perbaikan onerror agar tidak infinite loop/nge-lag -->
                         <img src="../logo.png.png" alt="Beyonce" class="logo-main" onerror="this.onerror=null; this.src='../logo.png';">
                         <img src="../kitty.png.png" alt="Kitty" class="logo-sub" onerror="this.onerror=null; this.src='../kitty.png';">
                         <span class="brand-text">Kitty Tenacity</span>
@@ -468,18 +468,14 @@
                     document.getElementById("valOnceToken").innerText = p.onceToken || 0;
                     document.getElementById("valKristalOmega").innerText = p.kristalOmega || 0;
                     
-                    // --- FIX NAMA: Cek jika kosong atau "belum terdaftar" ---
                     let namaUser = p.nama || p.name || p.username || "User";
                     if (namaUser.toLowerCase() === "belum terdaftar" || namaUser.trim() === "") {
                         namaUser = p.username || "User";
                     }
                     currentUserData.username = namaUser;
-                    // --------------------------------------------------------
 
-                    // PP langsung pakai URL ImgBB dari statuschat
                     currentUserData.linkProfil = p.photoProfile || p.linkProfil || "../kitty.png";
                     
-                    // Logika Konversi BORDER & CHAT Skin
                     let rawSkinCode = "";
                     if (p.skin) {
                         rawSkinCode = typeof p.skin === 'string' ? p.skin : (p.skin.border || p.skin.border_skin || "");
@@ -490,9 +486,8 @@
                     }
 
                     if (rawSkinCode) {
-                        // Pastikan variabel menyimpan base text-nya (Hapus ekstensi agar tidak double .png)
-                        let baseCode = rawSkinCode.replace("BORDER_", "").replace("CHAT_", "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
-                        // Set border menjadi BORDER_XXX dan chat menjadi CHAT_XXX
+                        // Regex pembersih nama file biar dapet base id aja
+                        let baseCode = rawSkinCode.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
                         currentUserData.skinBorderCode = "BORDER_" + baseCode;
                         currentUserData.skinChatCode = "CHAT_" + baseCode;
                     }
@@ -501,7 +496,6 @@
                     document.getElementById("profileUsername").innerText = "@" + (p.username || "user");
                     document.getElementById("userAvatar").src = currentUserData.linkProfil;
                     
-                    // PEMASANGAN BORDER
                     if(currentUserData.skinBorderCode) {
                         const borderEl = document.getElementById("profileBorder");
                         borderEl.src = SKIN_FOLDER_URL + currentUserData.skinBorderCode + ".png"; 
@@ -546,34 +540,28 @@
             const chatContainer = document.getElementById("chatContainer");
             const sideClass = isSelf ? "user" : "ai";
             
-            // --- FIX NAMA DI CHAT: Cek "belum terdaftar" dari history ---
             let displayName = isSelf ? "Kamu" : (msgData.username || "System");
             if (displayName.toLowerCase() === "belum terdaftar") {
                 displayName = "User"; 
             }
-            // ------------------------------------------------------------
             
             const timeHTML = `<span class="msg-time">${msgData.waktu || getCurrentTime()}</span>`;
             
-            // LOGIKA PEMASANGAN SKIN CHAT BUBBLE & BORDER AVATAR
             let bgStyle = "";
             let borderHTML = "";
             let rawSkin = msgData.skinChatCode || msgData.skinBorderCode || msgData.skin || "";
 
             if (rawSkin) {
-                // Ekstrak ID nomornya saja (Hapus ekstensi jika terlanjur terbawa dari database)
-                let baseCode = rawSkin.replace("BORDER_", "").replace("CHAT_", "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
+                let baseCode = rawSkin.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
                 
-                // Set path untuk background chat
+                // PERBAIKAN LOGIKA CHAT SKIN: Hilangkan border & set transparent biar skin aslinya keliatan keren!
                 let chatFullPath = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".png";
-                bgStyle = `background-image: url('${chatFullPath}'); background-color: rgba(255,255,255,0.7);`;
+                bgStyle = `background-image: url('${chatFullPath}'); background-color: transparent !important; border: none !important; box-shadow: none !important;`;
                 
-                // Set path untuk border avatar
                 let borderFullPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".png";
                 borderHTML = `<img src="${borderFullPath}" class="msg-border" onerror="this.style.display='none'">`;
             }
             
-            // Hindari infinite loop jika PP (linkProfil) gagal terload
             const ppSrc = msgData.linkProfil || currentUserData.linkProfil || '../kitty.png';
 
             const html = `
@@ -635,7 +623,7 @@
                 const payloadGlobal = {
                     id: currentUserData.userId,
                     chat: messageText,
-                    skin: currentUserData.skinBorderCode, // Kirim ke server
+                    skin: currentUserData.skinBorderCode, 
                     waktu: getCurrentTime(),
                     linkProfil: currentUserData.linkProfil,
                     username: currentUserData.username
