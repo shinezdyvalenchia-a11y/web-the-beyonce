@@ -217,16 +217,9 @@
         .msg-time { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.75); }
 
         .msg-bubble {
-            padding: 12px 18px; font-size: 14px; line-height: 1.5; word-break: break-word;
-            background: rgba(255, 255, 255, 0.85);
-            background-size: 100% 100%; background-position: center; background-repeat: no-repeat;
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.7);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            color: #2c3e50; font-weight: 700; position: relative;
+            font-size: 14px; line-height: 1.5; word-break: break-word;
+            font-weight: 700; position: relative;
         }
-        .user .msg-bubble { border-radius: 20px 20px 4px 20px; border-right: 4px solid #ff7700; }
-        .ai .msg-bubble { border-radius: 20px 20px 20px 4px; border-left: 4px solid #1a5cff; }
 
         /* ==========================================
            5. INPUT DOCK
@@ -553,25 +546,59 @@
                 let baseCode = rawSkin.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
                 let chatSkinUrl = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".png"; 
                 
-                // MENGGUNAKAN SETTINGAN TERBAIK (ANTI-GEPENG) - DIPERBAIKI
+                // DIKEMBALIKAN SESUAI PERMINTAAN USER 100%
                 bgStyle = `
                     border-style: solid !important;
-                    border-width: 15px 20px 15px 30px !important;
+                    border-width: 45px 50px 45px 80px !important; 
                     border-image-source: url('${chatSkinUrl}') !important;
-                    border-image-slice: 70 90 60 130 fill !important;
+                    border-image-slice: 70 90 60 130 fill !important; 
                     border-image-repeat: stretch !important;
-                    background: transparent !important;
-                    box-shadow: none !important;
-                    color: #4a3b32 !important;
-                    border-radius: 0 !important;
-                    padding: 10px 15px !important;
-                    max-width: 100% !important;
-                    word-break: break-word !important;
+                    background: transparent !important; 
+                    box-shadow: none !important; 
+                    color: #4a3b32 !important; 
+                    border-radius: 0 !important; 
+                    
+                    /* Ruang kosong kiri-kanan pakai padding 50px */
+                    padding: 10px 50px !important; 
+                    
+                    /* Min-width 300px memaksa bubble tetap panjang/lebar */
+                    min-width: 300px !important; 
+                    
+                    min-height: 80px !important; 
+                    display: flex !important;
+                    align-items: center !important; 
                 `;
                 
                 let borderFallbackPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".png";
                 let borderFullPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".jpg";
                 borderHTML = `<img src="${borderFallbackPath}" class="msg-border" onerror="this.src='${borderFullPath}'; this.onerror=null;">`;
+            } else {
+                // FALLBACK KALAU TIDAK ADA SKIN
+                if (isSelf) {
+                    bgStyle = `
+                        background: rgba(255, 255, 255, 0.85);
+                        border-radius: 20px 20px 4px 20px; 
+                        border-right: 4px solid #ff7700;
+                        padding: 12px 18px;
+                        backdrop-filter: blur(12px); 
+                        -webkit-backdrop-filter: blur(12px);
+                        border: 1px solid rgba(255, 255, 255, 0.7);
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+                        color: #2c3e50;
+                    `;
+                } else {
+                    bgStyle = `
+                        background: rgba(255, 255, 255, 0.85);
+                        border-radius: 20px 20px 20px 4px; 
+                        border-left: 4px solid #1a5cff;
+                        padding: 12px 18px;
+                        backdrop-filter: blur(12px); 
+                        -webkit-backdrop-filter: blur(12px);
+                        border: 1px solid rgba(255, 255, 255, 0.7);
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+                        color: #2c3e50;
+                    `;
+                }
             }
             
             const ppSrc = msgData.linkProfil || currentUserData.linkProfil || '../kitty.png';
