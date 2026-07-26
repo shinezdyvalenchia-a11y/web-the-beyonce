@@ -134,20 +134,23 @@
             position: relative;
             width: 40px; height: 40px;
             min-width: 40px; min-height: 40px;
-            flex-shrink: 0; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            /* Dibiarkan tanpa overflow: hidden agar border tidak kepotong bulat */
         }
         .profile-pic {
             width: 100%; height: 100%;
             border-radius: 50%; object-fit: cover;
             border: 2px solid rgba(255,255,255,0.8);
         }
-        /* PERBAIKAN BORDER: Ukuran disesuaikan, efek nge-crop paksa dihilangkan */
+        
+        /* BORDER DIPERBAIKI: multiply + filter buat hilangin sisa putih kotor JPG */
         .profile-border {
             position: absolute;
             top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 140%; height: 140%;
+            width: 155%; height: 155%;
             pointer-events: none; object-fit: contain; z-index: 2;
+            mix-blend-mode: multiply;
+            filter: contrast(1.15) brightness(1.05);
         }
 
         .sub-row { margin-top: -5px; flex-wrap: wrap; gap: 10px; }
@@ -196,14 +199,15 @@
             position: relative;
             width: 30px; height: 30px;
             min-width: 30px; min-height: 30px;
-            flex-shrink: 0; border-radius: 50%;
+            flex-shrink: 0; 
         }
         .msg-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
         
-        /* PERBAIKAN BORDER CHAT: Dibuat normal tanpa filter aneh-aneh */
         .msg-border {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 140%; height: 140%; pointer-events: none; z-index: 2; object-fit: contain;
+            width: 155%; height: 155%; pointer-events: none; z-index: 2; object-fit: contain;
+            mix-blend-mode: multiply;
+            filter: contrast(1.15) brightness(1.05);
         }
 
         .msg-name-time { display: flex; flex-direction: column; }
@@ -211,7 +215,6 @@
         .msg-name { font-size: 12px; font-weight: 800; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
         .msg-time { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.75); }
 
-        /* PERBAIKAN CHAT BUBBLE: Size diganti ke 100% 100% biar gak kepotong (cover) */
         .msg-bubble {
             padding: 12px 18px; font-size: 14px; line-height: 1.5; word-break: break-word;
             background: rgba(255, 255, 255, 0.85);
@@ -322,21 +325,17 @@
 </head>
 <body>
 
-    <!-- Latar Belakang Video -->
     <video class="video-bg" autoplay loop muted playsinline>
         <source src="latarglobal.webm" type="video/webm">
     </video>
 
-    <!-- Cahaya Tipis -->
     <div class="corner-glows">
         <div class="glow glow-tl"></div><div class="glow glow-tr"></div>
         <div class="glow glow-bl"></div><div class="glow glow-br"></div>
     </div>
 
-    <!-- Overlay Gelap saat Sidebar Buka di HP -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-    <!-- SIDEBAR KIRI -->
     <aside class="left-sidebar" id="leftSidebar">
         <a href="#" class="side-item active"><span class="side-icon">💬</span>Beranda</a>
         <a href="../gacha-skin/" class="side-item"><span class="side-icon">🎁</span>Gacha</a>
@@ -350,11 +349,8 @@
         <a href="../link-shortcut/" class="side-item"><span class="side-icon">🔗</span>Shortcut</a>
     </aside>
 
-    <!-- CONTAINER UTAMA -->
     <main class="main-content">
-        <!-- Top Bar -->
         <header class="top-bar">
-            <!-- Baris 1: Logo & Profile -->
             <div class="top-bar-row">
                 <div class="left-group">
                     <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
@@ -379,7 +375,6 @@
                 </div>
             </div>
 
-            <!-- Baris 2: Inventory & Sub Nav Shortcut -->
             <div class="top-bar-row sub-row">
                 <div class="inventory-bar" id="inventoryBar">
                     <div class="inv-item"><img src="KRISTAL.PNG" alt="K"> <span id="valKristal">0</span></div>
@@ -395,10 +390,8 @@
             </div>
         </header>
 
-        <!-- Area Chat -->
         <div class="chat-container" id="chatContainer"></div>
 
-        <!-- Input Area Dock -->
         <div class="input-dock-wrapper">
             <div class="model-popup-selector" id="modelPopup">
                 <span class="model-label">🧠 Pilih Model:</span>
@@ -486,7 +479,6 @@
                     }
 
                     if (rawSkinCode) {
-                        // Regex pembersih nama file biar dapet base id aja
                         let baseCode = rawSkinCode.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
                         currentUserData.skinBorderCode = "BORDER_" + baseCode;
                         currentUserData.skinChatCode = "CHAT_" + baseCode;
@@ -498,7 +490,13 @@
                     
                     if(currentUserData.skinBorderCode) {
                         const borderEl = document.getElementById("profileBorder");
-                        borderEl.src = SKIN_FOLDER_URL + currentUserData.skinBorderCode + ".png"; 
+                        // Fallback ke .png kalau file .jpg nya nggak ada
+                        borderEl.src = SKIN_FOLDER_URL + currentUserData.skinBorderCode + ".jpg"; 
+                        borderEl.onerror = function() {
+                            if (!this.src.endsWith('.png')) {
+                                this.src = SKIN_FOLDER_URL + currentUserData.skinBorderCode + ".png";
+                            }
+                        };
                         borderEl.style.display = "block";
                     }
                 }
@@ -554,12 +552,16 @@
             if (rawSkin) {
                 let baseCode = rawSkin.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
                 
-                // PERBAIKAN LOGIKA CHAT SKIN: Hilangkan border & set transparent biar skin aslinya keliatan keren!
-                let chatFullPath = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".png";
-                bgStyle = `background-image: url('${chatFullPath}'); background-color: transparent !important; border: none !important; box-shadow: none !important;`;
+                // Coba nge-load file .jpg dulu untuk Chat Skin
+                let chatFullPath = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".jpg";
+                let chatFallbackPath = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".png";
                 
-                let borderFullPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".png";
-                borderHTML = `<img src="${borderFullPath}" class="msg-border" onerror="this.style.display='none'">`;
+                // Tambahan `mix-blend-mode` di sini biar putih di chat skin juga hilang, dan teks dipaksa hitam!
+                bgStyle = `background-image: url('${chatFullPath}'), url('${chatFallbackPath}'); background-color: transparent !important; border: none !important; box-shadow: none !important; mix-blend-mode: multiply; filter: contrast(1.1); color: #000 !important;`;
+                
+                let borderFullPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".jpg";
+                let borderFallbackPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".png";
+                borderHTML = `<img src="${borderFullPath}" class="msg-border" onerror="this.src='${borderFallbackPath}'; this.onerror=null;">`;
             }
             
             const ppSrc = msgData.linkProfil || currentUserData.linkProfil || '../kitty.png';
