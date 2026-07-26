@@ -147,6 +147,7 @@
             top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 145%; height: 145%;
             pointer-events: none; object-fit: contain; z-index: 2;
+            mix-blend-mode: multiply; /* Menghilangkan background putih pada JPG */
         }
 
         .sub-row { margin-top: -5px; flex-wrap: wrap; gap: 10px; }
@@ -201,6 +202,7 @@
         .msg-border {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 145%; height: 145%; pointer-events: none; z-index: 2; object-fit: contain;
+            mix-blend-mode: multiply; /* Menghilangkan background putih pada JPG */
         }
 
         .msg-name-time { display: flex; flex-direction: column; }
@@ -466,7 +468,14 @@
                     document.getElementById("valOnceToken").innerText = p.onceToken || 0;
                     document.getElementById("valKristalOmega").innerText = p.kristalOmega || 0;
                     
-                    currentUserData.username = p.nama || p.username || "User";
+                    // --- FIX NAMA: Cek jika kosong atau "belum terdaftar" ---
+                    let namaUser = p.nama || p.name || p.username || "User";
+                    if (namaUser.toLowerCase() === "belum terdaftar" || namaUser.trim() === "") {
+                        namaUser = p.username || "User";
+                    }
+                    currentUserData.username = namaUser;
+                    // --------------------------------------------------------
+
                     // PP langsung pakai URL ImgBB dari statuschat
                     currentUserData.linkProfil = p.photoProfile || p.linkProfil || "../kitty.png";
                     
@@ -481,8 +490,8 @@
                     }
 
                     if (rawSkinCode) {
-                        // Pastikan variabel menyimpan base text-nya
-                        let baseCode = rawSkinCode.replace("BORDER_", "").replace("CHAT_", "");
+                        // Pastikan variabel menyimpan base text-nya (Hapus ekstensi agar tidak double .png)
+                        let baseCode = rawSkinCode.replace("BORDER_", "").replace("CHAT_", "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
                         // Set border menjadi BORDER_XXX dan chat menjadi CHAT_XXX
                         currentUserData.skinBorderCode = "BORDER_" + baseCode;
                         currentUserData.skinChatCode = "CHAT_" + baseCode;
@@ -536,7 +545,14 @@
         function renderChatHTML(msgData, isSelf) {
             const chatContainer = document.getElementById("chatContainer");
             const sideClass = isSelf ? "user" : "ai";
-            const displayName = isSelf ? "Kamu" : (msgData.username || "System");
+            
+            // --- FIX NAMA DI CHAT: Cek "belum terdaftar" dari history ---
+            let displayName = isSelf ? "Kamu" : (msgData.username || "System");
+            if (displayName.toLowerCase() === "belum terdaftar") {
+                displayName = "User"; 
+            }
+            // ------------------------------------------------------------
+            
             const timeHTML = `<span class="msg-time">${msgData.waktu || getCurrentTime()}</span>`;
             
             // LOGIKA PEMASANGAN SKIN CHAT BUBBLE & BORDER AVATAR
@@ -545,8 +561,8 @@
             let rawSkin = msgData.skinChatCode || msgData.skinBorderCode || msgData.skin || "";
 
             if (rawSkin) {
-                // Ekstrak ID nomornya saja (misal dari BORDER_365 ambil 365)
-                let baseCode = rawSkin.replace("BORDER_", "").replace("CHAT_", "");
+                // Ekstrak ID nomornya saja (Hapus ekstensi jika terlanjur terbawa dari database)
+                let baseCode = rawSkin.replace("BORDER_", "").replace("CHAT_", "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
                 
                 // Set path untuk background chat
                 let chatFullPath = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".png";
