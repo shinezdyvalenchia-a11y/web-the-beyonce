@@ -118,10 +118,10 @@
 
         /* KOTAK PROFIL DIPANJANGKAN (TAPI UKURAN NORMAL) */
         .profile-card {
-            display: flex; align-items: center; gap: 18px; /* Jarak dijauhkan biar teks gak nabrak border */
+            display: flex; align-items: center; gap: 18px; 
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            padding: 5px 20px 5px 25px; /* Padding kiri-kanan ditambah biar memanjang */
+            padding: 5px 20px 5px 25px; 
             border-radius: 30px;
             border: 1px solid rgba(255, 255, 255, 0.4);
             text-decoration: none; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -130,11 +130,9 @@
         .profile-card:hover { background: rgba(255, 255, 255, 0.4); }
         .profile-info { display: flex; flex-direction: column; text-align: right; }
         
-        /* Font kembali ke ukuran awal biar gak kegedean */
         .profile-name { font-weight: 800; font-size: 14px; color: #fff; line-height: 1.2; text-shadow: 0 1px 2px rgba(0,0,0,0.4); } 
         .profile-username { font-weight: 700; font-size: 11px; color: rgba(255,255,255,0.85); } 
         
-        /* Foto Profil Atas dikembalikan ke ukuran semula */
         .avatar-container {
             position: relative;
             width: 40px; height: 40px; 
@@ -147,11 +145,10 @@
             border: 2px solid rgba(255,255,255,0.8);
         }
         
-        /* BORDER ATAS DIKECILKAN agar gak menutupi UI/Kotak Profil */
         .profile-border {
             position: absolute;
             top: 54%; left: 50%; transform: translate(-50%, -50%);
-            width: 120%; height: 138%; /* Turun dari 155% ke 138% */
+            width: 120%; height: 138%; 
             pointer-events: none; object-fit: contain; z-index: 2;
             mix-blend-mode: multiply;
             filter: contrast(1.15) brightness(1.05);
@@ -199,7 +196,6 @@
         .msg-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
         .message.user .msg-header { flex-direction: row-reverse; }
         
-        /* FOTO PROFIL CHAT TETAP DIBESARKAN (Sesuai Permintaan) */
         .msg-avatar-wrapper {
             position: relative;
             width: 42px; height: 42px; 
@@ -208,7 +204,6 @@
         }
         .msg-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
         
-        /* BORDER CHAT TETAP 155% KARENA UDAH MANTAP */
         .msg-border {
             position: absolute; top: 51%; left: 49%; transform: translate(-50%, -50%);
             width: 135%; height: 120%; pointer-events: none; z-index: 2; object-fit: contain;
@@ -558,29 +553,21 @@
                 let baseCode = rawSkin.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
                 let chatSkinUrl = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".png"; 
                 
-                // MENGGUNAKAN SETTINGAN TERBAIK (ANTI-GEPENG) 
-               bgStyle = `
-    border-style: solid !important;
-    border-width: 45px 50px 45px 80px !important; 
-    border-image-source: url('${chatSkinUrl}') !important;
-    border-image-slice: 70 90 60 130 fill !important; 
-    border-image-repeat: stretch !important;
-    background: transparent !important; 
-    box-shadow: none !important; 
-    color: #4a3b32 !important; 
-    border-radius: 0 !important;
-`;
-    
-    /* Ruang kosong kiri-kanan pakai padding 50px */
-    padding: 10px 50px !important; 
-    
-    /* Min-width 300px memaksa bubble tetap panjang/lebar */
-    min-width: 300px !important; 
-    
-    min-height: 80px !important; 
-    display: flex !important;
-    align-items: center !important; 
-`;
+                // MENGGUNAKAN SETTINGAN TERBAIK (ANTI-GEPENG) - DIPERBAIKI
+                bgStyle = `
+                    border-style: solid !important;
+                    border-width: 15px 20px 15px 30px !important;
+                    border-image-source: url('${chatSkinUrl}') !important;
+                    border-image-slice: 70 90 60 130 fill !important;
+                    border-image-repeat: stretch !important;
+                    background: transparent !important;
+                    box-shadow: none !important;
+                    color: #4a3b32 !important;
+                    border-radius: 0 !important;
+                    padding: 10px 15px !important;
+                    max-width: 100% !important;
+                    word-break: break-word !important;
+                `;
                 
                 let borderFallbackPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".png";
                 let borderFullPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".jpg";
