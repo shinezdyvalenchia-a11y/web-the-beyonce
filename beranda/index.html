@@ -116,7 +116,6 @@
         .logo-sub { height: 25px; width: auto; border-radius: 50%; object-fit: contain; }
         .brand-text { font-weight: 800; font-size: 16px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.4); white-space: nowrap; }
 
-        /* KOTAK PROFIL DIPANJANGKAN (TAPI UKURAN NORMAL) */
         .profile-card {
             display: flex; align-items: center; gap: 18px; 
             background: rgba(255, 255, 255, 0.25);
@@ -187,7 +186,7 @@
         }
         .chat-container::-webkit-scrollbar { display: none; }
 
-        .message { display: flex; flex-direction: column; max-width: 80%; animation: slideUp 0.3s ease forwards; }
+        .message { display: flex; flex-direction: column; max-width: 85%; animation: slideUp 0.3s ease forwards; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         .message.user { align-self: flex-end; align-items: flex-end; }
@@ -312,7 +311,7 @@
             .sub-nav-btn { font-size: 9px; padding: 4px 8px; }
             
             .chat-container { padding: 10px 10px 120px 10px; }
-            .message { max-width: 90%; }
+            .message { max-width: 95%; }
             .input-dock-wrapper { left: 10px; right: 10px; bottom: 10px; }
         }
     </style>
@@ -546,7 +545,7 @@
                 let baseCode = rawSkin.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
                 let chatSkinUrl = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".png"; 
                 
-                // DIKEMBALIKAN SESUAI PERMINTAAN USER 100%
+                // INI BAGIAN YANG DIPERBAIKI BIAR NGGAK GEPENG TAPI TETEP BISA MELAR
                 bgStyle = `
                     border-style: solid !important;
                     border-width: 45px 50px 45px 80px !important; 
@@ -558,22 +557,26 @@
                     color: #4a3b32 !important; 
                     border-radius: 0 !important; 
                     
-                    /* Ruang kosong kiri-kanan pakai padding 50px */
-                    padding: 10px 50px !important; 
+                    /* Padding dikurangi sedikit biar teks nggak terlalu kejauhan */
+                    padding: 5px 25px !important; 
                     
-                    /* Min-width 300px memaksa bubble tetap panjang/lebar */
-                    min-width: 300px !important; 
+                    /* Mencegah gambar skin gepeng kalau cuma ketik "p" atau dikit */
+                    min-width: 180px !important; 
+                    min-height: 90px !important; 
                     
-                    min-height: 80px !important; 
+                    /* Otomatis memanjang sesuai seberapa panjang teksnya */
+                    width: fit-content !important; 
+                    max-width: 100% !important; 
+                    
                     display: flex !important;
                     align-items: center !important; 
+                    word-break: break-word !important;
                 `;
                 
                 let borderFallbackPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".png";
                 let borderFullPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".jpg";
                 borderHTML = `<img src="${borderFallbackPath}" class="msg-border" onerror="this.src='${borderFullPath}'; this.onerror=null;">`;
             } else {
-                // FALLBACK KALAU TIDAK ADA SKIN
                 if (isSelf) {
                     bgStyle = `
                         background: rgba(255, 255, 255, 0.85);
