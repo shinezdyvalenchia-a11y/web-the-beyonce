@@ -78,7 +78,7 @@
         .sidebar-overlay.active { display: block; opacity: 1; }
 
         /* ==========================================
-           3. MAIN CONTAINER & TOP BAR (TATA LETAK BARU)
+           3. MAIN CONTAINER & TOP BAR
            ========================================== */
         .main-content {
             flex-grow: 1; display: flex; flex-direction: column;
@@ -90,7 +90,6 @@
             padding: 15px 25px; z-index: 20; width: 100%;
         }
 
-        /* Baris 1: Logo & Profil (Rapi tidak overlap) */
         .top-bar-row {
             display: flex; justify-content: space-between; align-items: center; width: 100%;
         }
@@ -131,28 +130,25 @@
         .profile-name { font-weight: 800; font-size: 14px; color: #fff; line-height: 1.2; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
         .profile-username { font-weight: 700; font-size: 11px; color: rgba(255,255,255,0.85); }
         
-        /* FIX AVATAR AGAR BULAT SEMPURNA & BORDER */
         .avatar-container {
             position: relative;
-            width: 40px; height: 40px; /* Dikunci agar tidak lonjong */
+            width: 40px; height: 40px;
             min-width: 40px; min-height: 40px;
             flex-shrink: 0; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
         }
         .profile-pic {
             width: 100%; height: 100%;
-            border-radius: 50%;
-            object-fit: cover; /* Wajib cover agar proporsional */
+            border-radius: 50%; object-fit: cover;
             border: 2px solid rgba(255,255,255,0.8);
         }
         .profile-border {
             position: absolute;
             top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 145%; height: 145%; /* Diperbesar agar presisi di luar avatar */
+            width: 145%; height: 145%;
             pointer-events: none; object-fit: contain; z-index: 2;
         }
 
-        /* Baris 2: Inventory & Sub Nav (Rapi, Kiri-Kanan) */
         .sub-row { margin-top: -5px; flex-wrap: wrap; gap: 10px; }
 
         .inventory-bar {
@@ -304,9 +300,11 @@
             .brand-logo { padding: 4px 10px; gap: 6px; border-radius: 20px; }
             .logo-main { height: 26px; } .logo-sub { height: 18px; } .brand-text { font-size: 12px; }
 
-            .profile-card { padding: 4px 10px; gap: 8px; }
-            .profile-name { font-size: 11px; } .profile-username { font-size: 9px; }
-            .avatar-container { width: 32px; height: 32px; min-width: 32px; min-height: 32px; }
+            /* PERBAIKAN UI PROFIL UNTUK HP - DIPERBESAR AGAR LEBIH PAS */
+            .profile-card { padding: 6px 12px; gap: 10px; } 
+            .profile-name { font-size: 13px; } 
+            .profile-username { font-size: 10px; } 
+            .avatar-container { width: 38px; height: 38px; min-width: 38px; min-height: 38px; } 
 
             .inventory-bar { padding: 4px 10px; gap: 8px; overflow-x: auto; max-width: 100%; }
             .inventory-bar::-webkit-scrollbar { display: none; }
@@ -353,13 +351,14 @@
     <main class="main-content">
         <!-- Top Bar -->
         <header class="top-bar">
-            <!-- Baris 1: Logo (Kiri) & Profile (Kanan) -->
+            <!-- Baris 1: Logo & Profile -->
             <div class="top-bar-row">
                 <div class="left-group">
                     <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
                     <div class="brand-logo">
-                        <img src="../logo.png.png" alt="Beyonce" class="logo-main" onerror="this.src='../logo.png.png'">
-                        <img src="../kitty.png.png" alt="Kitty" class="logo-sub" onerror="this.src='../kitty.png.png'">
+                        <!-- Perbaikan onerror agar tidak infinite loop/nge-lag -->
+                        <img src="../logo.png.png" alt="Beyonce" class="logo-main" onerror="this.onerror=null; this.src='../logo.png';">
+                        <img src="../kitty.png.png" alt="Kitty" class="logo-sub" onerror="this.onerror=null; this.src='../kitty.png';">
                         <span class="brand-text">Kitty Tenacity</span>
                     </div>
                 </div>
@@ -371,7 +370,7 @@
                             <span class="profile-username" id="profileUsername">@loading</span>
                         </div>
                         <div class="avatar-container">
-                            <img src="../kitty.png.png" alt="Avatar" class="profile-pic" id="userAvatar">
+                            <img src="../kitty.png.png" alt="Avatar" class="profile-pic" id="userAvatar" onerror="this.onerror=null; this.src='../kitty.png';">
                             <img src="" alt="Border" class="profile-border" id="profileBorder" style="display: none;">
                         </div>
                     </a>
@@ -420,16 +419,14 @@
 
     <script>
         const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
-        
-        // PENTING: Lokasi folder Skin/Border. Silakan ganti sesuai dengan lokasi sebenarnya di servermu
-        // Contoh lain: "../gacha-skin/", "../border/", atau "../skin/"
         const SKIN_FOLDER_URL = "../skin/"; 
         
         let activeMode = "chat"; 
         let currentUserData = {
             userId: getUserId(),
             username: "User",
-            skinKode: "", 
+            skinBorderCode: "", 
+            skinChatCode: "",
             linkProfil: "../kitty.png.png"
         };
         let lastMessageId = ""; 
@@ -470,27 +467,35 @@
                     document.getElementById("valKristalOmega").innerText = p.kristalOmega || 0;
                     
                     currentUserData.username = p.nama || p.username || "User";
-                    currentUserData.linkProfil = p.photoProfile || p.linkProfil || "../kitty.png.png";
+                    // PP langsung pakai URL ImgBB dari statuschat
+                    currentUserData.linkProfil = p.photoProfile || p.linkProfil || "../kitty.png";
                     
-                    // Deteksi Skin dari data user
-                    if (p.skins && p.skins.border_skin) {
-                        currentUserData.skinKode = p.skins.border_skin;
+                    // Logika Konversi BORDER & CHAT Skin
+                    let rawSkinCode = "";
+                    if (p.skin) {
+                        rawSkinCode = typeof p.skin === 'string' ? p.skin : (p.skin.border || p.skin.border_skin || "");
+                    } else if (p.skins) {
+                        rawSkinCode = p.skins.border_skin || p.skins.chat_skin || "";
                     } else if (typeof p.inventory === "string") {
-                        currentUserData.skinKode = p.inventory;
+                        rawSkinCode = p.inventory;
+                    }
+
+                    if (rawSkinCode) {
+                        // Pastikan variabel menyimpan base text-nya
+                        let baseCode = rawSkinCode.replace("BORDER_", "").replace("CHAT_", "");
+                        // Set border menjadi BORDER_XXX dan chat menjadi CHAT_XXX
+                        currentUserData.skinBorderCode = "BORDER_" + baseCode;
+                        currentUserData.skinChatCode = "CHAT_" + baseCode;
                     }
 
                     document.getElementById("profileName").innerText = currentUserData.username;
                     document.getElementById("profileUsername").innerText = "@" + (p.username || "user");
                     document.getElementById("userAvatar").src = currentUserData.linkProfil;
                     
-                    // PEMASANGAN BORDER DARI FOLDER SKIN
-                    if(currentUserData.skinKode) {
+                    // PEMASANGAN BORDER
+                    if(currentUserData.skinBorderCode) {
                         const borderEl = document.getElementById("profileBorder");
-                        let skinFileName = currentUserData.skinKode;
-                        if (!skinFileName.endsWith(".png")) skinFileName += ".png";
-                        
-                        // Gabungkan folder + nama file skin
-                        borderEl.src = SKIN_FOLDER_URL + skinFileName; 
+                        borderEl.src = SKIN_FOLDER_URL + currentUserData.skinBorderCode + ".png"; 
                         borderEl.style.display = "block";
                     }
                 }
@@ -534,24 +539,32 @@
             const displayName = isSelf ? "Kamu" : (msgData.username || "System");
             const timeHTML = `<span class="msg-time">${msgData.waktu || getCurrentTime()}</span>`;
             
-            // PEMASANGAN BORDER SKIN DI CHAT BUBBLE
+            // LOGIKA PEMASANGAN SKIN CHAT BUBBLE & BORDER AVATAR
             let bgStyle = "";
             let borderHTML = "";
+            let rawSkin = msgData.skinChatCode || msgData.skinBorderCode || msgData.skin || "";
 
-            if (msgData.skin) {
-                let skinFile = msgData.skin;
-                if (!skinFile.endsWith(".png")) skinFile += ".png";
-                let skinFullPath = SKIN_FOLDER_URL + skinFile;
-
-                bgStyle = `background-image: url('${skinFullPath}'); background-color: rgba(255,255,255,0.7);`;
-                borderHTML = `<img src="${skinFullPath}" class="msg-border" onerror="this.style.display='none'">`;
+            if (rawSkin) {
+                // Ekstrak ID nomornya saja (misal dari BORDER_365 ambil 365)
+                let baseCode = rawSkin.replace("BORDER_", "").replace("CHAT_", "");
+                
+                // Set path untuk background chat
+                let chatFullPath = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".png";
+                bgStyle = `background-image: url('${chatFullPath}'); background-color: rgba(255,255,255,0.7);`;
+                
+                // Set path untuk border avatar
+                let borderFullPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".png";
+                borderHTML = `<img src="${borderFullPath}" class="msg-border" onerror="this.style.display='none'">`;
             }
             
+            // Hindari infinite loop jika PP (linkProfil) gagal terload
+            const ppSrc = msgData.linkProfil || currentUserData.linkProfil || '../kitty.png';
+
             const html = `
                 <div class="message ${sideClass}">
                     <div class="msg-header">
                         <div class="msg-avatar-wrapper">
-                            <img src="${msgData.linkProfil || currentUserData.linkProfil || '../kitty.png.png'}" class="msg-avatar" onerror="this.src='../kitty.png.png'">
+                            <img src="${ppSrc}" class="msg-avatar" onerror="this.onerror=null; this.src='../kitty.png';">
                             ${borderHTML}
                         </div>
                         <div class="msg-name-time">
@@ -606,7 +619,7 @@
                 const payloadGlobal = {
                     id: currentUserData.userId,
                     chat: messageText,
-                    skin: currentUserData.skinKode, 
+                    skin: currentUserData.skinBorderCode, // Kirim ke server
                     waktu: getCurrentTime(),
                     linkProfil: currentUserData.linkProfil,
                     username: currentUserData.username
@@ -628,14 +641,19 @@
                 }
                 let displayNameModel = selectedModel === 'ultrakitty' ? "UltraKitty Pro" : (selectedModel.charAt(0).toUpperCase() + selectedModel.slice(1));
                 
-                const userPayload = { chat: messageText, waktu: getCurrentTime(), linkProfil: currentUserData.linkProfil, skin: currentUserData.skinKode };
+                const userPayload = { 
+                    chat: messageText, 
+                    waktu: getCurrentTime(), 
+                    linkProfil: currentUserData.linkProfil, 
+                    skin: currentUserData.skinBorderCode 
+                };
                 renderChatHTML(userPayload, true);
 
                 const uniqueMsgId = "ai-msg-" + Date.now();
                 const aiLoadingHtml = `
                     <div class="message ai" id="${uniqueMsgId}">
                         <div class="msg-header">
-                            <div class="msg-avatar-wrapper"><img src="../kitty.png.png" class="msg-avatar"></div>
+                            <div class="msg-avatar-wrapper"><img src="../kitty.png" class="msg-avatar" onerror="this.onerror=null; this.src='../kitty.png';"></div>
                             <div class="msg-name-time">
                                 <span class="msg-name">${displayNameModel}</span>
                                 <span class="msg-time">${getCurrentTime()}</span>
