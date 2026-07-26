@@ -135,7 +135,6 @@
             width: 40px; height: 40px;
             min-width: 40px; min-height: 40px;
             flex-shrink: 0;
-            /* Dibiarkan tanpa overflow: hidden agar border tidak kepotong bulat */
         }
         .profile-pic {
             width: 100%; height: 100%;
@@ -143,7 +142,6 @@
             border: 2px solid rgba(255,255,255,0.8);
         }
         
-        /* BORDER DIPERBAIKI: multiply + filter buat hilangin sisa putih kotor JPG */
         .profile-border {
             position: absolute;
             top: 50%; left: 50%; transform: translate(-50%, -50%);
@@ -490,11 +488,11 @@
                     
                     if(currentUserData.skinBorderCode) {
                         const borderEl = document.getElementById("profileBorder");
-                        // Fallback ke .png kalau file .jpg nya nggak ada
-                        borderEl.src = SKIN_FOLDER_URL + currentUserData.skinBorderCode + ".jpg"; 
+                        // PERUBAHAN: Prioritaskan load .png terlebih dahulu
+                        borderEl.src = SKIN_FOLDER_URL + currentUserData.skinBorderCode + ".png"; 
                         borderEl.onerror = function() {
-                            if (!this.src.endsWith('.png')) {
-                                this.src = SKIN_FOLDER_URL + currentUserData.skinBorderCode + ".png";
+                            if (!this.src.endsWith('.jpg')) {
+                                this.src = SKIN_FOLDER_URL + currentUserData.skinBorderCode + ".jpg";
                             }
                         };
                         borderEl.style.display = "block";
@@ -552,16 +550,29 @@
             if (rawSkin) {
                 let baseCode = rawSkin.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
                 
-                // Coba nge-load file .jpg dulu untuk Chat Skin
-                let chatFullPath = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".jpg";
-                let chatFallbackPath = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".png";
+                // PERUBAHAN: Memastikan format yang dipanggil adalah .png (contoh spesifik: CHAT_365.png jika basecode 365)
+                let chatSkinUrl = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".png"; 
                 
-                // Tambahan `mix-blend-mode` di sini biar putih di chat skin juga hilang, dan teks dipaksa hitam!
-                bgStyle = `background-image: url('${chatFullPath}'), url('${chatFallbackPath}'); background-color: transparent !important; border: none !important; box-shadow: none !important; mix-blend-mode: multiply; filter: contrast(1.1); color: #000 !important;`;
+                // PERUBAHAN: CSS 9-slice scaling agar burung & hati di pinggir tidak gepeng/pecah,
+                // sementara bagian tengah (merah muda kosong) akan meregang sesuai panjang tulisan.
+                bgStyle = `
+                    border-style: solid !important;
+                    border-width: 40px 75px 40px 115px !important; /* Menyesuaikan tebal ujung agar gambar burung/hiasan masuk akal area potongnya */
+                    border-image-source: url('${chatSkinUrl}') !important;
+                    border-image-slice: 40 75 40 115 fill !important; /* Area slice (Atas, Kanan, Bawah, Kiri) */
+                    border-image-repeat: stretch !important;
+                    background: transparent !important; 
+                    box-shadow: none !important; 
+                    color: #4a3b32 !important; /* Warna text dicocokkan sedikit gelap agar serasi dengan background pastel */
+                    border-radius: 0 !important; /* Matikan radius bawaan karena border-image sudah mengatur lekukannya */
+                    padding: 5px 0px !important; /* Padding spasi text dalam */
+                    min-height: 40px;
+                `;
                 
-                let borderFullPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".jpg";
                 let borderFallbackPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".png";
-                borderHTML = `<img src="${borderFullPath}" class="msg-border" onerror="this.src='${borderFallbackPath}'; this.onerror=null;">`;
+                let borderFullPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".jpg";
+                // Prioritas border profil juga diubah menjadi PNG terlebih dahulu
+                borderHTML = `<img src="${borderFallbackPath}" class="msg-border" onerror="this.src='${borderFullPath}'; this.onerror=null;">`;
             }
             
             const ppSrc = msgData.linkProfil || currentUserData.linkProfil || '../kitty.png';
