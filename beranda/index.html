@@ -559,22 +559,28 @@
                 let chatSkinUrl = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".png"; 
                 
                 // MENGGUNAKAN SETTINGAN TERBAIK (ANTI-GEPENG) 
-                bgStyle = `
-                    border-style: solid !important;
-                    border-width: 45px 50px 45px 80px !important; 
-                    border-image-source: url('${chatSkinUrl}') !important;
-                    border-image-slice: 70 90 60 130 fill !important; 
-                    border-image-repeat: stretch !important;
-                    background: transparent !important; 
-                    box-shadow: none !important; 
-                    color: #4a3b32 !important; 
-                    border-radius: 0 !important; 
-                    padding: 5px 205px !important; 
-                    min-height: 80px !important; 
-                    min-width: 170px !important; 
-                    display: flex !important;
-                    align-items: center !important; 
-                `;
+               bgStyle = `
+    border-style: solid !important;
+    border-width: 45px 50px 45px 80px !important; 
+    border-image-source: url('${chatSkinUrl}') !important;
+    border-image-slice: 70 90 60 130 fill !important; 
+    border-image-repeat: stretch !important;
+    background: transparent !important; 
+    box-shadow: none !important; 
+    color: #4a3b32 !important; 
+    border-radius: 0 !important;
+`;
+    
+    /* Ruang kosong kiri-kanan pakai padding 50px */
+    padding: 10px 50px !important; 
+    
+    /* Min-width 300px memaksa bubble tetap panjang/lebar */
+    min-width: 300px !important; 
+    
+    min-height: 80px !important; 
+    display: flex !important;
+    align-items: center !important; 
+`;
                 
                 let borderFallbackPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".png";
                 let borderFullPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".jpg";
