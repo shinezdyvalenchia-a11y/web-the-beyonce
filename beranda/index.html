@@ -26,14 +26,12 @@
         }
 
         /* ==========================================
-           1. BACKGROUND VIDEO & CAHAYA TIPIS
+           1. BACKGROUND & CAHAYA
            ========================================== */
         .video-bg {
-            position: absolute;
-            top: 0; left: 0;
+            position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
-            object-fit: cover;
-            z-index: -2;
+            object-fit: cover; z-index: -2;
         }
 
         .corner-glows {
@@ -47,7 +45,7 @@
         .glow-br { bottom: -10%; right: -10%; background: #ffffff; opacity: 0.1; }
 
         /* ==========================================
-           2. SIDEBAR KIRI (TASKBAR SLIDE-OUT DI HP)
+           2. SIDEBAR KIRI (TASKBAR)
            ========================================== */
         .left-sidebar {
             width: 90px;
@@ -72,27 +70,15 @@
         .side-item.active { background: rgba(255, 255, 255, 0.85); color: #1a5cff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .side-icon { font-size: 20px; }
 
-        /* Overlay gelap saat sidebar keluar di HP */
         .sidebar-overlay {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
             z-index: 90; opacity: 0; transition: opacity 0.3s ease;
         }
         .sidebar-overlay.active { display: block; opacity: 1; }
 
-        /* Tombol Toggle Sidebar */
-        .sidebar-toggle-btn {
-            display: none;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            color: #fff; font-size: 18px; padding: 6px 12px;
-            border-radius: 12px; cursor: pointer; z-index: 30;
-        }
-
         /* ==========================================
-           3. MAIN CONTAINER & TOP BAR
+           3. MAIN CONTAINER & TOP BAR (TATA LETAK BARU)
            ========================================== */
         .main-content {
             flex-grow: 1; display: flex; flex-direction: column;
@@ -100,69 +86,92 @@
         }
 
         .top-bar {
-            display: flex; justify-content: space-between; align-items: flex-start;
-            padding: 15px 20px; z-index: 20; width: 100%; gap: 10px;
+            display: flex; flex-direction: column; gap: 15px;
+            padding: 15px 25px; z-index: 20; width: 100%;
         }
 
-        .top-center-container {
-            position: absolute; left: 50%; transform: translateX(-50%);
-            display: flex; flex-direction: column; align-items: center; gap: 8px;
+        /* Baris 1: Logo & Profil (Rapi tidak overlap) */
+        .top-bar-row {
+            display: flex; justify-content: space-between; align-items: center; width: 100%;
         }
 
-        .top-center-logo {
+        .left-group { display: flex; align-items: center; gap: 15px; }
+        
+        .sidebar-toggle-btn {
+            display: none; background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #fff; font-size: 18px; padding: 6px 12px;
+            border-radius: 12px; cursor: pointer; flex-shrink: 0;
+        }
+
+        .brand-logo {
             display: flex; align-items: center; gap: 10px;
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             padding: 6px 18px; border-radius: 35px;
             border: 1px solid rgba(255, 255, 255, 0.4);
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            flex-shrink: 0;
         }
-        .logo-main { height: 40px; width: auto; border-radius: 50%; object-fit: contain; }
-        .logo-sub { height: 28px; width: auto; border-radius: 50%; object-fit: contain; }
+        .logo-main { height: 35px; width: auto; border-radius: 50%; object-fit: contain; }
+        .logo-sub { height: 25px; width: auto; border-radius: 50%; object-fit: contain; }
         .brand-text { font-weight: 800; font-size: 16px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.4); white-space: nowrap; }
 
-        /* INVENTORY UI */
-        .inventory-bar {
-            display: flex; gap: 10px;
-            background: rgba(0, 0, 0, 0.45);
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            padding: 4px 14px; border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .inv-item { display: flex; align-items: center; gap: 4px; color: #fff; font-size: 11px; font-weight: 800; }
-        .inv-item img { width: 16px; height: 16px; object-fit: contain; }
-
-        .top-right-area {
-            display: flex; flex-direction: column; align-items: flex-end; gap: 8px; margin-left: auto;
-        }
         .profile-card {
-            display: flex; align-items: center; gap: 10px;
+            display: flex; align-items: center; gap: 12px;
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            padding: 5px 12px; border-radius: 30px;
+            padding: 5px 15px; border-radius: 30px;
             border: 1px solid rgba(255, 255, 255, 0.4);
             text-decoration: none; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: 0.2s;
+            transition: 0.2s; flex-shrink: 0;
         }
         .profile-card:hover { background: rgba(255, 255, 255, 0.4); }
         .profile-info { display: flex; flex-direction: column; text-align: right; }
-        .profile-name { font-weight: 800; font-size: 12px; color: #fff; line-height: 1.2; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
-        .profile-username { font-weight: 700; font-size: 10px; color: rgba(255,255,255,0.85); }
+        .profile-name { font-weight: 800; font-size: 14px; color: #fff; line-height: 1.2; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+        .profile-username { font-weight: 700; font-size: 11px; color: rgba(255,255,255,0.85); }
         
-        /* AVATAR DENGAN BORDER SKIN */
-        .avatar-container { position: relative; width: 36px; height: 36px; flex-shrink: 0; }
-        .profile-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #fff; }
-        .profile-border { position: absolute; top: -4px; left: -4px; width: calc(100% + 8px); height: calc(100% + 8px); pointer-events: none; object-fit: contain; z-index: 2;}
-
-        .sub-nav-links {
-            display: flex; gap: 6px;
+        /* FIX AVATAR AGAR BULAT SEMPURNA & BORDER */
+        .avatar-container {
+            position: relative;
+            width: 40px; height: 40px; /* Dikunci agar tidak lonjong */
+            min-width: 40px; min-height: 40px;
+            flex-shrink: 0; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
         }
+        .profile-pic {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            object-fit: cover; /* Wajib cover agar proporsional */
+            border: 2px solid rgba(255,255,255,0.8);
+        }
+        .profile-border {
+            position: absolute;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 145%; height: 145%; /* Diperbesar agar presisi di luar avatar */
+            pointer-events: none; object-fit: contain; z-index: 2;
+        }
+
+        /* Baris 2: Inventory & Sub Nav (Rapi, Kiri-Kanan) */
+        .sub-row { margin-top: -5px; flex-wrap: wrap; gap: 10px; }
+
+        .inventory-bar {
+            display: flex; gap: 12px;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 6px 16px; border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+        .inv-item { display: flex; align-items: center; gap: 5px; color: #fff; font-size: 12px; font-weight: 800; }
+        .inv-item img { width: 18px; height: 18px; object-fit: contain; }
+
+        .sub-nav-links { display: flex; gap: 8px; flex-shrink: 0; }
         .sub-nav-btn {
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.4);
-            padding: 4px 10px; border-radius: 15px;
-            color: #fff; font-size: 10px; font-weight: 700;
+            padding: 6px 12px; border-radius: 15px;
+            color: #fff; font-size: 11px; font-weight: 800;
             text-decoration: none; transition: 0.2s; white-space: nowrap;
         }
         .sub-nav-btn:hover { background: rgba(255, 255, 255, 0.45); }
@@ -172,9 +181,8 @@
            ========================================== */
         .chat-container {
             flex-grow: 1; overflow-y: auto; 
-            padding: 20px 20px 120px 20px;
-            display: flex; flex-direction: column; gap: 15px;
-            scroll-behavior: smooth;
+            padding: 20px; display: flex; flex-direction: column; gap: 15px;
+            padding-bottom: 120px; scroll-behavior: smooth;
         }
         .chat-container::-webkit-scrollbar { display: none; }
 
@@ -187,14 +195,22 @@
         .msg-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
         .message.user .msg-header { flex-direction: row-reverse; }
         
-        .msg-avatar-wrapper { position: relative; width: 28px; height: 28px; flex-shrink: 0;}
+        .msg-avatar-wrapper {
+            position: relative;
+            width: 30px; height: 30px;
+            min-width: 30px; min-height: 30px;
+            flex-shrink: 0; border-radius: 50%;
+        }
         .msg-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-        .msg-border { position: absolute; top: -3px; left: -3px; width: calc(100% + 6px); height: calc(100% + 6px); pointer-events: none; z-index: 2; object-fit: contain;}
+        .msg-border {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 145%; height: 145%; pointer-events: none; z-index: 2; object-fit: contain;
+        }
 
         .msg-name-time { display: flex; flex-direction: column; }
         .message.user .msg-name-time { align-items: flex-end; }
-        .msg-name { font-size: 11px; font-weight: 800; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
-        .msg-time { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.75); }
+        .msg-name { font-size: 12px; font-weight: 800; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .msg-time { font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.75); }
 
         .msg-bubble {
             padding: 12px 18px; font-size: 14px; line-height: 1.5; word-break: break-word;
@@ -209,7 +225,7 @@
         .ai .msg-bubble { border-radius: 20px 20px 20px 4px; border-left: 4px solid #1a5cff; }
 
         /* ==========================================
-           5. INPUT DOCK & MODE SELECTION
+           5. INPUT DOCK
            ========================================== */
         .input-dock-wrapper {
             position: absolute; bottom: 15px; left: 15px; right: 15px;
@@ -229,8 +245,7 @@
         .model-select {
             background: rgba(255, 255, 255, 0.85); border: none;
             padding: 6px 12px; border-radius: 12px; font-weight: 700;
-            color: #333; outline: none; cursor: pointer; font-size: 12px;
-            flex-grow: 1;
+            color: #333; outline: none; cursor: pointer; font-size: 12px; flex-grow: 1;
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
@@ -273,7 +288,6 @@
            6. RESPONSIVE / HP CUSTOMIZATION
            ========================================== */
         @media screen and (max-width: 768px) {
-            /* Taskbar Samping di HP (Drawer mode) */
             .left-sidebar {
                 position: fixed; top: 0; left: 0; height: 100%;
                 width: 180px; padding: 25px 10px; gap: 10px;
@@ -282,64 +296,26 @@
                 align-items: stretch;
             }
             .left-sidebar.open { transform: translateX(0); }
-
-            .side-item {
-                width: 100%; height: 44px; flex-direction: row;
-                justify-content: flex-start; padding: 0 15px; gap: 12px;
-                font-size: 12px; text-align: left; border-radius: 12px;
-            }
-            .side-icon { font-size: 18px; }
-
-            /* Tombol Toggle muncul di HP */
+            .side-item { width: 100%; height: 44px; flex-direction: row; justify-content: flex-start; padding: 0 15px; font-size: 12px; border-radius: 12px; }
             .sidebar-toggle-btn { display: block; }
 
-            /* Header & Top Bar Layout Rapi di HP */
-            .top-bar {
-                flex-direction: column; padding: 10px 12px; gap: 8px;
-            }
+            .top-bar { padding: 10px 12px; gap: 10px; }
+            
+            .brand-logo { padding: 4px 10px; gap: 6px; border-radius: 20px; }
+            .logo-main { height: 26px; } .logo-sub { height: 18px; } .brand-text { font-size: 12px; }
 
-            .top-bar-header-row {
-                display: flex; width: 100%; justify-content: space-between; align-items: center;
-            }
+            .profile-card { padding: 4px 10px; gap: 8px; }
+            .profile-name { font-size: 11px; } .profile-username { font-size: 9px; }
+            .avatar-container { width: 32px; height: 32px; min-width: 32px; min-height: 32px; }
 
-            .top-center-container {
-                position: static; transform: none; width: 100%;
-                flex-direction: row; justify-content: space-between; align-items: center;
-            }
-
-            .top-center-logo {
-                padding: 4px 10px; gap: 6px; border-radius: 20px;
-            }
-            .logo-main { height: 26px; }
-            .logo-sub { height: 18px; }
-            .brand-text { font-size: 12px; }
-
-            .top-right-area {
-                margin-left: 0; flex-direction: row; align-items: center; width: auto; gap: 6px;
-            }
-
-            .profile-card { padding: 3px 8px; gap: 6px; }
-            .profile-info { display: flex; text-align: right; }
-            .profile-name { font-size: 10px; }
-            .profile-username { font-size: 8px; }
-            .avatar-container { width: 28px; height: 28px; }
-
-            .top-sub-row {
-                display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 5px;
-            }
-
-            .inventory-bar {
-                padding: 3px 8px; gap: 8px; overflow-x: auto;
-            }
-            .inv-item { font-size: 9px; }
-            .inv-item img { width: 13px; height: 13px; }
-
-            .sub-nav-links { gap: 4px; }
-            .sub-nav-btn { font-size: 9px; padding: 3px 7px; border-radius: 10px; }
-
+            .inventory-bar { padding: 4px 10px; gap: 8px; overflow-x: auto; max-width: 100%; }
+            .inventory-bar::-webkit-scrollbar { display: none; }
+            .inv-item { font-size: 10px; } .inv-item img { width: 14px; height: 14px; }
+            .sub-nav-btn { font-size: 9px; padding: 4px 8px; }
+            
             .chat-container { padding: 10px 10px 120px 10px; }
-            .message { max-width: 88%; }
-            .input-dock-wrapper { left: 8px; right: 8px; bottom: 10px; }
+            .message { max-width: 90%; }
+            .input-dock-wrapper { left: 10px; right: 10px; bottom: 10px; }
         }
     </style>
 </head>
@@ -377,17 +353,18 @@
     <main class="main-content">
         <!-- Top Bar -->
         <header class="top-bar">
-            <!-- Baris Atas Header (Mobile Friendly) -->
-            <div class="top-bar-header-row">
-                <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
-                
-                <div class="top-center-logo">
-                    <img src="../logo.png.png" alt="Beyonce" class="logo-main" onerror="this.src='logo.png.png'">
-                    <img src="../kitty.png.png" alt="Kitty" class="logo-sub" onerror="this.src='kitty.png.png'">
-                    <span class="brand-text">Kitty Tenacity</span>
+            <!-- Baris 1: Logo (Kiri) & Profile (Kanan) -->
+            <div class="top-bar-row">
+                <div class="left-group">
+                    <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
+                    <div class="brand-logo">
+                        <img src="../logo.png.png" alt="Beyonce" class="logo-main" onerror="this.src='../logo.png.png'">
+                        <img src="../kitty.png.png" alt="Kitty" class="logo-sub" onerror="this.src='../kitty.png.png'">
+                        <span class="brand-text">Kitty Tenacity</span>
+                    </div>
                 </div>
 
-                <div class="top-right-area">
+                <div class="right-group">
                     <a href="../profil/" class="profile-card">
                         <div class="profile-info">
                             <span class="profile-name" id="profileName">Loading...</span>
@@ -395,14 +372,14 @@
                         </div>
                         <div class="avatar-container">
                             <img src="../kitty.png.png" alt="Avatar" class="profile-pic" id="userAvatar">
-                            <img src="" alt="" class="profile-border" id="profileBorder" style="display: none;">
+                            <img src="" alt="Border" class="profile-border" id="profileBorder" style="display: none;">
                         </div>
                     </a>
                 </div>
             </div>
 
-            <!-- Baris Bawah Header (Inventory & Shortcut Nav) -->
-            <div class="top-sub-row">
+            <!-- Baris 2: Inventory & Sub Nav Shortcut -->
+            <div class="top-bar-row sub-row">
                 <div class="inventory-bar" id="inventoryBar">
                     <div class="inv-item"><img src="KRISTAL.PNG" alt="K"> <span id="valKristal">0</span></div>
                     <div class="inv-item"><img src="TBCOIN.PNG" alt="C"> <span id="valTbCoin">0</span></div>
@@ -442,16 +419,19 @@
     </main>
 
     <script>
-        const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space"; 
-        let activeMode = "chat"; 
+        const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
         
+        // PENTING: Lokasi folder Skin/Border. Silakan ganti sesuai dengan lokasi sebenarnya di servermu
+        // Contoh lain: "../gacha-skin/", "../border/", atau "../skin/"
+        const SKIN_FOLDER_URL = "../skin/"; 
+        
+        let activeMode = "chat"; 
         let currentUserData = {
             userId: getUserId(),
             username: "User",
             skinKode: "", 
             linkProfil: "../kitty.png.png"
         };
-        
         let lastMessageId = ""; 
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -463,32 +443,22 @@
             setInterval(pollNewChats, 3000);
         });
 
-        // Toggle Taskbar Samping di HP
         function toggleSidebar() {
-            const sidebar = document.getElementById("leftSidebar");
-            const overlay = document.getElementById("sidebarOverlay");
-            sidebar.classList.toggle("open");
-            overlay.classList.toggle("active");
+            document.getElementById("leftSidebar").classList.toggle("open");
+            document.getElementById("sidebarOverlay").classList.toggle("active");
         }
 
-        // MEMPERBAIKI ERROR 422 STATUSCHAT
         async function loadStatusChat() {
             try {
                 const sessionKey = getCookie("user_session") || currentUserData.userId;
                 
-                // Key diperbaiki menjadi session_cookie & sessionCookie agar lolos validasi backend
                 const response = await fetch(`${BACKEND_URL}/statuschat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        session_cookie: sessionKey,
-                        sessionCookie: sessionKey 
-                    })
+                    body: JSON.stringify({ session_cookie: sessionKey, sessionCookie: sessionKey })
                 });
 
                 const data = await response.json();
-                
-                // Support struktur data.data maupun data.profile
                 const profileObj = data.data || data.profile;
 
                 if ((data.status === "success" || response.ok) && profileObj) {
@@ -502,9 +472,9 @@
                     currentUserData.username = p.nama || p.username || "User";
                     currentUserData.linkProfil = p.photoProfile || p.linkProfil || "../kitty.png.png";
                     
-                    // Deteksi Skin
+                    // Deteksi Skin dari data user
                     if (p.skins && p.skins.border_skin) {
-                        currentUserData.skinKode = p.skins.border_skin.replace(".png", "");
+                        currentUserData.skinKode = p.skins.border_skin;
                     } else if (typeof p.inventory === "string") {
                         currentUserData.skinKode = p.inventory;
                     }
@@ -513,9 +483,14 @@
                     document.getElementById("profileUsername").innerText = "@" + (p.username || "user");
                     document.getElementById("userAvatar").src = currentUserData.linkProfil;
                     
+                    // PEMASANGAN BORDER DARI FOLDER SKIN
                     if(currentUserData.skinKode) {
                         const borderEl = document.getElementById("profileBorder");
-                        borderEl.src = currentUserData.skinKode.includes('.png') ? currentUserData.skinKode : currentUserData.skinKode + ".png"; 
+                        let skinFileName = currentUserData.skinKode;
+                        if (!skinFileName.endsWith(".png")) skinFileName += ".png";
+                        
+                        // Gabungkan folder + nama file skin
+                        borderEl.src = SKIN_FOLDER_URL + skinFileName; 
                         borderEl.style.display = "block";
                     }
                 }
@@ -536,9 +511,7 @@
                         lastMessageId = msg.id || lastMessageId;
                     });
                 }
-            } catch (error) {
-                console.error("Gagal load history:", error);
-            }
+            } catch (error) { console.error("Gagal load history:", error); }
         }
 
         async function pollNewChats() {
@@ -552,17 +525,27 @@
                         lastMessageId = msg.id;
                     });
                 }
-            } catch (error) { /* Silent fail */ }
+            } catch (error) {}
         }
 
         function renderChatHTML(msgData, isSelf) {
             const chatContainer = document.getElementById("chatContainer");
             const sideClass = isSelf ? "user" : "ai";
             const displayName = isSelf ? "Kamu" : (msgData.username || "System");
-            
             const timeHTML = `<span class="msg-time">${msgData.waktu || getCurrentTime()}</span>`;
-            const bgStyle = msgData.skin ? `background-image: url('${msgData.skin}.png'); background-color: rgba(255,255,255,0.7);` : "";
-            const borderHTML = msgData.skin ? `<img src="${msgData.skin}.png" class="msg-border" onerror="this.style.display='none'">` : "";
+            
+            // PEMASANGAN BORDER SKIN DI CHAT BUBBLE
+            let bgStyle = "";
+            let borderHTML = "";
+
+            if (msgData.skin) {
+                let skinFile = msgData.skin;
+                if (!skinFile.endsWith(".png")) skinFile += ".png";
+                let skinFullPath = SKIN_FOLDER_URL + skinFile;
+
+                bgStyle = `background-image: url('${skinFullPath}'); background-color: rgba(255,255,255,0.7);`;
+                borderHTML = `<img src="${skinFullPath}" class="msg-border" onerror="this.style.display='none'">`;
+            }
             
             const html = `
                 <div class="message ${sideClass}">
@@ -583,24 +566,18 @@
         }
 
         function getCurrentTime() {
-            const d = new Date();
-            return d.getHours().toString().padStart(2, '0') + ":" + d.getMinutes().toString().padStart(2, '0');
+            const d = new Date(); return d.getHours().toString().padStart(2, '0') + ":" + d.getMinutes().toString().padStart(2, '0');
         }
 
         function toggleMode() {
             const btn = document.getElementById("modeToggleBtn");
             const popup = document.getElementById("modelPopup");
-            
             if (activeMode === "chat") {
-                activeMode = "tanya";
-                btn.innerText = "Tanya AI";
-                btn.classList.add("tanya-active");
-                popup.classList.add("active");
+                activeMode = "tanya"; btn.innerText = "Tanya AI";
+                btn.classList.add("tanya-active"); popup.classList.add("active");
             } else {
-                activeMode = "chat";
-                btn.innerText = "Chat";
-                btn.classList.remove("tanya-active");
-                popup.classList.remove("active");
+                activeMode = "chat"; btn.innerText = "Chat";
+                btn.classList.remove("tanya-active"); popup.classList.remove("active");
             }
         }
 
@@ -626,16 +603,14 @@
             inputField.value = ""; 
 
             if (activeMode === "chat") {
-                const waktuKirim = getCurrentTime();
                 const payloadGlobal = {
                     id: currentUserData.userId,
                     chat: messageText,
                     skin: currentUserData.skinKode, 
-                    waktu: waktuKirim,
+                    waktu: getCurrentTime(),
                     linkProfil: currentUserData.linkProfil,
                     username: currentUserData.username
                 };
-
                 renderChatHTML(payloadGlobal, true);
                 
                 try {
@@ -644,10 +619,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payloadGlobal)
                     });
-                } catch(e) {
-                    console.error("Gagal mengirim chat global", e);
-                }
-
+                } catch(e) { console.error("Gagal mengirim chat global", e); }
             } else {
                 let selectedModel = document.getElementById("modelSelect").value;
                 if (selectedModel === "auto") {
@@ -655,7 +627,7 @@
                     selectedModel = autoChoices[Math.floor(Math.random() * autoChoices.length)];
                 }
                 let displayNameModel = selectedModel === 'ultrakitty' ? "UltraKitty Pro" : (selectedModel.charAt(0).toUpperCase() + selectedModel.slice(1));
-
+                
                 const userPayload = { chat: messageText, waktu: getCurrentTime(), linkProfil: currentUserData.linkProfil, skin: currentUserData.skinKode };
                 renderChatHTML(userPayload, true);
 
@@ -697,7 +669,6 @@
                         const responseText = rawReply.substring(firstCommaIndex + 1).trim();
                         if (responseId === currentUserData.userId) { finalAnswer = responseText; }
                     }
-
                     document.getElementById(uniqueMsgId).querySelector('.msg-bubble').innerHTML = finalAnswer.replace(/\n/g, "<br>");
                 } catch (error) {
                     const el = document.getElementById(uniqueMsgId).querySelector('.msg-bubble');
