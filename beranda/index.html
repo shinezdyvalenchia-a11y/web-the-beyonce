@@ -78,7 +78,7 @@
         .sidebar-overlay.active { display: block; opacity: 1; }
 
         /* ==========================================
-           3. MAIN CONTAINER & TOP BAR
+           3. MAIN CONTAINER & TOP BAR (DIPERBESAR)
            ========================================== */
         .main-content {
             flex-grow: 1; display: flex; flex-direction: column;
@@ -116,24 +116,27 @@
         .logo-sub { height: 25px; width: auto; border-radius: 50%; object-fit: contain; }
         .brand-text { font-weight: 800; font-size: 16px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.4); white-space: nowrap; }
 
+        /* KOTAK PROFIL DIPERBESAR */
         .profile-card {
-            display: flex; align-items: center; gap: 12px;
+            display: flex; align-items: center; gap: 15px; /* Jarak dijauhkan biar lega */
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            padding: 5px 15px; border-radius: 30px;
+            padding: 8px 25px; /* Padding ditambah biar memanjang & tebal */
+            border-radius: 40px; 
             border: 1px solid rgba(255, 255, 255, 0.4);
             text-decoration: none; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             transition: 0.2s; flex-shrink: 0;
         }
         .profile-card:hover { background: rgba(255, 255, 255, 0.4); }
-        .profile-info { display: flex; flex-direction: column; text-align: right; }
-        .profile-name { font-weight: 800; font-size: 14px; color: #fff; line-height: 1.2; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
-        .profile-username { font-weight: 700; font-size: 11px; color: rgba(255,255,255,0.85); }
+        .profile-info { display: flex; flex-direction: column; text-align: right; justify-content: center; }
+        .profile-name { font-weight: 800; font-size: 16px; color: #fff; line-height: 1.2; text-shadow: 0 1px 2px rgba(0,0,0,0.4); } /* Font dibesarkan */
+        .profile-username { font-weight: 700; font-size: 13px; color: rgba(255,255,255,0.85); } /* Font dibesarkan */
         
+        /* FOTO PROFIL ATAS DIPERBESAR */
         .avatar-container {
             position: relative;
-            width: 40px; height: 40px;
-            min-width: 40px; min-height: 40px;
+            width: 55px; height: 55px; /* Dari 40px ke 55px */
+            min-width: 55px; min-height: 55px;
             flex-shrink: 0;
         }
         .profile-pic {
@@ -190,13 +193,14 @@
         .message.user { align-self: flex-end; align-items: flex-end; }
         .message.ai { align-self: flex-start; align-items: flex-start; }
 
-        .msg-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .msg-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
         .message.user .msg-header { flex-direction: row-reverse; }
         
+        /* FOTO PROFIL CHAT DIPERBESAR */
         .msg-avatar-wrapper {
             position: relative;
-            width: 30px; height: 30px;
-            min-width: 30px; min-height: 30px;
+            width: 45px; height: 45px; /* Dari 30px naik ke 45px biar pas sm border */
+            min-width: 45px; min-height: 45px;
             flex-shrink: 0; 
         }
         .msg-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
@@ -305,10 +309,11 @@
             .brand-logo { padding: 4px 10px; gap: 6px; border-radius: 20px; }
             .logo-main { height: 26px; } .logo-sub { height: 18px; } .brand-text { font-size: 12px; }
 
-            .profile-card { padding: 6px 12px; gap: 10px; } 
-            .profile-name { font-size: 13px; } 
-            .profile-username { font-size: 10px; } 
-            .avatar-container { width: 38px; height: 38px; min-width: 38px; min-height: 38px; } 
+            /* RESPONSIVE PROFIL BIAR GAK KEPOTONG DI HP */
+            .profile-card { padding: 8px 15px; gap: 12px; } 
+            .profile-name { font-size: 14px; } 
+            .profile-username { font-size: 11px; } 
+            .avatar-container { width: 45px; height: 45px; min-width: 45px; min-height: 45px; } 
 
             .inventory-bar { padding: 4px 10px; gap: 8px; overflow-x: auto; max-width: 100%; }
             .inventory-bar::-webkit-scrollbar { display: none; }
@@ -488,7 +493,6 @@
                     
                     if(currentUserData.skinBorderCode) {
                         const borderEl = document.getElementById("profileBorder");
-                        // PERUBAHAN: Prioritaskan load .png terlebih dahulu
                         borderEl.src = SKIN_FOLDER_URL + currentUserData.skinBorderCode + ".png"; 
                         borderEl.onerror = function() {
                             if (!this.src.endsWith('.jpg')) {
@@ -549,29 +553,29 @@
 
             if (rawSkin) {
                 let baseCode = rawSkin.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
-                
-                // PERUBAHAN: Memastikan format yang dipanggil adalah .png (contoh spesifik: CHAT_365.png jika basecode 365)
                 let chatSkinUrl = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".png"; 
                 
-                // PERUBAHAN: CSS 9-slice scaling agar burung & hati di pinggir tidak gepeng/pecah,
-                // sementara bagian tengah (merah muda kosong) akan meregang sesuai panjang tulisan.
+                // PENAMBAHAN: min-width & min-height agar bubble TIDAK GEPENG saat teks pendek.
+                // Ditambah Flexbox untuk menengahkan teks kalau cuma sedikit.
                 bgStyle = `
                     border-style: solid !important;
-                    border-width: 40px 75px 40px 115px !important; /* Menyesuaikan tebal ujung agar gambar burung/hiasan masuk akal area potongnya */
+                    border-width: 30px 60px 30px 90px !important; /* Proporsi diperhalus */
                     border-image-source: url('${chatSkinUrl}') !important;
-                    border-image-slice: 40 75 40 115 fill !important; /* Area slice (Atas, Kanan, Bawah, Kiri) */
+                    border-image-slice: 40 75 40 115 fill !important; 
                     border-image-repeat: stretch !important;
                     background: transparent !important; 
                     box-shadow: none !important; 
-                    color: #4a3b32 !important; /* Warna text dicocokkan sedikit gelap agar serasi dengan background pastel */
-                    border-radius: 0 !important; /* Matikan radius bawaan karena border-image sudah mengatur lekukannya */
-                    padding: 5px 0px !important; /* Padding spasi text dalam */
-                    min-height: 40px;
+                    color: #4a3b32 !important; 
+                    border-radius: 0 !important; 
+                    padding: 0px 10px !important; 
+                    min-height: 80px !important; /* MENCEGAH GEPENG */
+                    min-width: 170px !important; /* MENCEGAH NYUSUT KE KIRI/KANAN */
+                    display: flex !important;
+                    align-items: center !important; /* TEKS PENDEK RATA TENGAH VERTIKAL */
                 `;
                 
                 let borderFallbackPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".png";
                 let borderFullPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".jpg";
-                // Prioritas border profil juga diubah menjadi PNG terlebih dahulu
                 borderHTML = `<img src="${borderFallbackPath}" class="msg-border" onerror="this.src='${borderFullPath}'; this.onerror=null;">`;
             }
             
