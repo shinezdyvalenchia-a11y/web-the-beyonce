@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Koleksi Skin Web - Spesial Jiko</title>
+    <title>Skin Inventory</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
 
@@ -69,11 +69,13 @@
 
         .sidebar-title { 
             text-align: center; 
-            font-size: 18px; 
+            font-size: 16px; 
             color: #00a8ff; 
             margin-bottom: 5px; 
             font-weight: 800; 
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .nav-menu {
@@ -93,7 +95,7 @@
             background: rgba(255, 255, 255, 0.1);
             color: #fff;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 14px;
             border-radius: 12px;
             text-decoration: none;
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -167,7 +169,7 @@
             color: #fff;
             padding: 8px 16px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 800;
             cursor: pointer;
             display: flex;
@@ -179,11 +181,12 @@
         .back-btn:hover { background: rgba(255, 255, 255, 0.35); transform: scale(1.02); }
 
         .page-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 800;
             color: #fff;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
             white-space: nowrap;
+            letter-spacing: 0.5px;
         }
 
         /* ========================================= */
@@ -251,12 +254,12 @@
             flex-direction: column; 
             justify-content: center;
         }
-        .card-name { font-size: 12px; font-weight: 800; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        .card-name { font-size: 13px; font-weight: 800; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
         .card-jiko {
             margin-top: 5px; 
             padding-top: 5px; 
             border-top: 1px solid rgba(255,255,255,0.15);
-            font-size: 10.5px; 
+            font-size: 11px; 
             font-style: italic; 
             color: rgba(255, 255, 255, 0.85); 
             line-height: 1.3;
@@ -266,13 +269,14 @@
             position: absolute; 
             top: 8px; 
             left: 8px; 
-            font-size: 9px; 
+            font-size: 10px; 
             font-weight: 800;
             padding: 3px 8px; 
             border-radius: 10px; 
             z-index: 4; 
             color: white;
             box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            letter-spacing: 0.5px;
         }
         .bg-myth { background: #e91e63; }
         .bg-legend { background: #ff9800; }
@@ -301,7 +305,7 @@
                 grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 12px;
             }
-            .page-title { font-size: 14px; }
+            .page-title { font-size: 15px; }
         }
     </style>
 </head>
@@ -314,9 +318,6 @@
     <aside class="left-sidebar" id="leftSidebar">
         <h2 class="sidebar-title">Menu Utama</h2>
         <nav class="nav-menu">
-            <a href="../" class="nav-item">💬 Beranda</a>
-            <a href="../gacha-skin/" class="nav-item">🎁 Gacha</a>
-            <a href="../koleksi-kartu/" class="nav-item">🃏 Koleksi Kartu</a>
             <a href="../profil/" class="nav-item">👤 Profil</a>
         </nav>
 
@@ -339,7 +340,7 @@
                 <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
                 <button class="back-btn" onclick="goBack()">⬅ Kembali</button>
             </div>
-            <span class="page-title">Koleksi Skin Jiko</span>
+            <span class="page-title">Skin Inventory</span>
         </header>
 
         <!-- Container Grid Kartu -->
