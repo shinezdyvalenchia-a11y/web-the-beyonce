@@ -135,12 +135,16 @@
     </div>
 
 <script>
+    // Konfigurasi Link Frontend
     const CONFIG = {
         LINK_TIKTOK: "https://www.tiktok.com/@contoh/video/123",
         LINK_TELE_MSG: "https://t.me/grup_anda",
         LINK_ABSEN: "https://t.me/grup_anda/absen",
         TOKEN_IMG: "https://thebeyonce48.my.id/gacha-skin/ONCETOKEN.PNG"
     };
+
+    // Konfigurasi Backend API HF Space
+    const API_BASE_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
 
     const MISSIONS = [
         { id: "daily_login", title: "(Harian) Login ke web", type: "daily", target: 1, reward: 20 },
@@ -231,9 +235,11 @@
         if (!sessionKey) return;
 
         try {
-            const res = await fetch("/api/statusmisi", {
+            // Mengarah ke API di HF Space
+            const res = await fetch(`${API_BASE_URL}/api/statusmisi`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
+                // Sesuai schema model pydantic: session_cookie dan sessionKey
                 body: JSON.stringify({ session_cookie: sessionKey, sessionKey: sessionKey })
             });
             const data = await res.json();
@@ -287,10 +293,18 @@
         btn.disabled = true;
 
         try {
-            const res = await fetch("/api/misi", {
+            // Mengarah ke API di HF Space
+            const res = await fetch(`${API_BASE_URL}/api/misi`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ session_cookie: sessionKey, sessionKey: sessionKey, mission_id: misiId, reward: rewardAmount, type: type })
+                // Sesuai schema model pydantic Backend
+                body: JSON.stringify({ 
+                    session_cookie: sessionKey, 
+                    sessionKey: sessionKey, 
+                    mission_id: misiId, 
+                    reward: rewardAmount, 
+                    type: type 
+                })
             });
             const data = await res.json();
             
