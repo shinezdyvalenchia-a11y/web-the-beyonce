@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koleksi Skin - The Beyonce 48</title>
+    <title>Koleksi Skin Web</title>
     <style>
         /* ========================================= */
-        /* CSS: TEMA TERANG & KACA (Sesuai Screenshot) */
+        /* CSS: TEMA GLASSMORPHISM TERANG            */
         /* ========================================= */
         * {
             margin: 0;
@@ -16,7 +16,6 @@
         }
 
         body {
-            /* Asumsi ini ditiban di atas background anime pemandangan lu */
             background-color: transparent;
             color: #333;
             overflow-x: hidden;
@@ -30,25 +29,25 @@
             gap: 20px;
         }
 
-        /* SIDEBAR / FILTER (Glassmorphism) */
+        /* SIDEBAR / FILTER */
         .sidebar {
-            width: 260px;
-            background: rgba(255, 255, 255, 0.5); /* Putih transparan */
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: 24px;
-            padding: 30px 20px;
+            width: 250px;
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            padding: 25px 15px;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.08);
         }
 
         .sidebar h2 {
             text-align: center;
             font-size: 20px;
-            color: #1e88e5; /* Biru terang mirip tombol di web lu */
-            margin-bottom: 25px;
+            color: #0088cc;
+            margin-bottom: 20px;
             font-weight: 800;
         }
 
@@ -56,71 +55,69 @@
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .tier-item {
-            padding: 12px 20px;
-            background: rgba(255, 255, 255, 0.6);
-            color: #555;
+            padding: 10px 18px;
+            background: rgba(255, 255, 255, 0.5);
+            color: #444;
             font-weight: 700;
-            font-size: 14px;
-            border-radius: 50px; /* Bentuk pill/kapsul mirip tombol gacha */
+            font-size: 13px;
+            border-radius: 30px;
             cursor: pointer;
             text-align: center;
             transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         .tier-item:hover {
             background: rgba(255, 255, 255, 0.9);
-            transform: translateY(-2px);
         }
 
         .tier-item.active {
-            background: #00a8ff; /* Warna tombol spin web lu */
+            background: #00a8ff;
             color: white;
             border-color: #00a8ff;
-            box-shadow: 0 4px 15px rgba(0, 168, 255, 0.4);
+            box-shadow: 0 4px 12px rgba(0, 168, 255, 0.35);
         }
 
-        /* AREA GRID KARTU */
+        /* GRID AREA */
         .card-area {
             flex: 1;
             overflow-y: auto;
-            padding-right: 15px;
+            padding-right: 10px;
         }
 
-        /* Scrollbar custom tipis */
-        .card-area::-webkit-scrollbar { width: 8px; }
-        .card-area::-webkit-scrollbar-track { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        .card-area::-webkit-scrollbar { width: 6px; }
+        .card-area::-webkit-scrollbar-track { background: rgba(255,255,255,0.2); }
         .card-area::-webkit-scrollbar-thumb { background: rgba(0, 168, 255, 0.5); border-radius: 10px; }
 
         .card-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 20px;
+            gap: 18px;
             padding-bottom: 50px;
         }
 
-        /* KARTU (Glassmorphism) */
+        /* KARTU */
         .card {
             position: relative;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
             border-radius: 16px;
             overflow: hidden;
             aspect-ratio: 3/4;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: transform 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            transition: transform 0.2s;
         }
 
         .card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 8px 25px rgba(0, 168, 255, 0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
 
         .card-media {
@@ -130,67 +127,60 @@
             display: block;
         }
 
-        /* Gembok untuk yang belum punya */
         .lock-icon {
             display: none;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 35px;
-            z-index: 10;
-            text-shadow: 0 2px 10px rgba(255,255,255,0.8);
+            font-size: 32px;
+            z-index: 5;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
         }
 
         .card.locked .lock-icon {
             display: block;
         }
 
-        /* Label Info Nama Kartu */
         .card-info {
             position: absolute;
             bottom: 0;
             width: 100%;
             background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(5px);
-            padding: 12px 8px;
+            backdrop-filter: blur(4px);
+            padding: 8px 5px;
             text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.5);
         }
 
         .card-name {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 800;
-            color: #333;
-            word-wrap: break-word;
+            color: #222;
         }
 
-        /* Label Rarity di pojok atas */
         .rarity-badge {
             position: absolute;
             top: 8px;
             left: 8px;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 800;
-            padding: 4px 8px;
-            border-radius: 12px;
-            z-index: 5;
+            padding: 3px 7px;
+            border-radius: 10px;
+            z-index: 4;
             color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
 
-        .bg-myth { background: linear-gradient(45deg, #ff007f, #7928ca); }
-        .bg-legend { background: linear-gradient(45deg, #f5af19, #f12711); }
-        .bg-rare { background: linear-gradient(45deg, #00b4db, #0083b0); }
-        .bg-uncommon { background: linear-gradient(45deg, #11998e, #38ef7d); }
-        .bg-omega { background: linear-gradient(45deg, #1f1c2c, #928dab); }
+        .bg-myth { background: #e91e63; }
+        .bg-legend { background: #ff9800; }
+        .bg-rare { background: #00bcd4; }
+        .bg-uncommon { background: #4caf50; }
+        .bg-omega { background: #673ab7; }
 
     </style>
 </head>
 <body>
 
     <div class="inventory-container">
-        <!-- SIDEBAR -->
         <aside class="sidebar">
             <h2>Koleksi Skin</h2>
             <ul class="tier-list">
@@ -203,32 +193,25 @@
             </ul>
         </aside>
 
-        <!-- KARTU AREA -->
         <main class="card-area">
             <div class="card-grid" id="cardContainer">
-                <!-- Kartu bakal dirender Javascript di sini -->
+                <!-- Data di-render oleh JavaScript -->
             </div>
         </main>
     </div>
 
     <script>
-        // ==========================================
-        // 1. DATA DARI USER (Gua rangkum biar rapi)
-        // ==========================================
-
-        // Data Member Reguler (Tanpa '_grey.jpg' biar gampang dikelola)
+        // DAFTAR NAMA SKIN REGULER (Ditarik dari /skin)
         const REGULER_SKINS = [
             "ABIGAIL_RACHEL_LEGEND", "ABIGAIL_RACHEL_MYTH", "ABIGAIL_RACHEL_RARE", "ABIGAIL_RACHEL_UNCOMMON",
             "ADELINE_WIJAYA_LEGEND", "ADELINE_WIJAYA_MYTH", "ADELINE_WIJAYA_RARE", "ADELINE_WIJAYA_UNCOMMON",
             "ADHISTY_ZARA_LEGEND", "ADHISTY_ZARA_MYTH", "ADHISTY_ZARA_RARE", "ADHISTY_ZARA_UNCOMMON",
             "ADZANA_ASHEL_LEGEND", "ADZANA_ASHEL_MYTH", "ADZANA_ASHEL_RARE", "ADZANA_ASHEL_UNCOMMON",
-            "AFERA_THALIA_UNCOMMON",
-            "ALYA_AMANDA_LEGEND", "ALYA_AMANDA_MYTH", "ALYA_AMANDA_RARE", "ALYA_AMANDA_UNCOMMON",
+            "AFERA_THALIA_UNCOMMON", "ALYA_AMANDA_LEGEND", "ALYA_AMANDA_MYTH", "ALYA_AMANDA_RARE", "ALYA_AMANDA_UNCOMMON",
             "AMANDA_SUKMA_LEGEND", "AMANDA_SUKMA_MYTH", "AMANDA_SUKMA_RARE", "AMANDA_SUKMA_UNCOMMON",
             "ANGELINA_CHRISTY_LEGEND", "ANGELINA_CHRISTY_MYTH", "ANGELINA_CHRISTY_RARE", "ANGELINA_CHRISTY_UNCOMMON",
             "ANINDYA_RAMADHANI_LEGEND", "ANINDYA_RAMADHANI_MYTH", "ANINDYA_RAMADHANI_RARE", "ANINDYA_RAMADHANI_UNCOMMON",
-            "ARA_LEGEND", "ARA_MYTH", "ARA_RARE", "ARA_UNCOMMON",
-            "ASTRELLA_VIRGIANANDA_UNCOMMON", "AULIA_RIZA_UNCOMMON",
+            "ARA_LEGEND", "ARA_MYTH", "ARA_RARE", "ARA_UNCOMMON", "ASTRELLA_VIRGIANANDA_UNCOMMON", "AULIA_RIZA_UNCOMMON",
             "AURELLIA_LIA_LEGEND", "AURELLIA_LIA_MYTH", "AURELLIA_LIA_RARE", "AURELLIA_LIA_UNCOMMON",
             "AUREL_MAYORI_LEGEND", "AUREL_MAYORI_MYTH", "AUREL_MAYORI_RARE", "AUREL_MAYORI_UNCOMMON",
             "AURHEL_ALANA_LEGEND", "AURHEL_ALANA_MYTH", "AURHEL_ALANA_RARE", "AURHEL_ALANA_UNCOMMON",
@@ -239,8 +222,7 @@
             "CATHLEEN_NIXIE_LEGEND", "CATHLEEN_NIXIE_MYTH", "CATHLEEN_NIXIE_RARE", "CATHLEEN_NIXIE_UNCOMMON",
             "CELLINE_THEFANI_LEGEND", "CELLINE_THEFANI_MYTH", "CELLINE_THEFANI_RARE", "CELLINE_THEFANI_UNCOMMON",
             "CHELSEA_DEVINA_LEGEND", "CHELSEA_DEVINA_MYTH", "CHELSEA_DEVINA_RARE", "CHELSEA_DEVINA_UNCOMMON",
-            "CHRISTABELLA_BONITA_UNCOMMON",
-            "CINDY_YUVIA_LEGEND", "CINDY_YUVIA_MYTH", "CINDY_YUVIA_RARE", "CINDY_YUVIA_UNCOMMON",
+            "CHRISTABELLA_BONITA_UNCOMMON", "CINDY_YUVIA_LEGEND", "CINDY_YUVIA_MYTH", "CINDY_YUVIA_RARE", "CINDY_YUVIA_UNCOMMON",
             "CORNELIA_VANISA_LEGEND", "CORNELIA_VANISA_MYTH", "CORNELIA_VANISA_RARE", "CORNELIA_VANISA_UNCOMMON",
             "CYNTHIA_YAPUTERA_LEGEND", "CYNTHIA_YAPUTERA_MYTH", "CYNTHIA_YAPUTERA_RARE", "CYNTHIA_YAPUTERA_UNCOMMON",
             "DENA_NATALIA_LEGEND", "DENA_NATALIA_MYTH", "DENA_NATALIA_RARE", "DENA_NATALIA_UNCOMMON",
@@ -253,10 +235,52 @@
             "FREYA_JAYAWARDANA_LEGEND", "FREYA_JAYAWARDANA_MYTH", "FREYA_JAYAWARDANA_RARE", "FREYA_JAYAWARDANA_UNCOMMON",
             "FRIESKA_LEGEND", "FRIESKA_MYTH", "FRIESKA_RARE", "FRIESKA_UNCOMMON",
             "FRITZY_ROSMERIAN_LEGEND", "FRITZY_ROSMERIAN_MYTH", "FRITZY_ROSMERIAN_RARE", "FRITZY_ROSMERIAN_UNCOMMON",
-            // Catatan: Lu bisa tambahin daftar sisa gen & member ke dalam array ini persis format di atas
+            "GABRIELA_ABIGAIL_LEGEND", "GABRIELA_ABIGAIL_MYTH", "GABRIELA_ABIGAIL_RARE", "GABRIELA_ABIGAIL_UNCOMMON",
+            "GENDIS_MAYRANNISA_LEGEND", "GENDIS_MAYRANNISA_MYTH", "GENDIS_MAYRANNISA_RARE", "GENDIS_MAYRANNISA_UNCOMMON",
+            "GISELE_GEN_10_LEGEND", "GISELE_GEN_10_MYTH", "GISELE_GEN_10_RARE", "GISELE_GEN_10_UNCOMMON",
+            "GITA_SEKAR_LEGEND", "GITA_SEKAR_MYTH", "GITA_SEKAR_RARE", "GITA_SEKAR_UNCOMMON",
+            "GRACE_OCTAVIANI_LEGEND", "GRACE_OCTAVIANI_MYTH", "GRACE_OCTAVIANI_RARE", "GRACE_OCTAVIANI_UNCOMMON",
+            "GREESELA_ADHALIA_LEGEND", "GREESELA_ADHALIA_MYTH", "GREESELA_ADHALIA_RARE", "GREESELA_ADHALIA_UNCOMMON",
+            "HAGIA_SOPIA_UNCOMMON", "HEIDA_SUYANGGA_UNCOMMON",
+            "HELISMA_PUTRI_LEGEND", "HELISMA_PUTRI_MYTH", "HELISMA_PUTRI_RARE", "HELISMA_PUTRI_UNCOMMON",
+            "HILLARY_ABIGAIL_LEGEND", "HILLARY_ABIGAIL_MYTH", "HILLARY_ABIGAIL_RARE", "HILLARY_ABIGAIL_UNCOMMON",
+            "HUMAIRA_RAMADHANI_UNCOMMON", "INDAH_CAHYA_LEGEND", "INDAH_CAHYA_MYTH", "INDAH_CAHYA_RARE", "INDAH_CAHYA_UNCOMMON",
+            "INDIRA_PUTRI_LEGEND", "INDIRA_PUTRI_MYTH", "INDIRA_PUTRI_RARE", "INDIRA_PUTRI_UNCOMMON",
+            "JACQUELINE_IMMANUELA_UNCOMMON", "JAZZLYN_TRISHA_LEGEND", "JAZZLYN_TRISHA_MYTH", "JAZZLYN_TRISHA_RARE", "JAZZLYN_TRISHA_UNCOMMON",
+            "JEMIMA_EVODIE_UNCOMMON", "JESSICA_CHANDRA_LEGEND", "JESSICA_CHANDRA_MYTH", "JESSICA_CHANDRA_RARE", "JESSICA_CHANDRA_UNCOMMON",
+            "JESSLYN_CALLISTA_LEGEND", "JESSLYN_CALLISTA_MYTH", "JESSLYN_CALLISTA_RARE", "JESSLYN_CALLISTA_UNCOMMON",
+            "JESSLYN_ELLY_LEGEND", "JESSLYN_ELLY_MYTH", "JESSLYN_ELLY_RARE", "JESSLYN_ELLY_UNCOMMON",
+            "JINAN_LEGEND", "JINAN_MYTH", "JINAN_RARE", "JINAN_UNCOMMON",
+            "KATHRINA_IRENE_LEGEND", "KATHRINA_IRENE_MYTH", "KATHRINA_IRENE_RARE", "KATHRINA_IRENE_UNCOMMON",
+            "LETYCIA_MOREEN_MYTH", "LETYCIA_MOREEN_UNCOMMON",
+            "LULU_SALSABILA_LEGEND", "LULU_SALSABILA_MYTH", "LULU_SALSABILA_RARE", "LULU_SALSABILA_UNCOMMON",
+            "MAEGAN_JOVANKA_UNCOMMON", "MARSHA_LENATHEA_LEGEND", "MARSHA_LENATHEA_MYTH", "MARSHA_LENATHEA_RARE", "MARSHA_LENATHEA_UNCOMMON",
+            "MAXINE_FAYE_UNCOMMON", "MELATI_LEGEND", "MELATI_MYTH", "MELATI_RARE", "MELATI_UNCOMMON",
+            "MELODY_LAKSANI_LEGEND", "MELODY_LAKSANI_MYTH", "MELODY_LAKSANI_RARE", "MELODY_LAKSANI_UNCOMMON",
+            "MICHELLE_ALEXANDRA_LEGEND", "MICHELLE_ALEXANDRA_MYTH", "MICHELLE_ALEXANDRA_RARE", "MICHELLE_ALEXANDRA_UNCOMMON",
+            "MICHELLE_LEVIA_LEGEND", "MICHELLE_LEVIA_MYTH", "MICHELLE_LEVIA_RARE", "MICHELLE_LEVIA_UNCOMMON",
+            "MIKAELA_KUSJANTO_UNCOMMON", "MUTIARA_AZZAHRA_LEGEND", "MUTIARA_AZZAHRA_MYTH", "MUTIARA_AZZAHRA_RARE", "MUTIARA_AZZAHRA_UNCOMMON",
+            "NABILAH_GEN_1_LEGEND", "NABILAH_GEN_1_MYTH", "NABILAH_GEN_1_RARE", "NABILAH_GEN_1_UNCOMMON",
+            "NABILA_FITRIANA_LEGEND", "NABILA_FITRIANA_MYTH", "NABILA_FITRIANA_RARE", "NABILA_FITRIANA_UNCOMMON",
+            "NAYLA_SUJI_LEGEND", "NAYLA_SUJI_MYTH", "NAYLA_SUJI_RARE", "NAYLA_SUJI_UNCOMMON",
+            "NINA_TUTACHIA_LEGEND", "NINA_TUTACHIA_MYTH", "NINA_TUTACHIA_RARE", "NINA_TUTACHIA_UNCOMMON",
+            "NUR_INTAN_UNCOMMON", "OLINE_MANUEL_LEGEND", "OLINE_MANUEL_MYTH", "OLINE_MANUEL_RARE", "OLINE_MANUEL_UNCOMMON",
+            "PUTRI_JAZYTA_UNCOMMON", "RAISHA_SYIFA_LEGEND", "RAISHA_SYIFA_MYTH", "RAISHA_SYIFA_RARE", "RAISHA_SYIFA_UNCOMMON",
+            "RALYNE_VAN_UNCOMMON", "REGINA_WILLIAM_MYTH", "REGINA_WILLIAM_UNCOMMON",
+            "REVA_FIDELA_LEGEND", "REVA_FIDELA_MYTH", "REVA_FIDELA_RARE", "REVA_FIDELA_UNCOMMON",
+            "RIBKA_BUDIMAN_LEGEND", "RIBKA_BUDIMAN_MYTH", "RIBKA_BUDIMAN_RARE", "RIBKA_BUDIMAN_UNCOMMON",
+            "SHABILQIS_NAILA_LEGEND", "SHABILQIS_NAILA_MYTH", "SHABILQIS_NAILA_RARE", "SHABILQIS_NAILA_UNCOMMON",
+            "SHANIA_GRACIA_LEGEND", "SHANIA_GRACIA_MYTH", "SHANIA_GRACIA_RARE", "SHANIA_GRACIA_UNCOMMON",
+            "SHANI_INDIRA_LEGEND", "SHANI_INDIRA_MYTH", "SHANI_INDIRA_RARE", "SHANI_INDIRA_UNCOMMON",
+            "SHANJU_MYTH", "SHANJU_RARE", "SHANJU_UNCOMMON",
+            "SISCA_SARAS_LEGEND", "SISCA_SARAS_MYTH", "SISCA_SARAS_RARE", "SISCA_SARAS_UNCOMMON",
+            "SONA_KALYANA_UNCOMMON",
+            "TAN_ZHI_HUI_CELINE_LEGEND", "TAN_ZHI_HUI_CELINE_MYTH", "TAN_ZHI_HUI_CELINE_RARE", "TAN_ZHI_HUI_CELINE_UNCOMMON",
+            "VICTORIA_KIMBERLY_LEGEND", "VICTORIA_KIMBERLY_MYTH", "VICTORIA_KIMBERLY_RARE", "VICTORIA_KIMBERLY_UNCOMMON",
+            "YESICA_TAMARA_LEGEND", "YESICA_TAMARA_MYTH", "YESICA_TAMARA_RARE", "YESICA_TAMARA_UNCOMMON"
         ];
 
-        // Data Omega & Kode Pendek
+        // DAFTAR KODE OMEGA & SPESIAL (Ditarik dari /skin_jpg atau /gacha-skin)
         const OMEGA_SKINS = [
             "CELI", "CFNI", "CGRC", "CSHN", "DKTY", "FCHK", "FCHR", "FFIO", "FFNI", "FGRC",
             "FJIN", "FMAR", "FSHN", "PCHR", "PFNI", "PFNY", "PFYR", "PGRC", "PGTS", "PJCC",
@@ -268,20 +292,41 @@
             "SOLL", "SONI", "SRAI", "SREG", "SRIB", "STRI"
         ];
 
-        // INI PENTING: Simulasi kepemilikan. Kalau di web asli, ambil dari Database/API.
-        // Gua kasih contoh user ini cuma punya 3 skin.
-        const ownedSkins = ["ABIGAIL_RACHEL_MYTH", "FIONY_ALVERIA_UNCOMMON", "CELI", "SCHR"]; 
+        let ownedSkins = [];
 
-        const cardContainer = document.getElementById('cardContainer');
+        // ==========================================
+        // FETCH DATA DARI BACKEND HUGGINGFACE
+        // ==========================================
+        async function fetchStatusSkin() {
+            try {
+                const response = await fetch('https://shinezzzz-gokgokgogkgokgok.hf.space/statusskin', {
+                    method: 'GET',
+                    credentials: 'include' // Opsi ini WAJIB untuk mengirim session cookie otomatis
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    // Menampung array skin yang dimiliki user dari backend
+                    ownedSkins = data.owned_skins || data;
+                } else {
+                    console.warn("Gagal mengambil data dari server, HTTP Status:", response.status);
+                }
+            } catch (error) {
+                console.error("Terjadi kesalahan jaringan saat fetch /statusskin:", error);
+            } finally {
+                // Render tampilan kartu setelah data siap
+                renderCards("ALL");
+            }
+        }
 
-        // Fungsi ekstrak nama untuk display dari format (ABIGAIL_RACHEL_LEGEND -> Abigail Rachel)
+        // Helper Format Nama
         function formatName(fileName) {
             let parts = fileName.split('_');
-            parts.pop(); // Buang rarity (LEGEND/MYTH) di belakang
+            parts.pop(); 
             return parts.map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(' ');
         }
 
-        // Fungsi ekstrak Rarity
+        // Helper Ekstrak Rarity
         function getRarity(fileName) {
             if (fileName.includes("MYTH")) return { name: "MYTH", class: "bg-myth" };
             if (fileName.includes("LEGEND")) return { name: "LEGEND", class: "bg-legend" };
@@ -291,28 +336,26 @@
         }
 
         // ==========================================
-        // 2. LOGIKA RENDER (Tarik File Gambar Asli)
+        // RENDER KARTU SESUAI ATURAN FOLDER
         // ==========================================
+        const cardContainer = document.getElementById('cardContainer');
+
         function renderCards(filterTier) {
             cardContainer.innerHTML = ""; 
-
             let htmlString = "";
 
-            // A. Proses Skin Reguler (Ada di /skin_jpg/)
+            // 1. SKIN REGULER (MYTH, LEGEND, RARE, UNCOMMON)
             REGULER_SKINS.forEach(fileName => {
                 const rarityData = getRarity(fileName);
-                
-                // Cek filter kategori
                 if (filterTier !== "ALL" && filterTier !== rarityData.name) return;
 
                 const isOwned = ownedSkins.includes(fileName);
                 const displayName = formatName(fileName);
                 
-                // LOGIKA FILE: Ini yang ngebuat 404 ilang. Sesuai request lu!
-                // Kalo punya = .jpg biasa. Kalo ga punya = _grey.jpg
+                // PATH REGULER: Ada di /skin/
                 const mediaSource = isOwned 
-                    ? `/skin_jpg/${fileName}.jpg` 
-                    : `/skin_jpg/${fileName}_grey.jpg`;
+                    ? `/skin/${fileName}.jpg` 
+                    : `/skin/${fileName}_grey.jpg`;
 
                 const lockClass = isOwned ? "" : "locked";
 
@@ -328,50 +371,55 @@
                 `;
             });
 
-            // B. Proses Skin Omega (Ada di /skin/)
+            // 2. SKIN OMEGA & SPESIAL
             if (filterTier === "ALL" || filterTier === "OMEGA") {
                 OMEGA_SKINS.forEach(code => {
                     const isOwned = ownedSkins.includes(code);
-                    
-                    // Asumsi: OMEGA juga lu siapin _grey.jpg nya karena lu bilang "semua keload versi grey"
-                    // Kalau Omega di server lu GA ADA _grey.jpg, lu bisa hapus "_grey" di baris bawah ini khusus yg else.
-                    const mediaSource = isOwned 
-                        ? `/skin/${code}.jpg` 
-                        : `/skin/${code}_grey.jpg`; 
-
                     const lockClass = isOwned ? "" : "locked";
 
-                    htmlString += `
-                        <div class="card ${lockClass}">
-                            <div class="rarity-badge bg-omega">OMEGA</div>
-                            <div class="lock-icon">🔒</div>
-                            <img class="card-media" src="${mediaSource}" loading="lazy" alt="${code}">
-                            <div class="card-info">
-                                <div class="card-name">Skin ${code}</div>
+                    if (isOwned) {
+                        // JIKA PUNYA: Load Video WebM dari /gacha-skin/ preview_(kodenya).webm
+                        const videoSource = `/gacha-skin/preview_${code}.webm`;
+                        htmlString += `
+                            <div class="card ${lockClass}">
+                                <div class="rarity-badge bg-omega">OMEGA</div>
+                                <video class="card-media" autoplay loop muted playsinline src="${videoSource}"></video>
+                                <div class="card-info">
+                                    <div class="card-name">${code}</div>
+                                </div>
                             </div>
-                        </div>
-                    `;
+                        `;
+                    } else {
+                        // JIKA BELUM PUNYA: Load Foto Grey dari /skin_jpg/{KODE}_grey.jpg
+                        const imageSource = `/skin_jpg/${code}_grey.jpg`;
+                        htmlString += `
+                            <div class="card ${lockClass}">
+                                <div class="rarity-badge bg-omega">OMEGA</div>
+                                <div class="lock-icon">🔒</div>
+                                <img class="card-media" src="${imageSource}" loading="lazy" alt="${code}">
+                                <div class="card-info">
+                                    <div class="card-name">${code}</div>
+                                </div>
+                            </div>
+                        `;
+                    }
                 });
             }
 
             cardContainer.innerHTML = htmlString;
         }
 
-        // Event Listener untuk Filter Sidebar
+        // Event Listener Filter Sidebar
         document.querySelectorAll('.tier-item').forEach(item => {
             item.addEventListener('click', (e) => {
-                // Hapus warna aktif dari semua tombol
                 document.querySelectorAll('.tier-item').forEach(el => el.classList.remove('active'));
-                // Tambah warna aktif ke tombol yg diklik
                 e.target.classList.add('active');
-                
-                // Jalankan fungsi render sesuai kategori
                 renderCards(e.target.getAttribute('data-tier'));
             });
         });
 
-        // Render semua kartu saat web pertama kali dibuka
-        window.onload = () => renderCards("ALL");
+        // Jalankan Fetch pertama kali web dimuat
+        window.onload = fetchStatusSkin;
 
     </script>
 </body>
