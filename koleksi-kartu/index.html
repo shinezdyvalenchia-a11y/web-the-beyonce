@@ -401,7 +401,7 @@
             "SDAN": { name: "SSK: Danella Piawahan", jiko: "Tok-tok! Si penari yang akan menarikmu ke duniaku! Halo, aku Danella!" },
             "SFRE": { name: "SSK: Freya Jayawardana", jiko: "Gadis koleris yang suka berimajinasi, terangi harimu dengan senyuman karamelku. Halo, aku Freya!" },
             "SARA": { name: "SSK: Abigail Rachel", jiko: "Seperti bunga yang mekar, aku akan membuat kamu, kamu, dan kamu terbayang-bayang. Halo, aku Aralie!" },
-            "SFIO": { name: "SSK: Fiony Alveria", jiko: "Seperti simfoni yang menenangkan hati. Halo, aku Fiony!" },
+            "SFIO": { name: "SSK: Fiony Alveria", jiko: "Seperti simfoni yang menenangan hati. Halo, aku Fiony!" },
             "SJES": { name: "SSK: Jessica Chandra", jiko: "Suka menari dan akan selalu berusaha untuk menjadi sumber energimu. Halo, aku Jessi!" },
             "SERI": { name: "SSK: Catherina Vallencia", jiko: "Hadir dengan seribu kejutan, Checkmate! Siap memenangkan hatimu. Halo, aku Erine!" },
             "SRAI": { name: "SSK: Raisha Syifa", jiko: "Kalau sakura itu kembang, Aku itu kembanggaanmu! Halo, aku Raisha!" },
@@ -545,37 +545,33 @@
         }
 
         // ==========================================
-        // 3. FETCH DATA STATUS SKIN DARI BACKEND
+        // 3. FETCH DATA STATUS SKIN (PERSIS STATUSCHAT)
         // ==========================================
         async function fetchStatusSkin() {
             try {
-                const sessionKey = getCookie("user_session");
-                let response;
+                // Mengambil cookie sesi persis cara statuschat
+                const sessionKey = getCookie("user_session") || "default_user";
 
-                if (sessionKey) {
-                    // Mengirimkan cookie sesi melalui metode POST
-                    response = await fetch(`${BACKEND_URL}/statusskin`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ session_cookie: sessionKey, sessionCookie: sessionKey }),
-                        credentials: 'include'
-                    });
-                } else {
-                    // Fallback GET request dengan Cookie bawaan browser
-                    response = await fetch(`${BACKEND_URL}/statusskin`, {
-                        method: 'GET',
-                        credentials: 'include' 
-                    });
-                }
-                
+                // Mengirim via POST dengan payload JSON tanpa credentials: 'include' untuk menghindari CORS Error
+                const response = await fetch(`${BACKEND_URL}/statusskin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        session_cookie: sessionKey, 
+                        sessionCookie: sessionKey 
+                    })
+                });
+
                 if (response.ok) {
                     const data = await response.json();
-                    ownedSkins = data.owned_skins || data.skins || data.ownedSkins || (Array.isArray(data) ? data : []);
+                    
+                    // Mendukung fleksibilitas struktur JSON dari backend HuggingFace
+                    ownedSkins = data.owned_skins || data.skins || data.ownedSkins || data.data || (Array.isArray(data) ? data : []);
                 } else {
                     console.warn("Gagal terhubung ke backend, memuat status default...");
                 }
             } catch (error) {
-                console.error("Terjadi error Fetch:", error);
+                console.error("Gagal load status skin:", error);
             } finally {
                 renderCards("ALL"); 
             }
@@ -630,7 +626,7 @@
                 `;
             });
 
-            // B. SKIN OMEGA & SPESIAL (Ditarik dari object OMEGA_DATA)
+            // B. SKIN OMEGA & SPESIAL
             if (filterTier === "ALL" || filterTier === "OMEGA") {
                 Object.entries(OMEGA_DATA).forEach(([code, data]) => {
                     const isOwned = ownedSkins.includes(code);
@@ -681,7 +677,6 @@
                 e.target.classList.add('active');
                 renderCards(e.target.getAttribute('data-tier'));
 
-                // Tutup sidebar jika dibuka di perangkat mobile
                 if (window.innerWidth <= 768) {
                     toggleSidebar();
                 }
