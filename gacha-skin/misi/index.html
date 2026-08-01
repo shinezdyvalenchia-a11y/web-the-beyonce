@@ -172,6 +172,7 @@
 
     let userProgress = { total_messages: 0, daily_claims: [], weekly_claims: [] };
 
+    // Fungsi pintar untuk mengambil Session Key (Diprioritaskan sama seperti GAS)
     function getSessionKey() {
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('session_cookie')) return urlParams.get('session_cookie');
@@ -232,14 +233,16 @@
 
     async function syncStatusMisi() {
         const sessionKey = getSessionKey();
-        if (!sessionKey) return;
+        if (!sessionKey) {
+            console.warn("Sesi tidak ditemukan. Pastikan sudah login.");
+            return;
+        }
 
         try {
-            // Mengarah ke API di HF Space
             const res = await fetch(`${API_BASE_URL}/api/statusmisi`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                // Sesuai schema model pydantic: session_cookie dan sessionKey
+                // Ngirim session cookie untuk dibaca GAS di Kolom P
                 body: JSON.stringify({ session_cookie: sessionKey, sessionKey: sessionKey })
             });
             const data = await res.json();
@@ -287,17 +290,23 @@
 
     async function claimMisi(misiId, rewardAmount, type) {
         const sessionKey = getSessionKey();
+        
+        // Validasi ekstra kalau sesi hilang saat mau klaim
+        if (!sessionKey) {
+            alert("Sesi kamu tidak valid. Silakan login ulang!");
+            return;
+        }
+
         const btn = document.getElementById(`btn-${misiId}`);
         
         btn.innerText = "...";
         btn.disabled = true;
 
         try {
-            // Mengarah ke API di HF Space
             const res = await fetch(`${API_BASE_URL}/api/misi`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                // Sesuai schema model pydantic Backend
+                // Ngirim data claim beserta session cookie-nya
                 body: JSON.stringify({ 
                     session_cookie: sessionKey, 
                     sessionKey: sessionKey, 
@@ -313,6 +322,9 @@
                 btn.innerText = "Diklaim";
                 if(type === 'daily') userProgress.daily_claims.push(misiId);
                 if(type === 'weekly') userProgress.weekly_claims.push(misiId);
+                
+                // Opsional: Kasih alert ke user kalau token masuk
+                // alert(`Berhasil! Kamu dapat ${rewardAmount} ONCE Token.`);
             } else {
                 alert("Gagal: " + (data.message || data.detail || "Terjadi kesalahan"));
                 btn.className = "btn-claim btn-ready";
@@ -324,9 +336,11 @@
             btn.className = "btn-claim btn-ready";
             btn.innerText = "Klaim";
             btn.disabled = false;
+            alert("Terjadi kesalahan jaringan.");
         }
     }
 
+    // Inisialisasi awal
     renderMissions();
     syncStatusMisi();
 </script>
