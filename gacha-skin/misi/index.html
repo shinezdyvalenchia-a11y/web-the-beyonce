@@ -172,13 +172,43 @@
 
     let userProgress = { total_messages: 0, daily_claims: [], weekly_claims: [] };
 
-    // Fungsi pintar untuk mengambil Session Key (Diprioritaskan sama seperti GAS)
-    function getSessionKey() {
+    // FUNGSI UTAMA HASIL ADOPSI DARI FILE GACHA
+    function getSessionCookie() {
+        const possibleKeys = [
+            'session_cookie', 'session', 'session_id', 'user_id', 
+            'token', 'access_token', 'user_session', 'auth_token', 'sessionKey'
+        ];
+
+        // 1. Cek Parameter URL
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('session_cookie')) return urlParams.get('session_cookie');
-        if (localStorage.getItem('session_cookie')) return localStorage.getItem('session_cookie');
-        if (localStorage.getItem('sessionKey')) return localStorage.getItem('sessionKey');
-        return "";
+        for (let key of possibleKeys) {
+            if (urlParams.has(key) && urlParams.get(key)) return urlParams.get(key);
+        }
+
+        // 2. Cek LocalStorage
+        for (let key of possibleKeys) {
+            const val = localStorage.getItem(key);
+            if (val) return val;
+        }
+
+        // 3. Cek SessionStorage
+        for (let key of possibleKeys) {
+            const val = sessionStorage.getItem(key);
+            if (val) return val;
+        }
+
+        // 4. Cek Cookie Browser (document.cookie)
+        if (document.cookie) {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const parts = cookie.trim().split('=');
+                if (possibleKeys.includes(parts[0]) && parts[1]) {
+                    return decodeURIComponent(parts[1]);
+                }
+            }
+        }
+
+        return ""; 
     }
 
     function renderMissions() {
@@ -232,9 +262,10 @@
     }
 
     async function syncStatusMisi() {
-        const sessionKey = getSessionKey();
+        const sessionKey = getSessionCookie();
+        
         if (!sessionKey) {
-            console.warn("Sesi tidak ditemukan. Pastikan sudah login.");
+            console.warn("Sesi tidak ditemukan. Pastikan user sudah login.");
             return;
         }
 
@@ -242,19 +273,21 @@
             const res = await fetch(`${API_BASE_URL}/api/statusmisi`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                // Ngirim session cookie untuk dibaca GAS di Kolom P
-                body: JSON.stringify({ session_cookie: sessionKey, sessionKey: sessionKey })
+                body: JSON.stringify({ 
+                    session_cookie: sessionKey,
+                    sessionKey: sessionKey 
+                })
             });
             const data = await res.json();
             
-            if (data.status === "success") {
+            if (res.ok && data.status === "success") {
                 userProgress.total_messages = data.total_messages || 0;
                 userProgress.daily_claims = data.daily_claims || []; 
                 userProgress.weekly_claims = data.weekly_claims || []; 
                 renderMissions();
             }
         } catch (err) {
-            console.error("Gagal sync status misi", err);
+            console.error("Gagal sync status misi:", err);
         }
     }
 
@@ -289,16 +322,14 @@
     }
 
     async function claimMisi(misiId, rewardAmount, type) {
-        const sessionKey = getSessionKey();
+        const sessionKey = getSessionCookie();
         
-        // Validasi ekstra kalau sesi hilang saat mau klaim
         if (!sessionKey) {
-            alert("Sesi kamu tidak valid. Silakan login ulang!");
+            alert("Session cookie tidak terdeteksi. Silakan login kembali!");
             return;
         }
 
         const btn = document.getElementById(`btn-${misiId}`);
-        
         btn.innerText = "...";
         btn.disabled = true;
 
@@ -306,7 +337,6 @@
             const res = await fetch(`${API_BASE_URL}/api/misi`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                // Ngirim data claim beserta session cookie-nya
                 body: JSON.stringify({ 
                     session_cookie: sessionKey, 
                     sessionKey: sessionKey, 
@@ -315,24 +345,23 @@
                     type: type 
                 })
             });
+
             const data = await res.json();
             
-            if (data.status === "success") {
+            if (res.ok && data.status === "success") {
                 btn.className = "btn-claim btn-disabled";
                 btn.innerText = "Diklaim";
-                if(type === 'daily') userProgress.daily_claims.push(misiId);
-                if(type === 'weekly') userProgress.weekly_claims.push(misiId);
                 
-                // Opsional: Kasih alert ke user kalau token masuk
-                // alert(`Berhasil! Kamu dapat ${rewardAmount} ONCE Token.`);
+                if (type === 'daily') userProgress.daily_claims.push(misiId);
+                if (type === 'weekly') userProgress.weekly_claims.push(misiId);
             } else {
-                alert("Gagal: " + (data.message || data.detail || "Terjadi kesalahan"));
+                alert("Gagal Klaim: " + (data.message || data.detail || "Terjadi kesalahan"));
                 btn.className = "btn-claim btn-ready";
                 btn.innerText = "Klaim";
                 btn.disabled = false;
             }
         } catch (err) {
-            console.error(err);
+            console.error("Error klaim:", err);
             btn.className = "btn-claim btn-ready";
             btn.innerText = "Klaim";
             btn.disabled = false;
@@ -341,8 +370,10 @@
     }
 
     // Inisialisasi awal
-    renderMissions();
-    syncStatusMisi();
+    document.addEventListener('DOMContentLoaded', () => {
+        renderMissions();
+        syncStatusMisi();
+    });
 </script>
 </body>
 </html>
