@@ -31,7 +31,6 @@
             color: #fff;
         }
 
-        /* Link Admin */
         .admin-contact {
             position: absolute;
             top: 15px;
@@ -56,7 +55,6 @@
             transform: translateY(-2px);
         }
 
-        /* Layering Bintang */
         .stars-wrapper {
             position: absolute;
             top: 0;
@@ -91,7 +89,6 @@
             to { transform: translateY(400px); }
         }
 
-        /* LOGO & ORBIT SATURNUS 3D */
         .logo-center-wrapper {
             position: relative;
             z-index: 5;
@@ -107,7 +104,6 @@
             transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.2, 1), opacity 0.5s ease;
         }
 
-        /* ZOOM SMOOTH 60 FPS TANPA FRAME DROP */
         .logo-center-wrapper.zooming {
             transform: scale(2.8) translateZ(0);
             opacity: 0.95;
@@ -160,7 +156,6 @@
             z-index: 5;
         }
 
-        /* ORBIT ITEM GPU ACCELERATED */
         .orbit-item {
             position: absolute;
             top: 50%;
@@ -216,7 +211,6 @@
             background: radial-gradient(circle, rgba(255, 182, 193, 0.95) 0%, rgba(255, 119, 169, 0.5) 50%, transparent 100%);
         }
 
-        /* 3D Orbit Layering Saturnus */
         @keyframes saturn3DOrbit {
             0% { transform: translate3d(220px, 0px, 0) scale(1.05); z-index: 18; }
             25% { transform: translate3d(0px, 80px, 0) scale(1.22); z-index: 25; }
@@ -225,7 +219,6 @@
             100% { transform: translate3d(220px, 0px, 0) scale(1.05); z-index: 18; }
         }
 
-        /* TIRAI PUTIH SWEEP DARI KANAN KE KIRI (OPTIMIZED) */
         .white-sweep-curtain {
             position: fixed;
             top: 0;
@@ -244,7 +237,6 @@
             width: 100%;
         }
 
-        /* AUTH CARD */
         .auth-card-wrapper {
             z-index: 30;
             width: 100%;
@@ -379,6 +371,24 @@
             color: #e0f2fe;
         }
 
+        .tele-open-btn {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 6px 14px;
+            background: #0088cc;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 12px;
+            border-radius: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .tele-open-btn:hover {
+            transform: scale(1.05);
+            background: #0099ee;
+        }
+
         .countdown-timer {
             font-size: 18px;
             font-weight: 900;
@@ -509,6 +519,7 @@
         </div>
 
         <div id="telegramAuthArea">
+            <!-- LOGIN SECTION -->
             <div id="loginSection" class="auth-container">
                 <form id="loginForm" style="display: flex; flex-direction: column; gap: 10px;">
                     <input type="text" id="loginId" class="input-pill" placeholder="ID TELEGRAM / USERNAME" required autocomplete="off">
@@ -519,21 +530,27 @@
                 <div class="switch-mode">Belum punya akun? <span onclick="toggleMode('register')">Register</span></div>
             </div>
 
+            <!-- REGISTER SECTION (NO FULL NAME - ONLY ID & OPTIONAL USERNAME) -->
             <div id="registerSection" class="auth-container hidden">
                 <form id="registerForm" style="display: flex; flex-direction: column; gap: 10px;">
-                    <input type="text" id="regNama" class="input-pill" placeholder="NAMA LENGKAP" required autocomplete="off">
-                    <input type="text" id="regId" class="input-pill" placeholder="TELEGRAM USERNAME (@USER)" required autocomplete="off">
+                    <input type="text" id="regId" class="input-pill" placeholder="ID TELEGRAM (ANGKA ATAU ID)" required autocomplete="off">
+                    <input type="text" id="regUsername" class="input-pill" placeholder="USERNAME TELEGRAM (OPSIONAL)" autocomplete="off">
                     <input type="password" id="regPass" class="input-pill" placeholder="PASSWORD" required>
                     <input type="password" id="regConfirmPass" class="input-pill" placeholder="VERIFIKASI PASSWORD" required>
-                    <button type="submit" class="btn-action">KIRIM KODE OTP</button>
+                    <button type="submit" class="btn-action">KIRIM KODE OTP & BUKA TELEGRAM</button>
                 </form>
                 <div class="switch-mode">Punya akun? <span onclick="toggleMode('login')">Login</span></div>
             </div>
 
+            <!-- OTP INPUT SECTION -->
             <div id="otpSection" class="auth-container hidden">
                 <div class="otp-notice-box">
-                    <div>Silakan kirim pesan <b>/verif</b> ke Bot Telegram kami di <b>@WOK0987689wokbot</b> untuk mendapatkan 6-digit OTP.</div>
+                    <div>Pesan otomatis <b>/verif</b> sedang dibuka di Bot <b>@pxxcazellbot</b>.</div>
+                    <a href="https://t.me/pxxcazellbot?text=%2Fverif" target="_blank" class="tele-open-btn">
+                        ✈️ Buka Bot @pxxcazellbot
+                    </a>
                     <div class="countdown-timer" id="otpTimer">03:00</div>
+                    <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">Kirim <b>/verif</b> ke bot dan salin 6 digit OTP di bawah ini:</div>
                 </div>
                 <form id="otpForm" style="display: flex; flex-direction: column; gap: 10px;">
                     <input type="text" id="otpCode" class="input-pill" placeholder="MASUKKAN 6 DIGIT OTP" required maxlength="6" autocomplete="off">
@@ -636,7 +653,7 @@
                 if (data.success) {
                     setCookie("user_session", data.session_key, 7);
                     triggerCinematicZoomTransition(() => {
-                        window.location.href = "beranda";
+                        window.location.href = "chat.html";
                     });
                 } else {
                     alert("Sistem Menolak: " + (data.message || "Akun tidak ditemukan. Silakan Register!"));
@@ -646,11 +663,11 @@
             }
         });
 
-        // 2. TAHAP 1 REGISTRASI INIT (TELEGRAM OTP)
+        // 2. TAHAP 1 REGISTRASI INIT (NO FULL NAME - ONLY ID & OPTIONAL USERNAME)
         document.getElementById("registerForm").addEventListener("submit", async (e) => {
             e.preventDefault();
-            const nama = document.getElementById("regNama").value;
-            const id = document.getElementById("regId").value;
+            const id = document.getElementById("regId").value.trim();
+            const username = document.getElementById("regUsername").value.trim();
             const pass = document.getElementById("regPass").value;
             const confirmPass = document.getElementById("regConfirmPass").value;
 
@@ -663,16 +680,20 @@
                 const response = await fetch(`${BACKEND_URL}/api/register/init`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: nama, id: id, password: pass })
+                    body: JSON.stringify({ id: id, username: username, password: pass })
                 });
                 const data = await response.json();
 
                 if (response.ok && data.status === "success") {
-                    pendingRegData = { id: id, password: pass, name: nama };
+                    pendingRegData = { id: id, username: username, password: pass };
                     toggleMode('otp');
                     startOtpTimer(180);
+
+                    // Buka otomatis ke bot telegram dengan template /verif
+                    const teleUrl = `https://t.me/pxxcazellbot?text=%2Fverif`;
+                    window.open(teleUrl, "_blank");
                 } else {
-                    alert("Gagal Inisialisasi: " + (data.detail || data.message || "Username sudah terdaftar!"));
+                    alert("Gagal Inisialisasi: " + (data.detail || data.message || "ID sudah terdaftar!"));
                 }
             } catch (error) {
                 alert("Gagal mengirimkan inisialisasi pendaftaran!");
@@ -682,7 +703,7 @@
         // 3. TAHAP 2 VERIFIKASI OTP TELEGRAM SUBMIT
         document.getElementById("otpForm").addEventListener("submit", async (e) => {
             e.preventDefault();
-            const otp = document.getElementById("otpCode").value;
+            const otp = document.getElementById("otpCode").value.trim();
             if (!pendingRegData) return;
 
             try {
@@ -697,9 +718,10 @@
                 const data = await response.json();
 
                 if (response.ok && data.status === "success") {
-                    alert("Pendaftaran Berhasil! Silakan Login.");
+                    alert("Pendaftaran Berhasil! Silakan Login dengan ID dan Password Anda.");
                     clearInterval(otpCountdownInterval);
                     toggleMode('login');
+                    document.getElementById("loginId").value = pendingRegData.id;
                 } else {
                     alert("Verifikasi Gagal: " + (data.detail || "Kode OTP tidak valid atau telah kadaluwarsa."));
                 }
@@ -720,7 +742,7 @@
 
                 if (remaining <= 0) {
                     clearInterval(otpCountdownInterval);
-                    alert("Waktu OTP habis. Silakan minta kode baru.");
+                    alert("Waktu OTP habis (3 menit). Silakan ulangi pendaftaran.");
                     toggleMode('register');
                 }
                 remaining--;
@@ -740,7 +762,7 @@
                 if (res.ok && data.success) {
                     setCookie("user_session", data.session_key, 7);
                     triggerCinematicZoomTransition(() => {
-                        window.location.href = "beranda";
+                        window.location.href = "chat.html";
                     });
                 } else {
                     alert("Login Google Gagal: " + (data.detail || "Token Google tidak valid."));
@@ -760,15 +782,12 @@
             if (authCard) authCard.classList.add("fade-out");
             if (loadingArea) loadingArea.classList.add("hidden");
 
-            // Hardware-accelerated zoom
             logoWrapper.classList.add("zooming");
 
-            // Sapuan tirai putih
             setTimeout(() => {
                 curtain.classList.add("active");
             }, 120);
 
-            // Eksekusi redirect saat layar putih penuh
             setTimeout(() => {
                 if (callback) callback();
             }, 600);
@@ -795,7 +814,7 @@
                     if (data.success || session.startsWith("GGL_")) {
                         startLoadingAnimation("Menghubungkan ke data center...", () => {
                             triggerCinematicZoomTransition(() => {
-                                window.location.href = "beranda";
+                                window.location.href = "chat.html";
                             });
                         });
                     } else {
@@ -806,7 +825,7 @@
                 } catch (error) {
                     if (session.startsWith("GGL_")) {
                         triggerCinematicZoomTransition(() => {
-                            window.location.href = "beranda";
+                            window.location.href = "chat.html";
                         });
                     } else {
                         eraseCookie("user_session");
