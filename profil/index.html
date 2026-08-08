@@ -115,7 +115,7 @@
         }
         .nav-back-btn:hover { background: rgba(255, 255, 255, 0.25); }
 
-        /* VIEW CONTAINER — profile tab tidak scroll, lainnya scroll */
+        /* VIEW CONTAINER */
         .tab-viewport {
             flex-grow: 1; overflow-y: auto; padding: 0;
             position: relative; height: 100%;
@@ -123,9 +123,7 @@
         .tab-viewport::-webkit-scrollbar { width: 5px; }
         .tab-viewport::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
-        /* Profile tab: no padding, full height, no scroll (standee butuh full height) */
         #profileTab { padding: 0; overflow: hidden; }
-        /* Tab lain: normal padding + scroll */
         #skinTab, #historyTab, #statsTab, #affinityTab, #settingsTab { padding: 18px 24px; }
 
         .tab-pane { display: none; height: 100%; }
@@ -133,39 +131,38 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* =========================================================
-           PROFILE STAGE: Flex row, HUD kiri + Standee kanan
+           PROFILE STAGE: Flex row, Kiri & Kanan terpisah rapi
            ========================================================= */
         .profile-moba-stage {
             display: flex;
             width: 100%;
             height: 100%;
-            gap: 20px; /* Tambahan gap agar kiri dan kanan terpisah */
-            padding: 10px 0; /* Memberi ruang atas bawah */
+            gap: 20px; 
+            padding: 10px 20px; 
             overflow: hidden;
         }
 
-        /* HUD KIRI: Kotak solid terpisah, bukan gradasi pudar */
+        /* HUD KIRI: Kotak solid terpisah */
         .profile-moba-hud {
-            flex: 1.2; /* Memberi porsi sedikit lebih besar ke panel kiri */
+            flex: 1.2; 
             position: relative;
-            background: rgba(10, 16, 32, 0.85); /* Warna solid transparan */
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.15); /* Border penuh */
-            border-radius: 20px; /* Sudut membulat */
+            background: rgba(10, 16, 32, 0.85); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15); 
+            border-radius: 20px; 
             padding: 24px;
             display: flex; flex-direction: column; gap: 14px;
             z-index: 5; overflow-y: auto; overflow-x: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         }
         .profile-moba-hud::-webkit-scrollbar { width: 4px; }
         .profile-moba-hud::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
-        .profile-moba-hud::before {
-            display: none;
-        }
 
-        /* HEADER ROW (AVATAR, NAMA, OSHI, TRIO COUNTERS) */
+        /* HEADER ROW (AVATAR, NAMA, DLL) */
         .wota-user-header {
             display: flex; gap: 18px; align-items: center; width: 100%;
         }
+        
         .wota-avatar-box {
             position: relative; width: 78px; height: 78px; flex-shrink: 0; cursor: pointer;
             border-radius: 20px; padding: 2px;
@@ -176,26 +173,43 @@
         .wota-avatar-box:hover { transform: scale(1.06); }
         .wota-avatar-img {
             width: 100%; height: 100%; border-radius: 18px;
-            object-fit: cover; background: #111;
+            object-fit: cover; background: #111; z-index: 1; position: relative;
         }
-        .wota-cam-badge {
-            position: absolute; bottom: -4px; right: -4px;
-            background: linear-gradient(135deg, #ff7700, #ff007f);
-            width: 24px; height: 24px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 11px; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        
+        /* BORDER AVATAR DINAMIS KAYAK TAB CHAT */
+        .profile-border {
+            position: absolute;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 142%; height: 142%; 
+            pointer-events: none; z-index: 2; object-fit: contain;
+            mix-blend-mode: multiply; filter: contrast(1.15) brightness(1.05);
         }
 
         .wota-user-meta {
             display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0;
         }
+        
+        /* TEMPLATE ID DAN USERNAME SESUAI GAMBAR 2 */
         .wota-display-name {
             font-size: 22px; font-weight: 900; color: #fff;
             display: flex; align-items: center; gap: 8px;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
+        .lv-badge {
+            background: linear-gradient(135deg, #1a5cff, #00d4ff);
+            font-size: 10px; padding: 2px 6px; border-radius: 8px; 
+            margin-left: 2px; font-weight: 800; border: 1px solid rgba(255,255,255,0.3);
+        }
+        .gender-badge {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%; width: 22px; height: 22px; display: flex; 
+            align-items: center; justify-content: center; font-size: 11px;
+            color: #4da6ff;
+        }
+        
         .wota-username-tag {
-            font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 700;
+            font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 700;
+            display: flex; align-items: center; gap: 6px;
         }
         
         /* OSHI PILL BESAR DI BAWAH NAMA */
@@ -204,8 +218,8 @@
             background: linear-gradient(135deg, rgba(255, 0, 127, 0.25), rgba(255, 119, 0, 0.25));
             border: 1px solid rgba(255, 0, 127, 0.6);
             padding: 4px 12px; border-radius: 12px;
-            font-size: 12px; font-weight: 900; color: #ff80bf;
-            width: fit-content; margin-top: 2px;
+            font-size: 11.5px; font-weight: 900; color: #ff80bf;
+            width: fit-content; margin-top: 4px;
             box-shadow: 0 2px 10px rgba(255, 0, 127, 0.2);
         }
         .wota-oshi-badge b { color: #fff; }
@@ -273,7 +287,7 @@
         .wota-rank-lbl { font-size: 10px; font-weight: 900; color: #ffd700; text-transform: uppercase; }
         .wota-rank-val { font-size: 11px; font-weight: 900; color: #fff; }
 
-        /* QUICK ACTION BUTTONS BAR */
+        /* QUICK ACTION BUTTONS BAR (Tanpa tombol Salin Link) */
         .wota-quick-bar {
             display: flex; gap: 10px; justify-content: flex-end; width: 100%; margin-top: auto;
         }
@@ -288,32 +302,24 @@
            STANDEE KANAN: Kotak terpisah untuk Video/Foto
            ========================================================= */
         .moba-standee-hero-holder {
-            flex: 1; /* Sisa lebar layar */
+            flex: 1; 
             position: relative;
-            border-radius: 20px; /* Sudut membulat menyesuaikan Gambar 2 */
+            border-radius: 20px; 
             border: 1px solid rgba(255, 255, 255, 0.15);
             background: rgba(0,0,0,0.5);
             box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-            overflow: hidden; /* Mencegah video keluar dari lengkungan */
+            overflow: hidden; 
             z-index: 2;
         }
 
-        /* FADE KIRI DIHAPUS: Agar video/foto jelas dan tidak tertutup bayangan hitam */
-        .moba-standee-hero-holder::before {
-            display: none !important;
-        }
-
-        /* MEDIA: Menyesuaikan posisi gambar/video */
+        /* MEDIA: Menyesuaikan posisi gambar/video tanpa tabrakan */
         .standee-media-element {
             width: 100%; height: 100%;
             object-fit: cover;
-            object-position: center 15%; /* Fokus sedikit ke bagian atas/wajah */
+            object-position: center 15%; 
             display: block;
             transition: opacity 0.3s ease;
         }
-
-        /* GRADIENT BOTTOM: fade bawah untuk kedalaman */
-        .standee-media-element + .standee-media-element { position: absolute; top: 0; left: 0; }
 
         /* JIKO BANNER di ATAS standee */
         .standee-jiko-bubble {
@@ -321,49 +327,49 @@
             top: 14px; left: 0; right: 0;
             margin: 0 auto;
             width: fit-content; max-width: 85%;
-            background: rgba(0, 0, 0, 0.65);
-            border: 1px solid rgba(255, 215, 0, 0.5);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 215, 0, 0.6);
             border-radius: 20px;
             padding: 8px 18px;
-            font-size: 11.5px; font-style: italic;
+            font-size: 11.5px; font-style: italic; font-weight: 800;
             color: #ffd700; text-align: center;
             z-index: 20;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         }
 
         /* TOMBOL EDIT (kanan atas standee) */
         .standee-top-action-bar {
-            position: absolute; bottom: 12px; right: 10px;
+            position: absolute; top: 14px; right: 14px;
             display: flex; gap: 6px; z-index: 25;
         }
         .standee-edit-btn {
-            background: rgba(0, 0, 0, 0.75);
-            border: 1px solid #ffd700;
-            color: #ffd700; padding: 6px 14px; border-radius: 20px;
+            background: linear-gradient(135deg, #1a5cff, #00d4ff);
+            border: 1px solid #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            color: #fff; padding: 6px 14px; border-radius: 20px;
             font-size: 11px; font-weight: 900; cursor: pointer;
-            transition: background 0.2s;
+            transition: transform 0.2s;
             display: flex; align-items: center; gap: 5px;
         }
-        .standee-edit-btn:hover { background: #ffd700; color: #000; }
+        .standee-edit-btn:hover { transform: scale(1.05); }
 
-        /* BOTTOM ACTIONS — lingkaran kecil */
+        /* BOTTOM ACTIONS — lingkaran kecil (Tanpa Salin Link) */
         .standee-bottom-actions {
-            position: absolute; bottom: 12px; left: 14px;
-            display: flex; flex-direction: column; gap: 6px; z-index: 25;
+            position: absolute; bottom: 16px; right: 16px;
+            display: flex; flex-direction: column; gap: 8px; z-index: 25;
         }
         .hud-circle-btn {
             background: rgba(0, 0, 0, 0.75);
             border: 1px solid rgba(255,255,255,0.3);
-            width: 34px; height: 34px; border-radius: 50%;
+            width: 36px; height: 36px; border-radius: 50%;
             color: #fff; display: flex; align-items: center; justify-content: center;
-            font-size: 13px; cursor: pointer; transition: background 0.2s;
+            font-size: 14px; cursor: pointer; transition: background 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
         }
-        .hud-circle-btn:hover { background: #1a5cff; }
-
-        /* RUNE (sembunyikan karena lag — optional) */
-        .summon-pedestal-rune { display: none; }
+        .hud-circle-btn:hover { background: #1a5cff; border-color: transparent; }
 
         /* =========================================================
-           TAB 2: PAJANGAN KARTU SKIN & KOLEKTOR (FOTO 2)
+           TAB 2: PAJANGAN KARTU SKIN & KOLEKTOR
            ========================================================= */
         .collector-hub-layout {
             display: grid; grid-template-columns: 2.2fr 1fr; gap: 20px;
@@ -412,7 +418,7 @@
         }
 
         /* =========================================================
-           TAB 3: RIWAYAT GAME (FOTO 5)
+           TAB 3: RIWAYAT GAME
            ========================================================= */
         .history-grid-4 {
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
@@ -447,7 +453,7 @@
         }
 
         /* =========================================================
-           TAB 4: STATISTIK (FOTO 4)
+           TAB 4: STATISTIK
            ========================================================= */
         .stats-dashboard-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
@@ -468,7 +474,7 @@
         }
 
         /* =========================================================
-           TAB 5: HUBUNGAN / AFFINITY (FOTO 3)
+           TAB 5: HUBUNGAN / AFFINITY
            ========================================================= */
         .affinity-radar-stage {
             display: flex; align-items: center; justify-content: center;
@@ -588,42 +594,25 @@
             .side-item { width: 100%; height: 45px; flex-direction: row; justify-content: flex-start; padding: 0 14px; gap: 10px; font-size: 12px; }
             .toggle-btn-mobile { display: block; }
             
-            /* STACK KE BAWAH di Mobile */
             .profile-moba-stage {
                 display: flex !important;
                 flex-direction: column !important;
                 min-height: auto !important;
                 gap: 15px !important;
+                padding: 10px 14px !important;
             }
             .moba-standee-hero-holder {
-                margin-left: 0 !important;
                 width: 100% !important;
                 height: 270px !important;
                 min-height: unset !important;
                 overflow: hidden !important;
                 border-radius: 20px !important;
             }
-            .moba-standee-hero-holder::before { display: none !important; }
-            .moba-standee-hero-holder::after {
-                width: 100% !important; height: 85px !important;
-                border-radius: 0 !important;
-                bottom: 0 !important; left: 0 !important;
-                transform: none !important;
-                background: linear-gradient(to bottom, transparent 0%, rgba(6,11,23,0.92) 100%) !important;
-            }
             .standee-media-element { max-height: 250px; }
             .profile-moba-hud {
                 width: 100% !important;
-                padding: 14px 16px !important;
-                border: 1px solid rgba(255,255,255,0.12) !important;
-                border-radius: 0 0 20px 20px !important;
-                border-top: none !important;
-                background: linear-gradient(
-                    180deg,
-                    rgba(6,11,23,0.55) 0%,
-                    rgba(6,11,23,0.97) 22%,
-                    rgba(6,11,23,0.99) 100%
-                ) !important;
+                padding: 16px !important;
+                border: 1px solid rgba(255,255,255,0.15) !important;
             }
 
             .wota-user-header { flex-direction: column; align-items: flex-start; gap: 12px; }
@@ -691,15 +680,20 @@
                         <div class="wota-user-header">
                             <div class="wota-avatar-box" onclick="triggerAvatarUpload()" title="Klik untuk Ganti Foto Profil">
                                 <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="wota-avatar-img" id="heroUserAvatar">
-                                <div class="wota-cam-badge">📷</div>
+                                <!-- BORDER DINAMIS SKIN PROFIL -->
+                                <img src="" alt="Border" class="profile-border" id="profileBorder" style="display: none;">
                                 <input type="file" id="directAvatarPicker" accept="image/*" style="display: none;" onchange="handleDirectAvatarUpload(event)">
                             </div>
                             <div class="wota-user-meta">
                                 <div class="wota-display-name">
                                     <span id="heroUserName">Memuat...</span>
-                                    <span title="Indonesia">🇮🇩</span>
+                                    <span class="lv-badge">Lv.20</span>
+                                    <span style="font-size: 15px; margin-left: 6px; font-weight: 800; font-family: 'Rajdhani', sans-serif;">ID</span>
+                                    <span class="gender-badge" title="Gender">♂️</span>
                                 </div>
-                                <div class="wota-username-tag" id="heroUserTag">@user</div>
+                                <div class="wota-username-tag" id="heroUserTag">
+                                    @user • ID: 0000000 (2020)
+                                </div>
                                 <div class="wota-oshi-badge">
                                     <span>💖 Oshi:</span>
                                     <b id="heroOshiText">Shani Indira Natio</b>
@@ -724,7 +718,6 @@
 
                         <!-- 3 MEDAL UTAMA WOTA: TIM (KIRI) | ROLE (TENGAH) | GENERASI (KANAN) -->
                         <div class="wota-medals-row">
-                            <!-- KIRI: TIM -->
                             <div class="wota-medal-card">
                                 <div class="wota-emblem-badge emblem-team" id="teamEmblemIcon">🔴</div>
                                 <span class="wota-medal-category">Tim Favorit</span>
@@ -732,7 +725,6 @@
                                 <span class="wota-medal-sub" id="displayTeamDesc">Team of Passion</span>
                             </div>
 
-                            <!-- TENGAH: ROLE WOTA -->
                             <div class="wota-medal-card">
                                 <div class="wota-emblem-badge emblem-role" id="roleEmblemIcon">👑</div>
                                 <span class="wota-medal-category">Role Wota</span>
@@ -740,7 +732,6 @@
                                 <span class="wota-medal-sub" id="displayRoleDesc">Senior Dedicated Fan</span>
                             </div>
 
-                            <!-- KANAN: GENERASI -->
                             <div class="wota-medal-card">
                                 <div class="wota-emblem-badge emblem-gen" id="genEmblemIcon">⭐</div>
                                 <span class="wota-medal-category">Generasi</span>
@@ -768,11 +759,10 @@
                             </div>
                         </div>
 
-                        <!-- TOMBOL AKSI CEPAT -->
+                        <!-- TOMBOL AKSI CEPAT (Tanpa Salin Link) -->
                         <div class="wota-quick-bar">
                             <button class="wota-btn-pill" onclick="switchTab('settingsTab')">✏️ Edit Profil & Oshi</button>
                             <button class="wota-btn-pill" onclick="switchTab('skinTab')">🃏 Koleksi Kartu</button>
-                            <button class="wota-btn-pill" onclick="copyProfileLink()">🪪 Salin Link Profil</button>
                         </div>
 
                     </div>
@@ -794,17 +784,13 @@
                         <!-- FOTO POTRAIT STANDEE (UNTUK TIER REGULER / MYTH / LEGEND / RARE) -->
                         <img class="standee-media-element" id="standeeImage" src="../skin/CHAT_CSHN.png" style="display: none;" onerror="this.onerror=null; this.src='../skin/CSHN.jpg';">
 
-                        <!-- FLOOR SUMMONING PEDESTAL RUNE -->
-                        <div class="summon-pedestal-rune"></div>
-
                         <!-- JIKO SPEECH BUBBLE -->
                         <div class="standee-jiko-bubble" id="standeeJikoBox">
                             "<span id="standeeJikoText">Semanis cokelat, selembut sutra... Halo semuanya, aku Shani!</span>"
                         </div>
 
-                        <!-- BOTTOM RIGHT FLOATING HUD CONTROLS -->
+                        <!-- BOTTOM RIGHT FLOATING HUD CONTROLS (Tanpa Salin Link) -->
                         <div class="standee-bottom-actions">
-                            <button class="hud-circle-btn" title="Name Card" onclick="copyProfileLink()">🪪</button>
                             <button class="hud-circle-btn" title="Edit Pajangan" onclick="openSkinModal()">✏️</button>
                             <button class="hud-circle-btn" title="Album Skin" onclick="switchTab('skinTab')">📷</button>
                         </div>
@@ -813,7 +799,7 @@
                 </div>
             </div>
 
-            <!-- TAB 2: PAJANGAN KARTU SKIN & KOLEKTOR (FOTO 2) -->
+            <!-- TAB 2: PAJANGAN KARTU SKIN & KOLEKTOR -->
             <div class="tab-pane" id="skinTab">
                 <div class="collector-hub-layout">
                     <div class="showcase-grid-8" id="skinShowcaseGrid"></div>
@@ -834,18 +820,17 @@
 
                         <div style="display: flex; gap: 8px; width: 100%; margin-top: 10px;">
                             <button class="custom-btn-action" style="flex: 1;" onclick="openSkinModal()">Pilih Pajangan</button>
-                            <button class="custom-btn-action" style="flex: 1;" onclick="copyProfileLink()">Bagikan</button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB 3: RIWAYAT GAME (FOTO 5) -->
+            <!-- TAB 3: RIWAYAT GAME -->
             <div class="tab-pane" id="historyTab">
                 <div class="history-grid-4" id="matchHistoryList"></div>
             </div>
 
-            <!-- TAB 4: STATISTIK (FOTO 4) -->
+            <!-- TAB 4: STATISTIK -->
             <div class="tab-pane" id="statsTab">
                 <div class="stats-dashboard-grid">
                     <div class="setting-panel">
@@ -884,7 +869,7 @@
                 </div>
             </div>
 
-            <!-- TAB 5: HUBUNGAN / AFFINITY (FOTO 3) -->
+            <!-- TAB 5: HUBUNGAN / AFFINITY -->
             <div class="tab-pane" id="affinityTab">
                 <div class="setting-panel affinity-radar-stage">
                     <div class="concentric-ring ring-1"></div>
@@ -922,7 +907,7 @@
             <div class="tab-pane" id="settingsTab">
                 <div class="settings-card-grid">
                     
-                    <!-- CUSTOM KUSTOMISASI PROFIL WOTA (TIM, ROLE, GEN, OSHI) -->
+                    <!-- CUSTOM KUSTOMISASI PROFIL WOTA -->
                     <div class="setting-panel" style="grid-column: span 2;">
                         <div class="setting-panel-title">🎭 Kustomisasi Tim, Role Wota, Generasi & Oshi</div>
                         
@@ -1019,7 +1004,7 @@
                         <button class="custom-btn-action" style="margin-top: 6px;" onclick="saveCustomWotaProfile()">💾 Simpan Kustomisasi Profil Wota</button>
                     </div>
 
-                    <!-- GANTI USERNAME (COOLDOWN 7 HARI) -->
+                    <!-- GANTI USERNAME -->
                     <div class="setting-panel">
                         <div class="setting-panel-title">🆔 Ganti Username (Cooldown 7 Hari)</div>
                         <div id="usernameCooldownNotice" style="font-size:12px; color:#ffd700; padding:6px 10px; background:rgba(255,215,0,0.1); border-radius:8px; border:1px solid rgba(255,215,0,0.3);">
@@ -1031,7 +1016,7 @@
                         </div>
                     </div>
 
-                    <!-- GANTI FOTO PROFIL (IMGBB / TEMPLATE OS) -->
+                    <!-- GANTI FOTO PROFIL -->
                     <div class="setting-panel">
                         <div class="setting-panel-title">📸 Ganti Foto Profil</div>
                         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
@@ -1099,7 +1084,6 @@
 
         let ownedSkinsData = [];
 
-        // DESKRIPSI & IKON DINAMIS TIM, ROLE & GENERASI
         const TEAM_META = {
             "Tim J": { icon: "🔴", desc: "Team of Passion" },
             "Tim KIII": { icon: "🟡", desc: "Team of Sun Glory" },
@@ -1166,9 +1150,7 @@
                     body: JSON.stringify(payload)
                 });
                 if (res.ok) return await res.json();
-            } catch (err) {
-                console.warn(`Primary endpoint ${endpoint} failed, trying fallback:`, err);
-            }
+            } catch (err) {}
 
             try {
                 const resFallback = await fetch(`${FALLBACK_URL}${endpoint}`, {
@@ -1177,9 +1159,7 @@
                     body: JSON.stringify(payload)
                 });
                 if (resFallback.ok) return await resFallback.json();
-            } catch (err2) {
-                console.warn(`Fallback endpoint ${endpoint} failed:`, err2);
-            }
+            } catch (err2) {}
             return null;
         }
 
@@ -1206,16 +1186,37 @@
             if (json && json.data) {
                 const d = json.data;
 
-                // NAMA & USERNAME
+                // NAMA
                 document.getElementById("heroUserName").innerText = d.nama || "User";
+                
+                // USERNAME & ID TEMPLATE
                 let rawUser = d.username || d.userId || "user";
                 if (rawUser.includes("@")) rawUser = rawUser.split("@")[0];
-                document.getElementById("heroUserTag").innerText = "@" + rawUser;
+                document.getElementById("heroUserTag").innerHTML = `@${rawUser} • ID: ${d.userId || '00000000'} <span style="color:#aaa; font-size:9px;">(2026)</span>`;
                 
                 // AVATAR
                 const avatarSrc = d.photoProfile || DEFAULT_TEMPLATE_PP;
                 document.getElementById("heroUserAvatar").src = avatarSrc;
                 document.getElementById("affinityCenterAvatar").src = avatarSrc;
+
+                // BORDER AVATAR DINAMIS (Dari statusskin yang diload bareng, atau dari d.bg_profile_skin)
+                const inv = d.all_skins || d.inventory || [];
+                let borderCode = inv.find(s => String(s).startsWith("BORDER_"));
+                if (!borderCode && d.bg_profile_skin) borderCode = d.bg_profile_skin;
+                
+                const borderEl = document.getElementById("profileBorder");
+                if (borderCode) {
+                    let base = borderCode.replace(/BORDER_/i, "").replace(/\.png/i, "").replace(/\.jpg/i, "");
+                    borderEl.src = `../skin/BORDER_${base}.png`;
+                    borderEl.onerror = function() {
+                        if (!this.src.endsWith('.jpg')) {
+                            this.src = `../skin/BORDER_${base}.jpg`;
+                        } else {
+                            this.style.display = 'none';
+                        }
+                    };
+                    borderEl.style.display = "block";
+                }
 
                 // OSHI
                 const oshiVal = d.oshi || "Shani Indira Natio";
@@ -1278,7 +1279,7 @@
                 document.getElementById("cntUncommon").innerText = b.uncommon || 1;
                 document.getElementById("cntTotal").innerText = (d.all_skins || []).length || 6;
 
-                // STANDEE SKIN & JIKO — cari detail rarity dari ownedSkinsData bila sudah diload
+                // STANDEE SKIN & JIKO
                 const standeeCode = d.standee_skin || "CSHN";
                 const standeeDetail = ownedSkinsData.find(s => {
                     const fc = (s.code || "").replace(/BORDER_/gi, "").replace(/CHAT_/gi, "").replace(/\.png$/i, "").replace(/\.jpg$/i, "").trim();
@@ -1297,11 +1298,9 @@
         async function loadStatusSkinData() {
             const json = await fetchSafeApi('/statusskin');
             if (!json) return;
-            // Simpan data skin yang dimiliki
             if (json.skins_detail && json.skins_detail.length > 0) {
                 ownedSkinsData = json.skins_detail;
             }
-            // Tampilkan standee dari backend (standee yang dipajang user)
             const standeeSkin = json.current_standee || (ownedSkinsData.length > 0 ? ownedSkinsData[0].code : null);
             const jikoBio = json.current_bio || json.jiko || null;
             if (standeeSkin) {
@@ -1310,12 +1309,6 @@
             }
         }
 
-        /**
-         * renderStandeeDisplay
-         * @param {string} skinCode - kode skin (e.g. CSHN, DKTY, FIONY_ALVERIA_MYTH)
-         * @param {string|null} bioQuote - teks jiko / bio
-         * @param {object|null} skinDetail - detail skin dari backend (rarity, media_type, jiko)
-         */
         function renderStandeeDisplay(skinCode, bioQuote, skinDetail) {
             const cleanCode = (skinCode || "CSHN")
                 .replace(/BORDER_/gi, "")
@@ -1328,27 +1321,18 @@
             const imgEl = document.getElementById("standeeImage");
             const jikoEl = document.getElementById("standeeJikoText");
 
-            // Tampilkan teks jiko — prioritas: parameter > skinDetail.jiko > default
-            const jikoText = bioQuote
-                || (skinDetail && skinDetail.jiko)
-                || "Semanis cokelat, selembut sutra... Halo semuanya!";
+            const jikoText = bioQuote || (skinDetail && skinDetail.jiko) || "Semanis cokelat, selembut sutra... Halo semuanya!";
             if (jikoEl) jikoEl.innerText = jikoText;
 
-            // ===== DETEKSI OMEGA/VIDEO =====
-            // Cek dari skinDetail dulu (data langsung dari backend)
             let isOmegaVideo = false;
             if (skinDetail) {
                 const mt = (skinDetail.media_type || "").toLowerCase();
                 const rar = (skinDetail.rarity || "").toLowerCase();
-                if (mt === "video") isOmegaVideo = true;
-                else if (rar.includes("omega") || rar.includes("mso")) isOmegaVideo = true;
+                if (mt === "video" || rar.includes("omega") || rar.includes("mso")) isOmegaVideo = true;
             }
-            // Fallback: cari di ownedSkinsData yang sudah diload
             if (!isOmegaVideo && ownedSkinsData.length > 0) {
                 const found = ownedSkinsData.find(s => {
-                    const fc = (s.code || "")
-                        .replace(/BORDER_/gi, "").replace(/CHAT_/gi, "")
-                        .replace(/\.png$/i, "").replace(/\.jpg$/i, "").trim();
+                    const fc = (s.code || "").replace(/BORDER_/gi, "").replace(/CHAT_/gi, "").replace(/\.png$/i, "").replace(/\.jpg$/i, "").trim();
                     return fc === cleanCode || s.code === cleanCode;
                 });
                 if (found) {
@@ -1359,7 +1343,6 @@
             }
 
             if (isOmegaVideo) {
-                // Tampilkan VIDEO untuk skin Omega & Omega Spesial (dari folder gacha-skin)
                 if (vidEl) {
                     const newSrc = `../gacha-skin/preview_${cleanCode}.webm`;
                     if (!vidEl.currentSrc || !vidEl.currentSrc.endsWith(`preview_${cleanCode}.webm`)) {
@@ -1371,7 +1354,6 @@
                 }
                 if (imgEl) imgEl.style.display = "none";
             } else {
-                // Tampilkan FOTO POTRAIT untuk skin Regular/Rare/Legend/Myth (dari folder skin)
                 if (vidEl) { vidEl.pause(); vidEl.style.display = "none"; }
                 if (imgEl) {
                     imgEl.style.display = "block";
@@ -1429,9 +1411,8 @@
             const j = await fetchSafeApi('/api/user/change-username', { new_username: raw });
             if (j && j.status === "success") {
                 alert(j.message || `Username berhasil diganti menjadi @${raw}!`);
-                document.getElementById("heroUserTag").innerText = "@" + raw;
-                document.getElementById("editUsernameInput").value = "";
                 loadUserProfileData();
+                document.getElementById("editUsernameInput").value = "";
             } else {
                 alert("Gagal Ganti Username:\n" + (j ? j.detail || j.message : "Sistem cooldown aktif atau server offline."));
             }
@@ -1463,7 +1444,6 @@
             const modalList = document.getElementById("modalSkinList");
             modalList.innerHTML = "";
 
-            // Jika belum ada data skin, fetch dulu dari backend
             if (!ownedSkinsData || ownedSkinsData.length === 0) {
                 modalList.innerHTML = `<div style="grid-column:span 3; text-align:center; padding:30px; color:#ffd700;">⏳ Memuat koleksi skin Anda...</div>`;
                 document.getElementById("skinModalOverlay").classList.add("open");
@@ -1611,11 +1591,6 @@
             let count = parseInt(el.innerText) || 845;
             el.innerText = count + 1;
             alert("Terima kasih sudah memberikan Suka!");
-        }
-
-        function copyProfileLink() {
-            navigator.clipboard.writeText(window.location.href);
-            alert("Tautan profil berhasil disalin ke clipboard!");
         }
 
         function logout() {
