@@ -545,28 +545,45 @@
             }
         }
 
+        const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+        // PRIMARY_URL harus selalu ke backend HuggingFace, bukan domain GitHub Pages!
+        const PRIMARY_URL = (window.location.origin && window.location.origin.includes("hf.space")) 
+            ? window.location.origin 
+            : BACKEND_URL;
+        const FALLBACK_URL = BACKEND_URL;
+
         // ==========================================
         // 3. FETCH DATA STATUS SKIN (PERSIS STATUSCHAT)
         // ==========================================
         async function fetchStatusSkin() {
             try {
-                // Mengambil cookie sesi persis cara statuschat
-                const sessionKey = getCookie("user_session") || "default_user";
+                const sessionKey = getCookie("user_session") || getCookie("session_key") || getCookie("sessionCookie") || localStorage.getItem("user_session") || "demo_user";
 
-                // Mengirim via POST dengan payload JSON tanpa credentials: 'include' untuk menghindari CORS Error
-                const response = await fetch(`${BACKEND_URL}/statusskin`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        session_cookie: sessionKey, 
-                        sessionCookie: sessionKey 
-                    })
-                });
+                let response;
+                try {
+                    response = await fetch(`${PRIMARY_URL}/statusskin`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            session_cookie: sessionKey, 
+                            session_key: sessionKey,
+                            sessionCookie: sessionKey 
+                        })
+                    });
+                } catch(e) {
+                    response = await fetch(`${FALLBACK_URL}/statusskin`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            session_cookie: sessionKey, 
+                            session_key: sessionKey,
+                            sessionCookie: sessionKey 
+                        })
+                    });
+                }
 
                 if (response.ok) {
                     const data = await response.json();
-                    
-                    // Mendukung fleksibilitas struktur JSON dari backend HuggingFace
                     ownedSkins = data.owned_skins || data.skins || data.ownedSkins || data.data || (Array.isArray(data) ? data : []);
                 } else {
                     console.warn("Gagal terhubung ke backend, memuat status default...");
