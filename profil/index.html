@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Kitty Tenacity - Profil & Pajangan Skin MOBA</title>
+    <title>Kitty Tenacity - Profil Wota & Pajangan Skin MOBA</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
 
         * {
             margin: 0;
@@ -16,7 +16,7 @@
         }
 
         body {
-            background-color: #070a12;
+            background-color: #060b17;
             color: #fff;
             height: 100vh;
             height: 100dvh;
@@ -25,27 +25,32 @@
             position: relative;
         }
 
-        /* 1. BACKGROUND & GAME LIGHTING */
+        /* 1. BACKGROUND & GAME AMBIENT LIGHTING */
         .video-bg {
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
-            object-fit: cover; z-index: -2;
-            filter: brightness(0.65) contrast(1.1);
+            object-fit: cover; z-index: -3;
+            filter: brightness(0.5) contrast(1.15) saturate(1.2);
         }
         .bg-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(6, 11, 25, 0.8) 0%, rgba(13, 20, 38, 0.9) 100%);
-            z-index: -1;
+            background: radial-gradient(circle at 40% 30%, rgba(45, 27, 105, 0.45) 0%, rgba(10, 16, 32, 0.88) 60%, #060b17 100%);
+            z-index: -2;
+        }
+        .ambient-dust-glow {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 75% 45%, rgba(0, 212, 255, 0.18) 0%, transparent 65%);
+            pointer-events: none; z-index: -1;
         }
 
         /* 2. SIDEBAR KIRI (TASKBAR GAME HUD) */
         .left-sidebar {
             width: 95px;
-            background: rgba(15, 23, 42, 0.7);
+            background: rgba(10, 16, 32, 0.88);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            border-right: 1px solid rgba(255, 255, 255, 0.12);
             display: flex; flex-direction: column; align-items: center;
-            padding: 20px 6px; gap: 10px; z-index: 100;
+            padding: 18px 6px; gap: 8px; z-index: 100;
             overflow-y: auto; flex-shrink: 0;
             transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.2, 1);
         }
@@ -54,21 +59,21 @@
         .side-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             text-decoration: none; color: #cbd5e1; font-weight: 800; font-size: 10px;
-            background: rgba(255, 255, 255, 0.08); width: 78px; height: 56px; border-radius: 14px;
-            transition: all 0.25s ease; border: 1px solid rgba(255, 255, 255, 0.12);
-            text-align: center; gap: 3px; cursor: pointer; flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.06); width: 80px; height: 54px; border-radius: 14px;
+            transition: all 0.25s ease; border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center; gap: 2px; cursor: pointer; flex-shrink: 0;
         }
-        .side-item:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-2px); color: #fff; }
+        .side-item:hover { background: rgba(255, 255, 255, 0.18); transform: translateY(-2px); color: #fff; }
         .side-item.active {
             background: linear-gradient(135deg, #1a5cff, #00d4ff);
-            color: #fff; box-shadow: 0 4px 18px rgba(0, 150, 255, 0.5);
+            color: #fff; box-shadow: 0 4px 18px rgba(0, 150, 255, 0.55);
             border: 1px solid rgba(255, 255, 255, 0.8);
         }
         .side-icon { font-size: 17px; }
 
         .sidebar-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
             z-index: 90; opacity: 0; transition: opacity 0.3s ease;
         }
         .sidebar-overlay.active { display: block; opacity: 1; }
@@ -81,10 +86,10 @@
 
         .top-navbar {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 25px; z-index: 20; width: 100%;
-            background: rgba(10, 16, 32, 0.7);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 10px 24px; z-index: 20; width: 100%;
+            background: rgba(6, 11, 23, 0.75);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         .top-left { display: flex; align-items: center; gap: 12px; }
         .top-right { display: flex; align-items: center; gap: 10px; }
@@ -102,196 +107,264 @@
             font-family: 'Cinzel', serif;
         }
         .nav-back-btn {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             padding: 6px 14px; border-radius: 18px;
             color: #fff; font-size: 11px; font-weight: 800;
             text-decoration: none; transition: 0.2s;
         }
-        .nav-back-btn:hover { background: rgba(255, 255, 255, 0.3); }
+        .nav-back-btn:hover { background: rgba(255, 255, 255, 0.25); }
 
-        /* VIEW CONTAINER (SCROLLABLE TAB CONTENT) */
+        /* VIEW CONTAINER — profile tab tidak scroll, lainnya scroll */
         .tab-viewport {
-            flex-grow: 1; overflow-y: auto; padding: 20px;
+            flex-grow: 1; overflow-y: auto; padding: 0;
             position: relative; height: 100%;
         }
         .tab-viewport::-webkit-scrollbar { width: 5px; }
         .tab-viewport::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
-        .tab-pane { display: none; height: 100%; animation: fadeIn 0.3s ease; }
-        .tab-pane.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        /* Profile tab: no padding, full height, no scroll (standee butuh full height) */
+        #profileTab { padding: 0; overflow: hidden; }
+        /* Tab lain: normal padding + scroll */
+        #skinTab, #historyTab, #statsTab, #affinityTab, #settingsTab { padding: 18px 24px; }
 
-        /* ==========================================
-           TAB 1: PROFIL UTAMA (SPLIT 3/5 & 2/5 LAYAR)
-           ========================================== */
-        .profile-hero-layout {
-            display: grid;
-            grid-template-columns: 3fr 2fr; /* 60% Kiri Informasi vs 40% (2/5) Kanan Standee */
-            gap: 20px;
+        .tab-pane { display: none; height: 100%; }
+        .tab-pane.active { display: block; animation: fadeIn 0.25s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* =========================================================
+           PROFILE STAGE: Flex row, HUD kiri + Standee kanan
+           ========================================================= */
+        .profile-moba-stage {
+            display: flex;
+            width: 100%;
             height: 100%;
-            min-height: calc(100vh - 110px);
-            align-items: stretch;
-        }
-        
-        .profile-left-col {
-            display: flex; flex-direction: column; gap: 15px;
+            gap: 20px; /* Tambahan gap agar kiri dan kanan terpisah */
+            padding: 10px 0; /* Memberi ruang atas bawah */
+            overflow: hidden;
         }
 
-        .profile-card-glass {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 22px; padding: 18px;
-            box-shadow: 0 10px 35px rgba(0,0,0,0.4);
+        /* HUD KIRI: Kotak solid terpisah, bukan gradasi pudar */
+        .profile-moba-hud {
+            flex: 1.2; /* Memberi porsi sedikit lebih besar ke panel kiri */
+            position: relative;
+            background: rgba(10, 16, 32, 0.85); /* Warna solid transparan */
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15); /* Border penuh */
+            border-radius: 20px; /* Sudut membulat */
+            padding: 24px;
+            display: flex; flex-direction: column; gap: 14px;
+            z-index: 5; overflow-y: auto; overflow-x: hidden;
+        }
+        .profile-moba-hud::-webkit-scrollbar { width: 4px; }
+        .profile-moba-hud::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+        .profile-moba-hud::before {
+            display: none;
         }
 
-        .header-avatar-row {
-            display: flex; gap: 16px; align-items: center;
+        /* HEADER ROW (AVATAR, NAMA, OSHI, TRIO COUNTERS) */
+        .wota-user-header {
+            display: flex; gap: 18px; align-items: center; width: 100%;
         }
-        .avatar-box {
-            position: relative; width: 74px; height: 74px; flex-shrink: 0; cursor: pointer;
-            border-radius: 18px; padding: 2px;
-            background: linear-gradient(135deg, #ffd700, #ff7700);
-            box-shadow: 0 4px 15px rgba(255, 170, 0, 0.4);
+        .wota-avatar-box {
+            position: relative; width: 78px; height: 78px; flex-shrink: 0; cursor: pointer;
+            border-radius: 20px; padding: 2px;
+            background: linear-gradient(135deg, #ffd700, #ff007f);
+            box-shadow: 0 6px 20px rgba(255, 170, 0, 0.45);
             transition: transform 0.2s;
         }
-        .avatar-box:hover { transform: scale(1.05); }
-        .main-avatar-img {
-            width: 100%; height: 100%; border-radius: 16px;
+        .wota-avatar-box:hover { transform: scale(1.06); }
+        .wota-avatar-img {
+            width: 100%; height: 100%; border-radius: 18px;
             object-fit: cover; background: #111;
         }
-        .avatar-cam-badge {
+        .wota-cam-badge {
             position: absolute; bottom: -4px; right: -4px;
             background: linear-gradient(135deg, #ff7700, #ff007f);
-            width: 26px; height: 26px; border-radius: 50%;
+            width: 24px; height: 24px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 12px; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            font-size: 11px; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.5);
         }
 
-        .user-titles { display: flex; flex-direction: column; gap: 3px; flex-grow: 1; min-width: 0; }
-        .user-fullname { font-size: 19px; font-weight: 900; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .user-tagline { font-size: 12px; color: rgba(255,255,255,0.75); display: flex; gap: 8px; align-items: center; }
-        .badge-clan {
-            background: rgba(0, 136, 255, 0.35); border: 1px solid #00d4ff;
-            padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 900; color: #00e5ff;
+        .wota-user-meta {
+            display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0;
+        }
+        .wota-display-name {
+            font-size: 22px; font-weight: 900; color: #fff;
+            display: flex; align-items: center; gap: 8px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .wota-username-tag {
+            font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 700;
         }
         
-        .counter-badges-row {
-            display: flex; gap: 8px; margin-top: 6px;
+        /* OSHI PILL BESAR DI BAWAH NAMA */
+        .wota-oshi-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: linear-gradient(135deg, rgba(255, 0, 127, 0.25), rgba(255, 119, 0, 0.25));
+            border: 1px solid rgba(255, 0, 127, 0.6);
+            padding: 4px 12px; border-radius: 12px;
+            font-size: 12px; font-weight: 900; color: #ff80bf;
+            width: fit-content; margin-top: 2px;
+            box-shadow: 0 2px 10px rgba(255, 0, 127, 0.2);
         }
-        .mini-stat-pill {
-            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15);
-            padding: 4px 10px; border-radius: 10px; font-size: 11px; font-weight: 800;
-            display: flex; align-items: center; gap: 5px; cursor: pointer; transition: 0.2s;
-        }
-        .mini-stat-pill:hover { background: rgba(255,255,255,0.25); }
+        .wota-oshi-badge b { color: #fff; }
 
-        /* RANK DISPLAY & BADGES */
-        .rank-showcase-box {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-            margin: 12px 0; text-align: center;
+        /* COUNTERS (POPULARITAS, KUNJUNGAN, SUKA) */
+        .wota-counter-strip {
+            display: flex; gap: 14px; margin-left: auto; flex-shrink: 0;
         }
-        .rank-card-item {
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 14px; padding: 10px 6px;
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
+        .wota-stat-box {
+            display: flex; flex-direction: column; align-items: center;
+            font-size: 11px; font-weight: 900; color: #cbd5e1; gap: 2px;
+            background: rgba(0, 0, 0, 0.4); padding: 8px 12px; border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .rank-badge-img {
-            width: 48px; height: 48px; object-fit: contain;
-            filter: drop-shadow(0 4px 12px rgba(255, 170, 0, 0.4));
+        .wota-stat-box span.val { font-size: 15px; font-family: 'Rajdhani', sans-serif; color: #ffd700; font-weight: 900; }
+
+        /* 3 MEDAL UTAMA WOTA: TIM (KIRI) | ROLE (TENGAH) | GENERASI (KANAN) */
+        .wota-medals-row {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+            margin: 4px 0; width: 100%;
+        }
+        .wota-medal-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 18px; padding: 12px 8px;
+            display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px;
+            position: relative; overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .wota-medal-card:hover { transform: translateY(-3px); border-color: #ffd700; }
+        
+        .wota-emblem-badge {
+            width: 52px; height: 52px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; position: relative;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
             transition: transform 0.3s;
         }
-        .rank-badge-img:hover { transform: scale(1.12); }
-        .rank-title-text { font-size: 10px; font-weight: 900; color: #ffd700; text-transform: uppercase; }
-        .rank-score-val { font-size: 12px; font-weight: 900; color: #fff; }
+        .wota-emblem-badge:hover { transform: scale(1.1); }
 
-        /* CLASSIC HERO SHOWCASE SLOT (BAWAH) */
-        .bottom-slots-container {
-            margin-top: auto; background: rgba(10, 16, 32, 0.7);
-            border: 1px solid rgba(255,255,255,0.15); border-radius: 18px;
-            padding: 12px; display: flex; gap: 10px; overflow-x: auto;
-        }
-        .hero-slot-card {
-            width: 76px; height: 105px; border-radius: 12px;
-            background: rgba(255,255,255,0.06); border: 1px dashed rgba(255,255,255,0.3);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            font-size: 10px; font-weight: 800; color: rgba(255,255,255,0.5); gap: 4px;
-            flex-shrink: 0; position: relative; overflow: hidden; cursor: pointer;
-        }
-        .hero-slot-card.filled { border-style: solid; border-color: rgba(255,215,0,0.6); }
-        .hero-slot-img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+        .emblem-team { background: radial-gradient(circle, #ff0055 0%, #660022 100%); border: 2px solid #ff4d88; }
+        .emblem-role { background: radial-gradient(circle, #ffaa00 0%, #7a3e00 100%); border: 2px solid #ffd700; }
+        .emblem-gen { background: radial-gradient(circle, #00d4ff 0%, #004488 100%); border: 2px solid #00f0ff; }
 
-        /* ==========================================
-           2/5 LAYAR KANAN: STANDEE VIDEO / FOTO BESAR
-           ========================================== */
-        .standee-col-2-5 {
+        .wota-medal-category { font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.6); text-transform: uppercase; }
+        .wota-medal-title { font-size: 13px; font-weight: 900; color: #ffd700; font-family: 'Cinzel', serif; }
+        .wota-medal-sub { font-size: 10px; color: rgba(255,255,255,0.8); font-weight: 700; }
+
+        /* RANK BADGES STRIP */
+        .wota-rank-row {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+            width: 100%; text-align: center;
+        }
+        .wota-rank-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px; padding: 10px 6px;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+        }
+        .wota-rank-img {
+            width: 44px; height: 44px; object-fit: contain;
+            filter: drop-shadow(0 4px 10px rgba(255, 170, 0, 0.4));
+        }
+        .wota-rank-lbl { font-size: 10px; font-weight: 900; color: #ffd700; text-transform: uppercase; }
+        .wota-rank-val { font-size: 11px; font-weight: 900; color: #fff; }
+
+        /* QUICK ACTION BUTTONS BAR */
+        .wota-quick-bar {
+            display: flex; gap: 10px; justify-content: flex-end; width: 100%; margin-top: auto;
+        }
+        .wota-btn-pill {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25);
+            padding: 8px 16px; border-radius: 14px; font-size: 11px; font-weight: 800; color: #fff;
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px;
+        }
+        .wota-btn-pill:hover { background: linear-gradient(135deg, #1a5cff, #00d4ff); border-color: transparent; transform: translateY(-2px); }
+
+        /* =========================================================
+           STANDEE KANAN: Kotak terpisah untuk Video/Foto
+           ========================================================= */
+        .moba-standee-hero-holder {
+            flex: 1; /* Sisa lebar layar */
             position: relative;
-            background: radial-gradient(circle at center, rgba(30, 41, 59, 0.65) 0%, rgba(10, 15, 30, 0.9) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 26px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.55);
-            min-height: 480px;
+            border-radius: 20px; /* Sudut membulat menyesuaikan Gambar 2 */
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(0,0,0,0.5);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            overflow: hidden; /* Mencegah video keluar dari lengkungan */
+            z-index: 2;
         }
 
-        .top-right-edit-btn {
-            position: absolute; top: 15px; right: 15px;
-            background: linear-gradient(135deg, #ff7700, #ff007f);
-            border: 1px solid rgba(255, 255, 255, 0.7);
-            color: #fff; font-weight: 900; font-size: 12px;
-            padding: 8px 16px; border-radius: 20px; cursor: pointer;
-            box-shadow: 0 4px 18px rgba(255, 0, 127, 0.5);
-            transition: transform 0.2s; z-index: 25;
-            display: flex; align-items: center; gap: 6px;
+        /* FADE KIRI DIHAPUS: Agar video/foto jelas dan tidak tertutup bayangan hitam */
+        .moba-standee-hero-holder::before {
+            display: none !important;
         }
-        .top-right-edit-btn:hover { transform: scale(1.06); }
 
-        .quote-bubble-glow {
-            position: absolute; top: 20px; left: 20px; right: 140px;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+        /* MEDIA: Menyesuaikan posisi gambar/video */
+        .standee-media-element {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            object-position: center 15%; /* Fokus sedikit ke bagian atas/wajah */
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+
+        /* GRADIENT BOTTOM: fade bawah untuk kedalaman */
+        .standee-media-element + .standee-media-element { position: absolute; top: 0; left: 0; }
+
+        /* JIKO BANNER di ATAS standee */
+        .standee-jiko-bubble {
+            position: absolute;
+            top: 14px; left: 0; right: 0;
+            margin: 0 auto;
+            width: fit-content; max-width: 85%;
+            background: rgba(0, 0, 0, 0.65);
             border: 1px solid rgba(255, 215, 0, 0.5);
-            padding: 10px 16px; border-radius: 18px;
-            font-size: 12px; font-weight: 800; color: #ffe699;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-            z-index: 20; display: flex; flex-direction: column; gap: 3px;
-        }
-        .quote-text {
-            font-style: italic; font-family: 'Cinzel', cursive, sans-serif;
-            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
-        }
-        .pulse-wave-line {
-            width: 100px; height: 8px;
-            background: radial-gradient(ellipse at center, #ff007f 0%, transparent 80%);
-            margin-top: 2px;
+            border-radius: 20px;
+            padding: 8px 18px;
+            font-size: 11.5px; font-style: italic;
+            color: #ffd700; text-align: center;
+            z-index: 20;
         }
 
-        .standee-media-wrapper {
-            width: 100%; height: 100%; position: absolute; top: 0; left: 0;
-            display: flex; align-items: center; justify-content: center;
+        /* TOMBOL EDIT (kanan atas standee) */
+        .standee-top-action-bar {
+            position: absolute; bottom: 12px; right: 10px;
+            display: flex; gap: 6px; z-index: 25;
         }
-        .standee-char-video {
-            width: 100%; height: 100%; object-fit: cover;
-            mask-image: linear-gradient(to top, transparent 0%, black 15%);
-            -webkit-mask-image: linear-gradient(to top, transparent 0%, black 15%);
+        .standee-edit-btn {
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid #ffd700;
+            color: #ffd700; padding: 6px 14px; border-radius: 20px;
+            font-size: 11px; font-weight: 900; cursor: pointer;
+            transition: background 0.2s;
+            display: flex; align-items: center; gap: 5px;
         }
-        .standee-char-img {
-            max-height: 92%; max-width: 95%; object-fit: contain;
-            filter: drop-shadow(0 15px 35px rgba(0,0,0,0.8));
-            animation: floatHero 4s ease-in-out infinite alternate;
-            z-index: 10;
-        }
-        @keyframes floatHero { from { transform: translateY(0); } to { transform: translateY(-12px); } }
+        .standee-edit-btn:hover { background: #ffd700; color: #000; }
 
-        /* ==========================================
-           TAB 2: PAJANGAN KARTU & KOLEKTOR (FOTO 2)
-           ========================================== */
+        /* BOTTOM ACTIONS — lingkaran kecil */
+        .standee-bottom-actions {
+            position: absolute; bottom: 12px; left: 14px;
+            display: flex; flex-direction: column; gap: 6px; z-index: 25;
+        }
+        .hud-circle-btn {
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid rgba(255,255,255,0.3);
+            width: 34px; height: 34px; border-radius: 50%;
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            font-size: 13px; cursor: pointer; transition: background 0.2s;
+        }
+        .hud-circle-btn:hover { background: #1a5cff; }
+
+        /* RUNE (sembunyikan karena lag — optional) */
+        .summon-pedestal-rune { display: none; }
+
+        /* =========================================================
+           TAB 2: PAJANGAN KARTU SKIN & KOLEKTOR (FOTO 2)
+           ========================================================= */
         .collector-hub-layout {
             display: grid; grid-template-columns: 2.2fr 1fr; gap: 20px;
         }
@@ -314,16 +387,16 @@
         }
         
         .collector-side-card {
-            background: rgba(15, 23, 42, 0.7);
+            background: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 24px; padding: 22px; display: flex; flex-direction: column;
             align-items: center; text-align: center; gap: 12px;
         }
         .collector-trophy-img {
-            width: 95px; height: 95px; object-fit: contain;
+            width: 90px; height: 90px; object-fit: contain;
             filter: drop-shadow(0 6px 18px rgba(255, 120, 0, 0.6));
         }
-        .collector-title-display { font-size: 19px; font-weight: 900; color: #ffd700; font-family: 'Cinzel', serif; }
+        .collector-title-display { font-size: 18px; font-weight: 900; color: #ffd700; font-family: 'Cinzel', serif; }
         .collector-points-badge {
             background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
             padding: 6px 14px; border-radius: 14px; font-size: 13px; font-weight: 800; color: #00e5ff;
@@ -338,14 +411,14 @@
             font-size: 10px; font-weight: 800; border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* ==========================================
+        /* =========================================================
            TAB 3: RIWAYAT GAME (FOTO 5)
-           ========================================== */
+           ========================================================= */
         .history-grid-4 {
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
         }
         .match-card-tall {
-            background: rgba(15, 23, 42, 0.7);
+            background: rgba(15, 23, 42, 0.75);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 18px; overflow: hidden; display: flex; flex-direction: column;
             position: relative; box-shadow: 0 8px 25px rgba(0,0,0,0.4); transition: transform 0.2s;
@@ -366,16 +439,16 @@
             padding: 10px; background: rgba(0,0,0,0.5); display: flex; flex-direction: column;
             gap: 4px; text-align: center;
         }
-        .kda-num-bold { font-size: 16px; font-weight: 900; color: #fff; }
+        .kda-num-bold { font-size: 16px; font-weight: 900; color: #fff; font-family: 'Rajdhani', sans-serif; }
         .mvp-badge-pill {
             background: linear-gradient(135deg, #ffbb00, #ff5500);
             font-size: 9px; font-weight: 900; padding: 2px 6px; border-radius: 6px;
             display: inline-block; margin-top: 2px;
         }
 
-        /* ==========================================
+        /* =========================================================
            TAB 4: STATISTIK (FOTO 4)
-           ========================================== */
+           ========================================================= */
         .stats-dashboard-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
         }
@@ -394,9 +467,9 @@
             width: 100%; height: 260px; display: flex; align-items: center; justify-content: center;
         }
 
-        /* ==========================================
+        /* =========================================================
            TAB 5: HUBUNGAN / AFFINITY (FOTO 3)
-           ========================================== */
+           ========================================================= */
         .affinity-radar-stage {
             display: flex; align-items: center; justify-content: center;
             min-height: 440px; position: relative;
@@ -430,24 +503,26 @@
         .node-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
         .node-heart-icon { font-size: 16px; position: absolute; top: -6px; right: -6px; }
 
-        /* ==========================================
-           TAB 6: AKUN & PENGATURAN
-           ========================================== */
+        /* =========================================================
+           TAB 6: AKUN & PENGATURAN CUSTOM WOTA
+           ========================================================= */
         .settings-card-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
         }
         .setting-panel {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 14px;
+            background: rgba(15, 23, 42, 0.78);
+            backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 12px;
         }
         .setting-panel-title { font-size: 15px; font-weight: 900; color: #ffd700; }
         
-        .custom-input {
-            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.25);
+        .custom-input, .custom-select {
+            width: 100%; background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.25);
             border-radius: 12px; padding: 10px 14px; color: #fff; font-size: 13px; font-weight: 700;
             outline: none;
         }
+        .custom-select option { background: #0f172a; color: #fff; }
+        
         .custom-btn-action {
             background: linear-gradient(135deg, #1a5cff, #00d4ff);
             border: none; color: #fff; font-weight: 800; font-size: 13px;
@@ -458,12 +533,10 @@
             background: linear-gradient(135deg, #ff3b30, #ff2d55);
         }
 
-        /* ==========================================
-           MODAL EDIT PAJANGAN SKIN
-           ========================================== */
+        /* MODAL */
         .skin-modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
             z-index: 200; align-items: center; justify-content: center;
             padding: 20px;
         }
@@ -488,25 +561,22 @@
             background: transparent; border: none; color: #fff; font-size: 20px;
             cursor: pointer; font-weight: 800;
         }
-
         .skin-modal-body {
             padding: 18px 22px; overflow-y: auto; display: grid;
             grid-template-columns: repeat(3, 1fr); gap: 14px;
         }
         .skin-choice-card {
-            background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.45); border: 2px solid rgba(255,255,255,0.2);
             border-radius: 16px; padding: 10px; display: flex; flex-direction: column;
-            align-items: center; gap: 6px; cursor: pointer; transition: 0.2s; position: relative;
+            align-items: center; gap: 8px; cursor: pointer; transition: 0.2s;
         }
-        .skin-choice-card:hover { border-color: #ffd700; transform: translateY(-3px); background: rgba(255,255,255,0.15); }
-        .skin-choice-thumb { width: 100%; aspect-ratio: 1/1; border-radius: 10px; object-fit: cover; }
-        .skin-choice-name { font-size: 11px; font-weight: 800; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-        .skin-choice-type {
-            font-size: 9px; font-weight: 900; background: linear-gradient(135deg, #0088ff, #00e5ff);
-            padding: 2px 6px; border-radius: 6px;
-        }
+        .skin-choice-card:hover { border-color: #ffd700; transform: translateY(-4px); }
+        .skin-choice-thumb { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 10px; }
+        .skin-choice-name { font-size: 12px; font-weight: 800; color: #fff; text-align: center; }
 
-        /* RESPONSIVE MOBILE */
+        /* =========================================================
+           RESPONSIVE MOBILE KHUSUS (STACK KE BAWAH)
+           ========================================================= */
         @media screen and (max-width: 860px) {
             .left-sidebar {
                 position: fixed; top: 0; left: 0; height: 100%;
@@ -517,17 +587,60 @@
             .left-sidebar.open { transform: translateX(0); }
             .side-item { width: 100%; height: 45px; flex-direction: row; justify-content: flex-start; padding: 0 14px; gap: 10px; font-size: 12px; }
             .toggle-btn-mobile { display: block; }
-            .profile-hero-layout {
-                grid-template-columns: 1fr;
+            
+            /* STACK KE BAWAH di Mobile */
+            .profile-moba-stage {
+                display: flex !important;
+                flex-direction: column !important;
+                min-height: auto !important;
+                gap: 15px !important;
             }
-            .standee-col-2-5 {
-                min-height: 380px;
+            .moba-standee-hero-holder {
+                margin-left: 0 !important;
+                width: 100% !important;
+                height: 270px !important;
+                min-height: unset !important;
+                overflow: hidden !important;
+                border-radius: 20px !important;
             }
+            .moba-standee-hero-holder::before { display: none !important; }
+            .moba-standee-hero-holder::after {
+                width: 100% !important; height: 85px !important;
+                border-radius: 0 !important;
+                bottom: 0 !important; left: 0 !important;
+                transform: none !important;
+                background: linear-gradient(to bottom, transparent 0%, rgba(6,11,23,0.92) 100%) !important;
+            }
+            .standee-media-element { max-height: 250px; }
+            .profile-moba-hud {
+                width: 100% !important;
+                padding: 14px 16px !important;
+                border: 1px solid rgba(255,255,255,0.12) !important;
+                border-radius: 0 0 20px 20px !important;
+                border-top: none !important;
+                background: linear-gradient(
+                    180deg,
+                    rgba(6,11,23,0.55) 0%,
+                    rgba(6,11,23,0.97) 22%,
+                    rgba(6,11,23,0.99) 100%
+                ) !important;
+            }
+
+            .wota-user-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .wota-counter-strip { margin-left: 0; width: 100%; justify-content: space-between; }
+            .wota-stat-box { flex: 1; padding: 6px; }
+
+            .wota-medals-row, .wota-rank-row { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .wota-medal-card { padding: 8px 4px; }
+            .wota-emblem-badge { width: 44px; height: 44px; font-size: 20px; }
+            .wota-medal-title { font-size: 11px; }
+
             .showcase-grid-8, .history-grid-4, .stats-dashboard-grid, .settings-card-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: 1fr;
             }
             .tab-viewport { padding: 12px; }
             .skin-modal-body { grid-template-columns: repeat(2, 1fr); }
+            .collector-hub-layout { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -537,6 +650,7 @@
         <source src="../beranda/latarglobal.webm" type="video/webm">
     </video>
     <div class="bg-overlay"></div>
+    <div class="ambient-dust-glow"></div>
 
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
@@ -556,7 +670,7 @@
             <div class="top-left">
                 <button class="toggle-btn-mobile" onclick="toggleSidebar()">☰</button>
                 <div class="brand-badge">
-                    <span>👑 Profil & Pajangan Skin</span>
+                    <span>👑 PROFIL WOTA & JKT48</span>
                 </div>
             </div>
             <div class="top-right">
@@ -566,78 +680,133 @@
 
         <div class="tab-viewport">
             
-            <!-- TAB 1: PROFIL UTAMA (SPLIT 3/5 & 2/5 LAYAR) -->
+            <!-- TAB 1: PROFIL UTAMA MOBA + PAJANGAN STANDEE -->
             <div class="tab-pane active" id="profileTab">
-                <div class="profile-hero-layout">
+                <div class="profile-moba-stage">
                     
-                    <!-- KIRI (3/5 LAYAR): INFORMASI, RANK & HERO SHOWCASE SLOTS -->
-                    <div class="profile-left-col">
-                        <div class="profile-card-glass">
-                            <div class="header-avatar-row">
-                                <div class="avatar-box" onclick="triggerAvatarUpload()" title="Klik untuk Ganti Foto Profil">
-                                    <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="main-avatar-img" id="heroUserAvatar">
-                                    <div class="avatar-cam-badge">📷</div>
-                                    <input type="file" id="directAvatarPicker" accept="image/*" style="display: none;" onchange="handleDirectAvatarUpload(event)">
+                    <!-- HUD PROFIL MEWAH -->
+                    <div class="profile-moba-hud">
+                        
+                        <!-- USER HEADER ROW -->
+                        <div class="wota-user-header">
+                            <div class="wota-avatar-box" onclick="triggerAvatarUpload()" title="Klik untuk Ganti Foto Profil">
+                                <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="wota-avatar-img" id="heroUserAvatar">
+                                <div class="wota-cam-badge">📷</div>
+                                <input type="file" id="directAvatarPicker" accept="image/*" style="display: none;" onchange="handleDirectAvatarUpload(event)">
+                            </div>
+                            <div class="wota-user-meta">
+                                <div class="wota-display-name">
+                                    <span id="heroUserName">Memuat...</span>
+                                    <span title="Indonesia">🇮🇩</span>
                                 </div>
-                                <div class="user-titles">
-                                    <div class="user-fullname" id="heroUserName">Memuat...</div>
-                                    <div class="user-tagline">
-                                        <span id="heroUserTag">@user</span>
-                                        <span class="badge-clan" id="heroClanTitle">Kindred Alliance</span>
-                                    </div>
-                                    <div class="counter-badges-row">
-                                        <div class="mini-stat-pill" onclick="giveLike()">👍 Suka <span id="likesCount">845</span></div>
-                                        <div class="mini-stat-pill">👁️ Dilihat <span id="viewsCount">3,984</span></div>
-                                    </div>
+                                <div class="wota-username-tag" id="heroUserTag">@user</div>
+                                <div class="wota-oshi-badge">
+                                    <span>💖 Oshi:</span>
+                                    <b id="heroOshiText">Shani Indira Natio</b>
                                 </div>
                             </div>
 
-                            <!-- RANK DISPLAY & SKOR BESAR -->
-                            <div class="rank-showcase-box">
-                                <div class="rank-card-item">
-                                    <img src="../beranda/TBCOIN.PNG" class="rank-badge-img" id="currentRankBadge">
-                                    <span class="rank-title-text" id="currentRankName">Bronze</span>
-                                    <span class="rank-score-val" id="currentRankScore">150 Pts</span>
+                            <div class="wota-counter-strip">
+                                <div class="wota-stat-box">
+                                    <span>🔥 Popularitas</span>
+                                    <span class="val" id="flameCount">1,240</span>
                                 </div>
-                                <div class="rank-card-item">
-                                    <img src="../beranda/KRISTAL.PNG" class="rank-badge-img">
-                                    <span class="rank-title-text">Highest Rank</span>
-                                    <span class="rank-score-val">Mythic Glory</span>
+                                <div class="wota-stat-box">
+                                    <span>📅 Kunjungan</span>
+                                    <span class="val" id="visitCount">3,892</span>
                                 </div>
-                                <div class="rank-card-item">
-                                    <img src="../beranda/KRISTAL_OMEGA.PNG" class="rank-badge-img" id="heroCollectorBadge">
-                                    <span class="rank-title-text" id="heroCollectorTitle">Kolektor Have</span>
-                                    <span class="rank-score-val" id="heroCollectorPoints">450 Pts</span>
+                                <div class="wota-stat-box" onclick="giveLike()" style="cursor: pointer;">
+                                    <span>👍 Suka</span>
+                                    <span class="val" id="likesCount">845</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- CLASSIC HERO SHOWCASE SLOT (BAWAH) -->
-                        <div class="bottom-slots-container" id="favoriteSlots">
-                            <div class="hero-slot-card filled" onclick="openSkinModal()">
-                                <img src="../skin/CHAT_CSHN.png" class="hero-slot-img" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
+                        <!-- 3 MEDAL UTAMA WOTA: TIM (KIRI) | ROLE (TENGAH) | GENERASI (KANAN) -->
+                        <div class="wota-medals-row">
+                            <!-- KIRI: TIM -->
+                            <div class="wota-medal-card">
+                                <div class="wota-emblem-badge emblem-team" id="teamEmblemIcon">🔴</div>
+                                <span class="wota-medal-category">Tim Favorit</span>
+                                <span class="wota-medal-title" id="displayTeamTitle">Tim J</span>
+                                <span class="wota-medal-sub" id="displayTeamDesc">Team of Passion</span>
                             </div>
-                            <div class="hero-slot-card filled" onclick="openSkinModal()">
-                                <img src="../skin/CHAT_DKTY.png" class="hero-slot-img" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
+
+                            <!-- TENGAH: ROLE WOTA -->
+                            <div class="wota-medal-card">
+                                <div class="wota-emblem-badge emblem-role" id="roleEmblemIcon">👑</div>
+                                <span class="wota-medal-category">Role Wota</span>
+                                <span class="wota-medal-title" id="displayRoleTitle">Wotasepuh</span>
+                                <span class="wota-medal-sub" id="displayRoleDesc">Senior Dedicated Fan</span>
                             </div>
-                            <div class="hero-slot-card" onclick="openSkinModal()"><span>+ Slot</span></div>
-                            <div class="hero-slot-card" onclick="openSkinModal()"><span>+ Slot</span></div>
+
+                            <!-- KANAN: GENERASI -->
+                            <div class="wota-medal-card">
+                                <div class="wota-emblem-badge emblem-gen" id="genEmblemIcon">⭐</div>
+                                <span class="wota-medal-category">Generasi</span>
+                                <span class="wota-medal-title" id="displayGenTitle">Gen 3</span>
+                                <span class="wota-medal-sub" id="displayGenDesc">Era Keemasan</span>
+                            </div>
                         </div>
+
+                        <!-- RANK STRIP ROW -->
+                        <div class="wota-rank-row">
+                            <div class="wota-rank-box">
+                                <img src="../beranda/TBCOIN.PNG" class="wota-rank-img" id="currentRankBadge">
+                                <span class="wota-rank-lbl">Rank Saat Ini</span>
+                                <span class="wota-rank-val" id="currentRankName">Bronze (150 Pts)</span>
+                            </div>
+                            <div class="wota-rank-box">
+                                <img src="../beranda/KRISTAL.PNG" class="wota-rank-img">
+                                <span class="wota-rank-lbl">Rank Tertinggi</span>
+                                <span class="wota-rank-val">Mythic Glory</span>
+                            </div>
+                            <div class="wota-rank-box">
+                                <img src="../beranda/KRISTAL_OMEGA.PNG" class="wota-rank-img" id="heroCollectorBadge">
+                                <span class="wota-rank-lbl" id="heroCollectorLbl">Level Kolektor</span>
+                                <span class="wota-rank-val" id="heroCollectorVal">Kolektor Have (450 Pts)</span>
+                            </div>
+                        </div>
+
+                        <!-- TOMBOL AKSI CEPAT -->
+                        <div class="wota-quick-bar">
+                            <button class="wota-btn-pill" onclick="switchTab('settingsTab')">✏️ Edit Profil & Oshi</button>
+                            <button class="wota-btn-pill" onclick="switchTab('skinTab')">🃏 Koleksi Kartu</button>
+                            <button class="wota-btn-pill" onclick="copyProfileLink()">🪪 Salin Link Profil</button>
+                        </div>
+
                     </div>
 
-                    <!-- KANAN (2/5 LAYAR): STANDEE VIDEO / FOTO BESAR & JIKO QUOTE -->
-                    <div class="standee-col-2-5">
-                        <button class="top-right-edit-btn" onclick="openSkinModal()">
-                            <span>✏️ Edit Pajangan Skin</span>
-                        </button>
-
-                        <div class="quote-bubble-glow">
-                            <span class="quote-text" id="standeeQuote">"I'm so lonely, listen to my heart"</span>
-                            <div class="pulse-wave-line"></div>
+                    <!-- PEMUTARAN VIDEO & FOTO PAJANGAN SKIN HERO -->
+                    <div class="moba-standee-hero-holder">
+                        <!-- TOP RIGHT ACTION: EDIT PAJANGAN -->
+                        <div class="standee-top-action-bar">
+                            <button class="standee-edit-btn" onclick="openSkinModal()">
+                                <span>🖼️</span> Edit Pajangan
+                            </button>
                         </div>
 
-                        <div class="standee-media-wrapper" id="standeeContainer">
-                            <img src="../kitty.png.png" class="standee-char-img" id="standeeCharImg" onerror="this.src='../kitty.png';">
+                        <!-- VIDEO STANDEE (UNTUK TIER OMEGA & OMEGA SPESIAL) -->
+                        <video class="standee-media-element" id="standeeVideo" autoplay loop muted playsinline style="display: block;">
+                            <source src="../gacha-skin/preview_CSHN.webm" type="video/webm">
+                        </video>
+
+                        <!-- FOTO POTRAIT STANDEE (UNTUK TIER REGULER / MYTH / LEGEND / RARE) -->
+                        <img class="standee-media-element" id="standeeImage" src="../skin/CHAT_CSHN.png" style="display: none;" onerror="this.onerror=null; this.src='../skin/CSHN.jpg';">
+
+                        <!-- FLOOR SUMMONING PEDESTAL RUNE -->
+                        <div class="summon-pedestal-rune"></div>
+
+                        <!-- JIKO SPEECH BUBBLE -->
+                        <div class="standee-jiko-bubble" id="standeeJikoBox">
+                            "<span id="standeeJikoText">Semanis cokelat, selembut sutra... Halo semuanya, aku Shani!</span>"
+                        </div>
+
+                        <!-- BOTTOM RIGHT FLOATING HUD CONTROLS -->
+                        <div class="standee-bottom-actions">
+                            <button class="hud-circle-btn" title="Name Card" onclick="copyProfileLink()">🪪</button>
+                            <button class="hud-circle-btn" title="Edit Pajangan" onclick="openSkinModal()">✏️</button>
+                            <button class="hud-circle-btn" title="Album Skin" onclick="switchTab('skinTab')">📷</button>
                         </div>
                     </div>
 
@@ -647,11 +816,8 @@
             <!-- TAB 2: PAJANGAN KARTU SKIN & KOLEKTOR (FOTO 2) -->
             <div class="tab-pane" id="skinTab">
                 <div class="collector-hub-layout">
-                    
-                    <!-- 8-CARD SHOWCASE GRID -->
                     <div class="showcase-grid-8" id="skinShowcaseGrid"></div>
 
-                    <!-- KOLEKTOR LEVEL CALCULATOR BOX -->
                     <div class="collector-side-card">
                         <img src="../beranda/KRISTAL_OMEGA.PNG" class="collector-trophy-img" id="sideCollectorTrophy">
                         <div class="collector-title-display" id="sideCollectorTitle">Kolektor Have</div>
@@ -667,11 +833,10 @@
                         </div>
 
                         <div style="display: flex; gap: 8px; width: 100%; margin-top: 10px;">
-                            <button class="custom-btn-action" style="flex: 1;" onclick="openSkinModal()">Edit Pajangan</button>
+                            <button class="custom-btn-action" style="flex: 1;" onclick="openSkinModal()">Pilih Pajangan</button>
                             <button class="custom-btn-action" style="flex: 1;" onclick="copyProfileLink()">Bagikan</button>
                         </div>
                     </div>
-
                 </div>
             </div>
 
@@ -683,7 +848,7 @@
             <!-- TAB 4: STATISTIK (FOTO 4) -->
             <div class="tab-pane" id="statsTab">
                 <div class="stats-dashboard-grid">
-                    <div class="profile-card-glass">
+                    <div class="setting-panel">
                         <div class="rings-summary-row">
                             <div class="stat-circle-ring"><span id="statMatches">16,452</span><small style="font-size:9px;">Matches</small></div>
                             <div class="stat-circle-ring"><span id="statWinRate">75.79%</span><small style="font-size:9px;">Win Rate</small></div>
@@ -700,7 +865,7 @@
                         </div>
                     </div>
 
-                    <div class="profile-card-glass" style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="setting-panel" style="display: flex; flex-direction: column; align-items: center;">
                         <h4 style="margin-bottom: 10px; font-weight: 900; color: #ffd700;">Radar Kinerja Pertandingan</h4>
                         <div class="radar-canvas-container">
                             <svg width="220" height="220" viewBox="0 0 200 200">
@@ -721,17 +886,15 @@
 
             <!-- TAB 5: HUBUNGAN / AFFINITY (FOTO 3) -->
             <div class="tab-pane" id="affinityTab">
-                <div class="profile-card-glass affinity-radar-stage">
+                <div class="setting-panel affinity-radar-stage">
                     <div class="concentric-ring ring-1"></div>
                     <div class="concentric-ring ring-2"></div>
                     <div class="concentric-ring ring-3"></div>
 
-                    <!-- USER TENGAH -->
                     <div class="center-user-node">
                         <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" id="affinityCenterAvatar">
                     </div>
 
-                    <!-- NODES ORBIT RELASI -->
                     <div class="orbit-node-item" style="top: 15%; left: 50%; transform: translate(-50%, 0);">
                         <span class="node-heart-icon">🌹</span>
                         <div class="node-avatar-circle"><img src="../kitty.png.png" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';"></div>
@@ -755,33 +918,135 @@
                 </div>
             </div>
 
-            <!-- TAB 6: PENGATURAN AKUN & FOTO PROFIL -->
+            <!-- TAB 6: PENGATURAN AKUN & CUSTOM WOTA -->
             <div class="tab-pane" id="settingsTab">
                 <div class="settings-card-grid">
                     
-                    <!-- GANTI FOTO PROFIL (IMGBB / TEMPLATE) -->
-                    <div class="setting-panel">
-                        <div class="setting-panel-title">📸 Ganti Foto Profil</div>
-                        <p style="font-size:12px; color:rgba(255,255,255,0.8);">Pilih template bawaan OS atau upload foto sendiri langsung ke Cloud ImgBB.</p>
+                    <!-- CUSTOM KUSTOMISASI PROFIL WOTA (TIM, ROLE, GEN, OSHI) -->
+                    <div class="setting-panel" style="grid-column: span 2;">
+                        <div class="setting-panel-title">🎭 Kustomisasi Tim, Role Wota, Generasi & Oshi</div>
                         
-                        <div style="display: flex; gap: 10px;">
-                            <button class="custom-btn-action" style="flex:1;" onclick="useTemplatePP()">Pakai Template OS</button>
-                            <label class="custom-btn-action" style="flex:1; text-align:center; cursor:pointer;">
-                                📤 Upload Foto Sendiri
-                                <input type="file" accept="image/*" style="display:none;" onchange="handleDirectAvatarUpload(event)">
-                            </label>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                            <div>
+                                <label style="font-size: 11px; font-weight: 800; color: #ffd700;">🔴 Pilih Tim:</label>
+                                <select id="editTeamSelect" class="custom-select">
+                                    <option value="Tim J">Tim J (Red Fire)</option>
+                                    <option value="Tim KIII">Tim KIII (Yellow Sun)</option>
+                                    <option value="Tim T">Tim T (Cyan Wings)</option>
+                                    <option value="Tim Passion">Tim Passion (Blazing)</option>
+                                    <option value="Tim Dream">Tim Dream (Cosmic)</option>
+                                    <option value="Tim Love">Tim Love (Sweet Heart)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label style="font-size: 11px; font-weight: 800; color: #ffd700;">⭐ Pilih Generasi:</label>
+                                <select id="editGenSelect" class="custom-select">
+                                    <option value="Gen 1">Gen 1</option>
+                                    <option value="Gen 2">Gen 2</option>
+                                    <option value="Gen 3">Gen 3</option>
+                                    <option value="Gen 4">Gen 4</option>
+                                    <option value="Gen 5">Gen 5</option>
+                                    <option value="Gen 6">Gen 6</option>
+                                    <option value="Gen 7">Gen 7</option>
+                                    <option value="Gen 8">Gen 8</option>
+                                    <option value="Gen 9">Gen 9</option>
+                                    <option value="Gen 10">Gen 10</option>
+                                    <option value="Gen 11">Gen 11</option>
+                                    <option value="Gen 12">Gen 12</option>
+                                    <option value="Gen 13">Gen 13</option>
+                                    <option value="Gen 14">Gen 14</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label style="font-size: 11px; font-weight: 800; color: #ffd700;">👑 Pilih Role Wota:</label>
+                                <select id="editRoleSelect" class="custom-select">
+                                    <option value="wotagrapher">Wotagrapher</option>
+                                    <option value="wotasepuh">Wotasepuh</option>
+                                    <option value="wotafosil">Wotafosil</option>
+                                    <option value="wotarusuh">Wotarusuh</option>
+                                    <option value="wotabising">Wotabising</option>
+                                    <option value="wotatenang">Wotatenang</option>
+                                    <option value="wotafomo">Wotafomo</option>
+                                    <option value="wotagadungan">Wotagadungan</option>
+                                    <option value="wotasiluman">Wotasiluman</option>
+                                    <option value="wotanormal">Wotanormal</option>
+                                    <option value="wotanewbie">Wotanewbie</option>
+                                    <option value="wotawotaan">Wotawotaan</option>
+                                    <option value="wotaingfo">Wotaingfo</option>
+                                    <option value="wotapolice">Wotapolice</option>
+                                    <option value="wotatubir">Wotatubir</option>
+                                    <option value="wotabul">Wotabul</option>
+                                    <option value="wotaalay">Wotaalay</option>
+                                    <option value="wotawibu">Wotawibu</option>
+                                    <option value="wotaarmy">Wotaarmy</option>
+                                    <option value="wotapinter">Wotapinter</option>
+                                    <option value="wotasukses">Wotasukses</option>
+                                    <option value="wotasultan">Wotasultan</option>
+                                    <option value="wotapinggirjurang">Wotapinggirjurang</option>
+                                    <option value="wotabaik">Wotabaik</option>
+                                    <option value="wotajahat">Wotajahat</option>
+                                    <option value="wotakesepian">Wotakesepian</option>
+                                    <option value="wotajuragan">Wotajuragan</option>
+                                    <option value="wotaintrovert">Wotaintrovert</option>
+                                    <option value="wotahebat">Wotahebat</option>
+                                    <option value="wotaekstrovet">Wotaekstrovet</option>
+                                    <option value="wotakoleris">Wotakoleris</option>
+                                    <option value="wotasanguinis">Wotasanguinis</option>
+                                    <option value="wotamelankolis">Wotamelankolis</option>
+                                    <option value="wotaplegmatis">Wotaplegmatis</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label style="font-size: 11px; font-weight: 800; color: #ffd700;">💖 Oshi Saya:</label>
+                                <input type="text" id="editOshiInput" class="custom-input" placeholder="Nama Oshi (e.g. Shani, Christy, Freya)">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px;">
+                            <div>
+                                <label style="font-size: 11px; font-weight: 800; color: #ffd700;">✏️ Nama Tampilan:</label>
+                                <input type="text" id="editNameInput" class="custom-input" placeholder="Nama Baru">
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; font-weight: 800; color: #ffd700;">💬 Bio / Status:</label>
+                                <input type="text" id="editBioInput" class="custom-input" placeholder="Bio Pribadi">
+                            </div>
+                        </div>
+
+                        <button class="custom-btn-action" style="margin-top: 6px;" onclick="saveCustomWotaProfile()">💾 Simpan Kustomisasi Profil Wota</button>
+                    </div>
+
+                    <!-- GANTI USERNAME (COOLDOWN 7 HARI) -->
+                    <div class="setting-panel">
+                        <div class="setting-panel-title">🆔 Ganti Username (Cooldown 7 Hari)</div>
+                        <div id="usernameCooldownNotice" style="font-size:12px; color:#ffd700; padding:6px 10px; background:rgba(255,215,0,0.1); border-radius:8px; border:1px solid rgba(255,215,0,0.3);">
+                            ⏱️ Status Cooldown: <b id="cooldownStatusText">Tersedia</b>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="editUsernameInput" class="custom-input" placeholder="Username Baru (tanpa @)" style="flex: 2;">
+                            <button class="custom-btn-action" style="flex: 1;" onclick="changeUsername()">Ganti</button>
                         </div>
                     </div>
 
-                    <!-- GANTI NAMA & BIO -->
+                    <!-- GANTI FOTO PROFIL (IMGBB / TEMPLATE OS) -->
                     <div class="setting-panel">
-                        <div class="setting-panel-title">✏️ Edit Nama & Bio</div>
-                        <input type="text" id="editNameInput" class="custom-input" placeholder="Nama Tampilan Baru">
-                        <input type="text" id="editBioInput" class="custom-input" placeholder="Bio / Kutipan Karakter">
-                        <button class="custom-btn-action" onclick="saveNameBio()">Simpan Perubahan</button>
+                        <div class="setting-panel-title">📸 Ganti Foto Profil</div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
+                            <button class="custom-btn-action" style="font-size:11px; padding:6px 4px;" onclick="useTemplatePP('pp.png')">Template 1</button>
+                            <button class="custom-btn-action" style="font-size:11px; padding:6px 4px;" onclick="useTemplatePP('thebeyonce.png')">Template 2</button>
+                            <button class="custom-btn-action" style="font-size:11px; padding:6px 4px;" onclick="useTemplatePP('download.png')">Template 3</button>
+                        </div>
+
+                        <label class="custom-btn-action" style="display:block; text-align:center; cursor:pointer; background:linear-gradient(135deg, #e91e63, #9c27b0);">
+                            📤 Upload Foto Profil Sendiri (ImgBB)
+                            <input type="file" accept="image/*" style="display:none;" onchange="handleDirectAvatarUpload(event)">
+                        </label>
                     </div>
 
-                    <!-- MANAJEMEN AKUN (GOOGLE & TELEGRAM) -->
+                    <!-- MANAJEMEN AKUN & KEAMANAN -->
                     <div class="setting-panel">
                         <div class="setting-panel-title">🔐 Hubungkan / Putuskan Akun</div>
                         <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -817,7 +1082,7 @@
     <div class="skin-modal-overlay" id="skinModalOverlay" onclick="if(event.target===this) closeSkinModal()">
         <div class="skin-modal-content">
             <div class="skin-modal-header">
-                <div class="skin-modal-title">✨ Pilih Skin Pajangan / Standee Karakter</div>
+                <div class="skin-modal-title">✨ Pilih Skin Pajangan Profil Anda</div>
                 <button class="close-modal-btn" onclick="closeSkinModal()">✕</button>
             </div>
             <div class="skin-modal-body" id="modalSkinList"></div>
@@ -834,20 +1099,25 @@
 
         let ownedSkinsData = [];
 
-        // DEFAULT FALLBACK MOCK DATA (AGAR UI SELALU MENYALA WALAUPUN OFFLINE)
-        const DEFAULT_STARTER_SKINS = [
-            { code: "CSHN", raw_code: "CSHN", media_type: "video", media_url: "https://drive.google.com/uc?export=download&id=1TsVBSegTGAZkfdhwGtM5inCmJGtYTjOf", jiko: "Semanis cokelat, selembut sutra. Halo semuanya, aku Shani", rarity: "Omega Spesial" },
-            { code: "DKTY", raw_code: "DKTY", media_type: "video", media_url: "https://drive.google.com/uc?export=download&id=1BiJI_WwFXLjBgA-fYxuUZ6HSpat2ozOv", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!", rarity: "Omega Spesial" },
-            { code: "FIONY_ALVERIA_MYTH", raw_code: "FIONY_ALVERIA_MYTH", media_type: "image", media_url: "https://i.ibb.co/VW3bPb7n/uc-export-download-id-1-SYg-JY1glg-Azom22-WKNNrm-AM1-Xda-PVb-j.jpg", jiko: "Seperti simfoni yang menenangkan hati. Halo, aku Fiony!", rarity: "Myth" },
-            { code: "CGRC", raw_code: "CGRC", media_type: "video", media_url: "https://drive.google.com/uc?export=download&id=1mcVaAZC-liext7Wb4bPTS7r1to59IB-O", jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!", rarity: "Omega Spesial" },
-            { code: "CFNI", raw_code: "CFNI", media_type: "video", media_url: "https://drive.google.com/uc?export=download&id=1HHxyxVrMIVwEMgcjLtbZUPqFsJG9d4yv", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!", rarity: "Omega Spesial" },
-            { code: "CELI", raw_code: "CELI", media_type: "video", media_url: "https://drive.google.com/uc?export=download&id=1mcHqFJbu_Lj6fRLw2_egZvCwcf5abEVo", jiko: "Bagai lembayung senja, dengan energi kegembiraanku, Aku akan menghangatkan suasana. Halo, aku Eli!", rarity: "Omega Spesial" }
-        ];
+        // DESKRIPSI & IKON DINAMIS TIM, ROLE & GENERASI
+        const TEAM_META = {
+            "Tim J": { icon: "🔴", desc: "Team of Passion" },
+            "Tim KIII": { icon: "🟡", desc: "Team of Sun Glory" },
+            "Tim T": { icon: "🔵", desc: "Team of Cyan Wings" },
+            "Tim Passion": { icon: "🔥", desc: "Blazing Spirit" },
+            "Tim Dream": { icon: "🌌", desc: "Cosmic Dreamers" },
+            "Tim Love": { icon: "💖", desc: "Pure Love & Care" }
+        };
+
+        const GEN_META = {
+            "Gen 1": "Pioneer Era", "Gen 2": "Golden Era", "Gen 3": "Rising Star", "Gen 4": "Brave Heart",
+            "Gen 5": "New Horizon", "Gen 6": "Shining Wave", "Gen 7": "Cosmic Power", "Gen 8": "Glorious",
+            "Gen 9": "Future Sparks", "Gen 10": "New Revolution", "Gen 11": "Youth Energy", "Gen 12": "Next Miracle",
+            "Gen 13": "Fresh Spirit", "Gen 14": "Dreamers Era"
+        };
 
         document.addEventListener("DOMContentLoaded", () => {
-            // Render starter data terlebih dahulu agar tidak ada jeda kosong
-            applyStandee(DEFAULT_STARTER_SKINS[0], false);
-            renderShowcaseGrid(DEFAULT_STARTER_SKINS.map(s => s.code));
+            renderShowcaseGrid(["FIONY_ALVERIA_MYTH", "DKTY", "CSHN", "CGRC", "CFNI", "CELI", "BORDER_365", "CHAT_365"]);
             renderDefaultHistory();
 
             loadUserProfileData();
@@ -926,29 +1196,80 @@
             if (window.innerWidth <= 860) toggleSidebar();
         }
 
+        function formatWotaRoleName(role) {
+            if (!role) return "Wotasepuh";
+            return role.charAt(0).toUpperCase() + role.slice(1);
+        }
+
         async function loadUserProfileData() {
             const json = await fetchSafeApi('/api/user/status');
             if (json && json.data) {
                 const d = json.data;
 
+                // NAMA & USERNAME
                 document.getElementById("heroUserName").innerText = d.nama || "User";
-                document.getElementById("heroUserTag").innerText = "@" + (d.username || d.userId || "user");
+                let rawUser = d.username || d.userId || "user";
+                if (rawUser.includes("@")) rawUser = rawUser.split("@")[0];
+                document.getElementById("heroUserTag").innerText = "@" + rawUser;
                 
+                // AVATAR
                 const avatarSrc = d.photoProfile || DEFAULT_TEMPLATE_PP;
                 document.getElementById("heroUserAvatar").src = avatarSrc;
                 document.getElementById("affinityCenterAvatar").src = avatarSrc;
 
-                // Rank
-                document.getElementById("currentRankName").innerText = d.rank_name || "Bronze";
-                document.getElementById("currentRankScore").innerText = (d.rank_score || 150) + " Pts";
+                // OSHI
+                const oshiVal = d.oshi || "Shani Indira Natio";
+                document.getElementById("heroOshiText").innerText = oshiVal;
+                document.getElementById("editOshiInput").value = oshiVal;
 
-                // Collector
-                document.getElementById("heroCollectorTitle").innerText = d.collector_title || "Kolektor Have";
-                document.getElementById("heroCollectorPoints").innerText = (d.collector_points || 450) + " Pts";
-                document.getElementById("sideCollectorTitle").innerText = d.collector_title || "Kolektor Have";
-                document.getElementById("sideCollectorScore").innerText = `Poin: ${d.collector_points || 450} / 670`;
+                // TIM (KIRI)
+                const teamVal = d.team || "Tim J";
+                document.getElementById("displayTeamTitle").innerText = teamVal;
+                document.getElementById("editTeamSelect").value = teamVal;
+                const teamMeta = TEAM_META[teamVal] || { icon: "🔴", desc: "Team of Passion" };
+                document.getElementById("teamEmblemIcon").innerText = teamMeta.icon;
+                document.getElementById("displayTeamDesc").innerText = teamMeta.desc;
 
-                // Breakdown
+                // ROLE WOTA (TENGAH)
+                const roleVal = d.wota_role || "wotasepuh";
+                document.getElementById("displayRoleTitle").innerText = formatWotaRoleName(roleVal);
+                document.getElementById("editRoleSelect").value = roleVal;
+
+                // GENERASI (KANAN)
+                const genVal = d.generation || "Gen 3";
+                document.getElementById("displayGenTitle").innerText = genVal;
+                document.getElementById("editGenSelect").value = genVal;
+                document.getElementById("displayGenDesc").innerText = GEN_META[genVal] || "Pioneer Era";
+
+                // STATUS COOLDOWN USERNAME
+                if (d.username_cooldown) {
+                    const cd = d.username_cooldown;
+                    const statusText = document.getElementById("cooldownStatusText");
+                    const notice = document.getElementById("usernameCooldownNotice");
+                    if (statusText) statusText.innerText = cd.text || (cd.is_cooldown ? `${cd.days_left} hari ${cd.hours_left} jam` : "Tersedia");
+                    if (cd.is_cooldown && notice) {
+                        notice.style.borderColor = "rgba(255,82,82,0.5)";
+                        notice.style.background = "rgba(255,82,82,0.15)";
+                        notice.style.color = "#ff8080";
+                    } else if (notice) {
+                        notice.style.borderColor = "rgba(0,230,118,0.4)";
+                        notice.style.background = "rgba(0,230,118,0.1)";
+                        notice.style.color = "#00e676";
+                    }
+                }
+
+                // RANK
+                document.getElementById("currentRankName").innerText = `${d.rank_name || "Bronze"} (${d.rank_score || 150} Pts)`;
+
+                // LEVEL KOLEKTOR (KOTAK KE-3)
+                const collTitle = d.collector_title || "Kolektor Have";
+                const collPts = (d.collector_points !== undefined) ? d.collector_points : 450;
+                if (document.getElementById("heroCollectorLbl")) document.getElementById("heroCollectorLbl").innerText = "Level Kolektor";
+                if (document.getElementById("heroCollectorVal")) document.getElementById("heroCollectorVal").innerText = `${collTitle} (${collPts} Pts)`;
+                if (document.getElementById("sideCollectorTitle")) document.getElementById("sideCollectorTitle").innerText = collTitle;
+                if (document.getElementById("sideCollectorScore")) document.getElementById("sideCollectorScore").innerText = `Poin: ${collPts} / 670`;
+
+                // BREAKDOWN
                 const b = d.collector_breakdown || {};
                 document.getElementById("cntOmega").innerText = b.omega || 2;
                 document.getElementById("cntMyth").innerText = b.myth || 1;
@@ -957,8 +1278,14 @@
                 document.getElementById("cntUncommon").innerText = b.uncommon || 1;
                 document.getElementById("cntTotal").innerText = (d.all_skins || []).length || 6;
 
-                // Standee & Bio
-                if (d.custom_bio) document.getElementById("standeeQuote").innerText = `"${d.custom_bio}"`;
+                // STANDEE SKIN & JIKO — cari detail rarity dari ownedSkinsData bila sudah diload
+                const standeeCode = d.standee_skin || "CSHN";
+                const standeeDetail = ownedSkinsData.find(s => {
+                    const fc = (s.code || "").replace(/BORDER_/gi, "").replace(/CHAT_/gi, "").replace(/\.png$/i, "").replace(/\.jpg$/i, "").trim();
+                    return fc === standeeCode || s.code === standeeCode;
+                }) || null;
+                renderStandeeDisplay(standeeCode, d.custom_bio, standeeDetail);
+
                 if (d.nama) document.getElementById("editNameInput").value = d.nama;
                 if (d.custom_bio) document.getElementById("editBioInput").value = d.custom_bio;
 
@@ -969,16 +1296,95 @@
 
         async function loadStatusSkinData() {
             const json = await fetchSafeApi('/statusskin');
-            if (json && json.skins_detail && json.skins_detail.length > 0) {
+            if (!json) return;
+            // Simpan data skin yang dimiliki
+            if (json.skins_detail && json.skins_detail.length > 0) {
                 ownedSkinsData = json.skins_detail;
+            }
+            // Tampilkan standee dari backend (standee yang dipajang user)
+            const standeeSkin = json.current_standee || (ownedSkinsData.length > 0 ? ownedSkinsData[0].code : null);
+            const jikoBio = json.current_bio || json.jiko || null;
+            if (standeeSkin) {
+                const skinDetail = ownedSkinsData.find(s => s.code === standeeSkin) || null;
+                renderStandeeDisplay(standeeSkin, jikoBio, skinDetail);
+            }
+        }
 
-                if (json.current_standee || json.standee_skin) {
-                    const standeeCode = json.current_standee || json.standee_skin;
-                    const saved = ownedSkinsData.find(s => s.code === standeeCode || s.raw_code === standeeCode);
-                    if (saved) applyStandee(saved, false);
+        /**
+         * renderStandeeDisplay
+         * @param {string} skinCode - kode skin (e.g. CSHN, DKTY, FIONY_ALVERIA_MYTH)
+         * @param {string|null} bioQuote - teks jiko / bio
+         * @param {object|null} skinDetail - detail skin dari backend (rarity, media_type, jiko)
+         */
+        function renderStandeeDisplay(skinCode, bioQuote, skinDetail) {
+            const cleanCode = (skinCode || "CSHN")
+                .replace(/BORDER_/gi, "")
+                .replace(/CHAT_/gi, "")
+                .replace(/\.png$/i, "")
+                .replace(/\.jpg$/i, "")
+                .trim();
+
+            const vidEl = document.getElementById("standeeVideo");
+            const imgEl = document.getElementById("standeeImage");
+            const jikoEl = document.getElementById("standeeJikoText");
+
+            // Tampilkan teks jiko — prioritas: parameter > skinDetail.jiko > default
+            const jikoText = bioQuote
+                || (skinDetail && skinDetail.jiko)
+                || "Semanis cokelat, selembut sutra... Halo semuanya!";
+            if (jikoEl) jikoEl.innerText = jikoText;
+
+            // ===== DETEKSI OMEGA/VIDEO =====
+            // Cek dari skinDetail dulu (data langsung dari backend)
+            let isOmegaVideo = false;
+            if (skinDetail) {
+                const mt = (skinDetail.media_type || "").toLowerCase();
+                const rar = (skinDetail.rarity || "").toLowerCase();
+                if (mt === "video") isOmegaVideo = true;
+                else if (rar.includes("omega") || rar.includes("mso")) isOmegaVideo = true;
+            }
+            // Fallback: cari di ownedSkinsData yang sudah diload
+            if (!isOmegaVideo && ownedSkinsData.length > 0) {
+                const found = ownedSkinsData.find(s => {
+                    const fc = (s.code || "")
+                        .replace(/BORDER_/gi, "").replace(/CHAT_/gi, "")
+                        .replace(/\.png$/i, "").replace(/\.jpg$/i, "").trim();
+                    return fc === cleanCode || s.code === cleanCode;
+                });
+                if (found) {
+                    const mt = (found.media_type || "").toLowerCase();
+                    const rar = (found.rarity || "").toLowerCase();
+                    if (mt === "video" || rar.includes("omega") || rar.includes("mso")) isOmegaVideo = true;
                 }
+            }
+
+            if (isOmegaVideo) {
+                // Tampilkan VIDEO untuk skin Omega & Omega Spesial (dari folder gacha-skin)
+                if (vidEl) {
+                    const newSrc = `../gacha-skin/preview_${cleanCode}.webm`;
+                    if (!vidEl.currentSrc || !vidEl.currentSrc.endsWith(`preview_${cleanCode}.webm`)) {
+                        vidEl.src = newSrc;
+                        vidEl.load();
+                    }
+                    vidEl.style.display = "block";
+                    vidEl.play().catch(() => {});
+                }
+                if (imgEl) imgEl.style.display = "none";
             } else {
-                ownedSkinsData = DEFAULT_STARTER_SKINS;
+                // Tampilkan FOTO POTRAIT untuk skin Regular/Rare/Legend/Myth (dari folder skin)
+                if (vidEl) { vidEl.pause(); vidEl.style.display = "none"; }
+                if (imgEl) {
+                    imgEl.style.display = "block";
+                    imgEl.src = `../skin/CHAT_${cleanCode}.png`;
+                    imgEl.onerror = function() {
+                        this.onerror = null;
+                        this.src = `../skin/${cleanCode}.jpg`;
+                        this.onerror = function() {
+                            this.onerror = null;
+                            this.src = 'https://i.ibb.co.com/Y4JdtfGH/download.png';
+                        };
+                    };
+                }
             }
         }
 
@@ -1006,62 +1412,118 @@
             reader.readAsDataURL(file);
         }
 
+        async function useTemplatePP(templateChoice) {
+            const chosen = templateChoice || "pp.png";
+            const j = await fetchSafeApi('/api/user/upload-avatar', { image_data: chosen });
+            const templateImg = (chosen === "thebeyonce.png") ? "https://i.ibb.co.com/Y4JdtfGH/download.png" : DEFAULT_TEMPLATE_PP;
+            document.getElementById("heroUserAvatar").src = templateImg;
+            document.getElementById("affinityCenterAvatar").src = templateImg;
+            alert(`Foto profil berhasil diubah ke Template OS (${chosen})!`);
+        }
+
+        async function changeUsername() {
+            const raw = document.getElementById("editUsernameInput").value.trim().replace("@", "");
+            if (!raw) return alert("Masukkan username baru yang diinginkan!");
+            if (raw.length < 3) return alert("Username minimal harus 3 karakter!");
+
+            const j = await fetchSafeApi('/api/user/change-username', { new_username: raw });
+            if (j && j.status === "success") {
+                alert(j.message || `Username berhasil diganti menjadi @${raw}!`);
+                document.getElementById("heroUserTag").innerText = "@" + raw;
+                document.getElementById("editUsernameInput").value = "";
+                loadUserProfileData();
+            } else {
+                alert("Gagal Ganti Username:\n" + (j ? j.detail || j.message : "Sistem cooldown aktif atau server offline."));
+            }
+        }
+
+        async function saveCustomWotaProfile() {
+            const team = document.getElementById("editTeamSelect").value;
+            const gen = document.getElementById("editGenSelect").value;
+            const role = document.getElementById("editRoleSelect").value;
+            const oshi = document.getElementById("editOshiInput").value.trim();
+            const name = document.getElementById("editNameInput").value.trim();
+            const bio = document.getElementById("editBioInput").value.trim();
+
+            const payload = {
+                team: team,
+                generation: gen,
+                wota_role: role,
+                oshi: oshi || "Shani Indira Natio",
+                nama: name,
+                custom_bio: bio
+            };
+
+            const j = await fetchSafeApi('/api/user/update-profile', payload);
+            alert("Kustomisasi Tim, Role, Generasi, dan Oshi berhasil disimpan!");
+            loadUserProfileData();
+        }
+
         function openSkinModal() {
             const modalList = document.getElementById("modalSkinList");
             modalList.innerHTML = "";
 
-            const displayList = (ownedSkinsData && ownedSkinsData.length > 0) ? ownedSkinsData : DEFAULT_STARTER_SKINS;
+            // Jika belum ada data skin, fetch dulu dari backend
+            if (!ownedSkinsData || ownedSkinsData.length === 0) {
+                modalList.innerHTML = `<div style="grid-column:span 3; text-align:center; padding:30px; color:#ffd700;">⏳ Memuat koleksi skin Anda...</div>`;
+                document.getElementById("skinModalOverlay").classList.add("open");
+                loadStatusSkinData().then(() => {
+                    if (ownedSkinsData.length > 0) {
+                        document.getElementById("skinModalOverlay").classList.remove("open");
+                        openSkinModal();
+                    } else {
+                        modalList.innerHTML = `<div style="grid-column:span 3; text-align:center; padding:30px; color:#ff8080;">❌ Belum punya skin. Lakukan gacha dulu!</div>`;
+                    }
+                });
+                return;
+            }
 
-            displayList.forEach(skin => {
+            ownedSkinsData.forEach(skin => {
                 const card = document.createElement("div");
                 card.className = "skin-choice-card";
-                const isVid = skin.media_type === "video";
+
+                const cleanCode = (skin.code || "")
+                    .replace(/BORDER_/gi, "")
+                    .replace(/CHAT_/gi, "")
+                    .replace(/\.png$/i, "")
+                    .replace(/\.jpg$/i, "")
+                    .trim();
+
+                const mt = (skin.media_type || "").toLowerCase();
+                const rar = (skin.rarity || "").toLowerCase();
+                const isVid = mt === "video" || rar.includes("omega") || rar.includes("mso");
+
+                const thumbSrc = skin.media_url || `../skin/CHAT_${cleanCode}.png`;
+                const rarityLabel = skin.rarity || (isVid ? "Omega Spesial" : "Regular");
+                const rarityColor = rar.includes("omega") ? "#00d4ff"
+                    : rar.includes("myth") ? "#ffd700"
+                    : rar.includes("legend") ? "#ff7700"
+                    : rar.includes("rare") ? "#c084fc"
+                    : "#94a3b8";
+
                 card.innerHTML = `
-                    <div class="skin-choice-type">${isVid ? '🎬 Video Omega' : skin.rarity}</div>
-                    <img src="${isVid ? '../skin/CHAT_' + skin.code + '.png' : skin.media_url}" class="skin-choice-thumb" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
-                    <div class="skin-choice-name">${skin.code}</div>
+                    <div style="font-size: 10px; font-weight: 900; color: ${rarityColor}; text-transform: uppercase;">
+                        ${isVid ? "🎬 " : "🖼️ "}${rarityLabel}
+                    </div>
+                    <img src="${thumbSrc}" class="skin-choice-thumb"
+                        onerror="this.onerror=null; this.src='../skin/${cleanCode}.jpg'; this.onerror=function(){this.onerror=null;this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';};">
+                    <div class="skin-choice-name">${skin.nama || cleanCode}</div>
                 `;
-                card.onclick = () => selectStandeeSkin(skin);
+
+                card.onclick = async () => {
+                    renderStandeeDisplay(cleanCode, skin.jiko, skin);
+                    await fetchSafeApi('/api/user/update-profile', { standee_skin: cleanCode });
+                    closeSkinModal();
+                };
+
                 modalList.appendChild(card);
             });
+
             document.getElementById("skinModalOverlay").classList.add("open");
         }
 
         function closeSkinModal() {
             document.getElementById("skinModalOverlay").classList.remove("open");
-        }
-
-        async function selectStandeeSkin(skin) {
-            applyStandee(skin, true);
-            closeSkinModal();
-
-            await fetchSafeApi('/api/user/update-profile', {
-                standee_skin: skin.code,
-                custom_bio: skin.jiko || "I'm so lonely, listen to my heart"
-            });
-        }
-
-        function applyStandee(skin, showToast) {
-            const container = document.getElementById("standeeContainer");
-            const quoteEl = document.getElementById("standeeQuote");
-
-            if (skin.jiko) {
-                quoteEl.innerText = `"${skin.jiko}"`;
-            }
-
-            if (skin.media_type === "video") {
-                container.innerHTML = `
-                    <video class="standee-char-video" autoplay loop muted playsinline>
-                        <source src="${skin.media_url}" type="video/webm">
-                    </video>
-                `;
-            } else {
-                container.innerHTML = `
-                    <img src="${skin.media_url || '../skin/CHAT_' + skin.code + '.png'}" class="standee-char-img" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
-                `;
-            }
-
-            if (showToast) alert(`Pajangan skin ${skin.code} berhasil dipasang ke profil!`);
         }
 
         function renderShowcaseGrid(skins) {
@@ -1071,12 +1533,12 @@
             const displayList = skins.length > 0 ? skins.slice(0, 8) : defaultCodes;
 
             displayList.forEach(code => {
-                const baseName = code.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.png/i, "");
+                const baseName = code.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.png/i, "").replace(/\.jpg/i, "");
                 const frame = document.createElement("div");
                 frame.className = "skin-card-frame";
                 frame.innerHTML = `
                     <span class="skin-tag-badge">COLLECTOR</span>
-                    <img src="../skin/CHAT_${baseName}.png" class="skin-card-img" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
+                    <img src="../skin/CHAT_${baseName}.png" class="skin-card-img" onerror="this.onerror=null; this.src='../skin/${baseName}.jpg'; this.onerror=function(){this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';};">
                 `;
                 frame.onclick = () => openSkinModal();
                 grid.appendChild(frame);
@@ -1099,13 +1561,14 @@
                 const isWin = m.result.toLowerCase() === "victory";
                 const card = document.createElement("div");
                 card.className = `match-card-tall ${isWin ? 'win' : 'lose'}`;
+                const heroClean = (m.hero || 'CSHN').replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.png/i, "").replace(/\.jpg/i, "");
                 card.innerHTML = `
                     <div class="match-header-banner">
                         <span style="color: ${isWin ? '#00e676' : '#ff5252'}">${m.result}</span>
                         <span style="font-size:10px; color:#ffd700;">${m.type || 'Ranked'}</span>
                     </div>
                     <div class="match-hero-tall-box">
-                        <img src="../skin/CHAT_${m.hero || 'CSHN'}.png" class="match-hero-tall-img" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
+                        <img src="../skin/CHAT_${heroClean}.png" class="match-hero-tall-img" onerror="this.onerror=null; this.src='../skin/${heroClean}.jpg'; this.onerror=function(){this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';};">
                     </div>
                     <div class="match-kda-footer">
                         <div class="kda-num-bold">${m.kda || '12/2/8'}</div>
@@ -1115,24 +1578,6 @@
                 `;
                 list.appendChild(card);
             });
-        }
-
-        async function useTemplatePP() {
-            const j = await fetchSafeApi('/api/user/upload-avatar', { image_data: "template" });
-            document.getElementById("heroUserAvatar").src = DEFAULT_TEMPLATE_PP;
-            document.getElementById("affinityCenterAvatar").src = DEFAULT_TEMPLATE_PP;
-            alert("Foto profil berhasil dikembalikan ke Template OS!");
-        }
-
-        async function saveNameBio() {
-            const name = document.getElementById("editNameInput").value.trim();
-            const bio = document.getElementById("editBioInput").value.trim();
-            
-            if (name) document.getElementById("heroUserName").innerText = name;
-            if (bio) document.getElementById("standeeQuote").innerText = `"${bio}"`;
-
-            const j = await fetchSafeApi('/api/user/update-profile', { nama: name, custom_bio: bio });
-            alert("Profil & Bio berhasil diperbarui!");
         }
 
         async function disconnectProvider(provider) {
