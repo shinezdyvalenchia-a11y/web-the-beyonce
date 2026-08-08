@@ -404,10 +404,14 @@
     </main>
 
     <script>
-        const PRIMARY_URL = (window.location.origin && window.location.origin.startsWith("http") && !window.location.origin.includes("file:")) 
+        const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+        // PRIMARY_URL harus selalu mengarah ke backend HuggingFace.
+        // Jangan pakai window.location.origin karena jika diakses dari GitHub Pages
+        // (thebeyonce48.my.id), origin akan jadi domain GH Pages bukan backend!
+        const PRIMARY_URL = (window.location.origin && window.location.origin.includes("hf.space")) 
             ? window.location.origin 
-            : "https://shinezzzz-gokgokgogkgokgok.hf.space";
-        const FALLBACK_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+            : BACKEND_URL;
+        const FALLBACK_URL = BACKEND_URL;
         const SKIN_FOLDER_URL = "../skin/"; 
         const DEFAULT_TEMPLATE_PP = "https://i.ibb.co.com/Y4JdtfGH/download.png";
         
