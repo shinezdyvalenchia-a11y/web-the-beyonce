@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kitty Tenacity - Translucent AI Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Kitty Tenacity - Global Chat</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
 
@@ -86,15 +86,16 @@
         }
 
         .top-bar {
-            display: flex; flex-direction: column; gap: 15px;
+            display: flex; flex-direction: column; gap: 12px;
             padding: 15px 25px; z-index: 20; width: 100%;
         }
 
         .top-bar-row {
-            display: flex; justify-content: space-between; align-items: center; width: 100%;
+            display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 10px;
         }
 
-        .left-group { display: flex; align-items: center; gap: 15px; }
+        .left-group { display: flex; align-items: center; gap: 12px; min-width: 0; flex-shrink: 1; }
+        .right-group { display: flex; align-items: center; min-width: 0; flex-shrink: 0; }
         
         .sidebar-toggle-btn {
             display: none; background: rgba(255, 255, 255, 0.25);
@@ -107,41 +108,42 @@
             display: flex; align-items: center; gap: 10px;
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            padding: 6px 18px; border-radius: 35px;
+            padding: 6px 16px; border-radius: 35px;
             border: 1px solid rgba(255, 255, 255, 0.4);
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             flex-shrink: 0;
         }
         .logo-main { height: 35px; width: auto; border-radius: 50%; object-fit: contain; }
         .logo-sub { height: 25px; width: auto; border-radius: 50%; object-fit: contain; }
-        .brand-text { font-weight: 800; font-size: 16px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.4); white-space: nowrap; }
+        .brand-text { font-weight: 800; font-size: 15px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.4); white-space: nowrap; }
 
         .profile-card {
-            display: flex; align-items: center; gap: 18px; 
+            display: flex; align-items: center; gap: 12px; 
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            padding: 5px 20px 5px 25px; 
+            padding: 5px 16px 5px 18px; 
             border-radius: 30px;
             border: 1px solid rgba(255, 255, 255, 0.4);
             text-decoration: none; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: 0.2s; flex-shrink: 0;
+            transition: 0.2s; flex-shrink: 0; min-width: 0;
         }
         .profile-card:hover { background: rgba(255, 255, 255, 0.4); }
-        .profile-info { display: flex; flex-direction: column; text-align: right; }
+        .profile-info { display: flex; flex-direction: column; text-align: right; min-width: 0; }
         
-        .profile-name { font-weight: 800; font-size: 14px; color: #fff; line-height: 1.2; text-shadow: 0 1px 2px rgba(0,0,0,0.4); } 
-        .profile-username { font-weight: 700; font-size: 11px; color: rgba(255,255,255,0.85); } 
+        .profile-name { font-weight: 800; font-size: 14px; color: #fff; line-height: 1.2; text-shadow: 0 1px 2px rgba(0,0,0,0.4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; } 
+        .profile-username { font-weight: 700; font-size: 11px; color: rgba(255,255,255,0.85); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; } 
         
         .avatar-container {
             position: relative;
-            width: 40px; height: 40px; 
-            min-width: 40px; min-height: 40px;
+            width: 38px; height: 38px; 
+            min-width: 38px; min-height: 38px;
             flex-shrink: 0;
         }
         .profile-pic {
             width: 100%; height: 100%;
             border-radius: 50%; object-fit: cover;
             border: 2px solid rgba(255,255,255,0.8);
+            background: #fff;
         }
         
         .profile-border {
@@ -153,10 +155,10 @@
             filter: contrast(1.15) brightness(1.05);
         }
 
-        .sub-row { margin-top: -5px; flex-wrap: wrap; gap: 10px; }
+        .sub-row { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 10px; }
 
         .inventory-bar {
-            display: flex; gap: 12px;
+            display: flex; gap: 12px; align-items: center;
             background: rgba(0, 0, 0, 0.45);
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             padding: 6px 16px; border-radius: 20px;
@@ -181,8 +183,8 @@
            ========================================== */
         .chat-container {
             flex-grow: 1; overflow-y: auto; 
-            padding: 20px; display: flex; flex-direction: column; gap: 15px;
-            padding-bottom: 120px; scroll-behavior: smooth;
+            padding: 15px 25px 100px 25px; display: flex; flex-direction: column; gap: 14px;
+            scroll-behavior: smooth;
         }
         .chat-container::-webkit-scrollbar { display: none; }
 
@@ -192,16 +194,16 @@
         .message.user { align-self: flex-end; align-items: flex-end; }
         .message.ai { align-self: flex-start; align-items: flex-start; }
 
-        .msg-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+        .msg-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
         .message.user .msg-header { flex-direction: row-reverse; }
         
         .msg-avatar-wrapper {
             position: relative;
-            width: 42px; height: 42px; 
-            min-width: 42px; min-height: 42px;
+            width: 38px; height: 38px; 
+            min-width: 38px; min-height: 38px;
             flex-shrink: 0; 
         }
-        .msg-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .msg-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #fff; }
         
         .msg-border {
             position: absolute; top: 51%; left: 49%; transform: translate(-50%, -50%);
@@ -221,67 +223,44 @@
         }
 
         /* ==========================================
-           5. INPUT DOCK
+           5. INPUT DOCK (BERSIH & LAPANG)
            ========================================== */
         .input-dock-wrapper {
-            position: absolute; bottom: 15px; left: 15px; right: 15px;
+            position: absolute; bottom: 15px; left: 20px; right: 20px;
             max-width: 800px; margin: 0 auto;
-            display: flex; flex-direction: column; gap: 8px; z-index: 30;
+            display: flex; flex-direction: column; z-index: 30;
         }
-
-        .model-popup-selector {
-            display: none; background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.75);
-            padding: 8px 15px; border-radius: 20px; gap: 10px; align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); animation: fadeIn 0.2s ease;
-        }
-        .model-popup-selector.active { display: flex; }
-        .model-label { font-size: 12px; font-weight: 800; color: #1a5cff; white-space: nowrap; }
-        .model-select {
-            background: rgba(255, 255, 255, 0.85); border: none;
-            padding: 6px 12px; border-radius: 12px; font-weight: 700;
-            color: #333; outline: none; cursor: pointer; font-size: 12px; flex-grow: 1;
-        }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .input-dock {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: 35px; padding: 5px 5px 5px 18px;
-            display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            border-radius: 40px; padding: 6px 6px 6px 20px;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+            width: 100%;
         }
 
         .chat-input {
             flex-grow: 1; background: transparent; border: none;
-            font-size: 14px; font-weight: 700; color: #2c3e50;
+            font-size: 15px; font-weight: 700; color: #2c3e50;
             outline: none; padding: 8px 0; min-width: 0;
         }
         .chat-input::placeholder { color: #555; font-weight: 600; }
 
-        .mode-toggle-btn {
-            background: rgba(255, 255, 255, 0.75); border: 1px solid rgba(255, 255, 255, 0.85);
-            padding: 8px 12px; border-radius: 20px; font-weight: 800;
-            color: #1a5cff; outline: none; cursor: pointer; font-size: 11px;
-            white-space: nowrap; transition: 0.2s;
-        }
-        .mode-toggle-btn.tanya-active { background: #1a5cff; color: #fff; }
-
         .send-btn {
             background: linear-gradient(135deg, #ff7700, #ff007f);
-            border: none; color: white; width: 40px; height: 40px;
+            border: none; color: white; width: 42px; height: 42px;
             border-radius: 50%; flex-shrink: 0; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            font-size: 15px; box-shadow: 0 4px 10px rgba(255, 119, 0, 0.4);
-            transition: 0.2s;
+            font-size: 16px; box-shadow: 0 4px 12px rgba(255, 119, 0, 0.4);
+            transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.2, 1);
         }
-        .send-btn:hover { transform: scale(1.05); }
+        .send-btn:hover { transform: scale(1.08); }
+        .send-btn:active { transform: scale(0.95); }
 
         /* ==========================================
-           6. RESPONSIVE / HP CUSTOMIZATION
+           6. RESPONSIVE / HP ANTI-TABRAKAN KHUSUS
            ========================================== */
         @media screen and (max-width: 768px) {
             .left-sidebar {
@@ -295,24 +274,54 @@
             .side-item { width: 100%; height: 44px; flex-direction: row; justify-content: flex-start; padding: 0 15px; font-size: 12px; border-radius: 12px; }
             .sidebar-toggle-btn { display: block; }
 
-            .top-bar { padding: 10px 12px; gap: 10px; }
+            .top-bar { padding: 10px 12px; gap: 8px; }
             
-            .brand-logo { padding: 4px 10px; gap: 6px; border-radius: 20px; }
-            .logo-main { height: 26px; } .logo-sub { height: 18px; } .brand-text { font-size: 12px; }
-
-            .profile-card { padding: 6px 15px; gap: 15px; } 
-            .profile-name { font-size: 13px; } 
-            .profile-username { font-size: 10px; } 
-            .avatar-container { width: 38px; height: 38px; min-width: 38px; min-height: 38px; } 
-
-            .inventory-bar { padding: 4px 10px; gap: 8px; overflow-x: auto; max-width: 100%; }
-            .inventory-bar::-webkit-scrollbar { display: none; }
-            .inv-item { font-size: 10px; } .inv-item img { width: 14px; height: 14px; }
-            .sub-nav-btn { font-size: 9px; padding: 4px 8px; }
+            .top-bar-row { gap: 6px; }
+            .left-group { gap: 6px; }
             
-            .chat-container { padding: 10px 10px 120px 10px; }
-            .message { max-width: 95%; }
+            .brand-logo { padding: 4px 10px; gap: 6px; border-radius: 20px; max-width: 150px; }
+            .logo-main { height: 24px; } 
+            .logo-sub { height: 18px; } 
+            .brand-text { font-size: 11px; }
+
+            .profile-card { 
+                padding: 4px 10px 4px 12px; 
+                gap: 8px; 
+                border-radius: 25px; 
+                max-width: 170px;
+            } 
+            .profile-name { font-size: 12px; max-width: 95px; } 
+            .profile-username { font-size: 9px; max-width: 95px; } 
+            .avatar-container { width: 32px; height: 32px; min-width: 32px; min-height: 32px; } 
+
+            .sub-row { gap: 6px; justify-content: space-between; }
+            .inventory-bar { 
+                padding: 4px 8px; 
+                gap: 7px; 
+                border-radius: 15px; 
+                max-width: 60%;
+                overflow-x: auto;
+            }
+            .inv-item { font-size: 10px; gap: 3px; } 
+            .inv-item img { width: 13px; height: 13px; }
+            
+            .sub-nav-links { gap: 5px; }
+            .sub-nav-btn { font-size: 10px; padding: 4px 8px; border-radius: 12px; }
+            
+            .chat-container { padding: 10px 10px 90px 10px; gap: 10px; }
+            .message { max-width: 92%; }
             .input-dock-wrapper { left: 10px; right: 10px; bottom: 10px; }
+            .input-dock { padding: 4px 4px 4px 14px; }
+            .chat-input { font-size: 14px; }
+            .send-btn { width: 38px; height: 38px; font-size: 14px; }
+        }
+
+        @media screen and (max-width: 380px) {
+            .brand-text { display: none; }
+            .profile-name { max-width: 80px; }
+            .profile-username { max-width: 80px; }
+            .inventory-bar { padding: 3px 6px; gap: 5px; }
+            .sub-nav-btn { font-size: 9px; padding: 3px 6px; }
         }
     </style>
 </head>
@@ -361,7 +370,7 @@
                             <span class="profile-username" id="profileUsername">@loading</span>
                         </div>
                         <div class="avatar-container">
-                            <img src="../kitty.png.png" alt="Avatar" class="profile-pic" id="userAvatar" onerror="this.onerror=null; this.src='../kitty.png';">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" alt="Avatar" class="profile-pic" id="userAvatar" onerror="this.onerror=null; this.src='../kitty.png.png';">
                             <img src="" alt="Border" class="profile-border" id="profileBorder" style="display: none;">
                         </div>
                     </a>
@@ -386,21 +395,9 @@
         <div class="chat-container" id="chatContainer"></div>
 
         <div class="input-dock-wrapper">
-            <div class="model-popup-selector" id="modelPopup">
-                <span class="model-label">🧠 Pilih Model:</span>
-                <select id="modelSelect" class="model-select">
-                    <option value="auto" selected>Auto (Random)</option>
-                    <option value="claude">Claude</option>
-                    <option value="gemini">Gemini</option>
-                    <option value="gpt">GPT</option>
-                    <option value="ultrakitty">UltraKitty Pro</option>
-                </select>
-            </div>
-
             <div class="input-dock">
                 <input type="text" id="userInput" class="chat-input" placeholder="Ketik pesan..." autocomplete="off">
-                <button type="button" class="mode-toggle-btn" id="modeToggleBtn" onclick="toggleMode()">Chat</button>
-                <button class="send-btn" onclick="sendMessage()">➤</button>
+                <button class="send-btn" onclick="sendMessage()" title="Kirim Pesan">➤</button>
             </div>
         </div>
     </main>
@@ -408,14 +405,14 @@
     <script>
         const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
         const SKIN_FOLDER_URL = "../skin/"; 
+        const DEFAULT_TEMPLATE_PP = "https://i.ibb.co.com/Y4JdtfGH/download.png";
         
-        let activeMode = "chat"; 
         let currentUserData = {
             userId: getUserId(),
             username: "User",
             skinBorderCode: "", 
             skinChatCode: "",
-            linkProfil: "../kitty.png.png"
+            linkProfil: DEFAULT_TEMPLATE_PP
         };
         let lastMessageId = ""; 
 
@@ -460,7 +457,12 @@
                     }
                     currentUserData.username = namaUser;
 
-                    currentUserData.linkProfil = p.photoProfile || p.linkProfil || "../kitty.png";
+                    // Fallback Pintar PP: Jika kosong, pakai template OS default (ImgBB / download.png)
+                    let userPhoto = p.photoProfile || p.linkProfil || "";
+                    if (!userPhoto || userPhoto.trim() === "" || userPhoto.toLowerCase() === "none") {
+                        userPhoto = DEFAULT_TEMPLATE_PP;
+                    }
+                    currentUserData.linkProfil = userPhoto;
                     
                     let rawSkinCode = "";
                     if (p.skin) {
@@ -478,8 +480,11 @@
                     }
 
                     document.getElementById("profileName").innerText = currentUserData.username;
-                    document.getElementById("profileUsername").innerText = "@" + (p.username || "user");
-                    document.getElementById("userAvatar").src = currentUserData.linkProfil;
+                    document.getElementById("profileUsername").innerText = "@" + (p.username || currentUserData.userId || "user");
+                    
+                    const avatarImg = document.getElementById("userAvatar");
+                    avatarImg.src = currentUserData.linkProfil;
+                    avatarImg.onerror = function() { this.src = "../kitty.png.png"; };
                     
                     if(currentUserData.skinBorderCode) {
                         const borderEl = document.getElementById("profileBorder");
@@ -513,7 +518,6 @@
         }
 
         async function pollNewChats() {
-            if(activeMode === "tanya") return; 
             try {
                 const response = await fetch(`${BACKEND_URL}/getnewchats?lastId=${lastMessageId}`, { method: 'GET' });
                 const data = await response.json();
@@ -545,7 +549,6 @@
                 let baseCode = rawSkin.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
                 let chatSkinUrl = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".png"; 
                 
-                // INI BAGIAN YANG DIPERBAIKI BIAR NGGAK GEPENG TAPI TETEP BISA MELAR
                 bgStyle = `
                     border-style: solid !important;
                     border-width: 45px 50px 45px 80px !important; 
@@ -556,18 +559,11 @@
                     box-shadow: none !important; 
                     color: #4a3b32 !important; 
                     border-radius: 0 !important; 
-                    
-                    /* Padding dikurangi sedikit biar teks nggak terlalu kejauhan */
                     padding: 5px 25px !important; 
-                    
-                    /* Mencegah gambar skin gepeng kalau cuma ketik "p" atau dikit */
-                    min-width: 180px !important; 
-                    min-height: 90px !important; 
-                    
-                    /* Otomatis memanjang sesuai seberapa panjang teksnya */
+                    min-width: 160px !important; 
+                    min-height: 80px !important; 
                     width: fit-content !important; 
                     max-width: 100% !important; 
-                    
                     display: flex !important;
                     align-items: center !important; 
                     word-break: break-word !important;
@@ -582,7 +578,7 @@
                         background: rgba(255, 255, 255, 0.85);
                         border-radius: 20px 20px 4px 20px; 
                         border-right: 4px solid #ff7700;
-                        padding: 12px 18px;
+                        padding: 10px 16px;
                         backdrop-filter: blur(12px); 
                         -webkit-backdrop-filter: blur(12px);
                         border: 1px solid rgba(255, 255, 255, 0.7);
@@ -594,7 +590,7 @@
                         background: rgba(255, 255, 255, 0.85);
                         border-radius: 20px 20px 20px 4px; 
                         border-left: 4px solid #1a5cff;
-                        padding: 12px 18px;
+                        padding: 10px 16px;
                         backdrop-filter: blur(12px); 
                         -webkit-backdrop-filter: blur(12px);
                         border: 1px solid rgba(255, 255, 255, 0.7);
@@ -604,13 +600,16 @@
                 }
             }
             
-            const ppSrc = msgData.linkProfil || currentUserData.linkProfil || '../kitty.png';
+            let ppSrc = msgData.linkProfil || (isSelf ? currentUserData.linkProfil : DEFAULT_TEMPLATE_PP);
+            if (!ppSrc || ppSrc.trim() === "" || ppSrc.toLowerCase() === "none") {
+                ppSrc = DEFAULT_TEMPLATE_PP;
+            }
 
             const html = `
                 <div class="message ${sideClass}">
                     <div class="msg-header">
                         <div class="msg-avatar-wrapper">
-                            <img src="${ppSrc}" class="msg-avatar" onerror="this.onerror=null; this.src='../kitty.png';">
+                            <img src="${ppSrc}" class="msg-avatar" onerror="this.onerror=null; this.src='../kitty.png.png';">
                             ${borderHTML}
                         </div>
                         <div class="msg-name-time">
@@ -626,18 +625,6 @@
 
         function getCurrentTime() {
             const d = new Date(); return d.getHours().toString().padStart(2, '0') + ":" + d.getMinutes().toString().padStart(2, '0');
-        }
-
-        function toggleMode() {
-            const btn = document.getElementById("modeToggleBtn");
-            const popup = document.getElementById("modelPopup");
-            if (activeMode === "chat") {
-                activeMode = "tanya"; btn.innerText = "Tanya AI";
-                btn.classList.add("tanya-active"); popup.classList.add("active");
-            } else {
-                activeMode = "chat"; btn.innerText = "Chat";
-                btn.classList.remove("tanya-active"); popup.classList.remove("active");
-            }
         }
 
         function getCookie(name) {
@@ -658,89 +645,25 @@
             const messageText = inputField.value.trim();
             if (!messageText) return;
             
-            const chatContainer = document.getElementById("chatContainer");
             inputField.value = ""; 
 
-            if (activeMode === "chat") {
-                const payloadGlobal = {
-                    id: currentUserData.userId,
-                    chat: messageText,
-                    skin: currentUserData.skinBorderCode, 
-                    waktu: getCurrentTime(),
-                    linkProfil: currentUserData.linkProfil,
-                    username: currentUserData.username
-                };
-                renderChatHTML(payloadGlobal, true);
-                
-                try {
-                    await fetch(`${BACKEND_URL}/chat`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payloadGlobal)
-                    });
-                } catch(e) { console.error("Gagal mengirim chat global", e); }
-            } else {
-                let selectedModel = document.getElementById("modelSelect").value;
-                if (selectedModel === "auto") {
-                    const autoChoices = ["claude", "gemini", "gpt"];
-                    selectedModel = autoChoices[Math.floor(Math.random() * autoChoices.length)];
-                }
-                let displayNameModel = selectedModel === 'ultrakitty' ? "UltraKitty Pro" : (selectedModel.charAt(0).toUpperCase() + selectedModel.slice(1));
-                
-                const userPayload = { 
-                    chat: messageText, 
-                    waktu: getCurrentTime(), 
-                    linkProfil: currentUserData.linkProfil, 
-                    skin: currentUserData.skinBorderCode 
-                };
-                renderChatHTML(userPayload, true);
-
-                const uniqueMsgId = "ai-msg-" + Date.now();
-                const aiLoadingHtml = `
-                    <div class="message ai" id="${uniqueMsgId}">
-                        <div class="msg-header">
-                            <div class="msg-avatar-wrapper"><img src="../kitty.png" class="msg-avatar" onerror="this.onerror=null; this.src='../kitty.png';"></div>
-                            <div class="msg-name-time">
-                                <span class="msg-name">${displayNameModel}</span>
-                                <span class="msg-time">${getCurrentTime()}</span>
-                            </div>
-                        </div>
-                        <div class="msg-bubble"><em>Memproses...</em></div>
-                    </div>`;
-                chatContainer.insertAdjacentHTML('beforeend', aiLoadingHtml);
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-
-                const formattedPayload = `/${selectedModel} ${currentUserData.userId},${messageText}`;
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 60000);
-
-                try {
-                    const response = await fetch(`${BACKEND_URL}/chat`, { 
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message: formattedPayload }),
-                        signal: controller.signal
-                    });
-                    clearTimeout(timeoutId); 
-                    
-                    const data = await response.json();
-                    let rawReply = data.reply || data.message || `${currentUserData.userId}, Gagal memproses respon.`;
-                    let finalAnswer = rawReply;
-
-                    if (rawReply.includes(",")) {
-                        const firstCommaIndex = rawReply.indexOf(',');
-                        const responseId = rawReply.substring(0, firstCommaIndex).trim();
-                        const responseText = rawReply.substring(firstCommaIndex + 1).trim();
-                        if (responseId === currentUserData.userId) { finalAnswer = responseText; }
-                    }
-                    document.getElementById(uniqueMsgId).querySelector('.msg-bubble').innerHTML = finalAnswer.replace(/\n/g, "<br>");
-                } catch (error) {
-                    const el = document.getElementById(uniqueMsgId).querySelector('.msg-bubble');
-                    if (error.name === 'AbortError') { el.innerText = "Waktu habis. Server sibuk."; } 
-                    else { el.innerText = "Koneksi terputus ke server utama."; }
-                }
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }
+            const payloadGlobal = {
+                id: currentUserData.userId,
+                chat: messageText,
+                skin: currentUserData.skinBorderCode, 
+                waktu: getCurrentTime(),
+                linkProfil: currentUserData.linkProfil,
+                username: currentUserData.username
+            };
+            renderChatHTML(payloadGlobal, true);
+            
+            try {
+                await fetch(`${BACKEND_URL}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payloadGlobal)
+                });
+            } catch(e) { console.error("Gagal mengirim chat global", e); }
         }
 
         document.getElementById("userInput").addEventListener("keypress", function(e) {
