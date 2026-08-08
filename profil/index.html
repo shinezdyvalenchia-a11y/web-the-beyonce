@@ -1646,11 +1646,13 @@
             }
             
             // Tampilkan standee dari backend (standee yang dipajang user)
-            const standeeSkin = json.current_standee || (ownedSkinsData.length > 0 ? ownedSkinsData[0].code : null);
+            const standeeSkin = json.current_standee && json.current_standee !== "None" && json.current_standee !== "" ? json.current_standee : null;
             const jikoBio = json.current_bio || json.jiko || null;
             if (standeeSkin) {
                 const skinDetail = ownedSkinsData.find(s => s.code === standeeSkin) || null;
                 renderStandeeDisplay(standeeSkin, jikoBio, skinDetail);
+            } else {
+                renderStandeeDisplay(null, null, null);
             }
         }
 
