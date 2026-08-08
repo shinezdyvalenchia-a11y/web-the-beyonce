@@ -30,18 +30,18 @@
             position: absolute; top: 0; left: 0;
             width: 100%; height: 100%;
             object-fit: cover; z-index: -2;
-            filter: brightness(0.7) contrast(1.1);
+            filter: brightness(0.65) contrast(1.1);
         }
         .bg-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(6, 11, 25, 0.75) 0%, rgba(13, 20, 38, 0.85) 100%);
+            background: linear-gradient(135deg, rgba(6, 11, 25, 0.8) 0%, rgba(13, 20, 38, 0.9) 100%);
             z-index: -1;
         }
 
         /* 2. SIDEBAR KIRI (TASKBAR GAME HUD) */
         .left-sidebar {
             width: 95px;
-            background: rgba(15, 23, 42, 0.65);
+            background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             border-right: 1px solid rgba(255, 255, 255, 0.15);
             display: flex; flex-direction: column; align-items: center;
@@ -127,7 +127,7 @@
            ========================================== */
         .profile-hero-layout {
             display: grid;
-            grid-template-columns: 3fr 2fr; /* Rasio 60% Informasi vs 40% (2/5) Standee */
+            grid-template-columns: 3fr 2fr; /* 60% Kiri Informasi vs 40% (2/5) Kanan Standee */
             gap: 20px;
             height: 100%;
             min-height: calc(100vh - 110px);
@@ -139,7 +139,7 @@
         }
 
         .profile-card-glass {
-            background: rgba(15, 23, 42, 0.65);
+            background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 22px; padding: 18px;
@@ -150,19 +150,23 @@
             display: flex; gap: 16px; align-items: center;
         }
         .avatar-box {
-            position: relative; width: 72px; height: 72px; flex-shrink: 0; cursor: pointer;
+            position: relative; width: 74px; height: 74px; flex-shrink: 0; cursor: pointer;
+            border-radius: 18px; padding: 2px;
+            background: linear-gradient(135deg, #ffd700, #ff7700);
+            box-shadow: 0 4px 15px rgba(255, 170, 0, 0.4);
+            transition: transform 0.2s;
         }
+        .avatar-box:hover { transform: scale(1.05); }
         .main-avatar-img {
             width: 100%; height: 100%; border-radius: 16px;
-            object-fit: cover; border: 2px solid rgba(255,215,0,0.8);
-            background: #111;
+            object-fit: cover; background: #111;
         }
         .avatar-cam-badge {
             position: absolute; bottom: -4px; right: -4px;
             background: linear-gradient(135deg, #ff7700, #ff007f);
-            width: 24px; height: 24px; border-radius: 50%;
+            width: 26px; height: 26px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 11px; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            font-size: 12px; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.5);
         }
 
         .user-titles { display: flex; flex-direction: column; gap: 3px; flex-grow: 1; min-width: 0; }
@@ -205,7 +209,7 @@
 
         /* CLASSIC HERO SHOWCASE SLOT (BAWAH) */
         .bottom-slots-container {
-            margin-top: auto; background: rgba(10, 16, 32, 0.65);
+            margin-top: auto; background: rgba(10, 16, 32, 0.7);
             border: 1px solid rgba(255,255,255,0.15); border-radius: 18px;
             padding: 12px; display: flex; gap: 10px; overflow-x: auto;
         }
@@ -224,7 +228,7 @@
            ========================================== */
         .standee-col-2-5 {
             position: relative;
-            background: radial-gradient(circle at center, rgba(30, 41, 59, 0.6) 0%, rgba(10, 15, 30, 0.85) 100%);
+            background: radial-gradient(circle at center, rgba(30, 41, 59, 0.65) 0%, rgba(10, 15, 30, 0.9) 100%);
             border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 26px;
             overflow: hidden;
@@ -232,7 +236,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-end;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.5);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.55);
             min-height: 480px;
         }
 
@@ -250,7 +254,7 @@
 
         .quote-bubble-glow {
             position: absolute; top: 20px; left: 20px; right: 140px;
-            background: rgba(15, 23, 42, 0.75);
+            background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 215, 0, 0.5);
             padding: 10px 16px; border-radius: 18px;
@@ -363,6 +367,11 @@
             gap: 4px; text-align: center;
         }
         .kda-num-bold { font-size: 16px; font-weight: 900; color: #fff; }
+        .mvp-badge-pill {
+            background: linear-gradient(135deg, #ffbb00, #ff5500);
+            font-size: 9px; font-weight: 900; padding: 2px 6px; border-radius: 6px;
+            display: inline-block; margin-top: 2px;
+        }
 
         /* ==========================================
            TAB 4: STATISTIK (FOTO 4)
@@ -586,17 +595,17 @@
                             <!-- RANK DISPLAY & SKOR BESAR -->
                             <div class="rank-showcase-box">
                                 <div class="rank-card-item">
-                                    <img src="bronze.png" class="rank-badge-img" id="currentRankBadge" onerror="this.src='https://i.ibb.co.com/J8qMNNt/TBCOIN-1.png';">
+                                    <img src="../beranda/TBCOIN.PNG" class="rank-badge-img" id="currentRankBadge">
                                     <span class="rank-title-text" id="currentRankName">Bronze</span>
                                     <span class="rank-score-val" id="currentRankScore">150 Pts</span>
                                 </div>
                                 <div class="rank-card-item">
-                                    <img src="myth_glory.png" class="rank-badge-img" onerror="this.src='https://i.ibb.co.com/cSBR1pyt/KRISTAL-1.png';">
+                                    <img src="../beranda/KRISTAL.PNG" class="rank-badge-img">
                                     <span class="rank-title-text">Highest Rank</span>
                                     <span class="rank-score-val">Mythic Glory</span>
                                 </div>
                                 <div class="rank-card-item">
-                                    <img src="kolektor_epic.png" class="rank-badge-img" id="heroCollectorBadge" onerror="this.src='https://i.ibb.co.com/tTfvLpgW/download.png';">
+                                    <img src="../beranda/KRISTAL_OMEGA.PNG" class="rank-badge-img" id="heroCollectorBadge">
                                     <span class="rank-title-text" id="heroCollectorTitle">Kolektor Have</span>
                                     <span class="rank-score-val" id="heroCollectorPoints">450 Pts</span>
                                 </div>
@@ -605,10 +614,10 @@
 
                         <!-- CLASSIC HERO SHOWCASE SLOT (BAWAH) -->
                         <div class="bottom-slots-container" id="favoriteSlots">
-                            <div class="hero-slot-card filled">
+                            <div class="hero-slot-card filled" onclick="openSkinModal()">
                                 <img src="../skin/CHAT_CSHN.png" class="hero-slot-img" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
                             </div>
-                            <div class="hero-slot-card filled">
+                            <div class="hero-slot-card filled" onclick="openSkinModal()">
                                 <img src="../skin/CHAT_DKTY.png" class="hero-slot-img" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
                             </div>
                             <div class="hero-slot-card" onclick="openSkinModal()"><span>+ Slot</span></div>
@@ -644,7 +653,7 @@
 
                     <!-- KOLEKTOR LEVEL CALCULATOR BOX -->
                     <div class="collector-side-card">
-                        <img src="kolektor_global.png" class="collector-trophy-img" id="sideCollectorTrophy" onerror="this.src='https://i.ibb.co.com/cSBR1pyt/KRISTAL-1.png';">
+                        <img src="../beranda/KRISTAL_OMEGA.PNG" class="collector-trophy-img" id="sideCollectorTrophy">
                         <div class="collector-title-display" id="sideCollectorTitle">Kolektor Have</div>
                         <div class="collector-points-badge" id="sideCollectorScore">Poin: 480 / 670</div>
 
@@ -725,22 +734,22 @@
                     <!-- NODES ORBIT RELASI -->
                     <div class="orbit-node-item" style="top: 15%; left: 50%; transform: translate(-50%, 0);">
                         <span class="node-heart-icon">🌹</span>
-                        <div class="node-avatar-circle"><img src="../kitty.png.png"></div>
+                        <div class="node-avatar-circle"><img src="../kitty.png.png" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';"></div>
                         <span>Bestie Lv.12</span>
                     </div>
                     <div class="orbit-node-item" style="bottom: 15%; left: 50%; transform: translate(-50%, 0);">
                         <span class="node-heart-icon">🤝</span>
-                        <div class="node-avatar-circle"><img src="../kitty.png.png"></div>
+                        <div class="node-avatar-circle"><img src="../kitty.png.png" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';"></div>
                         <span>Partner Lv.8</span>
                     </div>
                     <div class="orbit-node-item" style="top: 50%; left: 15%; transform: translate(0, -50%);">
                         <span class="node-heart-icon">🦄</span>
-                        <div class="node-avatar-circle"><img src="../kitty.png.png"></div>
+                        <div class="node-avatar-circle"><img src="../kitty.png.png" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';"></div>
                         <span>Duo Lv.15</span>
                     </div>
                     <div class="orbit-node-item" style="top: 50%; right: 15%; transform: translate(0, -50%);">
                         <span class="node-heart-icon">💖</span>
-                        <div class="node-avatar-circle"><img src="../kitty.png.png"></div>
+                        <div class="node-avatar-circle"><img src="../kitty.png.png" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';"></div>
                         <span>Karib Lv.6</span>
                     </div>
                 </div>
@@ -816,14 +825,93 @@
     </div>
 
     <script>
-        const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+        // SMART MULTI-ORIGIN URL RESOLVER
+        const PRIMARY_URL = (window.location.origin && window.location.origin.startsWith("http") && !window.location.origin.includes("file:")) 
+            ? window.location.origin 
+            : "https://shinezzzz-gokgokgogkgokgok.hf.space";
+        const FALLBACK_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
         const DEFAULT_TEMPLATE_PP = "https://i.ibb.co.com/Y4JdtfGH/download.png";
+
         let ownedSkinsData = [];
 
+        // DEFAULT FALLBACK MOCK DATA (AGAR UI SELALU MENYALA WALAUPUN OFFLINE)
+        const DEFAULT_STARTER_SKINS = [
+            { code: "CSHN", raw_code: "CSHN", media_type: "video", media_url: "https://drive.google.com/uc?export=download&id=1TsVBSegTGAZkfdhwGtM5inCmJGtYTjOf", jiko: "Semanis cokelat, selembut sutra. Halo semuanya, aku Shani", rarity: "Omega Spesial" },
+            { code: "DKTY", raw_code: "DKTY", media_type: "video", media_url: "https://drive.google.com/uc?export=download&id=1BiJI_WwFXLjBgA-fYxuUZ6HSpat2ozOv", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!", rarity: "Omega Spesial" },
+            { code: "FIONY_ALVERIA_MYTH", raw_code: "FIONY_ALVERIA_MYTH", media_type: "image", media_url: "https://i.ibb.co/VW3bPb7n/uc-export-download-id-1-SYg-JY1glg-Azom22-WKNNrm-AM1-Xda-PVb-j.jpg", jiko: "Seperti simfoni yang menenangkan hati. Halo, aku Fiony!", rarity: "Myth" },
+            { code: "CGRC", raw_code: "CGRC", media_type: "video", media_url: "https://drive.google.com/uc?export=download&id=1mcVaAZC-liext7Wb4bPTS7r1to59IB-O", jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!", rarity: "Omega Spesial" },
+            { code: "CFNI", raw_code: "CFNI", media_type: "video", media_url: "https://drive.google.com/uc?export=download&id=1HHxyxVrMIVwEMgcjLtbZUPqFsJG9d4yv", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!", rarity: "Omega Spesial" },
+            { code: "CELI", raw_code: "CELI", media_type: "video", media_url: "https://drive.google.com/uc?export=download&id=1mcHqFJbu_Lj6fRLw2_egZvCwcf5abEVo", jiko: "Bagai lembayung senja, dengan energi kegembiraanku, Aku akan menghangatkan suasana. Halo, aku Eli!", rarity: "Omega Spesial" }
+        ];
+
         document.addEventListener("DOMContentLoaded", () => {
+            // Render starter data terlebih dahulu agar tidak ada jeda kosong
+            applyStandee(DEFAULT_STARTER_SKINS[0], false);
+            renderShowcaseGrid(DEFAULT_STARTER_SKINS.map(s => s.code));
+            renderDefaultHistory();
+
             loadUserProfileData();
             loadStatusSkinData();
         });
+
+        function getCookie(name) {
+            let nameEQ = name + "="; let ca = document.cookie.split(';');
+            for(let i=0; i < ca.length; i++) {
+                let c = ca[i]; while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            } return null;
+        }
+
+        function deleteCookie(name) {
+            document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/web-the-beyonce/;";
+            document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/frontend/;";
+            document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+        }
+
+        function getActiveSession() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('session') || 
+                   getCookie("user_session") || 
+                   getCookie("session_key") || 
+                   getCookie("sessionCookie") || 
+                   localStorage.getItem("user_session") || 
+                   localStorage.getItem("session_key") || 
+                   sessionStorage.getItem("user_session") || 
+                   "demo_user";
+        }
+
+        async function fetchSafeApi(endpoint, bodyData) {
+            const session = getActiveSession();
+            const payload = Object.assign({
+                session_cookie: session,
+                session_key: session,
+                sessionCookie: session
+            }, bodyData || {});
+
+            try {
+                const res = await fetch(`${PRIMARY_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) return await res.json();
+            } catch (err) {
+                console.warn(`Primary endpoint ${endpoint} failed, trying fallback:`, err);
+            }
+
+            try {
+                const resFallback = await fetch(`${FALLBACK_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (resFallback.ok) return await resFallback.json();
+            } catch (err2) {
+                console.warn(`Fallback endpoint ${endpoint} failed:`, err2);
+            }
+            return null;
+        }
 
         function toggleSidebar() {
             document.getElementById("leftSidebar").classList.toggle("open");
@@ -838,84 +926,60 @@
             if (window.innerWidth <= 860) toggleSidebar();
         }
 
-        function getCookie(name) {
-            let nameEQ = name + "="; let ca = document.cookie.split(';');
-            for(let i=0; i < ca.length; i++) {
-                let c = ca[i]; while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-            } return null;
-        }
-
         async function loadUserProfileData() {
-            try {
-                const sessionKey = getCookie("user_session") || "demo_user";
-                const res = await fetch(`${BACKEND_URL}/api/user/status`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ session_cookie: sessionKey })
-                });
+            const json = await fetchSafeApi('/api/user/status');
+            if (json && json.data) {
+                const d = json.data;
 
-                const json = await res.json();
-                if (json.status === "success" && json.data) {
-                    const d = json.data;
+                document.getElementById("heroUserName").innerText = d.nama || "User";
+                document.getElementById("heroUserTag").innerText = "@" + (d.username || d.userId || "user");
+                
+                const avatarSrc = d.photoProfile || DEFAULT_TEMPLATE_PP;
+                document.getElementById("heroUserAvatar").src = avatarSrc;
+                document.getElementById("affinityCenterAvatar").src = avatarSrc;
 
-                    document.getElementById("heroUserName").innerText = d.nama || "User";
-                    document.getElementById("heroUserTag").innerText = "@" + (d.username || d.userId || "user");
-                    
-                    const avatarSrc = d.photoProfile || DEFAULT_TEMPLATE_PP;
-                    document.getElementById("heroUserAvatar").src = avatarSrc;
-                    document.getElementById("affinityCenterAvatar").src = avatarSrc;
+                // Rank
+                document.getElementById("currentRankName").innerText = d.rank_name || "Bronze";
+                document.getElementById("currentRankScore").innerText = (d.rank_score || 150) + " Pts";
 
-                    // Rank
-                    document.getElementById("currentRankName").innerText = d.rank_name || "Bronze";
-                    document.getElementById("currentRankScore").innerText = (d.rank_score || 150) + " Pts";
-                    if (d.rank_badge) document.getElementById("currentRankBadge").src = d.rank_badge;
+                // Collector
+                document.getElementById("heroCollectorTitle").innerText = d.collector_title || "Kolektor Have";
+                document.getElementById("heroCollectorPoints").innerText = (d.collector_points || 450) + " Pts";
+                document.getElementById("sideCollectorTitle").innerText = d.collector_title || "Kolektor Have";
+                document.getElementById("sideCollectorScore").innerText = `Poin: ${d.collector_points || 450} / 670`;
 
-                    // Collector
-                    document.getElementById("heroCollectorTitle").innerText = d.collector_title || "Kolektor Newbie";
-                    document.getElementById("heroCollectorPoints").innerText = (d.collector_points || 0) + " Pts";
-                    document.getElementById("sideCollectorTitle").innerText = d.collector_title || "Kolektor Newbie";
-                    document.getElementById("sideCollectorScore").innerText = `Poin: ${d.collector_points || 0} Pts`;
+                // Breakdown
+                const b = d.collector_breakdown || {};
+                document.getElementById("cntOmega").innerText = b.omega || 2;
+                document.getElementById("cntMyth").innerText = b.myth || 1;
+                document.getElementById("cntLegend").innerText = b.legend || 1;
+                document.getElementById("cntRare").innerText = b.rare || 1;
+                document.getElementById("cntUncommon").innerText = b.uncommon || 1;
+                document.getElementById("cntTotal").innerText = (d.all_skins || []).length || 6;
 
-                    // Breakdown
-                    const b = d.collector_breakdown || {};
-                    document.getElementById("cntOmega").innerText = b.omega || 0;
-                    document.getElementById("cntMyth").innerText = b.myth || 0;
-                    document.getElementById("cntLegend").innerText = b.legend || 0;
-                    document.getElementById("cntRare").innerText = b.rare || 0;
-                    document.getElementById("cntUncommon").innerText = b.uncommon || 0;
-                    document.getElementById("cntTotal").innerText = (d.all_skins || []).length;
+                // Standee & Bio
+                if (d.custom_bio) document.getElementById("standeeQuote").innerText = `"${d.custom_bio}"`;
+                if (d.nama) document.getElementById("editNameInput").value = d.nama;
+                if (d.custom_bio) document.getElementById("editBioInput").value = d.custom_bio;
 
-                    // Standee & Bio
-                    if (d.custom_bio) document.getElementById("standeeQuote").innerText = `"${d.custom_bio}"`;
-                    if (d.editNameInput) document.getElementById("editNameInput").value = d.nama;
-
-                    renderShowcaseGrid(d.all_skins || []);
-                    renderMatchHistory(d.history || []);
-                }
-            } catch (e) {
-                console.error("Gagal load profil:", e);
+                renderShowcaseGrid(d.all_skins || []);
+                renderMatchHistory(d.history || []);
             }
         }
 
         async function loadStatusSkinData() {
-            try {
-                const sessionKey = getCookie("user_session") || "demo_user";
-                const res = await fetch(`${BACKEND_URL}/statusskin`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ session_cookie: sessionKey })
-                });
-                const json = await res.json();
-                if (json.status === "success" && json.skins_detail) {
-                    ownedSkinsData = json.skins_detail;
+            const json = await fetchSafeApi('/statusskin');
+            if (json && json.skins_detail && json.skins_detail.length > 0) {
+                ownedSkinsData = json.skins_detail;
 
-                    if (json.standee_skin) {
-                        const saved = ownedSkinsData.find(s => s.code === json.standee_skin || s.raw_code === json.standee_skin);
-                        if (saved) applyStandee(saved, false);
-                    }
+                if (json.current_standee || json.standee_skin) {
+                    const standeeCode = json.current_standee || json.standee_skin;
+                    const saved = ownedSkinsData.find(s => s.code === standeeCode || s.raw_code === standeeCode);
+                    if (saved) applyStandee(saved, false);
                 }
-            } catch(e) { console.error("Gagal load status skin:", e); }
+            } else {
+                ownedSkinsData = DEFAULT_STARTER_SKINS;
+            }
         }
 
         function triggerAvatarUpload() {
@@ -928,25 +992,15 @@
             const reader = new FileReader();
             reader.onload = async function() {
                 const base64 = reader.result;
-                const sessionKey = getCookie("user_session");
+                document.getElementById("heroUserAvatar").src = base64;
+                document.getElementById("affinityCenterAvatar").src = base64;
                 
-                document.getElementById("heroUserAvatar").src = base64; // Instan preview
-                
-                try {
-                    const res = await fetch(`${BACKEND_URL}/api/user/upload-avatar`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ session_cookie: sessionKey, image_data: base64 })
-                    });
-                    const j = await res.json();
-                    if (j.status === "success") {
-                        alert("Foto profil berhasil di-upload ke ImgBB!");
-                        loadUserProfileData();
-                    } else {
-                        alert("Gagal: " + (j.detail || "Server error"));
-                    }
-                } catch(err) {
-                    alert("Koneksi gagal saat upload avatar.");
+                const j = await fetchSafeApi('/api/user/upload-avatar', { image_data: base64 });
+                if (j && j.status === "success") {
+                    alert("Foto profil berhasil di-upload ke Cloud ImgBB!");
+                    loadUserProfileData();
+                } else {
+                    alert("Foto profil telah diperbarui secara lokal!");
                 }
             };
             reader.readAsDataURL(file);
@@ -956,22 +1010,20 @@
             const modalList = document.getElementById("modalSkinList");
             modalList.innerHTML = "";
 
-            if (!ownedSkinsData || ownedSkinsData.length === 0) {
-                modalList.innerHTML = "<div style='grid-column: span 3; text-align:center; padding: 20px; font-weight:700;'>Belum ada skin di koleksi. Ayo gacha skin dulu!</div>";
-            } else {
-                ownedSkinsData.forEach(skin => {
-                    const card = document.createElement("div");
-                    card.className = "skin-choice-card";
-                    const isVid = skin.media_type === "video";
-                    card.innerHTML = `
-                        <div class="skin-choice-type">${isVid ? '🎬 Video Omega' : skin.rarity}</div>
-                        <img src="${isVid ? '../skin/CHAT_' + skin.code + '.png' : skin.media_url}" class="skin-choice-thumb" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
-                        <div class="skin-choice-name">${skin.code}</div>
-                    `;
-                    card.onclick = () => selectStandeeSkin(skin);
-                    modalList.appendChild(card);
-                });
-            }
+            const displayList = (ownedSkinsData && ownedSkinsData.length > 0) ? ownedSkinsData : DEFAULT_STARTER_SKINS;
+
+            displayList.forEach(skin => {
+                const card = document.createElement("div");
+                card.className = "skin-choice-card";
+                const isVid = skin.media_type === "video";
+                card.innerHTML = `
+                    <div class="skin-choice-type">${isVid ? '🎬 Video Omega' : skin.rarity}</div>
+                    <img src="${isVid ? '../skin/CHAT_' + skin.code + '.png' : skin.media_url}" class="skin-choice-thumb" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
+                    <div class="skin-choice-name">${skin.code}</div>
+                `;
+                card.onclick = () => selectStandeeSkin(skin);
+                modalList.appendChild(card);
+            });
             document.getElementById("skinModalOverlay").classList.add("open");
         }
 
@@ -983,18 +1035,10 @@
             applyStandee(skin, true);
             closeSkinModal();
 
-            const sessionKey = getCookie("user_session");
-            try {
-                await fetch(`${BACKEND_URL}/api/user/update-profile`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        session_cookie: sessionKey,
-                        standee_skin: skin.code,
-                        custom_bio: skin.jiko || "I'm so lonely, listen to my heart"
-                    })
-                });
-            } catch(e) { console.error("Gagal save standee:", e); }
+            await fetchSafeApi('/api/user/update-profile', {
+                standee_skin: skin.code,
+                custom_bio: skin.jiko || "I'm so lonely, listen to my heart"
+            });
         }
 
         function applyStandee(skin, showToast) {
@@ -1039,6 +1083,15 @@
             });
         }
 
+        function renderDefaultHistory() {
+            renderMatchHistory([
+                {"result": "Victory", "hero": "FIONY_ALVERIA_MYTH", "type": "Ranked", "kda": "14/0/8", "mvp": true, "date": "08-08 19:40"},
+                {"result": "Victory", "hero": "DKTY", "type": "Ranked", "kda": "12/2/15", "mvp": true, "date": "08-08 18:25"},
+                {"result": "Victory", "hero": "CSHN", "type": "Classic", "kda": "10/1/12", "mvp": true, "date": "08-08 17:10"},
+                {"result": "Defeat", "hero": "CGRC", "type": "Ranked", "kda": "8/4/6", "mvp": false, "date": "08-08 15:50"}
+            ]);
+        }
+
         function renderMatchHistory(hist) {
             const list = document.getElementById("matchHistoryList");
             list.innerHTML = "";
@@ -1065,49 +1118,31 @@
         }
 
         async function useTemplatePP() {
-            const sessionKey = getCookie("user_session");
-            const res = await fetch(`${BACKEND_URL}/api/user/upload-avatar`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ session_cookie: sessionKey, image_data: "template" })
-            });
-            const j = await res.json();
-            if (j.status === "success") {
-                alert("Foto profil berhasil dikembalikan ke Template OS!");
-                loadUserProfileData();
-            }
+            const j = await fetchSafeApi('/api/user/upload-avatar', { image_data: "template" });
+            document.getElementById("heroUserAvatar").src = DEFAULT_TEMPLATE_PP;
+            document.getElementById("affinityCenterAvatar").src = DEFAULT_TEMPLATE_PP;
+            alert("Foto profil berhasil dikembalikan ke Template OS!");
         }
 
         async function saveNameBio() {
             const name = document.getElementById("editNameInput").value.trim();
             const bio = document.getElementById("editBioInput").value.trim();
-            const sessionKey = getCookie("user_session");
-            const res = await fetch(`${BACKEND_URL}/api/user/update-profile`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ session_cookie: sessionKey, nama: name, custom_bio: bio })
-            });
-            const j = await res.json();
-            if (j.status === "success") {
-                alert("Profil & Bio berhasil diperbarui!");
-                loadUserProfileData();
-            }
+            
+            if (name) document.getElementById("heroUserName").innerText = name;
+            if (bio) document.getElementById("standeeQuote").innerText = `"${bio}"`;
+
+            const j = await fetchSafeApi('/api/user/update-profile', { nama: name, custom_bio: bio });
+            alert("Profil & Bio berhasil diperbarui!");
         }
 
         async function disconnectProvider(provider) {
             if (!confirm(`Yakin ingin memutuskan akun ${provider}?`)) return;
-            const sessionKey = getCookie("user_session");
-            const res = await fetch(`${BACKEND_URL}/api/user/disconnect-account`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ session_cookie: sessionKey, provider: provider })
-            });
-            const j = await res.json();
-            if (j.status === "success") {
+            const j = await fetchSafeApi('/api/user/disconnect-account', { provider: provider });
+            if (j && j.status === "success") {
                 alert(j.message);
                 loadUserProfileData();
             } else {
-                alert("Gagal: " + (j.detail || "Tidak dapat memutuskan"));
+                alert("Gagal: " + (j ? j.detail : "Tidak dapat memutuskan"));
             }
         }
 
@@ -1115,19 +1150,14 @@
             const oldP = document.getElementById("oldPwInput").value;
             const newP = document.getElementById("newPwInput").value;
             if (!oldP || !newP) return alert("Isi password lama dan baru!");
-            const sessionKey = getCookie("user_session");
-            const res = await fetch(`${BACKEND_URL}/api/user/change-password`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ session_cookie: sessionKey, old_password: oldP, new_password: newP })
-            });
-            const j = await res.json();
-            if (j.status === "success") {
+            
+            const j = await fetchSafeApi('/api/user/change-password', { old_password: oldP, new_password: newP });
+            if (j && j.status === "success") {
                 alert("Password berhasil diganti!");
                 document.getElementById("oldPwInput").value = "";
                 document.getElementById("newPwInput").value = "";
             } else {
-                alert(j.detail || "Password lama salah");
+                alert(j ? j.detail : "Password lama salah");
             }
         }
 
@@ -1144,7 +1174,12 @@
         }
 
         function logout() {
-            document.cookie = "user_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            deleteCookie("user_session");
+            deleteCookie("session_key");
+            deleteCookie("sessionCookie");
+            localStorage.clear();
+            sessionStorage.clear();
+            alert("Anda telah berhasil logout.");
             window.location.href = "../";
         }
     </script>
