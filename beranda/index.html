@@ -432,13 +432,23 @@
 
         async function loadStatusChat() {
             try {
-                const sessionKey = getCookie("user_session") || currentUserData.userId;
+                // Prioritaskan session key dari sumber mana saja
+                const sessionKey = getCookie("user_session") || getCookie("session_key") || getCookie("sessionCookie") || localStorage.getItem("user_session") || currentUserData.userId;
                 
-                const response = await fetch(`${BACKEND_URL}/statuschat`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ session_cookie: sessionKey, sessionCookie: sessionKey })
-                });
+                let response;
+                try {
+                    response = await fetch(`${PRIMARY_URL}/statuschat`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ session_cookie: sessionKey, sessionCookie: sessionKey, session_key: sessionKey })
+                    });
+                } catch(e) {
+                    response = await fetch(`${FALLBACK_URL}/statuschat`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ session_cookie: sessionKey, sessionCookie: sessionKey, session_key: sessionKey })
+                    });
+                }
 
                 const data = await response.json();
                 const profileObj = data.data || data.profile;
@@ -451,14 +461,20 @@
                     document.getElementById("valOnceToken").innerText = p.onceToken || 0;
                     document.getElementById("valKristalOmega").innerText = p.kristalOmega || 0;
                     
-                    let namaUser = p.nama || p.name || p.username || "User";
-                    if (namaUser.toLowerCase() === "belum terdaftar" || namaUser.trim() === "") {
-                        namaUser = p.username || "User";
+                    // ===============================================
+                    // FIX FATAL 1: BACA NAMA DARI NAMA_ASLI / USERNAME, BUKAN JADI "User"
+                    // ===============================================
+                    let namaUser = p.nama || p.nama_asli || p.username || p.userId || "User";
+                    if (namaUser.toLowerCase() === "belum terdaftar" || namaUser.trim() === "" || namaUser === "demo_user") {
+                        namaUser = p.username || p.userId || "User";
                     }
                     currentUserData.username = namaUser;
+                    currentUserData.userId = p.userId; // Set userId agar nyantol dengan database
 
-                    // Fallback Pintar PP: Jika kosong, pakai template OS default (ImgBB / download.png)
-                    let userPhoto = p.photoProfile || p.linkProfil || "";
+                    // ===============================================
+                    // FIX FATAL 2: PASTIKAN PP DEFAULT TIDAK MERESET KE NULL
+                    // ===============================================
+                    let userPhoto = p.photoProfile || p.photo_profile || p.linkProfil || "";
                     if (!userPhoto || userPhoto.trim() === "" || userPhoto.toLowerCase() === "none") {
                         userPhoto = DEFAULT_TEMPLATE_PP;
                     }
@@ -469,24 +485,32 @@
                         rawSkinCode = typeof p.skin === 'string' ? p.skin : (p.skin.border || p.skin.border_skin || "");
                     } else if (p.skins) {
                         rawSkinCode = p.skins.border_skin || p.skins.chat_skin || "";
+                    } else if (p.standee_skin && p.standee_skin !== "None") {
+                        // Jika ada standee skin terpasang di statuschat
+                        rawSkinCode = p.standee_skin;
                     } else if (typeof p.inventory === "string") {
                         rawSkinCode = p.inventory;
                     }
 
-                    if (rawSkinCode) {
+                    if (rawSkinCode && rawSkinCode !== "None") {
                         let baseCode = rawSkinCode.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
                         currentUserData.skinBorderCode = "BORDER_" + baseCode;
                         currentUserData.skinChatCode = "CHAT_" + baseCode;
                     }
 
+                    // Tampilkan UserID/Username Asli di UI
+                    let cleanUsername = (p.username || currentUserData.userId || "user");
+                    if (cleanUsername.includes("@")) cleanUsername = cleanUsername.split("@")[0];
+                    
+                    // Tambahkan ID ke dalam @... supaya kamu tau ini akun asli atau nyasar
                     document.getElementById("profileName").innerText = currentUserData.username;
-                    document.getElementById("profileUsername").innerText = "@" + (p.username || currentUserData.userId || "user");
+                    document.getElementById("profileUsername").innerText = "@" + cleanUsername.substring(0, 10);
                     
                     const avatarImg = document.getElementById("userAvatar");
                     avatarImg.src = currentUserData.linkProfil;
                     avatarImg.onerror = function() { this.src = "../kitty.png.png"; };
                     
-                    if(currentUserData.skinBorderCode) {
+                    if(currentUserData.skinBorderCode && currentUserData.skinBorderCode !== "BORDER_None") {
                         const borderEl = document.getElementById("profileBorder");
                         borderEl.src = SKIN_FOLDER_URL + currentUserData.skinBorderCode + ".png"; 
                         borderEl.onerror = function() {
@@ -495,6 +519,9 @@
                             }
                         };
                         borderEl.style.display = "block";
+                    } else {
+                        // Sembunyikan kalau tidak punya border
+                         document.getElementById("profileBorder").style.display = "none";
                     }
                 }
             } catch (error) {
