@@ -521,12 +521,18 @@
     </div>
 
     <script>
-        const API_BASE = 'https://shinezzzz-gokgokgogkgokgok.hf.space';
+        const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+        // PRIMARY_URL harus selalu ke backend HuggingFace, bukan domain GitHub Pages!
+        const PRIMARY_URL = (window.location.origin && window.location.origin.includes("hf.space")) 
+            ? window.location.origin 
+            : BACKEND_URL;
+        const FALLBACK_URL = BACKEND_URL;
+        const API_BASE = PRIMARY_URL;
 
         function getSessionCookie() {
             const possibleKeys = [
                 'session_cookie', 'session', 'session_id', 'user_id', 
-                'token', 'access_token', 'user_session', 'auth_token'
+                'token', 'access_token', 'user_session', 'auth_token', 'session_key', 'sessionCookie'
             ];
 
             const urlParams = new URLSearchParams(window.location.search);
