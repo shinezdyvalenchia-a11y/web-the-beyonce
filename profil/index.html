@@ -814,25 +814,24 @@
                     <!-- 2/5 BAGIAN KANAN: PEMUTARAN VIDEO & FOTO PAJANGAN SKIN HERO -->
                     <div class="moba-standee-hero-holder">
                         <!-- JIKO SPEECH BUBBLE (DI ATAS MEDIA) -->
-                        <div class="standee-jiko-bubble" id="standeeJikoBox">
-                            "<span id="standeeJikoText">Semanis cokelat, selembut sutra... Halo semuanya, aku Shani!</span>"
+                        <div class="standee-jiko-bubble" id="standeeJikoBox" style="display: none;">
+                            "<span id="standeeJikoText">None</span>"
                         </div>
-
+ 
                         <!-- TOP RIGHT ACTION: EDIT PAJANGAN -->
                         <div class="standee-top-action-bar">
                             <button class="standee-edit-btn" onclick="openSkinModal()">
                                 <span>🖼️</span> Edit Pajangan
                             </button>
                         </div>
-
+ 
                         <!-- VIDEO STANDEE (UNTUK TIER OMEGA & OMEGA SPESIAL) -->
-                        <video class="standee-media-element" id="standeeVideo" autoplay loop muted playsinline style="display: block;">
-                            <source src="../gacha-skin/preview_CSHN.webm" type="video/webm">
+                        <video class="standee-media-element" id="standeeVideo" loop muted playsinline style="display: none;">
                         </video>
-
+ 
                         <!-- FOTO POTRAIT STANDEE (UNTUK TIER REGULER / MYTH / LEGEND / RARE) -->
-                        <img class="standee-media-element" id="standeeImage" src="../skin/CHAT_CSHN.png" style="display: none;" onerror="this.onerror=null; this.src='../skin/CSHN.jpg';">
-
+                        <img class="standee-media-element" id="standeeImage" style="display: none;">
+ 
                         <!-- FLOOR SUMMONING PEDESTAL RUNE -->
                         <div class="summon-pedestal-rune"></div>
                     </div>
@@ -1861,7 +1860,7 @@
                 const rar = (skin.rarity || "").toLowerCase();
                 const isVid = mt === "video" || rar.includes("omega") || rar.includes("mso");
 
-                const thumbSrc = skin.media_url || `../skin/CHAT_${cleanCode}.png`;
+                const thumbSrc = skin.media_url || `../skin/${cleanCode}.jpg`;
                 const rarityLabel = skin.rarity || (isVid ? "Omega Spesial" : "Regular");
                 const rarityColor = rar.includes("omega") ? "#00d4ff"
                     : rar.includes("myth") ? "#ffd700"
@@ -1873,8 +1872,8 @@
                     <div style="font-size: 10px; font-weight: 900; color: ${rarityColor}; text-transform: uppercase;">
                         ${isVid ? "🎬 " : "🖼️ "}${rarityLabel}
                     </div>
-                    <img src="${thumbSrc}" class="skin-choice-thumb"
-                        onerror="this.onerror=null; this.src='../skin/${cleanCode}.jpg'; this.onerror=function(){this.onerror=null;this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';};">
+                    <img src="${thumbSrc}" class="skin-choice-thumb" loading="lazy"
+                        onerror="this.onerror=null; this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
                     <div class="skin-choice-name">${skin.nama || cleanCode}</div>
                 `;
 
@@ -1918,7 +1917,7 @@
                     frame.innerHTML = `
                         <span class="skin-tag-badge bg-omega">OMEGA</span>
                         <div class="lock-icon" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; font-size: 20px; color: #fff; text-shadow: 0 0 4px rgba(0,0,0,0.8);">🔒</div>
-                        <img src="../skin_jpg/${code}.jpg" class="skin-card-img" style="filter: grayscale(1) brightness(0.65); object-fit: cover;">
+                        <img src="../skin_jpg/${code}.jpg" class="skin-card-img" style="filter: grayscale(1) brightness(0.65); object-fit: cover;" loading="lazy">
                     `;
                 }
                 frame.onclick = () => openSkinModal();
@@ -1949,13 +1948,13 @@
                 if (isOwned) {
                     frame.innerHTML = `
                         <span class="skin-tag-badge ${rarityClass}">${rarityName}</span>
-                        <img src="../skin/CHAT_${code}.png" class="skin-card-img" onerror="this.onerror=null; this.src='../skin/${code}.jpg'; this.onerror=function(){this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';};">
+                        <img src="../skin/${code}.jpg" class="skin-card-img" loading="lazy" onerror="this.onerror=null; this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
                     `;
                 } else {
                     frame.innerHTML = `
                         <span class="skin-tag-badge ${rarityClass}">${rarityName}</span>
                         <div class="lock-icon" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; font-size: 20px; color: #fff; text-shadow: 0 0 4px rgba(0,0,0,0.8);">🔒</div>
-                        <img src="../skin/CHAT_${code}.png" class="skin-card-img" style="filter: grayscale(1) brightness(0.65);" onerror="this.onerror=null; this.src='../skin/${code}.jpg'; this.onerror=function(){this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';};">
+                        <img src="../skin/${code}_grey.jpg" class="skin-card-img" loading="lazy" onerror="this.onerror=null; this.src='../skin/${code}.jpg'; this.onerror=function(){this.onerror=null;this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';};">
                     `;
                 }
                 frame.onclick = () => openSkinModal();
