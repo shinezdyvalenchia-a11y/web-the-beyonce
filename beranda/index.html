@@ -433,7 +433,7 @@
 
         async function loadStatusChat() {
             try {
-                const sessionKey = getCookie("user_session") || getCookie("session_key") || getCookie("sessionCookie") || localStorage.getItem("user_session") || currentUserData.userId;
+                const sessionKey = getCookie("user_session") || getCookie("session_key") || getCookie("sessionCookie") || localStorage.getItem("user_session") || localStorage.getItem("session_key") || sessionStorage.getItem("user_session") || "demo_user";
                 
                 let response;
                 try {
@@ -658,8 +658,8 @@
         }
 
         function getUserId() {
-            const session = getCookie("user_session");
-            return session ? session.substring(0, 10) : Math.floor(1000000000 + Math.random() * 9000000000).toString();
+            // Return FULL session key — jangan dipotong! Potongan 10 karakter menyebabkan backend membuat baris user kosong baru
+            return getCookie("user_session") || getCookie("session_key") || getCookie("sessionCookie") || localStorage.getItem("user_session") || localStorage.getItem("session_key") || "demo_user";
         }
 
         async function sendMessage() {
