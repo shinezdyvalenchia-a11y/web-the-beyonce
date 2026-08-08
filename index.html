@@ -762,7 +762,7 @@
                 if (res.ok && data.success) {
                     setCookie("user_session", data.session_key, 7);
                     triggerCinematicZoomTransition(() => {
-                        window.location.href = "chat.html";
+                        window.location.href = "/beranda";
                     });
                 } else {
                     alert("Login Google Gagal: " + (data.detail || "Token Google tidak valid."));
