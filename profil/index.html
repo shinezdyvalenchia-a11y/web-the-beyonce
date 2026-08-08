@@ -1096,6 +1096,9 @@
                             <button class="custom-btn-action" style="flex:1;" onclick="changePassword()">Ganti Sandi</button>
                             <button class="custom-btn-action custom-btn-danger" style="flex:1;" onclick="logout()">Logout</button>
                         </div>
+                        <div style="border-top: 1px solid rgba(255,255,255,0.15); margin-top: 12px; padding-top: 12px; text-align: center;">
+                            <button class="custom-btn-action custom-btn-danger" style="width: 100%; background: linear-gradient(135deg, #ff1744, #d50000); font-weight: 900; box-shadow: 0 4px 15px rgba(255, 23, 68, 0.4);" onclick="destroyAccountPermanently()">💥 Hancurkan Akun Permanen</button>
+                        </div>
                     </div>
 
                 </div>
@@ -1117,10 +1120,13 @@
 
     <script>
         // SMART MULTI-ORIGIN URL RESOLVER
-        const PRIMARY_URL = (window.location.origin && window.location.origin.startsWith("http") && !window.location.origin.includes("file:")) 
+        const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+        // PRIMARY_URL harus selalu ke backend HuggingFace, bukan domain GitHub Pages!
+        // Kondisi lama (startsWith("http")) salah karena domain GH Pages juga https.
+        const PRIMARY_URL = (window.location.origin && window.location.origin.includes("hf.space")) 
             ? window.location.origin 
-            : "https://shinezzzz-gokgokgogkgokgok.hf.space";
-        const FALLBACK_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+            : BACKEND_URL;
+        const FALLBACK_URL = BACKEND_URL;
         const DEFAULT_TEMPLATE_PP = "https://i.ibb.co.com/Y4JdtfGH/download.png";
 
         let ownedSkinsData = [];
@@ -2048,6 +2054,27 @@
             sessionStorage.clear();
             alert("Anda telah berhasil logout.");
             window.location.href = "../";
+        }
+
+        async function destroyAccountPermanently() {
+            const conf = prompt('⚠️ PERINGATAN KERAS! Akun Anda beserta seluruh saldo koin, kristal, token, dan skin yang dikoleksi akan DIHAPUS TOTAL secara permanen. Tindakan ini TIDAK dapat dibatalkan.\n\nKetik "Yakin" untuk mengonfirmasi penghapusan akun:');
+            if (conf !== "Yakin") {
+                alert("Tindakan penghapusan akun dibatalkan.");
+                return;
+            }
+
+            const j = await fetchSafeApi('/api/user/destroy-account');
+            if (j && j.status === "success") {
+                alert("Akun Anda telah berhasil dihancurkan secara permanen!");
+                deleteCookie("user_session");
+                deleteCookie("session_key");
+                deleteCookie("sessionCookie");
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = "../";
+            } else {
+                alert("Gagal menghapus akun secara permanen: " + (j ? j.detail || j.message : "Koneksi server offline."));
+            }
         }
     </script>
 </body>
