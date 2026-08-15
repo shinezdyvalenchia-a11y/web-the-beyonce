@@ -3,12 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Alcstify 48 &mdash; JKT48 Pop Music &amp; Glowing Lyrics</title>
+<title>Alcstify 48 &mdash; Google Drive Master Cloud Music &amp; Glowing Lyrics</title>
 <link rel="icon" href="../icon.png">
 <script src="../config.js"></script>
-<!-- YouTube IFrame Player API -->
-<script src="https://www.youtube.com/iframe_api"></script>
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
 
@@ -16,38 +13,38 @@
   --cyan: #00d2ff;
   --mint: #00ff88;
   --white: #ffffff;
-  --bg-dark: #060a14;
-  --glow-cyan: rgba(0, 210, 255, 0.6);
-  --glow-mint: rgba(0, 255, 136, 0.5);
+  --bg-dark: #050814;
+  --glow-cyan: rgba(0, 210, 255, 0.65);
+  --glow-mint: rgba(0, 255, 136, 0.55);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
 html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; background: var(--bg-dark); color: #fff; display: flex; position: relative; }
 
-/* ====== DYNAMIC BLURRED BACKDROP (SPOTIFY CANVAS STYLE) ====== */
+/* ====== DYNAMIC BLURRED BACKDROP (DRIVE THUMBNAILS) ====== */
 #dynamicBackdrop {
   position: fixed;
   inset: -40px;
   background-size: cover;
   background-position: center;
-  filter: blur(65px) brightness(0.24) saturate(2);
+  filter: blur(65px) brightness(0.24) saturate(2.2);
   z-index: -3;
-  transition: background-image 0.9s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: background-image 0.85s cubic-bezier(0.25, 0.8, 0.25, 1);
   transform: scale(1.12);
   will-change: background-image;
 }
 .ambient-overlay {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at 10% 20%, rgba(0, 210, 255, 0.15), transparent 45%),
-              radial-gradient(circle at 90% 80%, rgba(0, 255, 136, 0.15), transparent 45%),
-              linear-gradient(180deg, rgba(6,10,20,0.7) 0%, rgba(6,10,20,0.92) 100%);
+  background: radial-gradient(circle at 10% 15%, rgba(0, 210, 255, 0.16), transparent 45%),
+              radial-gradient(circle at 90% 85%, rgba(0, 255, 136, 0.16), transparent 45%),
+              linear-gradient(180deg, rgba(5,8,20,0.65) 0%, rgba(5,8,20,0.92) 100%);
   z-index: -2;
   pointer-events: none;
 }
 
 /* ====== SIDEBAR ====== */
-.sb { width: 82px; background: rgba(8,14,28,0.85); border-right: 1px solid rgba(0, 210, 255, 0.15); display: flex; flex-direction: column; align-items: center; padding: 12px 4px; gap: 7px; z-index: 100; overflow-y: auto; flex-shrink: 0; backdrop-filter: blur(24px); transition: transform .28s ease; }
+.sb { width: 82px; background: rgba(8,14,30,0.86); border-right: 1px solid rgba(0, 210, 255, 0.15); display: flex; flex-direction: column; align-items: center; padding: 12px 4px; gap: 7px; z-index: 100; overflow-y: auto; flex-shrink: 0; backdrop-filter: blur(24px); transition: transform .28s ease; }
 .sb::-webkit-scrollbar { display: none; }
 .na { display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: #fff; font-weight: 700; font-size: 9px; background: rgba(255,255,255,0.05); width: 66px; height: 54px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); text-align: center; gap: 3px; flex-shrink: 0; transition: all .18s; }
 .na:hover { background: rgba(0,210,255,0.18); transform: scale(1.04); border-color: var(--cyan); }
@@ -58,9 +55,9 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
 
 /* ====== MAIN CONTENT ====== */
 .mn { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; z-index: 10; min-width: 0; }
-.tb { display: flex; justify-content: space-between; align-items: center; padding: 10px 18px; border-bottom: 1px solid rgba(0,210,255,0.15); background: rgba(8,14,28,0.78); backdrop-filter: blur(20px); flex-shrink: 0; gap: 10px; }
+.tb { display: flex; justify-content: space-between; align-items: center; padding: 10px 18px; border-bottom: 1px solid rgba(0,210,255,0.15); background: rgba(8,14,30,0.8); backdrop-filter: blur(20px); flex-shrink: 0; gap: 10px; }
 .mb { display: none; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 16px; padding: 6px 11px; border-radius: 10px; cursor: pointer; flex-shrink: 0; }
-.br { display: flex; align-items: center; gap: 9px; background: rgba(10,20,38,0.85); padding: 5px 15px; border-radius: 30px; border: 1px solid var(--cyan); box-shadow: 0 0 14px var(--glow-cyan); }
+.br { display: flex; align-items: center; gap: 9px; background: rgba(10,22,44,0.85); padding: 5px 15px; border-radius: 30px; border: 1px solid var(--cyan); box-shadow: 0 0 14px var(--glow-cyan); }
 .br img { height: 26px; border-radius: 50%; flex-shrink: 0; }
 .bt { font-weight: 900; font-size: 13px; color: var(--cyan); font-family: 'Rajdhani', sans-serif; letter-spacing: .5px; }
 .bc { font-size: 11px; color: var(--mint); font-weight: 800; text-shadow: 0 0 10px var(--glow-mint); }
@@ -71,7 +68,7 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
 .sa::-webkit-scrollbar-thumb { background: rgba(0,210,255,0.25); border-radius: 5px; }
 
 /* ====== SEARCH & FILTER ====== */
-.search-wrap { position: sticky; top: 0; z-index: 40; background: rgba(6,10,20,0.88); padding: 10px 0 14px; backdrop-filter: blur(24px); }
+.search-wrap { position: sticky; top: 0; z-index: 40; background: rgba(5,8,20,0.88); padding: 10px 0 14px; backdrop-filter: blur(24px); }
 .search-inner { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .sinput { flex: 1; min-width: 200px; background: rgba(255,255,255,0.06); border: 1px solid rgba(0,210,255,0.2); border-radius: 14px; padding: 10px 16px; color: #fff; font-size: 13px; outline: none; transition: all .2s; }
 .sinput:focus { border-color: var(--cyan); background: rgba(0,210,255,0.08); box-shadow: 0 0 16px var(--glow-cyan); }
@@ -99,7 +96,7 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
 .scard.playing { border-color: var(--mint); box-shadow: 0 0 20px var(--glow-mint); background: rgba(0,255,136,0.08); }
 .scard.playing .play-ind { display: flex; }
 .play-ind { display: none; position: absolute; top: 8px; right: 8px; background: var(--mint); color: #000; font-size: 10px; width: 24px; height: 24px; border-radius: 50%; align-items: center; justify-content: center; font-weight: 900; box-shadow: 0 0 12px var(--mint); z-index: 5; }
-.scard-thumb-box { position: relative; width: 100%; aspect-ratio: 1/1; background: #0b1424; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.scard-thumb-box { position: relative; width: 100%; aspect-ratio: 1/1; background: #0b1426; overflow: hidden; display: flex; align-items: center; justify-content: center; }
 .scard-thumb { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s ease; }
 .scard:hover .scard-thumb { transform: scale(1.07); }
 .scard-album-badge { position: absolute; bottom: 6px; left: 6px; font-size: 8px; font-weight: 900; background: rgba(0,0,0,0.85); padding: 3px 7px; border-radius: 5px; border: 1px solid var(--cyan); color: var(--cyan); backdrop-filter: blur(6px); }
@@ -108,7 +105,7 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
 .scard-sub { font-size: 9.5px; color: rgba(255,255,255,0.5); font-weight: 700; margin-top: 3px; }
 
 /* ====== PLAYER BAR ====== */
-.pbar { flex-shrink: 0; background: rgba(8,14,28,0.94); border-top: 1px solid rgba(0,210,255,0.2); backdrop-filter: blur(30px); }
+.pbar { flex-shrink: 0; background: rgba(8,14,30,0.95); border-top: 1px solid rgba(0,210,255,0.22); backdrop-filter: blur(30px); }
 .seek-wrap { width: 100%; height: 6px; background: rgba(255,255,255,0.1); cursor: pointer; position: relative; }
 .seek-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cyan), var(--mint)); transition: width .1s linear; position: relative; box-shadow: 0 0 12px var(--glow-cyan); }
 .seek-handle { position: absolute; right: -6px; top: -4px; width: 14px; height: 14px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px var(--cyan); display: none; }
@@ -132,11 +129,11 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
 .mpb { padding: 7px 12px; font-size: 10px; font-weight: 800; border: none; background: transparent; color: rgba(255,255,255,0.6); cursor: pointer; transition: all .2s; white-space: nowrap; }
 .mpb.on { background: var(--cyan); color: #000; font-weight: 900; }
 
-/* ====== GLOWING KARAOKE LYRICS PANEL (CYAN + MINT + WHITE) ====== */
+/* ====== GLOWING KARAOKE LYRICS PANEL ====== */
 .lyr-panel { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; transform: translateY(100%); transition: transform .4s cubic-bezier(.25,.8,.25,1); overflow: hidden; }
 .lyr-panel.open { transform: translateY(0); }
 .lyr-backdrop { position: absolute; inset: -40px; background-size: cover; background-position: center; filter: blur(70px) brightness(0.24) saturate(2); z-index: -2; }
-.lyr-tint { position: absolute; inset: 0; background: rgba(4,8,18,0.76); z-index: -1; backdrop-filter: blur(30px); }
+.lyr-tint { position: absolute; inset: 0; background: rgba(4,8,20,0.78); z-index: -1; backdrop-filter: blur(30px); }
 .lyr-top { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid rgba(0,210,255,0.15); flex-shrink: 0; }
 .lyr-info { display: flex; align-items: center; gap: 14px; min-width: 0; }
 .lyr-cover { width: 52px; height: 52px; border-radius: 12px; object-fit: cover; flex-shrink: 0; border: 2px solid var(--cyan); box-shadow: 0 0 16px var(--glow-cyan); }
@@ -169,16 +166,13 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
   100% { transform: scale(1); text-shadow: 0 0 10px #fff, 0 0 20px var(--cyan), 0 0 35px var(--mint); }
 }
 
-/* ====== YOUTUBE MV CINEMA POPUP MODAL ====== */
-.mv-panel { position: fixed; inset: 0; z-index: 220; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .35s ease; }
+/* ====== CINEMA MV POP-UP MODAL ====== */
+.mv-panel { position: fixed; inset: 0; z-index: 220; background: rgba(0,0,0,0.88); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .35s ease; }
 .mv-panel.open { opacity: 1; pointer-events: auto; }
-.mv-box { position: relative; width: 100%; max-width: 900px; aspect-ratio: 16/9; background: #000; border-radius: 18px; overflow: hidden; border: 2px solid var(--cyan); box-shadow: 0 0 40px var(--glow-cyan); }
-.mv-close { position: absolute; top: -14px; right: -14px; z-index: 10; background: rgba(10,20,38,0.9); border: 2px solid var(--cyan); color: #fff; width: 38px; height: 38px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px var(--glow-cyan); }
+.mv-box { position: relative; width: 100%; max-width: 920px; aspect-ratio: 16/9; background: #000; border-radius: 18px; overflow: hidden; border: 2px solid var(--cyan); box-shadow: 0 0 40px var(--glow-cyan); }
+.mv-close { position: absolute; top: -14px; right: -14px; z-index: 10; background: rgba(10,22,44,0.9); border: 2px solid var(--cyan); color: #fff; width: 38px; height: 38px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px var(--glow-cyan); }
 .mv-close:hover { background: #ff0055; border-color: #ff0055; }
 #mvIframe { width: 100%; height: 100%; border: none; }
-
-/* HIDDEN BACKGROUND YOUTUBE ENGINE */
-#ytHiddenContainer { position: fixed; top: -9999px; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 
 @media(max-width:760px) {
   .sb { position: fixed; top: 0; left: 0; height: 100vh; transform: translateX(-100%); box-shadow: 4px 0 24px rgba(0,0,0,0.6); }
@@ -193,12 +187,12 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
 </head>
 <body>
 
+<!-- NATIVE HTML5 VIDEO/AUDIO STREAMER FOR GOOGLE DRIVE 5TB MASTER -->
+<video id="nativeStreamPlayer" preload="auto" playsinline style="display:none"></video>
+
 <!-- DYNAMIC BLURRED BACKDROP -->
 <div id="dynamicBackdrop"></div>
 <div class="ambient-overlay"></div>
-
-<!-- HIDDEN YOUTUBE PLAYER FOR DIRECT ZERO-LAG AUDIO STREAMING -->
-<div id="ytHiddenContainer"><div id="ytAudioPlayer"></div></div>
 
 <div class="sov" id="sov" onclick="closeSb()"></div>
 
@@ -225,7 +219,7 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
       <button class="mb" onclick="openSb()">&#9776;</button>
       <div class="br">
         <img src="../icon.png" alt="logo" onerror="this.src='../logo.png'">
-        <span class="bt">Alcstify 48 &mdash; Studio Pop &amp; Glowing Lyrics Engine</span>
+        <span class="bt">Alcstify 48 &mdash; Master Studio Stream &amp; Glowing Lyrics Engine</span>
       </div>
     </div>
     <span class="bc" id="badge">&#9679; Loading...</span>
@@ -250,11 +244,10 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
       <div class="seek-fill" id="seekFill"><div class="seek-handle"></div></div>
     </div>
     <div class="pinner">
-      <img class="now-thumb" id="nowThumb" src="https://img.youtube.com/vi/F4E46vj-h14/hqdefault.jpg"
-           onerror="this.src='../icon.png'" alt="cover" onclick="openLyr()">
+      <img class="now-thumb" id="nowThumb" src="../icon.png" alt="cover" onclick="openLyr()">
       <div class="now-info">
         <div class="now-ttl" id="nowTtl">RIVER</div>
-        <div class="now-sub" id="nowSub">JKT48 &bull; Single 1: RIVER &bull; 2013</div>
+        <div class="now-sub" id="nowSub">JKT48 &bull; Master Drive Stream &bull; 2013</div>
         <div class="trow"><span id="tCur">0:00</span><span>/</span><span id="tDur">0:00</span></div>
       </div>
       <button class="lkb" id="lkBtn" onclick="toggleLike()">&#9825;</button>
@@ -277,7 +270,7 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
   <div class="lyr-tint"></div>
   <div class="lyr-top">
     <div class="lyr-info">
-      <img class="lyr-cover" id="lyrCover" src="https://img.youtube.com/vi/F4E46vj-h14/hqdefault.jpg" alt="">
+      <img class="lyr-cover" id="lyrCover" src="../icon.png" alt="">
       <div class="lyr-ti">
         <div class="lyr-title" id="lyrTitle">RIVER</div>
         <div class="lyr-sub2" id="lyrSub">JKT48</div>
@@ -285,7 +278,7 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
     </div>
     <button class="lyr-close" onclick="closeLyr()">&#10005;</button>
   </div>
-  <div class="lyr-badge" id="lyrBadge">&#9679; Lirik Bersinar Real-Time &bull; Galery Alcsta48</div>
+  <div class="lyr-badge" id="lyrBadge">&#9679; Lirik Bersinar Real-Time &bull; Master Studio Stream</div>
   <div class="lyr-scroll" id="lyrScroll">
     <div style="color:rgba(255,255,255,.5);text-align:center;margin-top:80px;font-size:15px;line-height:2.2">
       &#127925; Pilih lagu untuk mulai memutar<br><span style="font-size:12px;opacity:.7">Lirik tersinkronisasi otomatis</span>
@@ -293,7 +286,7 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
   </div>
 </div>
 
-<!-- YOUTUBE MV POP-UP MODAL -->
+<!-- CINEMA MV POP-UP MODAL (DIRECT GOOGLE DRIVE MASTER PREVIEW) -->
 <div class="mv-panel" id="mvPanel" onclick="closeMvOnBackdrop(event)">
   <div class="mv-box">
     <button class="mv-close" onclick="closeMv()">&#10005;</button>
@@ -308,71 +301,34 @@ let ALB_MAP = new Map();
 let curIdx = 0;
 let liked = new Set(JSON.parse(localStorage.getItem('alc48v3_liked') || '[]'));
 let filt = 'all', q = '';
-let ytPlayer = null;
-let isYtReady = false;
-let playProgressTimer = null;
-let isPlaying = false;
+const player = document.getElementById('nativeStreamPlayer');
 
-// ===== YOUTUBE IFRAME API INITIALIZATION =====
-function onYouTubeIframeAPIReady() {
-  ytPlayer = new YT.Player('ytAudioPlayer', {
-    height: '1',
-    width: '1',
-    playerVars: {
-      autoplay: 0,
-      controls: 0,
-      disablekb: 1,
-      fs: 0,
-      modestbranding: 1,
-      rel: 0
-    },
-    events: {
-      onReady: onPlayerReady,
-      onStateChange: onPlayerStateChange
-    }
-  });
-}
-
-function onPlayerReady(event) {
-  isYtReady = true;
-  if (TRACKS.length > 0) {
-    loadTrackToPlayer(curIdx, false);
+// ===== NATIVE MEDIA EVENTS =====
+player.addEventListener('play', () => {
+  document.getElementById('playBtn').innerHTML = '&#9646;&#9646;';
+});
+player.addEventListener('pause', () => {
+  document.getElementById('playBtn').innerHTML = '&#9654;';
+});
+player.addEventListener('ended', () => {
+  nextT();
+});
+player.addEventListener('timeupdate', () => {
+  const cur = player.currentTime || 0;
+  const dur = player.duration || 1;
+  document.getElementById('seekFill').style.width = ((cur / dur) * 100).toFixed(2) + '%';
+  document.getElementById('tCur').textContent = fmt(cur);
+  document.getElementById('tDur').textContent = fmt(dur);
+  syncWords(cur);
+});
+player.addEventListener('error', (e) => {
+  console.warn("Direct stream error, attempting fallback stream...", e);
+  const t = TRACKS[curIdx];
+  if (t && t.cdn_url && player.src !== t.cdn_url) {
+    player.src = t.cdn_url;
+    player.play().catch(err => console.log("Stream autoplay fallback:", err));
   }
-}
-
-function onPlayerStateChange(event) {
-  if (event.data === YT.PlayerState.PLAYING) {
-    isPlaying = true;
-    document.getElementById('playBtn').innerHTML = '&#9646;&#9646;';
-    startProgressTimer();
-  } else if (event.data === YT.PlayerState.PAUSED) {
-    isPlaying = false;
-    document.getElementById('playBtn').innerHTML = '&#9654;';
-    stopProgressTimer();
-  } else if (event.data === YT.PlayerState.ENDED) {
-    isPlaying = false;
-    stopProgressTimer();
-    nextT();
-  }
-}
-
-function startProgressTimer() {
-  stopProgressTimer();
-  playProgressTimer = setInterval(() => {
-    if (ytPlayer && ytPlayer.getCurrentTime && ytPlayer.getDuration) {
-      const cur = ytPlayer.getCurrentTime() || 0;
-      const dur = ytPlayer.getDuration() || 1;
-      document.getElementById('seekFill').style.width = ((cur / dur) * 100).toFixed(2) + '%';
-      document.getElementById('tCur').textContent = fmt(cur);
-      document.getElementById('tDur').textContent = fmt(dur);
-      syncWords(cur);
-    }
-  }, 250);
-}
-
-function stopProgressTimer() {
-  if (playProgressTimer) clearInterval(playProgressTimer);
-}
+});
 
 // ===== LYRIC TIMINGS & GLOWING EFFECT =====
 let wordTimings = [];
@@ -433,7 +389,7 @@ Menyeberanglah, lewati rintangan yang ada
 Jangan menyerah, walau arus begitu deras
 Masa depan membentang di hadapanmu!
 RIVER!`,
-  "Fortune Cookie": `Penampilan yang biasa saja
+  "Fortune Cookie Yang Mencinta": `Penampilan yang biasa saja
 Janganlah kau merasa putus asa
 Keberuntungan ada di dalam hatimu
 Senyumlah selalu
@@ -549,25 +505,25 @@ function loadLyrics(t) {
 }
 
 function seekTo(t) {
-  if (ytPlayer && ytPlayer.seekTo) {
-    ytPlayer.seekTo(t, true);
+  if (player) {
+    player.currentTime = t;
   }
 }
 
 // ===== PLAY TRACK & DYNAMIC ADAPTATION =====
-function loadTrackToPlayer(idx, autoPlay = true) {
+function playTrack(idx) {
   if (!TRACKS || !TRACKS.length) return;
   if (idx < 0) idx = TRACKS.length - 1;
   if (idx >= TRACKS.length) idx = 0;
   curIdx = idx;
   const t = TRACKS[curIdx];
 
-  // 1. Set Blurred Canvas Backdrop (From Drive / HQ Thumb)
-  const coverUrl = t.cover || t.album_art || `https://img.youtube.com/vi/${t.yt_id}/hqdefault.jpg`;
+  // 1. Dynamic Blurred Canvas Backdrop from Drive Thumbnail
+  const coverUrl = t.cover || `https://drive.google.com/thumbnail?id=${t.drive_id}&sz=w600-h600`;
   document.getElementById('dynamicBackdrop').style.backgroundImage = `url('${coverUrl}')`;
   document.getElementById('lyrBackdrop').style.backgroundImage = `url('${coverUrl}')`;
 
-  // 2. Update UI Thumbnails & Texts
+  // 2. Update UI Controls & Thumbnails
   document.getElementById('nowThumb').src = coverUrl;
   document.getElementById('nowTtl').textContent = t.title;
   document.getElementById('nowSub').textContent = `JKT48 \u2022 ${t.album} \u2022 ${t.year}`;
@@ -584,40 +540,30 @@ function loadTrackToPlayer(idx, autoPlay = true) {
   updateLikeBtn();
   loadLyrics(t);
 
-  // 3. Play via YouTube IFrame API
-  if (isYtReady && ytPlayer && ytPlayer.loadVideoById) {
-    if (autoPlay) {
-      ytPlayer.loadVideoById(t.yt_id || 'F4E46vj-h14');
-      ytPlayer.playVideo();
-    } else {
-      ytPlayer.cueVideoById(t.yt_id || 'F4E46vj-h14');
-    }
+  // 3. Play from Google Drive Master MP4 Stream
+  if (t.stream_url) {
+    player.src = t.stream_url;
+  } else if (t.cdn_url) {
+    player.src = t.cdn_url;
   }
-}
-
-function playTrack(idx) {
-  loadTrackToPlayer(idx, true);
+  player.play().catch(err => {
+    console.log("Audio autoplay note:", err);
+  });
 }
 
 function togglePlay() {
-  if (!isYtReady || !ytPlayer) return;
-  if (isPlaying) {
-    ytPlayer.pauseVideo();
-  } else {
-    ytPlayer.playVideo();
-  }
+  if (player.paused) player.play();
+  else player.pause();
 }
 
 function nextT() { playTrack(curIdx + 1); }
 function prevT() { playTrack(curIdx - 1); }
 
 function onSeek(e) {
-  if (!ytPlayer || !ytPlayer.getDuration) return;
   const rect = document.getElementById('seekWrap').getBoundingClientRect();
   const pos = (e.clientX - rect.left) / rect.width;
-  const dur = ytPlayer.getDuration() || 0;
-  if (dur > 0) {
-    ytPlayer.seekTo(pos * dur, true);
+  if (player.duration) {
+    player.currentTime = pos * player.duration;
   }
 }
 
@@ -700,7 +646,7 @@ function renderSections() {
             <div class="scard ${s._i === curIdx ? 'playing' : ''}" id="scard_${s._i}" onclick="playTrack(${s._i})">
               <div class="play-ind">&#9654;</div>
               <div class="scard-thumb-box">
-                <img class="scard-thumb" src="${s.cover || `https://img.youtube.com/vi/${s.yt_id}/hqdefault.jpg`}" onerror="this.src='https://img.youtube.com/vi/${s.yt_id}/hqdefault.jpg'" alt="${s.title}" loading="lazy">
+                <img class="scard-thumb" src="${s.cover}" onerror="this.src='../icon.png'" alt="${s.title}" loading="lazy">
                 <span class="scard-album-badge">${s.year}</span>
               </div>
               <div class="scard-info">
@@ -750,12 +696,16 @@ function openMv() {
   const mvPanel = document.getElementById('mvPanel');
   const iframe = document.getElementById('mvIframe');
   
-  if (isPlaying && ytPlayer && ytPlayer.pauseVideo) {
-    ytPlayer.pauseVideo();
+  if (player && !player.paused) {
+    player.pause();
   }
 
-  const ytId = t.yt_id || 'F4E46vj-h14';
-  iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1`;
+  // Use Google Drive direct embed preview in cinema popup modal
+  if (t.preview_url) {
+    iframe.src = t.preview_url;
+  } else if (t.drive_id) {
+    iframe.src = `https://drive.google.com/file/d/${t.drive_id}/preview`;
+  }
   mvPanel.classList.add('open');
 }
 
@@ -780,7 +730,7 @@ function closeSb() {
   document.getElementById('sov').classList.remove('v');
 }
 
-// ===== INITIALIZATION & FETCH SONGS =====
+// ===== INITIALIZATION & FETCH 358 GOOGLE DRIVE SONGS =====
 async function initAlcstify() {
   try {
     const res = await fetch('./jkt48_songs.json');
@@ -801,10 +751,10 @@ async function initAlcstify() {
       ALB_MAP.get(t.album).songs.push(t);
     });
 
-    document.getElementById('badge').textContent = '\u25cf ' + TRACKS.length + ' Lagu JKT48 Pop Siap Putar';
+    document.getElementById('badge').textContent = '\u25cf ' + TRACKS.length + ' Master Drive Lagu Siap Putar';
     renderSections();
     updateLikeBtn();
-    loadTrackToPlayer(0, false);
+    playTrack(0);
   }
 }
 
