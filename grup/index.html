@@ -1,0 +1,531 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>galery alcsta48 - peta interaktif sebaran wota & member jkt48</title>
+    <link rel="icon" type="image/png" href="../icon.png">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #030712;
+            color: #fff;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .video-bg {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; z-index: -2;
+            filter: brightness(0.45);
+            transform: translateZ(0);
+            contain: strict;
+        }
+
+        .corner-glows {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden; contain: strict;
+        }
+        .glow { position: absolute; width: 50vw; height: 50vw; max-width: 450px; max-height: 450px; border-radius: 50%; opacity: 0.2; pointer-events: none; }
+        .glow-tl { top: -10%; left: -10%; background: radial-gradient(circle, #ff007f 0%, transparent 70%); }
+        .glow-tr { top: -10%; right: -10%; background: radial-gradient(circle, #ffd700 0%, transparent 70%); }
+        .glow-bl { bottom: -10%; left: -10%; background: radial-gradient(circle, #0088ff 0%, transparent 70%); }
+        .glow-br { bottom: -10%; right: -10%; background: radial-gradient(circle, #9d4edd 0%, transparent 70%); opacity: 0.15; }
+
+        .left-sidebar {
+            width: 90px;
+            background: rgba(11, 17, 33, 0.85);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px 5px; gap: 12px; z-index: 100;
+            overflow-y: auto; flex-shrink: 0;
+            transform: translateZ(0); will-change: transform;
+            -webkit-overflow-scrolling: touch;
+            transition: transform 0.25s ease-out;
+        }
+        .left-sidebar::-webkit-scrollbar { display: none; }
+
+        .side-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-decoration: none; color: #fff; font-weight: 700; font-size: 10px;
+            background: rgba(255, 255, 255, 0.1); width: 70px; height: 60px; border-radius: 16px;
+            transition: transform 0.15s ease, background 0.15s ease; border: 1px solid rgba(255, 255, 255, 0.18); text-align: center;
+            gap: 4px; flex-shrink: 0; contain: content;
+        }
+        .side-item:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.03); }
+        .side-item.active { background: rgba(255, 255, 255, 0.9); color: #1a5cff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .side-icon { font-size: 20px; }
+
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6);
+            z-index: 90; opacity: 0; transition: opacity 0.25s ease;
+        }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        .main-content {
+            flex-grow: 1; display: flex; flex-direction: column;
+            position: relative; height: 100%; overflow: hidden; z-index: 10;
+        }
+
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 24px; z-index: 20; width: 100%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(11, 17, 33, 0.6);
+        }
+
+        .left-group { display: flex; align-items: center; gap: 12px; }
+        .sidebar-toggle-btn {
+            display: none; background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #fff; font-size: 18px; padding: 6px 12px;
+            border-radius: 12px; cursor: pointer; flex-shrink: 0;
+        }
+
+        .brand-logo {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            padding: 6px 16px; border-radius: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        .logo-main { height: 32px; width: auto; border-radius: 50%; }
+        .brand-text { font-weight: 800; font-size: 14px; color: #fff; }
+
+        .sub-nav-container {
+            display: flex; gap: 8px; padding: 12px 24px; overflow-x: auto;
+            -webkit-overflow-scrolling: touch; background: rgba(11, 17, 33, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            flex-shrink: 0;
+        }
+        .sub-nav-container::-webkit-scrollbar { display: none; }
+        .pill-tab {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #cbd5e1; padding: 7px 18px; border-radius: 20px;
+            font-weight: 700; font-size: 12px; cursor: pointer;
+            transition: all 0.2s ease; white-space: nowrap;
+        }
+        .pill-tab:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
+        .pill-tab.active { background: #fff; color: #1a5cff; border-color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.25); }
+
+        .stage-container {
+            flex-grow: 1; overflow-y: auto; padding: 16px 24px 40px 24px;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            will-change: scroll-position;
+        }
+        .stage-container::-webkit-scrollbar { width: 6px; }
+        .stage-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 4px; }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.82);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 22px; padding: 22px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+            max-width: 980px; margin: 0 auto; width: 100%;
+            word-break: break-word; overflow-wrap: break-word;
+        }
+        .card-title { font-size: 17px; font-weight: 800; color: #ffd700; display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-family: 'Cinzel', serif; }
+
+        /* LEAFLET MAP NATIVE CONTAINER */
+        #mapContainer {
+            height: 480px; width: 100%; border-radius: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            z-index: 5; margin-top: 14px;
+        }
+
+        .leaflet-popup-content-wrapper {
+            background: rgba(11, 17, 33, 0.96) !important;
+            color: #fff !important; border-radius: 16px !important;
+            border: 1px solid rgba(255,255,255,0.25) !important;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.7) !important;
+        }
+        .leaflet-popup-tip { background: rgba(11, 17, 33, 0.96) !important; }
+        .popup-title { font-weight: 800; font-size: 14px; color: #ffd700; margin-bottom: 4px; }
+        .popup-desc { font-size: 11px; color: #cbd5e1; margin-bottom: 8px; line-height: 1.4; }
+        .popup-btn {
+            display: inline-block; background: linear-gradient(135deg, #1a5cff, #00d4ff);
+            color: #fff; text-decoration: none; padding: 5px 12px; border-radius: 12px;
+            font-size: 11px; font-weight: 800;
+        }
+
+        .region-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; margin-top: 16px;
+        }
+        .region-card {
+            background: rgba(0,0,0,0.45); padding: 12px 14px; border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.15); font-size: 12px; font-weight: 700;
+            cursor: pointer; transition: 0.2s;
+        }
+        .region-card:hover { background: rgba(26,92,255,0.25); border-color: #00d4ff; transform: translateY(-2px); }
+        .region-card b { color: #ffd700; display: block; margin-bottom: 2px; }
+
+        .social-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px;
+        }
+        .social-link-card {
+            display: flex; align-items: center; gap: 14px;
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15);
+            padding: 14px 18px; border-radius: 16px; text-decoration: none; color: #fff;
+            transition: all 0.25s ease;
+        }
+        .social-link-card:hover { transform: translateY(-3px); border-color: #1a5cff; background: rgba(26,92,255,0.2); box-shadow: 0 6px 20px rgba(26,92,255,0.25); }
+        .social-icon-box { font-size: 26px; flex-shrink: 0; }
+
+        @media screen and (max-width: 768px) {
+            .left-sidebar {
+                position: fixed; top: 0; left: 0; height: 100%;
+                width: 180px; padding: 25px 10px; gap: 10px;
+                transform: translateX(-100%);
+            }
+            .left-sidebar.open { transform: translateX(0); }
+            .side-item { width: 100%; height: 44px; flex-direction: row; justify-content: flex-start; padding: 0 15px; font-size: 12px; border-radius: 12px; }
+            .sidebar-toggle-btn { display: block; }
+            .top-bar { padding: 10px 14px; }
+            .sub-nav-container { padding: 8px 14px; }
+            .stage-container { padding: 12px 14px 20px 14px; }
+            #mapContainer { height: 350px; }
+            .social-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <video class="video-bg" autoplay loop muted playsinline>
+        <source src="../beranda/latarglobal.webm" type="video/webm">
+    </video>
+
+    <div class="corner-glows">
+        <div class="glow glow-tl"></div><div class="glow glow-tr"></div>
+        <div class="glow glow-bl"></div><div class="glow glow-br"></div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR 16 TAB -->
+            <aside class="left-sidebar" id="leftSidebar">
+        <a href="../beranda/" class="side-item"><span class="side-icon">💬</span>Beranda</a>
+        <a href="../profil/" class="side-item"><span class="side-icon">👤</span>Profil</a>
+        <a href="../gacha-skin/" class="side-item"><span class="side-icon">🎁</span>Gacha</a>
+        <a href="../live-jkt48/" class="side-item"><span class="side-icon">🎤</span>Live JKT</a>
+        <a href="../alcstify/" class="side-item"><span class="side-icon">🎵</span>Alcstify</a>
+        <a href="../mini-games/" class="side-item"><span class="side-icon">🎮</span>Mini Games</a>
+        <a href="#" class="side-item active"><span class="side-icon">👥</span>Grup</a>
+        <a href="../temen-mabar/" class="side-item"><span class="side-icon">⚔️</span>Mabar</a>
+        <a href="../medsos-saver/" class="side-item"><span class="side-icon">📥</span>Saver</a>
+        <a href="../koleksi-kartu/" class="side-item"><span class="side-icon">🃏</span>Kartu</a>
+        <a href="../bio-member/" class="side-item"><span class="side-icon">📖</span>Bio</a>
+        <a href="../link-shortcut/" class="side-item"><span class="side-icon">🔗</span>Shortcut</a>
+        <a href="../update-member/" class="side-item"><span class="side-icon">📱</span>Update Sosmed</a>
+        <a href="../tentang/" class="side-item"><span class="side-icon">ℹ️</span>Tentang</a>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="left-group">
+                <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
+                <div class="brand-logo">
+                    <img src="../logo.png.png" alt="Logo" class="logo-main" onerror="this.onerror=null; this.src='../logo.png';">
+                    <span class="brand-text">Peta Wota & Komunitas JKT48 Mandiri</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="sub-nav-container">
+            <button class="pill-tab active" onclick="switchTab('mapTab', this)">🗺️ Peta Interaktif Sebaran Wota & Member</button>
+            <button class="pill-tab" onclick="switchTab('linksTab', this)">🌐 Linktree Saluran Resmi</button>
+        </div>
+
+        <div class="stage-container">
+            <!-- TAB 1: PETA INTERAKTIF MANDIRI (ACTIVE BY DEFAULT) -->
+            <div id="mapTab" class="tab-content">
+                <div class="glass-card">
+                    <span class="card-title">🗺️ Peta Interaktif Sebaran Teater, Fanbase & Asal Member JKT48</span>
+                    <p style="font-size: 13px; color: rgba(255,255,255,0.75);">Peta interaktif Leaflet nyata yang memetakan titik Teater FX Sudirman, kota kelahiran member, serta basis regional wota di seluruh Indonesia (Ported dari Rebornian48/peta-jkt48).</p>
+
+                    <!-- SEARCH & FLY BUTTONS -->
+                    <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+                        <input type="text" id="mapSearchInput" placeholder="🔍 Cari kota atau nama member (e.g. Jakarta, Christy, Surabaya)..." style="flex: 1; min-width: 200px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 8px 14px; color: #fff; font-size: 13px;" oninput="searchMap(this.value)">
+                        <button class="pill-tab" style="background: rgba(255,255,255,0.15);" onclick="resetMapView()">🇮🇩 Tinjau Seluruh Indonesia</button>
+                    </div>
+
+                    <!-- LEAFLET MAP ELEMENT -->
+                    <div id="mapContainer"></div>
+
+                    <!-- SHORTCUT PIN REGIONS -->
+                    <div class="region-grid">
+                        <div class="region-card" onclick="flyToRegion(-6.2253, 106.8042, 14, 'JKT48 Theater HQ')">
+                            <b>🏛️ Teater JKT48 (FX Sudirman)</b>
+                            <span>Pusat Teater HQ • Lt. 4 FX</span>
+                        </div>
+                        <div class="region-card" onclick="flyToRegion(-6.9175, 107.6191, 12, 'Bandung')">
+                            <b>🌲 Bandung & Priangan</b>
+                            <span>Asal Freya, Feni • 1,840 Wota</span>
+                        </div>
+                        <div class="region-card" onclick="flyToRegion(-7.2575, 112.7521, 12, 'Surabaya')">
+                            <b>⚓ Surabaya & Jatim</b>
+                            <span>Asal Gracia • 1,680 Wota</span>
+                        </div>
+                        <div class="region-card" onclick="flyToRegion(-7.7956, 110.3695, 12, 'Yogyakarta')">
+                            <b>🏯 Yogyakarta & Solo</b>
+                            <span>Asal Shani • 1,420 Wota</span>
+                        </div>
+                        <div class="region-card" onclick="flyToRegion(3.5952, 98.6722, 12, 'Medan')">
+                            <b>🌴 Medan & Sumatera</b>
+                            <span>Basis Wota Sumut • 940 Wota</span>
+                        </div>
+                        <div class="region-card" onclick="flyToRegion(-5.1477, 119.4327, 12, 'Makassar')">
+                            <b>⛵ Makassar & Sulawesi</b>
+                            <span>Basis Wota Sulsel • 680 Wota</span>
+                        </div>
+                        <div class="region-card" onclick="flyToRegion(-8.6705, 115.2126, 12, 'Bali')">
+                            <b>🌺 Bali & Nusa Tenggara</b>
+                            <span>Basis Wota Denpasar • 520 Wota</span>
+                        </div>
+                        <div class="region-card" onclick="flyToRegion(-1.2379, 116.8529, 12, 'Balikpapan')">
+                            <b>💎 Balikpapan & Kaltim</b>
+                            <span>Basis Wota Borneo • 780 Wota</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: SOCIAL LINKTREE -->
+            <div id="linksTab" class="tab-content" style="display: none;">
+                <div class="glass-card">
+                    <span class="card-title">🔗 Saluran Komunitas & Media Sosial Galery Alcsta48</span>
+                    <div class="social-grid" style="margin-top: 14px;">
+                        <a href="https://t.me/galery_alcsta48" target="_blank" class="social-link-card">
+                            <div class="social-icon-box">📢</div>
+                            <div>
+                                <b>Channel Telegram Galery Alcsta</b>
+                                <span style="font-size: 11px; color: rgba(255,255,255,0.65);">@galery_alcsta48 (Official)</span>
+                            </div>
+                        </a>
+                        <a href="https://t.me/asha_zeneca" target="_blank" class="social-link-card">
+                            <div class="social-icon-box">✈️</div>
+                            <div>
+                                <b>Telegram Developer</b>
+                                <span style="font-size: 11px; color: rgba(255,255,255,0.65);">@asha_zeneca</span>
+                            </div>
+                        </a>
+                        <a href="https://tiktok.com/@galery.alcsta48ofc" target="_blank" class="social-link-card">
+                            <div class="social-icon-box">🎵</div>
+                            <div>
+                                <b>TikTok Official Galery</b>
+                                <span style="font-size: 11px; color: rgba(255,255,255,0.65);">@galery.alcsta48ofc</span>
+                            </div>
+                        </a>
+                        <a href="https://instagram.com/galery_alcsta48ofc" target="_blank" class="social-link-card">
+                            <div class="social-icon-box">📸</div>
+                            <div>
+                                <b>Instagram Galery</b>
+                                <span style="font-size: 11px; color: rgba(255,255,255,0.65);">@galery_alcsta48ofc</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById("leftSidebar").classList.toggle("open");
+            document.getElementById("sidebarOverlay").classList.toggle("active");
+        }
+
+        function switchTab(tabId, btnEl) {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.pill-tab').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).style.display = 'block';
+            btnEl.classList.add('active');
+
+            if (tabId === 'mapTab' && leafletMap) {
+                setTimeout(() => leafletMap.invalidateSize(), 150);
+            }
+        }
+
+        // =======================================================
+        // LEAFLET MAP NATIVE INITIALIZATION
+        // =======================================================
+        let leafletMap = null;
+        let mapMarkers = [];
+
+        const MAP_PINS = [
+            {
+                name: "JKT48 Theater HQ (Fx Sudirman)",
+                category: "Teater",
+                lat: -6.2253, lng: 106.8042,
+                desc: "Pusat Teater Resmi JKT48 Lantai 4 FX Sudirman, Jl. Jend. Sudirman, Jakarta Pusat.",
+                badge: "🏛️ 4,520 Wota Aktif",
+                members: "Seluruh Member & Trainee JKT48"
+            },
+            {
+                name: "Jakarta - Kelahiran Angelina Christy & Zee",
+                category: "Member",
+                lat: -6.1754, lng: 106.8272,
+                desc: "Wilayah asal & domisili member JKT48 Angelina Christy dan Azizi Asadel.",
+                badge: "👑 Asal Member",
+                members: "Angelina Christy, Zee, Marsha"
+            },
+            {
+                name: "Bandung & Priangan - Asal Freya & Feni",
+                category: "Member & Fanbase",
+                lat: -6.9175, lng: 107.6191,
+                desc: "Komunitas Wota Bandung & kota kelahiran Freya Jayawardana & Feni Fitriyanti.",
+                badge: "🌲 1,840 Wota Aktif",
+                members: "Freya, Feni"
+            },
+            {
+                name: "Surabaya - Asal Shania Gracia",
+                category: "Member & Fanbase",
+                lat: -7.2575, lng: 112.7521,
+                desc: "Komunitas Wota Surabaya & Arek Jatim, kota asal Kapten Shania Gracia.",
+                badge: "⚓ 1,680 Wota Aktif",
+                members: "Shania Gracia"
+            },
+            {
+                name: "Yogyakarta - Asal Shani Indira Natio",
+                category: "Member & Fanbase",
+                lat: -7.7956, lng: 110.3695,
+                desc: "Komunitas Wota Jogja & Solo, kota asal legenda JKT48 Shani Indira.",
+                badge: "🏯 1,420 Wota Aktif",
+                members: "Shani Indira"
+            },
+            {
+                name: "Semarang & Jawa Tengah Fanbase",
+                category: "Fanbase",
+                lat: -6.9667, lng: 110.4167,
+                desc: "Basis Regional Wota Semarang, Kudus, Salatiga & Pekalongan.",
+                badge: "⚡ 980 Wota Aktif",
+                members: "Wota Jateng"
+            },
+            {
+                name: "Medan & Sumatera Utara Fanbase",
+                category: "Fanbase",
+                lat: 3.5952, lng: 98.6722,
+                desc: "Basis Regional Wota Medan, Binjai, & Deli Serdang.",
+                badge: "🌴 940 Wota Aktif",
+                members: "Wota Sumut"
+            },
+            {
+                name: "Makassar & Sulawesi Selatan Fanbase",
+                category: "Fanbase",
+                lat: -5.1477, lng: 119.4327,
+                desc: "Basis Regional Wota Makassar & Sulawesi.",
+                badge: "⛵ 680 Wota Aktif",
+                members: "Wota Sulsel"
+            },
+            {
+                name: "Denpasar & Bali Fanbase",
+                category: "Fanbase",
+                lat: -8.6705, lng: 115.2126,
+                desc: "Basis Regional Wota Bali & Nusa Tenggara.",
+                badge: "🌺 520 Wota Aktif",
+                members: "Wota Bali"
+            },
+            {
+                name: "Balikpapan & Samarinda (Kaltim)",
+                category: "Fanbase",
+                lat: -1.2379, lng: 116.8529,
+                desc: "Basis Regional Wota Kalimantan Timur & Borneo.",
+                badge: "💎 780 Wota Aktif",
+                members: "Wota Borneo"
+            },
+            {
+                name: "Palembang & Sumatera Selatan",
+                category: "Fanbase",
+                lat: -2.9761, lng: 104.7754,
+                desc: "Basis Regional Wota Palembang & Sriwijaya.",
+                badge: "🌊 610 Wota Aktif",
+                members: "Wota Sumsel"
+            },
+            {
+                name: "Malang & Arema Fanbase",
+                category: "Fanbase",
+                lat: -7.9666, lng: 112.6326,
+                desc: "Basis Regional Wota Malang Raya & Batu.",
+                badge: "🏔️ 590 Wota Aktif",
+                members: "Wota Malang"
+            }
+        ];
+
+        function initMap() {
+            leafletMap = L.map('mapContainer', {
+                center: [-2.5489, 118.0149],
+                zoom: 5,
+                scrollWheelZoom: true
+            });
+
+            // CARTO Dark Theme Tile Layer
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap &copy; CARTO',
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(leafletMap);
+
+            // Add Markers
+            MAP_PINS.forEach(p => {
+                const marker = L.marker([p.lat, p.lng]).addTo(leafletMap);
+                marker.bindPopup(`
+                    <div class="popup-title">📍 ${p.name}</div>
+                    <div class="popup-desc">${p.desc}<br><b style="color:#00ff88;">${p.badge}</b><br><span style="color:#00d4ff;">Member: ${p.members}</span></div>
+                    <a href="https://t.me/galery_alcsta48" target="_blank" class="popup-btn">Gabung Komunitas</a>
+                `);
+                mapMarkers.push({ marker, data: p });
+            });
+        }
+
+        function flyToRegion(lat, lng, zoom, name) {
+            if (leafletMap) {
+                leafletMap.flyTo([lat, lng], zoom, { duration: 1.5 });
+                const found = mapMarkers.find(m => m.data.name.includes(name) || m.data.desc.includes(name));
+                if (found) {
+                    setTimeout(() => found.marker.openPopup(), 1600);
+                }
+            }
+        }
+
+        function resetMapView() {
+            if (leafletMap) {
+                leafletMap.flyTo([-2.5489, 118.0149], 5, { duration: 1.2 });
+            }
+        }
+
+        function searchMap(query) {
+            const q = query.toLowerCase();
+            const found = mapMarkers.find(m => m.data.name.toLowerCase().includes(q) || m.data.members.toLowerCase().includes(q) || m.data.desc.toLowerCase().includes(q));
+            if (found && leafletMap) {
+                leafletMap.flyTo([found.data.lat, found.data.lng], 12, { duration: 1.2 });
+                found.marker.openPopup();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initMap();
+        });
+    </script>
+</body>
+</html>

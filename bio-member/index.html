@@ -1,0 +1,754 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>galery alcsta48 - bio member & ensiklopedia</title>
+    <link rel="icon" type="image/png" href="../icon.png">
+    <script src="../config.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .video-bg {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; z-index: -2;
+            filter: brightness(0.6);
+            transform: translateZ(0);
+            will-change: transform;
+            contain: strict;
+        }
+
+        .corner-glows {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden; contain: strict;
+        }
+        .glow { position: absolute; width: 50vw; height: 50vw; max-width: 500px; max-height: 500px; border-radius: 50%; opacity: 0.2; pointer-events: none; }
+        .glow-tl { top: -10%; left: -10%; background: radial-gradient(circle, #ff007f 0%, transparent 70%); }
+        .glow-tr { top: -10%; right: -10%; background: radial-gradient(circle, #ff7700 0%, transparent 70%); }
+        .glow-bl { bottom: -10%; left: -10%; background: radial-gradient(circle, #0088ff 0%, transparent 70%); }
+        .glow-br { bottom: -10%; right: -10%; background: radial-gradient(circle, #ffffff 0%, transparent 70%); opacity: 0.15; }
+
+        .left-sidebar {
+            width: 90px;
+            background: rgba(11, 17, 33, 0.85);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px 5px; gap: 12px; z-index: 100;
+            overflow-y: auto; flex-shrink: 0;
+            transform: translateZ(0); will-change: transform;
+            -webkit-overflow-scrolling: touch;
+            transition: transform 0.25s ease-out;
+        }
+        .left-sidebar::-webkit-scrollbar { display: none; }
+
+        .side-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-decoration: none; color: #fff; font-weight: 700; font-size: 10px;
+            background: rgba(255, 255, 255, 0.1); width: 70px; height: 60px; border-radius: 16px;
+            transition: transform 0.15s ease, background 0.15s ease; border: 1px solid rgba(255, 255, 255, 0.18); text-align: center;
+            gap: 4px; flex-shrink: 0; contain: content;
+        }
+        .side-item:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.03); }
+        .side-item.active { background: rgba(255, 255, 255, 0.9); color: #1a5cff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .side-icon { font-size: 20px; }
+
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6);
+            z-index: 90; opacity: 0; transition: opacity 0.25s ease;
+        }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        .main-content {
+            flex-grow: 1; display: flex; flex-direction: column;
+            position: relative; height: 100%; overflow: hidden; z-index: 10;
+        }
+
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 25px; z-index: 20; width: 100%;
+        }
+
+        .left-group { display: flex; align-items: center; gap: 12px; }
+        .sidebar-toggle-btn {
+            display: none; background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #fff; font-size: 18px; padding: 6px 12px;
+            border-radius: 12px; cursor: pointer; flex-shrink: 0;
+        }
+
+        .brand-logo {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            padding: 6px 16px; border-radius: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .logo-main { height: 35px; width: auto; border-radius: 50%; }
+        .brand-text { font-weight: 800; font-size: 15px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+
+        .sub-nav-container {
+            display: flex; gap: 10px; padding: 0 25px 12px 25px; overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .sub-nav-container::-webkit-scrollbar { display: none; }
+        .pill-tab {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #fff; padding: 8px 18px; border-radius: 20px;
+            font-weight: 700; font-size: 13px; cursor: pointer;
+            transition: transform 0.15s ease, background 0.15s ease; white-space: nowrap;
+        }
+        .pill-tab:hover { background: rgba(255, 255, 255, 0.25); }
+        .pill-tab.active { background: #fff; color: #1a5cff; border-color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+
+        .stage-container {
+            flex-grow: 1; overflow-y: auto; padding: 10px 25px 30px 25px;
+            display: flex; flex-direction: column; gap: 20px;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            will-change: scroll-position;
+        }
+        .stage-container::-webkit-scrollbar { width: 6px; }
+        .stage-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.78);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 24px; padding: 24px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+            contain: content;
+        }
+        .card-title { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
+
+        /* MEMBER GRID */
+        .member-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px;
+        }
+        .member-card {
+            background: rgba(0,0,0,0.35); border-radius: 16px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.15); transition: 0.3s; text-align: center; padding-bottom: 12px;
+        }
+        .member-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.4); }
+        .member-photo { width: 100%; height: 210px; object-fit: cover; background: #222; }
+        .member-name { font-weight: 800; font-size: 14px; color: #fff; margin-top: 10px; }
+        .member-gen { font-size: 11px; color: rgba(255,255,255,0.7); font-weight: 700; margin-top: 2px; }
+
+        /* SETLIST LIST */
+        .setlist-item {
+            background: rgba(0,0,0,0.3); border-radius: 14px; padding: 14px 18px; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .setlist-name { font-size: 15px; font-weight: 800; color: #fff; }
+        .setlist-sub { font-size: 12px; color: rgba(255,255,255,0.7); }
+
+        /* PM TABLE */
+        .pm-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .pm-table th, .pm-table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .pm-table th { font-weight: 800; font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase; }
+
+        /* CLUSTERING & MUSIC ANALYTICS */
+        .cluster-box {
+            background: rgba(0,0,0,0.35); border-radius: 16px; padding: 16px; margin-bottom: 14px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .cluster-title { font-weight: 900; font-size: 16px; color: #ffd700; display: flex; justify-content: space-between; }
+        .cluster-songs { font-size: 13px; color: rgba(255,255,255,0.85); margin-top: 6px; line-height: 1.6; }
+        .audio-bar-wrapper { margin-top: 8px; }
+        .audio-bar-label { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.6); }
+        .audio-progress { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-top: 3px; }
+        .audio-fill { height: 100%; background: linear-gradient(90deg, #ff7700, #ff007f); }
+
+        /* MAP CARDS */
+        .map-region-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-top: 15px;
+        }
+        .map-region-card {
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15);
+            padding: 16px; border-radius: 16px;
+        }
+        .map-region-card b { color: #00d4ff; font-size: 15px; display: block; margin-bottom: 6px; }
+
+        @media screen and (max-width: 768px) {
+            .left-sidebar {
+                position: fixed; top: 0; left: 0; height: 100%;
+                width: 180px; padding: 25px 10px; gap: 10px;
+                transform: translateX(-100%);
+            }
+            .left-sidebar.open { transform: translateX(0); }
+            .side-item { width: 100%; height: 44px; flex-direction: row; justify-content: flex-start; padding: 0 15px; font-size: 12px; border-radius: 12px; }
+            .sidebar-toggle-btn { display: block; }
+            .top-bar { padding: 10px 15px; }
+            .sub-nav-container { padding: 0 15px 10px 15px; }
+            .stage-container { padding: 10px 15px 20px 15px; }
+            .member-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+            .member-photo { height: 150px; }
+        }
+    </style>
+</head>
+<body>
+
+    <video class="video-bg" autoplay loop muted playsinline>
+        <source src="../beranda/latarglobal.webm" type="video/webm">
+    </video>
+
+    <div class="corner-glows">
+        <div class="glow glow-tl"></div><div class="glow glow-tr"></div>
+        <div class="glow glow-bl"></div><div class="glow glow-br"></div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+            <aside class="left-sidebar" id="leftSidebar">
+        <a href="../beranda/" class="side-item"><span class="side-icon">💬</span>Beranda</a>
+        <a href="../profil/" class="side-item"><span class="side-icon">👤</span>Profil</a>
+        <a href="../gacha-skin/" class="side-item"><span class="side-icon">🎁</span>Gacha</a>
+        <a href="../live-jkt48/" class="side-item"><span class="side-icon">🎤</span>Live JKT</a>
+        <a href="../alcstify/" class="side-item"><span class="side-icon">🎵</span>Alcstify</a>
+        <a href="../mini-games/" class="side-item"><span class="side-icon">🎮</span>Mini Games</a>
+        <a href="../grup/" class="side-item"><span class="side-icon">👥</span>Grup</a>
+        <a href="../temen-mabar/" class="side-item"><span class="side-icon">⚔️</span>Mabar</a>
+        <a href="../medsos-saver/" class="side-item"><span class="side-icon">📥</span>Saver</a>
+        <a href="../koleksi-kartu/" class="side-item"><span class="side-icon">🃏</span>Kartu</a>
+        <a href="#" class="side-item active"><span class="side-icon">📖</span>Bio</a>
+        <a href="../link-shortcut/" class="side-item"><span class="side-icon">🔗</span>Shortcut</a>
+        <a href="../update-member/" class="side-item"><span class="side-icon">📱</span>Update Sosmed</a>
+        <a href="../tentang/" class="side-item"><span class="side-icon">ℹ️</span>Tentang</a>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="left-group">
+                <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
+                <div class="brand-logo">
+                    <img src="../logo.png.png" alt="Logo" class="logo-main" onerror="this.onerror=null; this.src='../logo.png';">
+                    <span class="brand-text">Alcsta Encyclopedia & Peta</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="sub-nav-container">
+            <button class="pill-tab active" onclick="switchTab('memberTab', this)">👥 Member Database</button>
+            <button class="pill-tab" onclick="switchTab('feedTab', this)">📱 Post Sosmed Terkini</button>
+            <button class="pill-tab" onclick="switchTab('mapTab', this)">🗺️ Peta Asal Member & Fans</button>
+            <button class="pill-tab" onclick="switchTab('setlistTab', this)">🎵 Setlist & Lirik (SetlistJKT48)</button>
+            <button class="pill-tab" onclick="switchTab('chordTab', this)">🎸 Chord & Transpose</button>
+            <button class="pill-tab" onclick="switchTab('clusterTab', this)">🎧 Analisis Musik & Clustering</button>
+            <button class="pill-tab" onclick="switchTab('pmTab', this)">📊 PM Message Stats</button>
+        </div>
+
+        <div class="stage-container">
+            <!-- TAB 1: MEMBER DB -->
+            <div id="memberTab" class="tab-content">
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                        <span class="card-title" style="margin-bottom: 0;">📖 Direktori Anggota JKT48 (16 Member Aktif)</span>
+                        <input type="text" id="memberSearchInput" placeholder="🔍 Cari nama member..." oninput="filterMemberGrid()" style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.3); border-radius: 12px; padding: 6px 14px; color: #fff; font-size: 12px; outline: none;">
+                    </div>
+                    
+                    <div class="member-grid" id="memberCardsGrid">
+                        <div class="member-card" onclick="showMemberModal('Angelina Christy', 'Gen 7', 'Jakarta, 05 Des 2005', 'Peduli dan berbaik hati, siapakah dia? Halo semuanya aku Christy!', 'O', '163 cm', 'Sagitarius')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Christy">
+                            <div class="member-name">Angelina Christy</div>
+                            <div class="member-gen">Generasi 7 • Jakarta</div>
+                        </div>
+                        <div class="member-card" onclick="showMemberModal('Freya Jayawardana', 'Gen 7 (Captain)', 'Yogyakarta, 13 Feb 2006', 'Gadis koleris yang suka berimajinasi, terangi harimu dengan senyuman karamelku!', 'B', '154 cm', 'Aquarius')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Freya">
+                            <div class="member-name">Freya Jayawardana</div>
+                            <div class="member-gen">Gen 7 (Captain) • Jogja</div>
+                        </div>
+                        <div class="member-card" onclick="showMemberModal('Marsha Lenathea', 'Gen 9', 'Jakarta, 09 Jan 2006', 'Seperti pizza yang selalu dinanti-nantikan, halo aku Marsha!', 'O', '160 cm', 'Capricorn')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Marsha">
+                            <div class="member-name">Marsha Lenathea</div>
+                            <div class="member-gen">Generasi 9 • Jakarta</div>
+                        </div>
+                        <div class="member-card" onclick="showMemberModal('Fiony Alveria', 'Gen 8', 'Jakarta, 04 Feb 2002', 'Simsalabim! Akan kubuat hatimu terpikat dengan senyumanku, halo aku Fiony!', 'O', '158 cm', 'Aquarius')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Fiony">
+                            <div class="member-name">Fiony Alveria</div>
+                            <div class="member-gen">Generasi 8 • Jakarta</div>
+                        </div>
+                        <div class="member-card" onclick="showMemberModal('Kathrina Irene', 'Gen 9', 'Jakarta, 20 Sep 2006', 'Bagaikan permen manis yang bikin ketagihan, halo aku Kathrina!', 'A', '165 cm', 'Virgo')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Kathrina">
+                            <div class="member-name">Kathrina Irene</div>
+                            <div class="member-gen">Generasi 9 • Jakarta</div>
+                        </div>
+                        <div class="member-card" onclick="showMemberModal('Lulu Salsabila', 'Gen 8', 'Serang, 23 Okt 2002', 'Menebar keceriaan di setiap langkah, halo aku Lulu!', 'B', '157 cm', 'Scorpio')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Lulu">
+                            <div class="member-name">Lulu Salsabila</div>
+                            <div class="member-gen">Generasi 8 • Serang</div>
+                        </div>
+                        <div class="member-card" onclick="showMemberModal('Cornelia Vanisa (Oniel)', 'Gen 8', 'Tangerang, 26 Jul 2002', 'Kecil-kecil cabe rawit, penuh energi dan semangat! Halo aku Oniel!', 'O', '153 cm', 'Leo')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Oniel">
+                            <div class="member-name">Cornelia Vanisa</div>
+                            <div class="member-gen">Generasi 8 • Tangerang</div>
+                        </div>
+                        <div class="member-card" onclick="showMemberModal('Gita Sekar Andarini', 'Gen 6', 'Jakarta, 30 Jun 2001', 'Diam bukan berarti tak memperhatikan, halo aku Gita!', 'O', '165 cm', 'Cancer')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Gita">
+                            <div class="member-name">Gita Sekar</div>
+                            <div class="member-gen">Generasi 6 • Jakarta</div>
+                        </div>
+                        <div class="member-card" onclick="showMemberModal('Helisma Putri (Eli)', 'Gen 7', 'Bandung, 15 Jun 2000', 'Seperti mentari yang menghangatkan bumi, halo aku Eli!', 'A', '165 cm', 'Gemini')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Eli">
+                            <div class="member-name">Helisma Putri</div>
+                            <div class="member-gen">Generasi 7 • Bandung</div>
+                        </div>
+                        <div class="member-card" onclick="showMemberModal('Indah Cahya', 'Gen 9', 'Jambi, 20 Mar 2001', 'Gadis manis dari tanah Jambi yang siap menyinari panggung, halo aku Indah!', 'A', '165 cm', 'Pisces')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Indah">
+                            <div class="member-name">Indah Cahya</div>
+                            <div class="member-gen">Generasi 9 • Jambi</div>
+                        </div>
+                        <div class="member-card" onclick="showMemberModal('Mutiara Azzahra (Muthe)', 'Gen 7', 'Jakarta, 12 Jul 2004', 'Seperti bunga yang mekar di musim semi, halo aku Muthe!', 'B', '158 cm', 'Cancer')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Muthe">
+                            <div class="member-name">Mutiara Azzahra</div>
+                            <div class="member-gen">Generasi 7 • Jakarta</div>
+                        </div>
+                        <div class="member-card" onclick="showMemberModal('Jesslyn Elly (Lyn)', 'Gen 10', 'Jakarta, 13 Sep 2001', 'Siap memukau dengan sejuta pesona, halo aku Lyn!', 'O', '156 cm', 'Virgo')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Lyn">
+                            <div class="member-name">Jesslyn Elly</div>
+                            <div class="member-gen">Generasi 10 • Jakarta</div>
+                        </div>
+                        <div class="member-card" onclick="showMemberModal('Amanda Sukma', 'Gen 10', 'Malang, 17 Des 2004', 'Gadis ceria yang selalu bersemangat, halo aku Amanda!', 'O', '160 cm', 'Sagitarius')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Amanda">
+                            <div class="member-name">Amanda Sukma</div>
+                            <div class="member-gen">Generasi 10 • Malang</div>
+                        </div>
+                        <div class="member-card" onclick="showMemberModal('Aurellia (Lia)', 'Gen 10', 'Jakarta, 29 Okt 2002', 'Senyuman manis penyejuk hati, halo aku Lia!', 'O', '155 cm', 'Scorpio')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Lia">
+                            <div class="member-name">Aurellia (Lia)</div>
+                            <div class="member-gen">Generasi 10 • Jakarta</div>
+                        </div>
+                        <div class="member-card" onclick="showMemberModal('Callista Alifia (Callie)', 'Gen 10', 'Jakarta, 08 Agu 2005', 'Penuh warna dan penuh canda tawa, halo aku Callie!', 'O', '157 cm', 'Leo')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Callie">
+                            <div class="member-name">Callista Alifia</div>
+                            <div class="member-gen">Generasi 10 • Jakarta</div>
+                        </div>
+                        <div class="member-card" onclick="showMemberModal('Raisha Syifa', 'Gen 10', 'Jakarta, 11 Nov 2007', 'Kecil, imut, dan selalu ceria, halo aku Raisha!', 'AB', '163 cm', 'Scorpio')">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="member-photo" alt="Raisha">
+                            <div class="member-name">Raisha Syifa</div>
+                            <div class="member-gen">Generasi 10 • Jakarta</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL DETAIL MEMBER -->
+            <div id="memberDetailModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center;">
+                <div class="glass-card" style="max-width: 440px; width: 90%; text-align: center; position: relative;">
+                    <button onclick="closeMemberModal()" style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.2); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 16px;">✕</button>
+                    <img id="modalMemberPhoto" src="https://i.ibb.co.com/Y4JdtfGH/download.png" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid #ffd700; box-shadow: 0 0 20px #ffd700; margin-bottom: 12px; object-fit: cover;">
+                    <h3 id="modalMemberName" style="font-size: 20px; font-weight: 900; color: #ffd700;">Nama Member</h3>
+                    <div id="modalMemberGen" style="font-size: 12px; color: #00d4ff; font-weight: 700; margin-top: 2px;">Generasi</div>
+                    <div id="modalMemberBirth" style="font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 2px;">TTL</div>
+
+                    <div style="background: rgba(0,0,0,0.5); border-radius: 14px; padding: 14px; margin: 14px 0; border: 1px solid rgba(255,255,255,0.15);">
+                        <b style="font-size: 11px; color: #ff007f; text-transform: uppercase;">Jikoshoukai:</b>
+                        <p id="modalMemberJiko" style="font-size: 13px; color: #fff; margin-top: 4px; font-style: italic;">"Catchphrase oshi..."</p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 11px; margin-bottom: 16px;">
+                        <div style="background: rgba(255,255,255,0.06); padding: 8px; border-radius: 10px;">Gol. Darah: <b id="modalMemberBlood" style="color: #00ff88;">O</b></div>
+                        <div style="background: rgba(255,255,255,0.06); padding: 8px; border-radius: 10px;">Tinggi: <b id="modalMemberHeight" style="color: #00ff88;">160cm</b></div>
+                        <div style="background: rgba(255,255,255,0.06); padding: 8px; border-radius: 10px;">Zodiak: <b id="modalMemberZodiac" style="color: #00ff88;">Leo</b></div>
+                    </div>
+
+                    <a href="../live-jkt48/" class="pill-tab" style="display: block; text-decoration: none; background: linear-gradient(135deg, #1a5cff, #00d4ff);">📺 Tonton Room Live Oshi</a>
+                </div>
+            </div>
+
+            <!-- TAB 1.5: LIVE SOSMED FEED (IDDILETELE NODE 2) -->
+            <div id="feedTab" class="tab-content" style="display: none;">
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <span class="card-title" style="margin-bottom: 2px;">📱 Live Feed Post & Story Sosmed Member</span>
+                            <div style="font-size: 11px; color: #00d4ff;">Disinkronkan otomatis oleh Iddiletele Telethon Engine</div>
+                        </div>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button class="pill-tab active" style="padding: 4px 10px; font-size: 11px;" onclick="filterFeedPlatform('ALL', this)">Semua</button>
+                            <button class="pill-tab" style="padding: 4px 10px; font-size: 11px;" onclick="filterFeedPlatform('Instagram', this)">📸 Instagram</button>
+                            <button class="pill-tab" style="padding: 4px 10px; font-size: 11px;" onclick="filterFeedPlatform('X', this)">🐦 X (Twitter)</button>
+                            <button class="pill-tab" style="padding: 4px 10px; font-size: 11px;" onclick="filterFeedPlatform('TikTok', this)">🎵 TikTok</button>
+                        </div>
+                    </div>
+
+                    <div id="feedListContainer" style="display: flex; flex-direction: column; gap: 14px;">
+                        <!-- FEED ITEM 1 -->
+                        <div class="glass-card feed-card" data-platform="Instagram" style="background: rgba(0,0,0,0.45); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" style="width: 38px; height: 38px; border-radius: 50%; border: 2px solid #ff007f;">
+                                    <div>
+                                        <b style="font-size: 13px; color: #fff;">Angelina Christy</b>
+                                        <div style="font-size: 10px; color: rgba(255,255,255,0.6);">@jkt48.christy • 10 menit yang lalu</div>
+                                    </div>
+                                </div>
+                                <span style="background: rgba(255,0,127,0.2); border: 1px solid #ff007f; color: #ff007f; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px;">📸 Instagram Story</span>
+                            </div>
+                            <p style="font-size: 13px; color: #fff; line-height: 1.5; margin-bottom: 12px;">"Jangan lupa nonton pertunjukan teater hari ini yaa guys! 💖"</p>
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" style="width: 100%; max-height: 280px; object-fit: cover; border-radius: 12px; margin-bottom: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                                <a href="https://i.ibb.co.com/Y4JdtfGH/download.png" target="_blank" class="pill-tab" style="padding: 4px 12px; font-size: 11px; background: linear-gradient(135deg, #1a5cff, #00d4ff); text-decoration: none;">💎 Download Versi HD</a>
+                                <a href="https://instagram.com/jkt48.christy" target="_blank" style="font-size: 11px; color: #ffd700; text-decoration: none; font-weight: 800;">👉 Buka di Instagram</a>
+                            </div>
+                        </div>
+
+                        <!-- FEED ITEM 2 -->
+                        <div class="glass-card feed-card" data-platform="X" style="background: rgba(0,0,0,0.45); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" style="width: 38px; height: 38px; border-radius: 50%; border: 2px solid #00d4ff;">
+                                    <div>
+                                        <b style="font-size: 13px; color: #fff;">Freya Jayawardana</b>
+                                        <div style="font-size: 10px; color: rgba(255,255,255,0.6);">@Freya_JKT48 • 25 menit yang lalu</div>
+                                    </div>
+                                </div>
+                                <span style="background: rgba(0,212,255,0.2); border: 1px solid #00d4ff; color: #00d4ff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px;">🐦 X / Tweet</span>
+                            </div>
+                            <p style="font-size: 13px; color: #fff; line-height: 1.5; margin-bottom: 12px;">"Selamat pagi semuanya! Semangat untuk aktivitasnya hari ini ✨ Jangan lupa sarapan!"</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                                <span style="font-size: 11px; color: rgba(255,255,255,0.7);">❤️ 8,120 Suka</span>
+                                <a href="https://twitter.com/Freya_JKT48" target="_blank" style="font-size: 11px; color: #ffd700; text-decoration: none; font-weight: 800;">👉 Buka di X (Twitter)</a>
+                            </div>
+                        </div>
+
+                        <!-- FEED ITEM 3 -->
+                        <div class="glass-card feed-card" data-platform="TikTok" style="background: rgba(0,0,0,0.45); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" style="width: 38px; height: 38px; border-radius: 50%; border: 2px solid #ff7700;">
+                                    <div>
+                                        <b style="font-size: 13px; color: #fff;">Marsha Lenathea</b>
+                                        <div style="font-size: 10px; color: rgba(255,255,255,0.6);">@marsha.jkt48 • 1 jam yang lalu</div>
+                                    </div>
+                                </div>
+                                <span style="background: rgba(255,119,0,0.2); border: 1px solid #ff7700; color: #ff7700; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px;">🎵 TikTok Video</span>
+                            </div>
+                            <p style="font-size: 13px; color: #fff; line-height: 1.5; margin-bottom: 12px;">"Dance challenge lagu baru! 🍕 Yuk ikutan dance bareng!"</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                                <a href="https://i.ibb.co.com/Y4JdtfGH/download.png" target="_blank" class="pill-tab" style="padding: 4px 12px; font-size: 11px; background: linear-gradient(135deg, #ff007f, #ff7700); text-decoration: none;">📥 Simpan Video HD</a>
+                                <a href="https://tiktok.com/@marsha.jkt48" target="_blank" style="font-size: 11px; color: #ffd700; text-decoration: none; font-weight: 800;">👉 Buka di TikTok</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: PETA ASAL MEMBER & FANS -->
+            <div id="mapTab" class="tab-content" style="display: none;">
+                <div class="glass-card">
+                    <span class="card-title">🗺️ Peta Interaktif Asal Daerah Member & Titik Kumpul Fans (PetaJKT48)</span>
+                    <p style="font-size: 13px; color: rgba(255,255,255,0.8);">Melihat pengelompokan member JKT48 berdasarkan kota asal kelahiran dan lokasi komunitas wota regional.</p>
+                    
+                    <div class="map-region-grid">
+                        <div class="map-region-card">
+                            <b>🏙️ Jabodetabek & Banten</b>
+                            <p style="font-size: 12px; color: rgba(255,255,255,0.75);">Member: Christy, Gracia, Marsha, Fiony, Muthe, Gita, Eli</p>
+                            <span style="font-size: 11px; color: #ffd700; margin-top: 6px; display: inline-block;">📍 Teater JKT48 FX Sudirman (Pusat)</span>
+                        </div>
+                        <div class="map-region-card">
+                            <b>🏛️ DI Yogyakarta & Jateng</b>
+                            <p style="font-size: 12px; color: rgba(255,255,255,0.75);">Member: Freya, Shani (Kebumen)</p>
+                            <span style="font-size: 11px; color: #ffd700; margin-top: 6px; display: inline-block;">📍 Titik Kumpul Wota Jogja & Solo</span>
+                        </div>
+                        <div class="map-region-card">
+                            <b>⛰️ Bandung & Jawa Barat</b>
+                            <p style="font-size: 12px; color: rgba(255,255,255,0.75);">Member: Melody, Frieska, Nabilah, Cathy</p>
+                            <span style="font-size: 11px; color: #ffd700; margin-top: 6px; display: inline-block;">📍 Basecamp Komunitas Bandung</span>
+                        </div>
+                        <div class="map-region-card">
+                            <b>⚓ Surabaya & Jawa Timur</b>
+                            <p style="font-size: 12px; color: rgba(255,255,255,0.75);">Member: Zee, Jessi, Trisha</p>
+                            <span style="font-size: 11px; color: #ffd700; margin-top: 6px; display: inline-block;">📍 Regional Fans Surabaya & Malang</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: SETLISTS -->
+            <div id="setlistTab" class="tab-content" style="display: none;">
+                <div class="glass-card">
+                    <span class="card-title">🎭 Katalog Setlist Pertunjukan Teater JKT48</span>
+                    
+                    <div class="setlist-item">
+                        <div>
+                            <div class="setlist-name">Cara Meminum Ramune (Ramune no Nomikata)</div>
+                            <div class="setlist-sub">16 Lagu • Team KIII / Pertunjukan Reguler</div>
+                        </div>
+                        <button class="pill-tab" style="padding: 4px 12px; font-size: 11px;" onclick="alert('Lirik Setlist Ramune:\n1. Pertanda (Kizashi)\n2. School Girls of the Horn\n3. Menatap Bintang Melamun\n4. Cross')">Buka Lirik</button>
+                    </div>
+
+                    <div class="setlist-item">
+                        <div>
+                            <div class="setlist-name">Tunas di Balik Batu (Boku no Taiyou)</div>
+                            <div class="setlist-sub">16 Lagu • Trainee JKT48 / Generasi Baru</div>
+                        </div>
+                        <button class="pill-tab" style="padding: 4px 12px; font-size: 11px;" onclick="alert('Lirik Setlist Tunas di Balik Batu:\n1. Dreamin girls\n2. RUN RUN RUN\n3. Piramida Masa Depan')">Buka Lirik</button>
+                    </div>
+
+                    <div class="setlist-item">
+                        <div>
+                            <div class="setlist-name">Aturan Anti Cinta (Renai Kinshi Jourei)</div>
+                            <div class="setlist-sub">16 Lagu • Setlist Legendaris JKT48</div>
+                        </div>
+                        <button class="pill-tab" style="padding: 4px 12px; font-size: 11px;" onclick="alert('Lirik Setlist Aturan Anti Cinta:\n1. Nagai Hikari\n2. Squall no Aida ni\n3. JK Nemurihime')">Buka Lirik</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3.5: CHORD & TRANSPOSE TOOL -->
+            <div id="chordTab" class="tab-content" style="display: none;">
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px;">
+                        <span class="card-title" style="margin-bottom: 0;">🎸 Kamus Chord Gitar & Lirik JKT48</span>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span style="font-size: 12px; font-weight: 800;">Nada:</span>
+                            <button class="pill-tab" style="padding: 4px 10px; font-size: 11px;" onclick="transposeChord(-1)">-1</button>
+                            <span id="currentKeyText" style="font-size: 12px; font-weight: 900; color: #ffd700;">Key: C</span>
+                            <button class="pill-tab" style="padding: 4px 10px; font-size: 11px;" onclick="transposeChord(1)">+1</button>
+                            <button class="pill-tab" id="autoScrollBtn" style="padding: 4px 12px; font-size: 11px; background: #1a5cff;" onclick="toggleAutoScroll()">▶️ Auto-Scroll</button>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(0,0,0,0.5); border-radius: 16px; padding: 20px; border: 1px solid rgba(255,255,255,0.15); line-height: 1.8; font-family: monospace; font-size: 14px;" id="chordSheetBox">
+                        <b style="color: #00d4ff; font-size: 16px; font-family: 'Cinzel', serif;">✈️ Pesawat Kertas 365 Hari (365 Nichi no Kamihikouki)</b><br><br>
+                        [Intro] <span style="color:#ffd700; font-weight:900;">C  G  Am  Em  F  C  Dm  G</span><br><br>
+                        <span style="color:#ffd700; font-weight:900;">C          G          Am        Em</span><br>
+                        Kutatap langit di pagi hari<br>
+                        <span style="color:#ffd700; font-weight:900;">F          C          Dm        G</span><br>
+                        Ku terus melangkah di jalan ini<br>
+                        <span style="color:#ffd700; font-weight:900;">C          G          Am        Em</span><br>
+                        Tak peduli rintangan yang menghadang<br>
+                        <span style="color:#ffd700; font-weight:900;">F          G          C</span><br>
+                        Ku kan tetap percaya pada mimpiku...<br><br>
+                        [Reff]<br>
+                        <span style="color:#ffd700; font-weight:900;">F          G          Em        Am</span><br>
+                        Terbanglah terbang pesawat kertas<br>
+                        <span style="color:#ffd700; font-weight:900;">Dm         G          C         C7</span><br>
+                        Bawalah mimpiku setinggi langit<br>
+                        <span style="color:#ffd700; font-weight:900;">F          G          Em        Am</span><br>
+                        Jangan pernah menyerah di tengah jalan<br>
+                        <span style="color:#ffd700; font-weight:900;">Dm         G          C</span><br>
+                        365 hari kita kan terus berjuang!
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: SONG CLUSTERING ML & ANALYTICS -->
+            <div id="clusterTab" class="tab-content" style="display: none;">
+                <div class="glass-card">
+                    <span class="card-title">🎧 Analisis Karakteristik Musik & Klaster Lagu JKT48</span>
+                    <p style="font-size: 13px; color: rgba(255,255,255,0.8); margin-bottom: 18px;">Hasil pemetaan algoritma machine learning (Song Clustering) berdasarkan tempo, energi, dan beat lagu.</p>
+                    
+                    <div class="cluster-box">
+                        <div class="cluster-title">
+                            <span>⚡ Klaster 1: High Energy Dance & Concert Anthem</span>
+                            <span style="font-size: 12px; color: #ff007f;">BPM 150 - 175</span>
+                        </div>
+                        <div class="cluster-songs">Lagu: Heavy Rotation, River, Flying High, Magic Hour, Gingham Check</div>
+                        <div class="audio-bar-wrapper">
+                            <div class="audio-bar-label">Tingkat Energi Audio: 92%</div>
+                            <div class="audio-progress"><div class="audio-fill" style="width: 92%;"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="cluster-box">
+                        <div class="cluster-title">
+                            <span>🌸 Klaster 2: Sentimental, Nostalgic & Graduation</span>
+                            <span style="font-size: 12px; color: #00d4ff;">BPM 85 - 110</span>
+                        </div>
+                        <div class="cluster-songs">Lagu: Pesawat Kertas 365 Hari, Sakura no Hanabiratachi, So Long!, Namida Surprise</div>
+                        <div class="audio-bar-wrapper">
+                            <div class="audio-bar-label">Tingkat Emosional & Akustik: 88%</div>
+                            <div class="audio-progress"><div class="audio-fill" style="width: 88%; background: linear-gradient(90deg, #0088ff, #00d4ff);"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="cluster-box">
+                        <div class="cluster-title">
+                            <span>🍭 Klaster 3: Cheerful, Idol Pop & Cute Melody</span>
+                            <span style="font-size: 12px; color: #ffd700;">BPM 120 - 138</span>
+                        </div>
+                        <div class="cluster-songs">Lagu: Fortune Cookie yang Mencinta, Kimi no Koto ga Suki Dakara, Sayonara Crawl</div>
+                        <div class="audio-bar-wrapper">
+                            <div class="audio-bar-label">Tingkat Keceriaan (Danceability): 95%</div>
+                            <div class="audio-progress"><div class="audio-fill" style="width: 95%; background: linear-gradient(90deg, #ffd700, #ff7700);"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- SONG SORTER BATTLE (REBORNIAN48 SONG SORTER) -->
+                    <div style="margin-top: 24px; text-align: center; background: rgba(0,0,0,0.5); padding: 20px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.2);">
+                        <h3 style="font-size: 16px; font-weight: 900; color: #ffd700; font-family: 'Cinzel', serif;">🎵 Alcsta Song Sorter (Pilih Lagu Favoritmu)</h3>
+                        <p style="font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px;">Pilih salah satu lagu di bawah untuk menentukan urutan lagu JKT48 terfavoritmu.</p>
+                        
+                        <div style="display: flex; gap: 14px; justify-content: center; align-items: center; margin-top: 16px; flex-wrap: wrap;">
+                            <button class="pill-tab" style="padding: 12px 24px; font-size: 14px; background: linear-gradient(135deg, #1a5cff, #00d4ff);" onclick="voteSong('Heavy Rotation')">🌟 Heavy Rotation</button>
+                            <span style="font-weight: 900; color: #ffd700;">VS</span>
+                            <button class="pill-tab" style="padding: 12px 24px; font-size: 14px; background: linear-gradient(135deg, #ff7700, #ff007f);" onclick="voteSong('Pesawat Kertas 365 Hari')">✈️ Pesawat Kertas 365 Hari</button>
+                        </div>
+                        <div style="margin-top: 12px; font-size: 11px; color: #00ff88; font-weight: 700;" id="songSorterStatus">Ronde 1 dari 10</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: PM STATS -->
+            <div id="pmTab" class="tab-content" style="display: none;">
+                <div class="glass-card">
+                    <span class="card-title">📊 Statistik Private Message (PM) Teraktif</span>
+                    <table class="pm-table">
+                        <thead>
+                            <tr>
+                                <th>Peringkat</th>
+                                <th>Nama Member</th>
+                                <th>Teks</th>
+                                <th>Foto</th>
+                                <th>Voice Note</th>
+                                <th>Total Pesan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>🥇 #1</td>
+                                <td>Angelina Christy</td>
+                                <td>842</td>
+                                <td>310</td>
+                                <td>94</td>
+                                <td><b style="color: #ff007f;">1,246</b></td>
+                            </tr>
+                            <tr>
+                                <td>🥈 #2</td>
+                                <td>Freya Jayawardana</td>
+                                <td>760</td>
+                                <td>280</td>
+                                <td>85</td>
+                                <td><b style="color: #ff7700;">1,125</b></td>
+                            </tr>
+                            <tr>
+                                <td>🥉 #3</td>
+                                <td>Shania Gracia</td>
+                                <td>690</td>
+                                <td>250</td>
+                                <td>60</td>
+                                <td><b style="color: #0088ff;">1,000</b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById("leftSidebar").classList.toggle("open");
+            document.getElementById("sidebarOverlay").classList.toggle("active");
+        }
+
+        function switchTab(tabId, btnEl) {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.pill-tab').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).style.display = 'block';
+            btnEl.classList.add('active');
+        }
+
+        let songRound = 1;
+        function voteSong(songTitle) {
+            songRound++;
+            const el = document.getElementById("songSorterStatus");
+            if (el) el.innerText = "Ronde " + songRound + " dari 10";
+            if (songRound > 10) {
+                alert("🎉 Selesai! Lagu " + songTitle + " terpilih sebagai Lagu Terfavorit Anda!");
+                songRound = 1;
+                if (el) el.innerText = "Ronde " + songRound + " dari 10";
+            }
+        }
+
+        let isScrolling = false;
+        let scrollInterval = null;
+        function toggleAutoScroll() {
+            isScrolling = !isScrolling;
+            const btn = document.getElementById("autoScrollBtn");
+            const container = document.querySelector(".stage-container");
+
+            if (isScrolling) {
+                btn.innerText = "⏸️ Pause Scroll";
+                btn.style.background = "#ff007f";
+                scrollInterval = setInterval(() => {
+                    if (container) container.scrollTop += 1;
+                }, 40);
+            } else {
+                btn.innerText = "▶️ Auto-Scroll";
+                btn.style.background = "#1a5cff";
+                if (scrollInterval) clearInterval(scrollInterval);
+            }
+        }
+
+        const KEYS = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+        let keyIdx = 0;
+        function transposeChord(delta) {
+            keyIdx = (keyIdx + delta + KEYS.length) % KEYS.length;
+            document.getElementById("currentKeyText").innerText = `Key: ${KEYS[keyIdx]}`;
+        }
+
+        function showMemberModal(name, gen, birth, jiko, blood, height, zodiac) {
+            document.getElementById("modalMemberName").innerText = name;
+            document.getElementById("modalMemberGen").innerText = gen;
+            document.getElementById("modalMemberBirth").innerText = birth;
+            document.getElementById("modalMemberJiko").innerText = `"${jiko}"`;
+            document.getElementById("modalMemberBlood").innerText = blood;
+            document.getElementById("modalMemberHeight").innerText = height;
+            document.getElementById("modalMemberZodiac").innerText = zodiac;
+            document.getElementById("memberDetailModal").style.display = "flex";
+        }
+
+        function closeMemberModal() {
+            document.getElementById("memberDetailModal").style.display = "none";
+        }
+
+        function filterMemberGrid() {
+            const query = document.getElementById("memberSearchInput").value.toLowerCase();
+            const cards = document.querySelectorAll("#memberCardsGrid .member-card");
+            cards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(query) ? "flex" : "none";
+            });
+        }
+
+        function filterFeedPlatform(platform, btnEl) {
+            document.querySelectorAll('#feedTab .pill-tab').forEach(b => b.classList.remove('active'));
+            btnEl.classList.add('active');
+
+            const feeds = document.querySelectorAll('#feedListContainer .feed-card');
+            feeds.forEach(f => {
+                if (platform === 'ALL' || f.getAttribute('data-platform') === platform) {
+                    f.style.display = 'block';
+                } else {
+                    f.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

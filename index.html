@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>galery alcsta48 - login</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', 'Segoe UI', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #000000;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; 
+            padding: 2vh 20px 20px 20px; 
+            gap: 10px; 
+            position: relative;
+            color: #fff;
+        }
+
+        .admin-contact {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            z-index: 50;
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .admin-contact:hover {
+            color: #ffffff;
+            border-color: #ffffff;
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .stars-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .stars-animation {
+            position: absolute;
+            top: -400px;
+            left: 0;
+            width: 100%;
+            height: calc(100% + 400px);
+            background-image: 
+                radial-gradient(1px 1px at 25px 40px, #ffffff, transparent),
+                radial-gradient(1.5px 1.5px at 75px 120px, #ffffff, transparent),
+                radial-gradient(1px 1px at 150px 60px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(2px 2px at 220px 300px, #ffffff, transparent),
+                radial-gradient(1px 1px at 310px 180px, rgba(255,255,255,0.9), transparent),
+                radial-gradient(1.5px 1.5px at 380px 20px, #ffffff, transparent);
+            background-size: 400px 400px;
+            animation: driftStars 25s linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes driftStars {
+            from { transform: translateY(0); }
+            to { transform: translateY(400px); }
+        }
+
+        .logo-center-wrapper {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 520px;
+            height: 250px;
+            margin-top: 5px;
+            transform: translateZ(0);
+            will-change: transform, opacity;
+            transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.2, 1), opacity 0.5s ease;
+        }
+
+        .logo-center-wrapper.zooming {
+            transform: scale(2.8) translateZ(0);
+            opacity: 0.95;
+        }
+
+        .logo-aura-glow {
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            pointer-events: none;
+            filter: blur(50px);
+            opacity: 0.7;
+            background: radial-gradient(circle, rgba(255, 119, 0, 0.6) 0%, rgba(0, 168, 255, 0.4) 50%, rgba(255, 182, 193, 0.5) 100%);
+            animation: pulseGlowTriple 7s ease-in-out infinite alternate;
+            will-change: opacity;
+            z-index: 10;
+        }
+
+        @keyframes pulseGlowTriple {
+            0% { opacity: 0.65; }
+            50% { opacity: 0.85; }
+            100% { opacity: 0.7; }
+        }
+
+        .logo-container {
+            position: relative;
+            z-index: 15;
+            text-align: center;
+            padding: 10px;
+            border-radius: 50%;
+        }
+
+        .logo-img {
+            max-width: 220px;
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 0 25px rgba(255, 255, 255, 0.4)); 
+        }
+
+        .saturn-ring-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 480px;
+            height: 220px;
+            transform: translate3d(-50%, -50%, 0);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .orbit-item {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 65px;
+            height: 65px;
+            margin-top: -32.5px;
+            margin-left: -32.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            border-radius: 50%;
+            pointer-events: auto;
+            will-change: transform;
+            animation: saturn3DOrbit 16s linear infinite;
+        }
+
+        .orbit-aura {
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
+            border-radius: 50%;
+            filter: blur(14px);
+            opacity: 0.85;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .orbit-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+            border-radius: 50%;
+        }
+
+        .orbit-passion { animation-delay: 0s; }
+        .orbit-passion .orbit-aura {
+            background: radial-gradient(circle, rgba(255, 119, 0, 0.95) 0%, rgba(255, 119, 0, 0.45) 50%, transparent 100%);
+        }
+
+        .orbit-dream { animation-delay: -5.33s; }
+        .orbit-dream .orbit-aura {
+            background: radial-gradient(circle, rgba(0, 168, 255, 0.95) 0%, rgba(0, 168, 255, 0.45) 50%, transparent 100%);
+        }
+
+        .orbit-love { animation-delay: -10.66s; }
+        .orbit-love .orbit-aura {
+            background: radial-gradient(circle, rgba(255, 182, 193, 0.95) 0%, rgba(255, 119, 169, 0.5) 50%, transparent 100%);
+        }
+
+        @keyframes saturn3DOrbit {
+            0% { transform: translate3d(220px, 0px, 0) scale(1.05); z-index: 18; }
+            25% { transform: translate3d(0px, 80px, 0) scale(1.22); z-index: 25; }
+            50% { transform: translate3d(-220px, 0px, 0) scale(1.05); z-index: 18; }
+            75% { transform: translate3d(0px, -80px, 0) scale(0.88); z-index: 8; }
+            100% { transform: translate3d(220px, 0px, 0) scale(1.05); z-index: 18; }
+        }
+
+        .white-sweep-curtain {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 0%;
+            height: 100%;
+            background: #ffffff;
+            box-shadow: -30px 0 50px rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            pointer-events: none;
+            transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: width;
+        }
+
+        .white-sweep-curtain.active {
+            width: 100%;
+        }
+
+        .auth-card-wrapper {
+            z-index: 30;
+            width: 100%;
+            max-width: 390px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 28px;
+            padding: 22px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: opacity 0.3s ease;
+        }
+
+        .auth-card-wrapper.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .login-tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 50px;
+            padding: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            gap: 4px;
+        }
+
+        .login-tab-btn {
+            flex: 1;
+            padding: 9px 12px;
+            border: none;
+            border-radius: 50px;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .login-tab-btn.active {
+            background: rgba(255, 255, 255, 0.95);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.25);
+        }
+
+        .auth-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .input-pill {
+            width: 100%;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 50px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .input-pill:focus {
+            outline: none;
+            border-color: #0088ff;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 136, 255, 0.4);
+        }
+
+        .input-pill::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            letter-spacing: 0.5px;
+        }
+
+        .forgot-password {
+            text-align: right;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            margin-top: -4px;
+            padding-right: 15px;
+            transition: color 0.2s;
+        }
+
+        .forgot-password:hover {
+            color: #ffffff;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #ffffff, #e0e0e0);
+            border: none;
+            color: #000000;
+            font-weight: 900;
+            font-size: 14px;
+            letter-spacing: 1px;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.15);
+        }
+
+        .btn-action:hover {
+            background: linear-gradient(135deg, #0088ff, #ff007f);
+            color: #ffffff;
+            box-shadow: 0 0 20px rgba(0, 136, 255, 0.5);
+        }
+
+        .otp-notice-box {
+            background: rgba(0, 168, 255, 0.15);
+            border: 1px solid rgba(0, 168, 255, 0.4);
+            border-radius: 16px;
+            padding: 12px;
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.4;
+            color: #e0f2fe;
+        }
+
+        .tele-open-btn {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 6px 14px;
+            background: #0088cc;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 12px;
+            border-radius: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .tele-open-btn:hover {
+            transform: scale(1.05);
+            background: #0099ee;
+        }
+
+        .countdown-timer {
+            font-size: 18px;
+            font-weight: 900;
+            color: #ff007f;
+            margin-top: 4px;
+        }
+
+        .switch-mode {
+            text-align: center;
+            margin-top: 4px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.65);
+            letter-spacing: 0.5px;
+        }
+
+        .switch-mode span {
+            color: #0088ff;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 800;
+            margin-left: 5px;
+        }
+        
+        .switch-mode span:hover {
+            color: #ff007f;
+        }
+
+        .loading-container {
+            z-index: 40;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            position: relative;
+        }
+
+        .loading-text {
+            color: rgba(255,255,255,0.85);
+            font-size: 12px;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-style: italic;
+            font-weight: 700;
+        }
+
+        .bar-outer {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 10px;
+            padding: 1px;
+            overflow: hidden;
+        }
+
+        .bar-inner {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(to right, #0088ff, #ff007f);
+            box-shadow: 0 0 10px #ff007f;
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media screen and (max-width: 500px) {
+            .saturn-ring-orbit {
+                width: 340px;
+                height: 170px;
+            }
+            @keyframes saturn3DOrbit {
+                0% { transform: translate3d(150px, 0px, 0) scale(1); z-index: 18; }
+                25% { transform: translate3d(0px, 60px, 0) scale(1.2); z-index: 25; }
+                50% { transform: translate3d(-150px, 0px, 0) scale(1); z-index: 18; }
+                75% { transform: translate3d(0px, -60px, 0) scale(0.88); z-index: 8; }
+                100% { transform: translate3d(150px, 0px, 0) scale(1); z-index: 18; }
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="https://t.me/asha_zeneca" target="_blank" class="admin-contact">Hubungi Admin</a>
+
+    <!-- TIRAI PUTIH SWEEP DARI KANAN KE KIRI -->
+    <div id="whiteSweepCurtain" class="white-sweep-curtain"></div>
+
+    <div class="stars-wrapper">
+        <div class="stars-animation"></div>
+    </div>
+
+    <div class="logo-center-wrapper" id="logoCenterWrapper">
+        <div class="logo-aura-glow"></div>
+
+        <div class="logo-container">
+            <img src="logo.png.png" alt="The Beyonce Logo" class="logo-img" onerror="this.onerror=null; this.src='logo.png';">
+        </div>
+
+        <div class="saturn-ring-orbit">
+            <div class="orbit-item orbit-passion" title="Passion">
+                <div class="orbit-aura"></div>
+                <img src="passion.png" alt="Passion" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%23ff7700\'/><text x=\'50%\' y=\'55%\' text-anchor=\'middle\' fill=\'white\' font-size=\'30\' font-weight=\'bold\'>🔥</text></svg>';">
+            </div>
+
+            <div class="orbit-item orbit-dream" title="Dream">
+                <div class="orbit-aura"></div>
+                <img src="dream.png" alt="Dream" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%2300a8ff\'/><text x=\'50%\' y=\'55%\' text-anchor=\'middle\' fill=\'white\' font-size=\'30\' font-weight=\'bold\'>✨</text></svg>';">
+            </div>
+
+            <div class="orbit-item orbit-love" title="Love">
+                <div class="orbit-aura"></div>
+                <img src="love.png" alt="Love" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><circle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%23ffb6c1\'/><text x=\'50%\' y=\'55%\' text-anchor=\'middle\' fill=\'white\' font-size=\'30\' font-weight=\'bold\'>💖</text></svg>';">
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-card-wrapper" id="authCard">
+        
+        <div class="login-tabs">
+            <button class="login-tab-btn active" id="tabTelegramBtn" onclick="switchLoginMethod('telegram')">
+                <span>✈️</span> Telegram / ID
+            </button>
+            <button class="login-tab-btn" id="tabGoogleBtn" onclick="switchLoginMethod('google')">
+                <span>🌐</span> Google Account
+            </button>
+        </div>
+
+        <div id="telegramAuthArea">
+            <!-- LOGIN SECTION -->
+            <div id="loginSection" class="auth-container">
+                <form id="loginForm" style="display: flex; flex-direction: column; gap: 10px;">
+                    <input type="text" id="loginId" class="input-pill" placeholder="ID TELEGRAM / USERNAME" required autocomplete="off">
+                    <input type="password" id="loginPass" class="input-pill" placeholder="PASSWORD" required>
+                    <div class="forgot-password" onclick="window.open('https://t.me/AntivilainCHtributebot', '_blank')">Lupa password?</div>
+                    <button type="submit" class="btn-action">MASUK</button>
+                </form>
+                <div class="switch-mode">Belum punya akun? <span onclick="toggleMode('register')">Register</span></div>
+            </div>
+
+            <!-- REGISTER SECTION (NO FULL NAME - ONLY ID & OPTIONAL USERNAME) -->
+            <div id="registerSection" class="auth-container hidden">
+                <form id="registerForm" style="display: flex; flex-direction: column; gap: 10px;">
+                    <input type="text" id="regId" class="input-pill" placeholder="ID TELEGRAM (ANGKA ATAU ID)" required autocomplete="off">
+                    <input type="text" id="regUsername" class="input-pill" placeholder="USERNAME TELEGRAM (OPSIONAL)" autocomplete="off">
+                    <input type="password" id="regPass" class="input-pill" placeholder="PASSWORD" required>
+                    <input type="password" id="regConfirmPass" class="input-pill" placeholder="VERIFIKASI PASSWORD" required>
+                    <button type="submit" class="btn-action">KIRIM KODE OTP & BUKA TELEGRAM</button>
+                </form>
+                <div class="switch-mode">Punya akun? <span onclick="toggleMode('login')">Login</span></div>
+            </div>
+
+            <!-- OTP INPUT SECTION -->
+            <div id="otpSection" class="auth-container hidden">
+                <div class="otp-notice-box">
+                    <div>Pesan otomatis <b>/verif</b> sedang dibuka di Bot <b>@pxxcazellbot</b>.</div>
+                    <a href="https://t.me/pxxcazellbot?text=%2Fverif" target="_blank" class="tele-open-btn">
+                        ✈️ Buka Bot @pxxcazellbot
+                    </a>
+                    <div class="countdown-timer" id="otpTimer">03:00</div>
+                    <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">Kirim <b>/verif</b> ke bot dan salin 6 digit OTP di bawah ini:</div>
+                </div>
+                <form id="otpForm" style="display: flex; flex-direction: column; gap: 10px;">
+                    <input type="text" id="otpCode" class="input-pill" placeholder="MASUKKAN 6 DIGIT OTP" required maxlength="6" autocomplete="off">
+                    <button type="submit" class="btn-action">VERIFIKASI & DAFTAR</button>
+                </form>
+                <div class="switch-mode"><span onclick="toggleMode('register')">⬅ Batal & Ulangi</span></div>
+            </div>
+        </div>
+
+        <div id="googleAuthArea" class="hidden">
+            <div class="auth-container" style="text-align: center; gap: 14px;">
+                <p style="font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.4;">
+                    Masuk secara instan menggunakan Akun Google Anda untuk mengakses <b>Kitty Tenacity</b>.
+                </p>
+
+                <div id="g_id_onload"
+                     data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                     data-callback="handleGoogleCredentialResponse">
+                </div>
+                <div class="g_id_signin" data-type="standard" data-size="large" data-theme="filled_blue" data-text="sign_in_with" data-shape="pill"></div>
+
+                <div style="font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 4px;">
+                    Tanpa perlu verifikasi OTP Telegram tambahan.
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="loadingArea" class="loading-container hidden">
+        <div id="loadingStatus" class="loading-text">Loading Resources...</div>
+        <div class="bar-outer">
+            <div id="loadingProgress" class="bar-inner"></div>
+        </div>
+    </div>
+
+    <script>
+        const PRIMARY_URL = (window.location.origin && window.location.origin.startsWith("http") && !window.location.origin.includes("file:")) 
+            ? window.location.origin 
+            : "https://shinezzzz-gokgokgogkgokgok.hf.space";
+        const FALLBACK_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+        const BACKEND_URL = PRIMARY_URL;
+        let pendingRegData = null;
+        let otpCountdownInterval = null;
+
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                let date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/;";
+            document.cookie = name + "=" + (value || "") + expires + "; path=/web-the-beyonce/;";
+            document.cookie = name + "=" + (value || "") + expires + "; path=/frontend/;";
+            localStorage.setItem(name, value || "");
+            sessionStorage.setItem(name, value || "");
+        }
+
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for(let i=0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return localStorage.getItem(name) || sessionStorage.getItem(name) || null;
+        }
+
+        function eraseCookie(name) {   
+            document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            document.cookie = name +'=; Path=/web-the-beyonce/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            document.cookie = name +'=; Path=/frontend/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            localStorage.removeItem(name);
+            sessionStorage.removeItem(name);
+        }
+
+        function switchLoginMethod(method) {
+            const tabTelegram = document.getElementById("tabTelegramBtn");
+            const tabGoogle = document.getElementById("tabGoogleBtn");
+            const telegramArea = document.getElementById("telegramAuthArea");
+            const googleArea = document.getElementById("googleAuthArea");
+
+            if (method === 'telegram') {
+                tabTelegram.classList.add("active");
+                tabGoogle.classList.remove("active");
+                telegramArea.classList.remove("hidden");
+                googleArea.classList.add("hidden");
+            } else {
+                tabGoogle.classList.add("active");
+                tabTelegram.classList.remove("active");
+                googleArea.classList.remove("hidden");
+                telegramArea.classList.add("hidden");
+            }
+        }
+
+        // 1. MANUAL LOGIN SUBMIT
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const id = document.getElementById("loginId").value;
+            const pass = document.getElementById("loginPass").value;
+
+            try {
+                let response;
+                try {
+                    response = await fetch(`${PRIMARY_URL}/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: id, password: pass }) 
+                    });
+                } catch(e1) {
+                    response = await fetch(`${FALLBACK_URL}/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: id, password: pass }) 
+                    });
+                }
+                const data = await response.json();
+
+                if (data.success) {
+                    setCookie("user_session", data.session_key, 7);
+                    triggerCinematicZoomTransition(() => {
+                        window.location.href = "beranda/";
+                    });
+                } else {
+                    alert("Sistem Menolak: " + (data.message || "Akun tidak ditemukan. Silakan Register!"));
+                }
+            } catch (error) {
+                alert("Gagal terhubung ke server backend!");
+            }
+        });
+
+        // 2. TAHAP 1 REGISTRASI INIT (NO FULL NAME - ONLY ID & OPTIONAL USERNAME)
+        document.getElementById("registerForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const id = document.getElementById("regId").value.trim();
+            const username = document.getElementById("regUsername").value.trim();
+            const pass = document.getElementById("regPass").value;
+            const confirmPass = document.getElementById("regConfirmPass").value;
+
+            if (pass !== confirmPass) {
+                alert("Verifikasi password tidak cocok!");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/register/init`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id, username: username, password: pass })
+                });
+                const data = await response.json();
+
+                if (response.ok && data.status === "success") {
+                    pendingRegData = { id: id, username: username, password: pass };
+                    toggleMode('otp');
+                    startOtpTimer(180);
+
+                    // Buka otomatis ke bot telegram dengan template /verif
+                    const teleUrl = `https://t.me/pxxcazellbot?text=%2Fverif`;
+                    window.open(teleUrl, "_blank");
+                } else {
+                    alert("Gagal Inisialisasi: " + (data.detail || data.message || "ID sudah terdaftar!"));
+                }
+            } catch (error) {
+                alert("Gagal mengirimkan inisialisasi pendaftaran!");
+            }
+        });
+
+        // 3. TAHAP 2 VERIFIKASI OTP TELEGRAM SUBMIT
+        document.getElementById("otpForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const otp = document.getElementById("otpCode").value.trim();
+            if (!pendingRegData) return;
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/register/verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        id: pendingRegData.id, 
+                        otp: otp 
+                    })
+                });
+                const data = await response.json();
+
+                if (response.ok && data.status === "success") {
+                    alert("Pendaftaran Berhasil! Silakan Login dengan ID dan Password Anda.");
+                    clearInterval(otpCountdownInterval);
+                    toggleMode('login');
+                    document.getElementById("loginId").value = pendingRegData.id;
+                } else {
+                    alert("Verifikasi Gagal: " + (data.detail || "Kode OTP tidak valid atau telah kadaluwarsa."));
+                }
+            } catch (error) {
+                alert("Terjadi kesalahan sistem saat memverifikasi OTP.");
+            }
+        });
+
+        function startOtpTimer(seconds) {
+            clearInterval(otpCountdownInterval);
+            const timerDisplay = document.getElementById("otpTimer");
+            let remaining = seconds;
+
+            otpCountdownInterval = setInterval(() => {
+                const mins = Math.floor(remaining / 60);
+                const secs = remaining % 60;
+                timerDisplay.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+                if (remaining <= 0) {
+                    clearInterval(otpCountdownInterval);
+                    alert("Waktu OTP habis (3 menit). Silakan ulangi pendaftaran.");
+                    toggleMode('register');
+                }
+                remaining--;
+            }, 1000);
+        }
+
+        // 4. GOOGLE OAUTH2 CREDENTIAL RESPONSE HANDLER
+        async function handleGoogleCredentialResponse(response) {
+            try {
+                const res = await fetch(`${BACKEND_URL}/api/auth/google`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ credential: response.credential })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    setCookie("user_session", data.session_key, 7);
+                    triggerCinematicZoomTransition(() => {
+                        window.location.href = "beranda/";
+                    });
+                } else {
+                    alert("Login Google Gagal: " + (data.detail || "Token Google tidak valid."));
+                }
+            } catch (err) {
+                alert("Gagal terhubung ke server autentikasi Google.");
+            }
+        }
+
+        // TRANSISI ZOOM 60 FPS ULTRA SMOOTH TANPA LAG
+        function triggerCinematicZoomTransition(callback) {
+            const logoWrapper = document.getElementById("logoCenterWrapper");
+            const curtain = document.getElementById("whiteSweepCurtain");
+            const authCard = document.getElementById("authCard");
+            const loadingArea = document.getElementById("loadingArea");
+
+            if (authCard) authCard.classList.add("fade-out");
+            if (loadingArea) loadingArea.classList.add("hidden");
+
+            logoWrapper.classList.add("zooming");
+
+            setTimeout(() => {
+                curtain.classList.add("active");
+            }, 120);
+
+            setTimeout(() => {
+                if (callback) callback();
+            }, 600);
+        }
+
+        // CHECK SESSION ANTI-BYPASS
+        document.addEventListener("DOMContentLoaded", async () => {
+            const session = getCookie("user_session");
+            if (session) {
+                document.getElementById("authCard").classList.add("hidden");
+                const loadingArea = document.getElementById("loadingArea");
+                const statusLabel = document.getElementById("loadingStatus");
+                loadingArea.classList.remove("hidden");
+                statusLabel.innerText = "Memvalidasi sesi login...";
+
+                try {
+                    const response = await fetch(`${BACKEND_URL}/check-session`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ session_key: session })
+                    });
+                    const data = await response.json();
+
+                    if (data.success || session.startsWith("GGL_")) {
+                        startLoadingAnimation("Menghubungkan ke data center...", () => {
+                            triggerCinematicZoomTransition(() => {
+                                window.location.href = "beranda/";
+                            });
+                        });
+                    } else {
+                        eraseCookie("user_session");
+                        loadingArea.classList.add("hidden");
+                        document.getElementById("authCard").classList.remove("hidden");
+                    }
+                } catch (error) {
+                    if (session.startsWith("GGL_")) {
+                        triggerCinematicZoomTransition(() => {
+                            window.location.href = "beranda/";
+                        });
+                    } else {
+                        eraseCookie("user_session");
+                        loadingArea.classList.add("hidden");
+                        document.getElementById("authCard").classList.remove("hidden");
+                    }
+                }
+            }
+        });
+
+        function toggleMode(mode) {
+            document.getElementById("loginSection").classList.add("hidden");
+            document.getElementById("registerSection").classList.add("hidden");
+            document.getElementById("otpSection").classList.add("hidden");
+
+            if (mode === 'register') {
+                document.getElementById("registerSection").classList.remove("hidden");
+            } else if (mode === 'otp') {
+                document.getElementById("otpSection").classList.remove("hidden");
+            } else {
+                document.getElementById("loginSection").classList.remove("hidden");
+            }
+        }
+
+        function startLoadingAnimation(statusText, callback) {
+            const loadingArea = document.getElementById("loadingArea");
+            const progressBar = document.getElementById("loadingProgress");
+            const statusLabel = document.getElementById("loadingStatus");
+
+            loadingArea.classList.remove("hidden");
+            statusLabel.innerText = statusText;
+
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    setTimeout(callback, 100);
+                } else {
+                    width += Math.floor(Math.random() * 15) + 5;
+                    if (width > 100) width = 100;
+                    progressBar.style.width = width + "%";
+                }
+            }, 40);
+        }
+    </script>
+</body>
+</html>

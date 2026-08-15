@@ -1,0 +1,774 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>galery alcsta48 - member sorter, song duel & tictactoe oshi</title>
+    <link rel="icon" type="image/png" href="../icon.png">
+    <script src="../config.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #030712;
+            color: #fff;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .video-bg {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; z-index: -2;
+            filter: brightness(0.45);
+            transform: translateZ(0);
+            will-change: transform;
+            contain: strict;
+        }
+
+        .corner-glows {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden; contain: strict;
+        }
+        .glow { position: absolute; width: 50vw; height: 50vw; max-width: 450px; max-height: 450px; border-radius: 50%; opacity: 0.2; pointer-events: none; }
+        .glow-tl { top: -10%; left: -10%; background: radial-gradient(circle, #ff007f 0%, transparent 70%); }
+        .glow-tr { top: -10%; right: -10%; background: radial-gradient(circle, #ffd700 0%, transparent 70%); }
+        .glow-bl { bottom: -10%; left: -10%; background: radial-gradient(circle, #0088ff 0%, transparent 70%); }
+        .glow-br { bottom: -10%; right: -10%; background: radial-gradient(circle, #9d4edd 0%, transparent 70%); opacity: 0.15; }
+
+        .left-sidebar {
+            width: 90px;
+            background: rgba(11, 17, 33, 0.85);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px 5px; gap: 12px; z-index: 100;
+            overflow-y: auto; flex-shrink: 0;
+            transform: translateZ(0); will-change: transform;
+            -webkit-overflow-scrolling: touch;
+            transition: transform 0.25s ease-out;
+        }
+        .left-sidebar::-webkit-scrollbar { display: none; }
+
+        .side-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-decoration: none; color: #fff; font-weight: 700; font-size: 10px;
+            background: rgba(255, 255, 255, 0.1); width: 70px; height: 60px; border-radius: 16px;
+            transition: transform 0.15s ease, background 0.15s ease; border: 1px solid rgba(255, 255, 255, 0.18); text-align: center;
+            gap: 4px; flex-shrink: 0; contain: content;
+        }
+        .side-item:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.03); }
+        .side-item.active { background: rgba(255, 255, 255, 0.9); color: #1a5cff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .side-icon { font-size: 20px; }
+
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6);
+            z-index: 90; opacity: 0; transition: opacity 0.25s ease;
+        }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        .main-content {
+            flex-grow: 1; display: flex; flex-direction: column;
+            position: relative; height: 100%; overflow: hidden; z-index: 10;
+        }
+
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 24px; z-index: 20; width: 100%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(11, 17, 33, 0.6);
+        }
+
+        .left-group { display: flex; align-items: center; gap: 12px; }
+        .sidebar-toggle-btn {
+            display: none; background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #fff; font-size: 18px; padding: 6px 12px;
+            border-radius: 12px; cursor: pointer; flex-shrink: 0;
+        }
+
+        .brand-logo {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            padding: 6px 16px; border-radius: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        .logo-main { height: 32px; width: auto; border-radius: 50%; }
+        .brand-text { font-weight: 800; font-size: 14px; color: #fff; }
+
+        .sub-nav-container {
+            display: flex; gap: 8px; padding: 12px 24px; overflow-x: auto;
+            -webkit-overflow-scrolling: touch; background: rgba(11, 17, 33, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            flex-shrink: 0;
+        }
+        .sub-nav-container::-webkit-scrollbar { display: none; }
+        .pill-tab {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #cbd5e1; padding: 7px 18px; border-radius: 20px;
+            font-weight: 700; font-size: 12px; cursor: pointer;
+            transition: all 0.2s ease; white-space: nowrap;
+        }
+        .pill-tab:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
+        .pill-tab.active { background: #fff; color: #1a5cff; border-color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.25); }
+
+        .stage-container {
+            flex-grow: 1; overflow-y: auto; padding: 16px 24px 40px 24px;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            will-change: scroll-position;
+        }
+        .stage-container::-webkit-scrollbar { width: 6px; }
+        .stage-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 4px; }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.82);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 22px; padding: 22px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+            max-width: 760px; margin: 0 auto; width: 100%;
+            word-break: break-word; overflow-wrap: break-word;
+        }
+        .card-title { font-size: 17px; font-weight: 800; color: #ffd700; display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-family: 'Cinzel', serif; }
+
+        /* DUEL CARDS STYLES (MEMBER & SONG SORTERS) */
+        .sorter-duel-box {
+            display: flex; gap: 16px; justify-content: center; align-items: center; margin: 20px 0; flex-wrap: wrap;
+        }
+        .duel-card {
+            flex: 1; min-width: 200px; max-width: 280px;
+            background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 18px; padding: 16px; text-align: center; cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .duel-card:hover {
+            transform: scale(1.04); border-color: #00d4ff; background: rgba(0,212,255,0.15);
+            box-shadow: 0 10px 25px rgba(0,212,255,0.3);
+        }
+        .duel-img {
+            width: 100%; height: 180px; object-fit: cover; border-radius: 12px; margin-bottom: 12px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .duel-title { font-size: 16px; font-weight: 900; color: #fff; }
+        .duel-sub { font-size: 12px; color: #ffd700; margin-top: 4px; }
+
+        /* TIC TAC TOE STYLES */
+        .ttt-grid {
+            display: grid; grid-template-columns: repeat(3, 80px); grid-gap: 8px;
+            margin: 20px auto; justify-content: center;
+        }
+        .ttt-cell {
+            width: 80px; height: 80px; background: rgba(0,0,0,0.5);
+            border: 2px solid rgba(255,255,255,0.25); border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; font-weight: 900; font-family: 'Rajdhani', sans-serif;
+            cursor: pointer; transition: 0.2s;
+        }
+        .ttt-cell:hover { background: rgba(255,255,255,0.15); border-color: #ffd700; }
+        .ttt-cell.x { color: #00d4ff; }
+        .ttt-cell.o { color: #ff007f; }
+
+        /* RESULT RANKING TABLE */
+        .ranking-table {
+            width: 100%; border-collapse: collapse; margin-top: 15px;
+        }
+        .ranking-table th, .ranking-table td {
+            padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px;
+        }
+        .ranking-table th { color: #ffd700; }
+
+        @media screen and (max-width: 768px) {
+            .left-sidebar {
+                position: fixed; top: 0; left: 0; height: 100%;
+                width: 180px; padding: 25px 10px; gap: 10px;
+                transform: translateX(-100%);
+            }
+            .left-sidebar.open { transform: translateX(0); }
+            .side-item { width: 100%; height: 44px; flex-direction: row; justify-content: flex-start; padding: 0 15px; font-size: 12px; border-radius: 12px; }
+            .sidebar-toggle-btn { display: block; }
+            .top-bar { padding: 10px 14px; }
+            .sub-nav-container { padding: 8px 14px; }
+            .stage-container { padding: 12px 14px 20px 14px; }
+            .sorter-duel-box { flex-direction: column; align-items: center; }
+            .duel-card { width: 100%; max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <video class="video-bg" autoplay loop muted playsinline>
+        <source src="../beranda/latarglobal.webm" type="video/webm">
+    </video>
+
+    <div class="corner-glows">
+        <div class="glow glow-tl"></div><div class="glow glow-tr"></div>
+        <div class="glow glow-bl"></div><div class="glow glow-br"></div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR 16 TAB -->
+            <aside class="left-sidebar" id="leftSidebar">
+        <a href="../beranda/" class="side-item"><span class="side-icon">💬</span>Beranda</a>
+        <a href="../profil/" class="side-item"><span class="side-icon">👤</span>Profil</a>
+        <a href="../gacha-skin/" class="side-item"><span class="side-icon">🎁</span>Gacha</a>
+        <a href="../live-jkt48/" class="side-item"><span class="side-icon">🎤</span>Live JKT</a>
+        <a href="../alcstify/" class="side-item"><span class="side-icon">🎵</span>Alcstify</a>
+        <a href="../mini-games/" class="side-item"><span class="side-icon">🎮</span>Mini Games</a>
+        <a href="../grup/" class="side-item"><span class="side-icon">👥</span>Grup</a>
+        <a href="../temen-mabar/" class="side-item"><span class="side-icon">⚔️</span>Mabar</a>
+        <a href="../medsos-saver/" class="side-item"><span class="side-icon">📥</span>Saver</a>
+        <a href="../koleksi-kartu/" class="side-item"><span class="side-icon">🃏</span>Kartu</a>
+        <a href="../bio-member/" class="side-item"><span class="side-icon">📖</span>Bio</a>
+        <a href="../link-shortcut/" class="side-item"><span class="side-icon">🔗</span>Shortcut</a>
+        <a href="../update-member/" class="side-item"><span class="side-icon">📱</span>Update Sosmed</a>
+        <a href="../tentang/" class="side-item"><span class="side-icon">ℹ️</span>Tentang</a>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="left-group">
+                <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
+                <div class="brand-logo">
+                    <img src="../logo.png.png" alt="Logo" class="logo-main" onerror="this.onerror=null; this.src='../logo.png';">
+                    <span class="brand-text">Alcsta Wota Mini Games & Sorter</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="sub-nav-container">
+            <button class="pill-tab active" onclick="switchTab('memberSorterTab', this)">👑 Member Sorter Duel</button>
+            <button class="pill-tab" onclick="switchTab('songSorterTab', this)">🎵 Song Sorter Duel</button>
+            <button class="pill-tab" onclick="switchTab('tictactoeTab', this)">❌ Tic Tac Toe Oshi</button>
+            <button class="pill-tab" onclick="switchTab('quizTab', this)">🧩 Kuis Jikoshoukai</button>
+        </div>
+
+        <div class="stage-container">
+            <!-- TAB 1: MEMBER SORTER DUEL (NATIVE DUEL ENGINE) -->
+            <div id="memberSorterTab" class="tab-content">
+                <div class="glass-card" style="text-align: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span class="card-title" style="margin-bottom: 0;">👑 JKT48 Member Sorter Duel Mandiri</span>
+                        <span style="font-size: 13px; color: #00ff88; font-weight: 800;" id="sorterProgress">Battle #1 • 0% Selesai</span>
+                    </div>
+                    <p style="font-size: 12px; color: rgba(255,255,255,0.7);">Pilih member yang lebih kamu sukai di setiap pertarungan untuk menyusun ranking oshi kamu!</p>
+
+                    <div class="sorter-duel-box" id="sorterDuelBox">
+                        <div class="duel-card" onclick="pickMember(0)">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="duel-img" id="cardImgA">
+                            <div class="duel-title" id="cardNameA">Angelina Christy</div>
+                            <div class="duel-sub" id="cardGenA">Generasi 7</div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <button class="pill-tab" style="padding: 6px 14px; font-size: 11px; background: rgba(255,255,255,0.15);" onclick="pickTie()">⚖️ Seri / Keduanya Suka</button>
+                            <button class="pill-tab" style="padding: 6px 14px; font-size: 11px; background: rgba(255,255,255,0.1);" onclick="undoPick()">↩️ Batalkan Pilihan</button>
+                        </div>
+
+                        <div class="duel-card" onclick="pickMember(1)">
+                            <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="duel-img" id="cardImgB">
+                            <div class="duel-title" id="cardNameB">Freya Jayawardana</div>
+                            <div class="duel-sub" id="cardGenB">Generasi 7</div>
+                        </div>
+                    </div>
+
+                    <!-- FINAL RESULT CONTAINER -->
+                    <div id="sorterResultBox" style="display: none; margin-top: 20px;">
+                        <h3 style="font-size: 20px; color: #ffd700; font-family: 'Cinzel', serif;">🎉 Hasil Ranking Oshi Kamu:</h3>
+                        <table class="ranking-table">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Nama Member</th>
+                                    <th>Generasi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rankingTableBody"></tbody>
+                        </table>
+                        <button class="pill-tab" style="margin-top: 15px; background: #1a5cff;" onclick="restartMemberSorter()">🔄 Main Ulang Sorter</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: SONG SORTER DUEL (NATIVE SONG DUEL ENGINE) -->
+            <div id="songSorterTab" class="tab-content" style="display: none;">
+                <div class="glass-card" style="text-align: center;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span class="card-title" style="margin-bottom: 0;">🎵 JKT48 Song Sorter Duel Mandiri</span>
+                        <span style="font-size: 13px; color: #00d4ff; font-weight: 800;" id="songProgress">Battle #1 • 0% Selesai</span>
+                    </div>
+                    <p style="font-size: 12px; color: rgba(255,255,255,0.7);">Adu dua lagu JKT48 dan tentukan lagu yang paling sering kamu dengarkan!</p>
+
+                    <div class="sorter-duel-box" id="songDuelBox">
+                        <div class="duel-card" onclick="pickSong(0)">
+                            <div style="font-size: 38px; margin: 15px 0;">💿</div>
+                            <div class="duel-title" id="songTitleA">Heavy Rotation</div>
+                            <div class="duel-sub">Single 1</div>
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <button class="pill-tab" style="padding: 6px 14px; font-size: 11px; background: rgba(255,255,255,0.15);" onclick="pickSongTie()">⚖️ Seri</button>
+                        </div>
+
+                        <div class="duel-card" onclick="pickSong(1)">
+                            <div style="font-size: 38px; margin: 15px 0;">💿</div>
+                            <div class="duel-title" id="songTitleB">Fortune Cookie yang Mencinta</div>
+                            <div class="duel-sub">Single 3</div>
+                        </div>
+                    </div>
+
+                    <div id="songResultBox" style="display: none; margin-top: 20px;">
+                        <h3 style="font-size: 20px; color: #ffd700; font-family: 'Cinzel', serif;">🏆 Top 10 Lagu JKT48 Favoritmu:</h3>
+                        <table class="ranking-table">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Judul Lagu</th>
+                                </tr>
+                            </thead>
+                            <tbody id="songRankingBody"></tbody>
+                        </table>
+                        <button class="pill-tab" style="margin-top: 15px; background: #1a5cff;" onclick="restartSongSorter()">🔄 Main Ulang Duel Lagu</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: TIC TAC TOE OSHI (NATIVE AI MINI GAME) -->
+            <div id="tictactoeTab" class="tab-content" style="display: none;">
+                <div class="glass-card" style="text-align: center; max-width: 480px;">
+                    <span class="card-title" style="justify-content: center;">❌ Tic Tac Toe Oshi (Wota vs Freya/Lia AI)</span>
+                    <p style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 12px;">Tantang kepintaran bot oshi dalam permainan strategi 3x3 klasik!</p>
+
+                    <div style="margin-bottom: 12px;">
+                        <label style="font-size: 11px; font-weight: 800;">Lawan Bot Oshi:</label>
+                        <select id="tttOpponent" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: #fff; padding: 4px 10px; font-size: 12px;">
+                            <option value="Freya">Freya Jayawardana (Bot O)</option>
+                            <option value="Lia">Aurellia / Lia (Bot O)</option>
+                            <option value="Christy">Angelina Christy (Bot O)</option>
+                        </select>
+                    </div>
+
+                    <div style="font-size: 14px; font-weight: 800; color: #00ff88;" id="tttStatus">Giliran Kamu (X) - Klik kotak untuk melangkah!</div>
+
+                    <div class="ttt-grid">
+                        <div class="ttt-cell" onclick="handleCellClick(0)"></div>
+                        <div class="ttt-cell" onclick="handleCellClick(1)"></div>
+                        <div class="ttt-cell" onclick="handleCellClick(2)"></div>
+                        <div class="ttt-cell" onclick="handleCellClick(3)"></div>
+                        <div class="ttt-cell" onclick="handleCellClick(4)"></div>
+                        <div class="ttt-cell" onclick="handleCellClick(5)"></div>
+                        <div class="ttt-cell" onclick="handleCellClick(6)"></div>
+                        <div class="ttt-cell" onclick="handleCellClick(7)"></div>
+                        <div class="ttt-cell" onclick="handleCellClick(8)"></div>
+                    </div>
+
+                    <button class="pill-tab" style="background: rgba(255,255,255,0.15);" onclick="resetTicTacToe()">🔄 Reset Papan Permainan</button>
+                </div>
+            </div>
+
+            <!-- TAB 4: JIKOSHOUKAI QUIZ -->
+            <div id="quizTab" class="tab-content" style="display: none;">
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span class="card-title" style="margin-bottom: 0;">🧩 Tebak Jikoshoukai Member JKT48</span>
+                        <div style="display: flex; gap: 10px; font-weight: 800; font-size: 13px;">
+                            <span style="color: #ffd700;" id="quizScoreText">Skor: 0</span>
+                            <span style="color: #00ff88;" id="quizStreakText">Streak: 0🔥</span>
+                        </div>
+                    </div>
+                    
+                    <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 8px;" id="quizQuestionCount">Soal #1 dari 10</div>
+                    
+                    <div style="background: rgba(0,0,0,0.5); border-radius: 16px; padding: 18px; border: 1px solid rgba(255,255,255,0.2); font-size: 15px; font-weight: 800; color: #fff; text-align: center; margin-bottom: 16px; line-height: 1.5;" id="questionBox">
+                        "Peduli dan berbaik hati, siapakah dia? Halo semuanya aku..."
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;" id="optionsContainer"></div>
+
+                    <div style="margin-top: 15px; text-align: center;">
+                        <button class="pill-tab" style="background: rgba(255,255,255,0.15);" onclick="nextQuestion()">Lewati / Soal Berikutnya ➡️</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById("leftSidebar").classList.toggle("open");
+            document.getElementById("sidebarOverlay").classList.toggle("active");
+        }
+
+        function switchTab(tabId, btnEl) {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.pill-tab').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).style.display = 'block';
+            btnEl.classList.add('active');
+        }
+
+        // =======================================================
+        // 1. MEMBER SORTER ENGINE (PORTED FROM REBORNIAN & ADITYAIWD)
+        // =======================================================
+        const MEMBER_POOL = [
+            { name: "Angelina Christy", gen: "Generasi 7", img: "https://i.ibb.co.com/Y4JdtfGH/download.png" },
+            { name: "Freya Jayawardana", gen: "Generasi 7", img: "https://i.ibb.co.com/Y4JdtfGH/download.png" },
+            { name: "Marsha Lenathea", gen: "Generasi 9", img: "https://i.ibb.co.com/Y4JdtfGH/download.png" },
+            { name: "Shania Gracia", gen: "Generasi 3", img: "https://i.ibb.co.com/Y4JdtfGH/download.png" },
+            { name: "Feni Fitriyanti", gen: "Generasi 3", img: "https://i.ibb.co.com/Y4JdtfGH/download.png" },
+            { name: "Fiony Alveria", gen: "Generasi 8", img: "https://i.ibb.co.com/Y4JdtfGH/download.png" },
+            { name: "Gita Sekar", gen: "Generasi 6", img: "https://i.ibb.co.com/Y4JdtfGH/download.png" },
+            { name: "Lulu Salsabila", gen: "Generasi 8", img: "https://i.ibb.co.com/Y4JdtfGH/download.png" },
+            { name: "Indira Seruni", gen: "Generasi 10", img: "https://i.ibb.co.com/Y4JdtfGH/download.png" },
+            { name: "Flora Shafiq", gen: "Generasi 8", img: "https://i.ibb.co.com/Y4JdtfGH/download.png" }
+        ];
+
+        let memberScores = {};
+        let sorterPairs = [];
+        let currentPairIndex = 0;
+        let historyStack = [];
+
+        function initMemberSorter() {
+            memberScores = {};
+            MEMBER_POOL.forEach(m => memberScores[m.name] = 0);
+            
+            sorterPairs = [];
+            for (let i = 0; i < MEMBER_POOL.length; i++) {
+                for (let j = i + 1; j < MEMBER_POOL.length; j++) {
+                    sorterPairs.push([MEMBER_POOL[i], MEMBER_POOL[j]]);
+                }
+            }
+            // Shuffle
+            sorterPairs.sort(() => Math.random() - 0.5);
+            currentPairIndex = 0;
+            historyStack = [];
+            loadCurrentPair();
+        }
+
+        function loadCurrentPair() {
+            if (currentPairIndex >= sorterPairs.length) {
+                showSorterResults();
+                return;
+            }
+
+            const pair = sorterPairs[currentPairIndex];
+            document.getElementById("cardNameA").innerText = pair[0].name;
+            document.getElementById("cardGenA").innerText = pair[0].gen;
+            document.getElementById("cardImgA").src = pair[0].img;
+
+            document.getElementById("cardNameB").innerText = pair[1].name;
+            document.getElementById("cardGenB").innerText = pair[1].gen;
+            document.getElementById("cardImgB").src = pair[1].img;
+
+            const percent = Math.round((currentPairIndex / sorterPairs.length) * 100);
+            document.getElementById("sorterProgress").innerText = `Battle #${currentPairIndex + 1}/${sorterPairs.length} • ${percent}% Selesai`;
+        }
+
+        function pickMember(choice) {
+            const pair = sorterPairs[currentPairIndex];
+            const winner = pair[choice];
+            memberScores[winner.name] += 1;
+            historyStack.push({ index: currentPairIndex, winner: winner.name });
+            currentPairIndex++;
+            loadCurrentPair();
+        }
+
+        function pickTie() {
+            const pair = sorterPairs[currentPairIndex];
+            memberScores[pair[0].name] += 0.5;
+            memberScores[pair[1].name] += 0.5;
+            historyStack.push({ index: currentPairIndex, winner: "TIE" });
+            currentPairIndex++;
+            loadCurrentPair();
+        }
+
+        function undoPick() {
+            if (historyStack.length === 0) return;
+            const last = historyStack.pop();
+            currentPairIndex = last.index;
+            if (last.winner !== "TIE") {
+                memberScores[last.winner] -= 1;
+            } else {
+                const pair = sorterPairs[currentPairIndex];
+                memberScores[pair[0].name] -= 0.5;
+                memberScores[pair[1].name] -= 0.5;
+            }
+            loadCurrentPair();
+        }
+
+        function showSorterResults() {
+            document.getElementById("sorterDuelBox").style.display = "none";
+            document.getElementById("sorterResultBox").style.display = "block";
+
+            const sorted = Object.entries(memberScores).sort((a, b) => b[1] - a[1]);
+            const tbody = document.getElementById("rankingTableBody");
+            tbody.innerHTML = "";
+
+            sorted.forEach((item, idx) => {
+                const memberObj = MEMBER_POOL.find(m => m.name === item[0]);
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><b style="color:#ffd700;">#${idx + 1}</b></td>
+                    <td><b>${item[0]}</b></td>
+                    <td><span style="color:#00d4ff;">${memberObj ? memberObj.gen : ''}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function restartMemberSorter() {
+            document.getElementById("sorterDuelBox").style.display = "flex";
+            document.getElementById("sorterResultBox").style.display = "none";
+            initMemberSorter();
+        }
+
+        // =======================================================
+        // 2. SONG SORTER ENGINE (PORTED FROM REBORNIAN SONG SORTER)
+        // =======================================================
+        const SONG_POOL = [
+            "Heavy Rotation", "Fortune Cookie yang Mencinta", "Cara Meminum Ramune", 
+            "Rapsodi", "Pesawat Kertas 365 Hari", "Seventeen", "Only Today", "Kizashi"
+        ];
+        let songScores = {};
+        let songPairs = [];
+        let currentSongIndex = 0;
+
+        function initSongSorter() {
+            songScores = {};
+            SONG_POOL.forEach(s => songScores[s] = 0);
+            songPairs = [];
+            for (let i = 0; i < SONG_POOL.length; i++) {
+                for (let j = i + 1; j < SONG_POOL.length; j++) {
+                    songPairs.push([SONG_POOL[i], SONG_POOL[j]]);
+                }
+            }
+            songPairs.sort(() => Math.random() - 0.5);
+            currentSongIndex = 0;
+            loadSongPair();
+        }
+
+        function loadSongPair() {
+            if (currentSongIndex >= songPairs.length) {
+                showSongResults();
+                return;
+            }
+            const pair = songPairs[currentSongIndex];
+            document.getElementById("songTitleA").innerText = pair[0];
+            document.getElementById("songTitleB").innerText = pair[1];
+            const percent = Math.round((currentSongIndex / songPairs.length) * 100);
+            document.getElementById("songProgress").innerText = `Battle #${currentSongIndex + 1}/${songPairs.length} • ${percent}% Selesai`;
+        }
+
+        function pickSong(idx) {
+            const pair = songPairs[currentSongIndex];
+            songScores[pair[idx]] += 1;
+            currentSongIndex++;
+            loadSongPair();
+        }
+
+        function pickSongTie() {
+            const pair = songPairs[currentSongIndex];
+            songScores[pair[0]] += 0.5;
+            songScores[pair[1]] += 0.5;
+            currentSongIndex++;
+            loadSongPair();
+        }
+
+        function showSongResults() {
+            document.getElementById("songDuelBox").style.display = "none";
+            document.getElementById("songResultBox").style.display = "block";
+            const sorted = Object.entries(songScores).sort((a, b) => b[1] - a[1]);
+            const tbody = document.getElementById("songRankingBody");
+            tbody.innerHTML = "";
+            sorted.forEach((item, idx) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td><b style="color:#ffd700;">#${idx + 1}</b></td><td><b>${item[0]}</b></td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function restartSongSorter() {
+            document.getElementById("songDuelBox").style.display = "flex";
+            document.getElementById("songResultBox").style.display = "none";
+            initSongSorter();
+        }
+
+        // =======================================================
+        // 3. TIC TAC TOE AI GAME (PORTED FROM JKT48LIVE TICTACTOE)
+        // =======================================================
+        let tttBoard = ["", "", "", "", "", "", "", "", ""];
+        let tttGameOver = false;
+
+        function handleCellClick(index) {
+            if (tttBoard[index] !== "" || tttGameOver) return;
+            
+            // Player move (X)
+            tttBoard[index] = "X";
+            updateTTTUI();
+
+            if (checkTTTWinner("X")) {
+                document.getElementById("tttStatus").innerText = "🎉 SELAMAT! Kamu Menang Lawan Oshi!";
+                document.getElementById("tttStatus").style.color = "#00ff88";
+                tttGameOver = true;
+                return;
+            }
+
+            if (tttBoard.every(c => c !== "")) {
+                document.getElementById("tttStatus").innerText = "🤝 Permainan Seri!";
+                document.getElementById("tttStatus").style.color = "#ffd700";
+                tttGameOver = true;
+                return;
+            }
+
+            // AI Move (O)
+            document.getElementById("tttStatus").innerText = "Oshi sedang berpikir...";
+            setTimeout(botMove, 400);
+        }
+
+        function botMove() {
+            if (tttGameOver) return;
+            // Simple smart AI: pick empty cell
+            const emptyIndices = tttBoard.map((val, idx) => val === "" ? idx : null).filter(val => val !== null);
+            if (emptyIndices.length > 0) {
+                const botPick = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+                tttBoard[botPick] = "O";
+                updateTTTUI();
+
+                if (checkTTTWinner("O")) {
+                    const oshiName = document.getElementById("tttOpponent").value;
+                    document.getElementById("tttStatus").innerText = `💔 ${oshiName} Menang! Semangat coba lagi!`;
+                    document.getElementById("tttStatus").style.color = "#ff007f";
+                    tttGameOver = true;
+                    return;
+                }
+
+                if (tttBoard.every(c => c !== "")) {
+                    document.getElementById("tttStatus").innerText = "🤝 Permainan Seri!";
+                    document.getElementById("tttStatus").style.color = "#ffd700";
+                    tttGameOver = true;
+                    return;
+                }
+
+                document.getElementById("tttStatus").innerText = "Giliran Kamu (X)";
+                document.getElementById("tttStatus").style.color = "#00ff88";
+            }
+        }
+
+        function updateTTTUI() {
+            const cells = document.querySelectorAll('.ttt-cell');
+            cells.forEach((cell, idx) => {
+                cell.innerText = tttBoard[idx];
+                cell.className = "ttt-cell " + (tttBoard[idx] ? tttBoard[idx].toLowerCase() : "");
+            });
+        }
+
+        function checkTTTWinner(player) {
+            const wins = [
+                [0,1,2],[3,4,5],[6,7,8], // Rows
+                [0,3,6],[1,4,7],[2,5,8], // Cols
+                [0,4,8],[2,4,6]          // Diagonals
+            ];
+            return wins.some(w => w.every(idx => tttBoard[idx] === player));
+        }
+
+        function resetTicTacToe() {
+            tttBoard = ["", "", "", "", "", "", "", "", ""];
+            tttGameOver = false;
+            document.getElementById("tttStatus").innerText = "Giliran Kamu (X) - Klik kotak untuk melangkah!";
+            document.getElementById("tttStatus").style.color = "#00ff88";
+            updateTTTUI();
+        }
+
+        // =======================================================
+        // 4. JIKOSHOUKAI QUIZ
+        // =======================================================
+        const QUIZ_DATA = [
+            {
+                q: '"Peduli dan berbaik hati, siapakah dia? Halo semuanya aku..."',
+                correct: "Angelina Christy",
+                options: ["Angelina Christy", "Freya Jayawardana", "Marsha Lenathea", "Shani Indira"]
+            },
+            {
+                q: '"Gadis koleris yang suka berimajinasi, terangi harimu dengan senyuman karamelku. Halo, aku..."',
+                correct: "Freya Jayawardana",
+                options: ["Freya Jayawardana", "Angelina Christy", "Gita Sekar", "Fiony Alveria"]
+            },
+            {
+                q: '"Seperti pizza yang selalu dinanti-nantikan semua orang, selalu nantikan aku ya? Halo, aku..."',
+                correct: "Marsha Lenathea",
+                options: ["Marsha Lenathea", "Kathrina Irene", "Lulu Salsabila", "Muthe"]
+            },
+            {
+                q: '"Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku..."',
+                correct: "Shania Gracia",
+                options: ["Shania Gracia", "Shani Indira", "Feni Fitriyanti", "Aurellia"]
+            }
+        ];
+
+        let currentQIndex = 0;
+        let score = 0;
+        let streak = 0;
+
+        function loadQuestion() {
+            const q = QUIZ_DATA[currentQIndex];
+            document.getElementById("quizQuestionCount").innerText = `Soal #${currentQIndex + 1} dari ${QUIZ_DATA.length}`;
+            document.getElementById("questionBox").innerText = q.q;
+
+            const container = document.getElementById("optionsContainer");
+            container.innerHTML = "";
+
+            const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+            shuffled.forEach(opt => {
+                const btn = document.createElement("button");
+                btn.className = "pill-tab";
+                btn.style.padding = "14px";
+                btn.style.fontSize = "13px";
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt, q.correct);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected, correct) {
+            if (selected === correct) {
+                score += 100;
+                streak += 1;
+                alert(`🎉 TEPAT SEKALI! Jawaban: ${correct}`);
+            } else {
+                streak = 0;
+                alert(`❌ Kurang tepat! Jawaban yang benar: ${correct}`);
+            }
+
+            document.getElementById("quizScoreText").innerText = `Skor: ${score}`;
+            document.getElementById("quizStreakText").innerText = `Streak: ${streak}🔥`;
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            currentQIndex = (currentQIndex + 1) % QUIZ_DATA.length;
+            loadQuestion();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initMemberSorter();
+            initSongSorter();
+            loadQuestion();
+        });
+    </script>
+</body>
+</html>

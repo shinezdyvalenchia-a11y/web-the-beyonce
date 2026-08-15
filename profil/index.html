@@ -1,0 +1,2090 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>galery alcsta48 - profil</title>
+    <link rel="icon" type="image/png" href="../icon.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #060b17;
+            color: #fff;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 1. BACKGROUND & GAME AMBIENT LIGHTING */
+        .video-bg {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; z-index: -3;
+        }
+        .bg-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 40% 30%, rgba(45, 27, 105, 0.3) 0%, rgba(6, 11, 23, 0.85) 60%, #060b17 100%);
+            z-index: -2;
+        }
+        .ambient-dust-glow {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 75% 45%, rgba(0, 212, 255, 0.18) 0%, transparent 65%);
+            pointer-events: none; z-index: -1;
+        }
+
+        /* 2. SIDEBAR KIRI (TASKBAR GAME HUD) */
+        .left-sidebar {
+            width: 95px;
+            background: rgba(6, 11, 23, 0.96);
+            border-right: 1px solid rgba(255, 255, 255, 0.10);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 18px 6px; gap: 8px; z-index: 100;
+            overflow-y: auto; flex-shrink: 0;
+            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.2, 1);
+        }
+        .left-sidebar::-webkit-scrollbar { display: none; }
+
+        .side-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-decoration: none; color: #cbd5e1; font-weight: 800; font-size: 10px;
+            background: rgba(255, 255, 255, 0.06); width: 80px; height: 54px; border-radius: 14px;
+            transition: all 0.25s ease; border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center; gap: 2px; cursor: pointer; flex-shrink: 0;
+        }
+        .side-item:hover { background: rgba(255, 255, 255, 0.18); transform: translateY(-2px); color: #fff; }
+        .side-item.active {
+            background: linear-gradient(135deg, #1a5cff, #00d4ff);
+            color: #fff; box-shadow: 0 4px 18px rgba(0, 150, 255, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        .side-icon { font-size: 17px; }
+
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.7);
+            z-index: 90; opacity: 0; transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        /* 3. MAIN CONTENT CONTAINER */
+        .main-content {
+            flex-grow: 1; display: flex; flex-direction: column;
+            position: relative; height: 100%; overflow: hidden; z-index: 10;
+        }
+
+        .top-navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 24px; z-index: 20; width: 100%;
+            background: rgba(6, 11, 23, 0.94);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .top-left { display: flex; align-items: center; gap: 12px; }
+        .top-right { display: flex; align-items: center; gap: 10px; }
+
+        .toggle-btn-mobile {
+            display: none; background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3); color: #fff;
+            padding: 6px 12px; border-radius: 10px; cursor: pointer;
+        }
+
+        .brand-badge {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 15px; font-weight: 900; color: #ffd700;
+            text-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+            font-family: 'Cinzel', serif;
+        }
+        .nav-back-btn {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 6px 14px; border-radius: 18px;
+            color: #fff; font-size: 11px; font-weight: 800;
+            text-decoration: none; transition: 0.2s;
+        }
+        .nav-back-btn:hover { background: rgba(255, 255, 255, 0.25); }
+
+        /* VIEW CONTAINER — profile tab tidak scroll, lainnya scroll */
+        .tab-viewport {
+            flex-grow: 1; overflow-y: auto; padding: 0;
+            position: relative; height: 100%;
+        }
+        .tab-viewport::-webkit-scrollbar { width: 5px; }
+        .tab-viewport::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        /* Profile tab: no padding, full height, no scroll (standee butuh full height) */
+        #profileTab { padding: 0; overflow: hidden; }
+        /* Tab lain: normal padding + scroll */
+        #skinTab, #historyTab, #statsTab, #affinityTab, #settingsTab { padding: 18px 24px; }
+
+        .tab-pane { display: none; height: 100%; }
+        .tab-pane.active { display: block; animation: fadeIn 0.25s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* =========================================================
+           PROFILE STAGE: Flex row, HUD kiri + Standee kanan
+           ========================================================= */
+        .profile-moba-stage {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* HUD KIRI: 60% lebar, fade transparan di tepi kanan — blend ke standee */
+        .profile-moba-hud {
+            flex: 0 0 60%;
+            position: relative;
+            background: linear-gradient(
+                90deg,
+                rgba(6, 11, 23, 0.98) 0%,
+                rgba(8, 14, 30, 0.95) 55%,
+                rgba(8, 14, 30, 0.65) 80%,
+                rgba(8, 14, 30, 0.08) 95%,
+                transparent 100%
+            );
+            border-top: 1px solid rgba(255, 255, 255, 0.10);
+            border-left: 1px solid rgba(255, 255, 255, 0.10);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            border-right: none;
+            border-radius: 0;
+            padding: 20px 60px 20px 24px;
+            display: flex; flex-direction: column; gap: 14px;
+            z-index: 5; overflow-y: auto; overflow-x: hidden;
+        }
+        .profile-moba-hud::-webkit-scrollbar { width: 4px; }
+        .profile-moba-hud::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+        .profile-moba-hud::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, #ffd700, #00d4ff, transparent);
+        }
+
+        /* HEADER ROW (AVATAR, NAMA, OSHI, TRIO COUNTERS) */
+        .wota-user-header {
+            display: flex; gap: 18px; align-items: center; width: 100%;
+        }
+        .wota-avatar-box {
+            position: relative; width: 78px; height: 78px; flex-shrink: 0; cursor: pointer;
+            border-radius: 20px; padding: 2px;
+            background: linear-gradient(135deg, #ffd700, #ff007f);
+            box-shadow: 0 6px 20px rgba(255, 170, 0, 0.45);
+            transition: transform 0.2s;
+        }
+        .wota-avatar-box:hover { transform: scale(1.06); }
+        .wota-avatar-img {
+            width: 100%; height: 100%; border-radius: 18px;
+            object-fit: cover; background: #111;
+        }
+        .wota-cam-badge {
+            position: absolute; bottom: -4px; right: -4px;
+            background: linear-gradient(135deg, #ff7700, #ff007f);
+            width: 24px; height: 24px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; border: 2px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        }
+
+        .wota-user-meta {
+            display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0;
+        }
+        .wota-display-name {
+            font-size: 22px; font-weight: 900; color: #fff;
+            display: flex; align-items: center; gap: 8px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .wota-username-tag {
+            font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 700;
+        }
+        
+        /* OSHI PILL BESAR DI BAWAH NAMA */
+        .wota-oshi-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: linear-gradient(135deg, rgba(255, 0, 127, 0.25), rgba(255, 119, 0, 0.25));
+            border: 1px solid rgba(255, 0, 127, 0.6);
+            padding: 4px 12px; border-radius: 12px;
+            font-size: 12px; font-weight: 900; color: #ff80bf;
+            width: fit-content; margin-top: 2px;
+            box-shadow: 0 2px 10px rgba(255, 0, 127, 0.2);
+        }
+        .wota-oshi-badge b { color: #fff; }
+
+        /* COUNTERS (POPULARITAS, KUNJUNGAN, SUKA) */
+        .wota-counter-strip {
+            display: flex; gap: 14px; margin-left: auto; flex-shrink: 0;
+        }
+        .wota-stat-box {
+            display: flex; flex-direction: column; align-items: center;
+            font-size: 11px; font-weight: 900; color: #cbd5e1; gap: 2px;
+            background: rgba(0, 0, 0, 0.4); padding: 8px 12px; border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .wota-stat-box span.val { font-size: 15px; font-family: 'Rajdhani', sans-serif; color: #ffd700; font-weight: 900; }
+
+        /* 3 MEDAL UTAMA WOTA: TIM (KIRI) | ROLE (TENGAH) | GENERASI (KANAN) */
+        .wota-medals-row {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+            margin: 4px 0; width: 100%;
+        }
+        .wota-medal-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 18px; padding: 12px 8px;
+            display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px;
+            position: relative; overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .wota-medal-card:hover { transform: translateY(-3px); border-color: #ffd700; }
+        
+        .wota-emblem-badge {
+            width: 52px; height: 52px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; position: relative;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            transition: transform 0.3s;
+        }
+        .wota-emblem-badge:hover { transform: scale(1.1); }
+
+        .emblem-team { background: radial-gradient(circle, #ff0055 0%, #660022 100%); border: 2px solid #ff4d88; }
+        .emblem-role { background: radial-gradient(circle, #ffaa00 0%, #7a3e00 100%); border: 2px solid #ffd700; }
+        .emblem-gen { background: radial-gradient(circle, #00d4ff 0%, #004488 100%); border: 2px solid #00f0ff; }
+
+        .wota-medal-category { font-size: 10px; font-weight: 900; color: rgba(255,255,255,0.6); text-transform: uppercase; }
+        .wota-medal-title { font-size: 13px; font-weight: 900; color: #ffd700; font-family: 'Cinzel', serif; }
+        .wota-medal-sub { font-size: 10px; color: rgba(255,255,255,0.8); font-weight: 700; }
+
+        /* RANK BADGES STRIP */
+        .wota-rank-row {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+            width: 100%; text-align: center;
+        }
+        .wota-rank-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px; padding: 10px 6px;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+        }
+        .wota-rank-img {
+            width: 44px; height: 44px; object-fit: contain;
+            filter: drop-shadow(0 4px 10px rgba(255, 170, 0, 0.4));
+        }
+        .wota-rank-lbl { font-size: 10px; font-weight: 900; color: #ffd700; text-transform: uppercase; }
+        .wota-rank-val { font-size: 11px; font-weight: 900; color: #fff; }
+
+        /* QUICK ACTION BUTTONS BAR */
+        .wota-quick-bar {
+            display: flex; gap: 10px; justify-content: flex-end; width: 100%; margin-top: auto;
+        }
+        .wota-btn-pill {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25);
+            padding: 8px 16px; border-radius: 14px; font-size: 11px; font-weight: 800; color: #fff;
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px;
+        }
+        .wota-btn-pill:hover { background: linear-gradient(135deg, #1a5cff, #00d4ff); border-color: transparent; transform: translateY(-2px); }
+
+        /* =========================================================
+           STANDEE KANAN: flex-grow mengisi sisa layar, media cover penuh
+           ========================================================= */
+        .moba-standee-hero-holder {
+            flex: 1;                    /* mengisi sisa lebar */
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        /* FADE KIRI: blend dari HUD ke standee — warna solid lalu transparan */
+        .moba-standee-hero-holder::before {
+            content: "";
+            position: absolute; top: 0; left: 0; bottom: 0;
+            width: 50%;
+            background: linear-gradient(
+                to right,
+                rgba(6, 11, 23, 0.90) 0%,
+                rgba(6, 11, 23, 0.50) 40%,
+                transparent 100%
+            );
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        /* MEDIA: cover seluruh area standee */
+        .standee-media-element {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+        #standeeVideo {
+            object-fit: cover !important;
+            transform: scale(0.96) translateY(20px);
+        }
+
+        /* GRADIENT BOTTOM: fade bawah untuk kedalaman */
+        .standee-media-element + .standee-media-element { position: absolute; top: 0; left: 0; }
+
+        /* JIKO BANNER di ATAS standee */
+        .standee-jiko-bubble {
+            position: absolute;
+            top: 14px; left: 0; right: 0;
+            margin: 0 auto;
+            width: fit-content; max-width: 85%;
+            background: rgba(0, 0, 0, 0.65);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            border-radius: 20px;
+            padding: 8px 18px;
+            font-size: 11.5px; font-style: italic;
+            color: #ffd700; text-align: center;
+            z-index: 20;
+        }
+
+        /* TOMBOL EDIT (kanan atas standee) */
+        .standee-top-action-bar {
+            position: absolute; bottom: 12px; right: 10px;
+            display: flex; gap: 6px; z-index: 25;
+        }
+        .standee-edit-btn {
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid #ffd700;
+            color: #ffd700; padding: 6px 14px; border-radius: 20px;
+            font-size: 11px; font-weight: 900; cursor: pointer;
+            transition: background 0.2s;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .standee-edit-btn:hover { background: #ffd700; color: #000; }
+
+        /* BOTTOM ACTIONS — lingkaran kecil */
+        .standee-bottom-actions {
+            position: absolute; bottom: 12px; left: 14px;
+            display: flex; flex-direction: column; gap: 6px; z-index: 25;
+        }
+        .hud-circle-btn {
+            background: rgba(0, 0, 0, 0.75);
+            border: 1px solid rgba(255,255,255,0.3);
+            width: 34px; height: 34px; border-radius: 50%;
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            font-size: 13px; cursor: pointer; transition: background 0.2s;
+        }
+        .hud-circle-btn:hover { background: #1a5cff; }
+
+        /* RUNE (sembunyikan karena lag — optional) */
+        .summon-pedestal-rune { display: none; }
+
+        /* =========================================================
+           TAB 2: PAJANGAN KARTU SKIN & KOLEKTOR (FOTO 2)
+           ========================================================= */
+        .collector-hub-layout {
+            display: grid; grid-template-columns: 2.2fr 1fr; gap: 20px;
+        }
+        .showcase-grid-8 {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px;
+        }
+        .skin-card-frame {
+            position: relative; aspect-ratio: 3/5; border-radius: 14px;
+            overflow: hidden; border: 2px solid rgba(255,255,255,0.25);
+            background: rgba(0,0,0,0.5); box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            transition: transform 0.2s, border-color 0.2s; cursor: pointer;
+        }
+        .skin-card-frame:hover { transform: translateY(-5px) scale(1.02); border-color: #ffd700; }
+        .skin-card-frame.locked .skin-card-img { filter: grayscale(90%) brightness(0.4); }
+        .skin-card-frame.locked::after {
+            content: "🔒";
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px; color: rgba(255, 255, 255, 0.85);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+        }
+        .skin-card-img { width: 100%; height: 100%; object-fit: cover; }
+        .skin-tag-badge {
+            position: absolute; top: 6px; right: 6px;
+            padding: 2px 6px; border-radius: 6px; font-size: 8px; font-weight: 900;
+            text-transform: uppercase; color: #fff;
+            z-index: 5;
+        }
+        .skin-tag-badge.bg-myth { background: linear-gradient(135deg, #ff0055, #ffaa00); }
+        .skin-tag-badge.bg-legend { background: linear-gradient(135deg, #b000ff, #00e5ff); }
+        .skin-tag-badge.bg-rare { background: linear-gradient(135deg, #0077ff, #00ffd5); }
+        .skin-tag-badge.bg-uncommon { background: linear-gradient(135deg, #00ff66, #aaff00); }
+        .skin-tag-badge.bg-omega { background: linear-gradient(135deg, #ffaa00, #ff5500); }
+        
+        .collector-side-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 24px; padding: 22px; display: flex; flex-direction: column;
+            align-items: center; text-align: center; gap: 12px;
+        }
+        .collector-trophy-img {
+            width: 90px; height: 90px; object-fit: contain;
+            filter: drop-shadow(0 6px 18px rgba(255, 120, 0, 0.6));
+        }
+        .collector-title-display { font-size: 18px; font-weight: 900; color: #ffd700; font-family: 'Cinzel', serif; }
+        .collector-points-badge {
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
+            padding: 6px 14px; border-radius: 14px; font-size: 13px; font-weight: 800; color: #00e5ff;
+        }
+        
+        .breakdown-matrix {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%;
+            margin-top: 10px;
+        }
+        .matrix-pill {
+            background: rgba(0,0,0,0.4); border-radius: 10px; padding: 6px 2px;
+            font-size: 10px; font-weight: 800; border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* =========================================================
+           TAB 3: RIWAYAT GAME (FOTO 5)
+           ========================================================= */
+        .history-grid-4 {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+        }
+        .match-card-tall {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 18px; overflow: hidden; display: flex; flex-direction: column;
+            position: relative; box-shadow: 0 8px 25px rgba(0,0,0,0.4); transition: transform 0.2s;
+        }
+        .match-card-tall:hover { transform: translateY(-4px); }
+        .match-card-tall.win { border-top: 5px solid #00e676; }
+        .match-card-tall.lose { border-top: 5px solid #ff3d00; }
+
+        .match-header-banner {
+            padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.3); font-size: 12px; font-weight: 900;
+        }
+        .match-hero-tall-box {
+            position: relative; height: 180px; width: 100%; overflow: hidden;
+        }
+        .match-hero-tall-img { width: 100%; height: 100%; object-fit: cover; }
+        .match-kda-footer {
+            padding: 10px; background: rgba(0,0,0,0.5); display: flex; flex-direction: column;
+            gap: 4px; text-align: center;
+        }
+        .kda-num-bold { font-size: 16px; font-weight: 900; color: #fff; font-family: 'Rajdhani', sans-serif; }
+        .mvp-badge-pill {
+            background: linear-gradient(135deg, #ffbb00, #ff5500);
+            font-size: 9px; font-weight: 900; padding: 2px 6px; border-radius: 6px;
+            display: inline-block; margin-top: 2px;
+        }
+
+        /* =========================================================
+           TAB 4: STATISTIK (FOTO 4)
+           ========================================================= */
+        .stats-dashboard-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+        }
+        .rings-summary-row {
+            display: flex; gap: 12px; justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .stat-circle-ring {
+            width: 90px; height: 90px; border-radius: 50%;
+            background: radial-gradient(closest-side, #0b0e14 79%, transparent 80% 100%),
+                        conic-gradient(#ff007f calc(75% * 1), rgba(255,255,255,0.15) 0);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 900; text-align: center;
+        }
+        .radar-canvas-container {
+            width: 100%; height: 260px; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* =========================================================
+           TAB 5: HUBUNGAN / AFFINITY (FOTO 3)
+           ========================================================= */
+        .affinity-radar-stage {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 440px; position: relative;
+        }
+        .concentric-ring {
+            position: absolute; border: 1px dashed rgba(255,255,255,0.25);
+            border-radius: 50%; pointer-events: none;
+        }
+        .ring-1 { width: 140px; height: 140px; }
+        .ring-2 { width: 280px; height: 280px; }
+        .ring-3 { width: 420px; height: 420px; }
+
+        .center-user-node {
+            width: 75px; height: 75px; border-radius: 50%;
+            border: 3px solid #ff007f; position: relative; z-index: 5;
+            background: #fff; overflow: hidden;
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.7);
+        }
+        .center-user-node img { width: 100%; height: 100%; object-fit: cover; }
+
+        .orbit-node-item {
+            position: absolute; display: flex; flex-direction: column;
+            align-items: center; gap: 4px; font-size: 11px; font-weight: 800;
+            z-index: 4; cursor: pointer; transition: transform 0.2s;
+        }
+        .orbit-node-item:hover { transform: scale(1.15); }
+        .node-avatar-circle {
+            width: 48px; height: 48px; border-radius: 50%;
+            border: 2px solid #ffd700; overflow: hidden; background: #fff;
+        }
+        .node-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+        .node-heart-icon { font-size: 16px; position: absolute; top: -6px; right: -6px; }
+
+        /* =========================================================
+           TAB 6: AKUN & PENGATURAN CUSTOM WOTA
+           ========================================================= */
+        .settings-card-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+        }
+        .setting-panel {
+            background: rgba(15, 23, 42, 0.78);
+            backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px; padding: 20px; display: flex; flex-direction: column; gap: 12px;
+        }
+        .setting-panel-title { font-size: 15px; font-weight: 900; color: #ffd700; }
+        
+        .custom-input, .custom-select {
+            width: 100%; background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 12px; padding: 10px 14px; color: #fff; font-size: 13px; font-weight: 700;
+            outline: none;
+        }
+        .custom-select option { background: #0f172a; color: #fff; }
+        
+        .custom-btn-action {
+            background: linear-gradient(135deg, #1a5cff, #00d4ff);
+            border: none; color: #fff; font-weight: 800; font-size: 13px;
+            padding: 10px 16px; border-radius: 14px; cursor: pointer; transition: 0.2s;
+        }
+        .custom-btn-action:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0, 102, 255, 0.4); }
+        .custom-btn-danger {
+            background: linear-gradient(135deg, #ff3b30, #ff2d55);
+        }
+
+        /* MODAL */
+        .skin-modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            z-index: 200; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .skin-modal-overlay.open { display: flex; }
+        
+        .skin-modal-content {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 28px; width: 100%; max-width: 680px;
+            max-height: 85vh; display: flex; flex-direction: column;
+            overflow: hidden; box-shadow: 0 15px 50px rgba(0,0,0,0.8);
+            animation: popModal 0.25s cubic-bezier(0.2, 0.9, 0.2, 1);
+        }
+        @keyframes popModal { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .skin-modal-header {
+            padding: 16px 22px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+        .skin-modal-title { font-size: 16px; font-weight: 900; color: #ffd700; }
+        .close-modal-btn {
+            background: transparent; border: none; color: #fff; font-size: 20px;
+            cursor: pointer; font-weight: 800;
+        }
+        .skin-modal-body {
+            padding: 18px 22px; overflow-y: auto; display: grid;
+            grid-template-columns: repeat(3, 1fr); gap: 14px;
+        }
+        .skin-choice-card {
+            background: rgba(0,0,0,0.45); border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 16px; padding: 10px; display: flex; flex-direction: column;
+            align-items: center; gap: 8px; cursor: pointer; transition: 0.2s;
+        }
+        .skin-choice-card:hover { border-color: #ffd700; transform: translateY(-4px); }
+        .skin-choice-thumb { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 10px; }
+        .skin-choice-name { font-size: 12px; font-weight: 800; color: #fff; text-align: center; }
+
+        /* =========================================================
+           RESPONSIVE MOBILE KHUSUS (STACK KE BAWAH)
+           ========================================================= */
+        @media screen and (max-width: 860px) {
+            .left-sidebar {
+                position: fixed; top: 0; left: 0; height: 100%;
+                width: 160px; padding: 25px 10px;
+                transform: translateX(-100%);
+                box-shadow: 5px 0 25px rgba(0,0,0,0.6);
+            }
+            .left-sidebar.open { transform: translateX(0); }
+            .side-item { width: 100%; height: 45px; flex-direction: row; justify-content: flex-start; padding: 0 14px; gap: 10px; font-size: 12px; }
+            .toggle-btn-mobile { display: block; }
+            
+            /* STACK KE BAWAH di Mobile */
+            .profile-moba-stage {
+                display: flex !important;
+                flex-direction: column !important;
+                min-height: auto !important;
+            }
+            .moba-standee-hero-holder {
+                order: 1 !important; /* Standee di atas */
+                margin-left: 0 !important; /* reset negative margin desktop */
+                width: 100% !important;
+                height: 270px !important;
+                min-height: unset !important;
+                overflow: hidden !important;
+            }
+            /* Matikan mask kiri di mobile — pakai fade bawah */
+            .moba-standee-hero-holder::before { display: none !important; }
+            .moba-standee-hero-holder::after {
+                width: 100% !important; height: 85px !important;
+                border-radius: 0 !important;
+                bottom: 0 !important; left: 0 !important;
+                transform: none !important;
+                background: linear-gradient(to bottom, transparent 0%, rgba(6,11,23,0.92) 100%) !important;
+            }
+            .standee-media-element { max-height: 250px; }
+            .standee-jiko-bubble {
+                top: 8px !important;
+                font-size: 10px !important;
+                padding: 6px 14px !important;
+                max-width: 90% !important;
+            }
+            .profile-moba-hud {
+                order: 2 !important; /* HUD di bawah */
+                width: 100% !important;
+                padding: 14px 16px !important;
+                border: 1px solid rgba(255,255,255,0.12) !important;
+                border-radius: 0 0 20px 20px !important;
+                border-top: none !important;
+                background: linear-gradient(
+                    180deg,
+                    rgba(6,11,23,0.55) 0%,
+                    rgba(6,11,23,0.97) 22%,
+                    rgba(6,11,23,0.99) 100%
+                ) !important;
+            }
+
+            .wota-user-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .wota-counter-strip { margin-left: 0; width: 100%; justify-content: space-between; }
+            .wota-stat-box { flex: 1; padding: 6px; }
+
+            .wota-medals-row, .wota-rank-row { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .wota-medal-card { padding: 8px 4px; }
+            .wota-emblem-badge { width: 44px; height: 44px; font-size: 20px; }
+            .wota-medal-title { font-size: 11px; }
+
+            .showcase-grid-8, .history-grid-4, .stats-dashboard-grid, .settings-card-grid {
+                grid-template-columns: 1fr;
+            }
+            .tab-viewport { padding: 12px; }
+            .skin-modal-body { grid-template-columns: repeat(2, 1fr); }
+            .collector-hub-layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <video class="video-bg" id="bgVideo" autoplay loop muted playsinline>
+        <source src="../beranda/latarglobal.webm" type="video/webm">
+    </video>
+    <div class="bg-overlay"></div>
+    <div class="ambient-dust-glow"></div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR KIRI (TASKBAR) -->
+            <aside class="left-sidebar" id="leftSidebar">
+        <a href="../beranda/" class="side-item"><span class="side-icon">💬</span>Beranda</a>
+        <a href="#" class="side-item active"><span class="side-icon">👤</span>Profil</a>
+        <a href="../gacha-skin/" class="side-item"><span class="side-icon">🎁</span>Gacha</a>
+        <a href="../live-jkt48/" class="side-item"><span class="side-icon">🎤</span>Live JKT</a>
+        <a href="../alcstify/" class="side-item"><span class="side-icon">🎵</span>Alcstify</a>
+        <a href="../mini-games/" class="side-item"><span class="side-icon">🎮</span>Mini Games</a>
+        <a href="../grup/" class="side-item"><span class="side-icon">👥</span>Grup</a>
+        <a href="../temen-mabar/" class="side-item"><span class="side-icon">⚔️</span>Mabar</a>
+        <a href="../medsos-saver/" class="side-item"><span class="side-icon">📥</span>Saver</a>
+        <a href="../koleksi-kartu/" class="side-item"><span class="side-icon">🃏</span>Kartu</a>
+        <a href="../bio-member/" class="side-item"><span class="side-icon">📖</span>Bio</a>
+        <a href="../link-shortcut/" class="side-item"><span class="side-icon">🔗</span>Shortcut</a>
+        <a href="../update-member/" class="side-item"><span class="side-icon">📱</span>Update Sosmed</a>
+        <a href="../tentang/" class="side-item"><span class="side-icon">ℹ️</span>Tentang</a>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-navbar">
+            <div class="top-left">
+                <button class="toggle-btn-mobile" onclick="toggleSidebar()">☰</button>
+                <div class="brand-badge">
+                    <span>👑 PROFIL WOTA & JKT48</span>
+                </div>
+            </div>
+            <div class="top-right">
+                <a href="../beranda/" class="nav-back-btn">← Kembali ke Chat</a>
+            </div>
+        </header>
+
+        <div class="tab-viewport">
+            
+            <!-- TAB 1: PROFIL UTAMA MOBA + PAJANGAN STANDEE (2/5 LAYAR KANAN) -->
+            <div class="tab-pane active" id="profileTab">
+                <div class="profile-moba-stage">
+                    
+                    <!-- 3/5 BAGIAN KIRI: HUD PROFIL MEWAH -->
+                    <div class="profile-moba-hud">
+                        
+                        <!-- USER HEADER ROW -->
+                        <div class="wota-user-header">
+                            <div class="wota-avatar-box" onclick="triggerAvatarUpload()" title="Klik untuk Ganti Foto Profil">
+                                <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" class="wota-avatar-img" id="heroUserAvatar">
+                                <div class="wota-cam-badge">📷</div>
+                                <input type="file" id="directAvatarPicker" accept="image/*" style="display: none;" onchange="handleDirectAvatarUpload(event)">
+                            </div>
+                            <div class="wota-user-meta">
+                                <div class="wota-display-name">
+                                    <span id="heroUserName">Memuat...</span>
+                                    <span title="Indonesia">🇮🇩</span>
+                                </div>
+                                <div class="wota-username-tag" id="heroUserTag">@user</div>
+                                <div class="wota-oshi-badge">
+                                    <span>💖 Oshi:</span>
+                                    <b id="heroOshiText">None</b>
+                                </div>
+                            </div>
+
+                            <div class="wota-counter-strip">
+                                <div class="wota-stat-box">
+                                    <span>🔥 Popularitas</span>
+                                    <span class="val" id="flameCount">0</span>
+                                </div>
+                                <div class="wota-stat-box">
+                                    <span>📅 Kunjungan</span>
+                                    <span class="val" id="visitCount">0</span>
+                                </div>
+                                <div class="wota-stat-box" onclick="giveLike()" style="cursor: pointer;">
+                                    <span>👍 Suka</span>
+                                    <span class="val" id="likesCount">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3 MEDAL UTAMA WOTA: TIM (KIRI) | ROLE (TENGAH) | GENERASI (KANAN) -->
+                        <div class="wota-medals-row">
+                            <!-- KIRI: TIM -->
+                            <div class="wota-medal-card">
+                                <div class="wota-emblem-badge emblem-team" id="teamEmblemIcon">⚪</div>
+                                <span class="wota-medal-category">Tim Favorit</span>
+                                <span class="wota-medal-title" id="displayTeamTitle">None</span>
+                                <span class="wota-medal-sub" id="displayTeamDesc">None</span>
+                            </div>
+
+                            <!-- TENGAH: ROLE WOTA -->
+                            <div class="wota-medal-card">
+                                <div class="wota-emblem-badge emblem-role" id="roleEmblemIcon">👑</div>
+                                <span class="wota-medal-category">Role Wota</span>
+                                <span class="wota-medal-title" id="displayRoleTitle">None</span>
+                                <span class="wota-medal-sub" id="displayRoleDesc">Belum Memilih</span>
+                            </div>
+
+                            <!-- KANAN: GENERASI -->
+                            <div class="wota-medal-card">
+                                <div class="wota-emblem-badge emblem-gen" id="genEmblemIcon">⭐</div>
+                                <span class="wota-medal-category">Generasi</span>
+                                <span class="wota-medal-title" id="displayGenTitle">None</span>
+                                <span class="wota-medal-sub" id="displayGenDesc">Belum Memilih</span>
+                            </div>
+                        </div>
+
+                        <!-- RANK STRIP ROW -->
+                        <div class="wota-rank-row">
+                            <div class="wota-rank-box">
+                                <img src="../beranda/TBCOIN.PNG" class="wota-rank-img" id="currentRankBadge" style="display: none;">
+                                <span class="wota-rank-lbl">Rank Saat Ini</span>
+                                <span class="wota-rank-val" id="currentRankName">None</span>
+                            </div>
+                            <div class="wota-rank-box">
+                                <img src="../beranda/KRISTAL.PNG" class="wota-rank-img" id="highestRankBadge" style="display: none;">
+                                <span class="wota-rank-lbl">Rank Tertinggi</span>
+                                <span class="wota-rank-val" id="highestRankName">None</span>
+                            </div>
+                            <div class="wota-rank-box">
+                                <img src="../beranda/KRISTAL_OMEGA.PNG" class="wota-rank-img" id="heroCollectorBadge" style="display: none;">
+                                <span class="wota-rank-lbl" id="heroCollectorLbl">Level Kolektor</span>
+                                <span class="wota-rank-val" id="heroCollectorVal">None</span>
+                            </div>
+                        </div>
+
+                        <!-- TOMBOL AKSI CEPAT -->
+                        <div class="wota-quick-bar">
+                            <button class="wota-btn-pill" onclick="switchTab('settingsTab')">✏️ Edit Profil & Oshi</button>
+                            <button class="wota-btn-pill" onclick="switchTab('skinTab')">🃏 Koleksi Kartu</button>
+                        </div>
+
+                    </div>
+
+                    <!-- 2/5 BAGIAN KANAN: PEMUTARAN VIDEO & FOTO PAJANGAN SKIN HERO -->
+                    <div class="moba-standee-hero-holder">
+                        <!-- JIKO SPEECH BUBBLE (DI ATAS MEDIA) -->
+                        <div class="standee-jiko-bubble" id="standeeJikoBox" style="display: none;">
+                            "<span id="standeeJikoText">None</span>"
+                        </div>
+ 
+                        <!-- TOP RIGHT ACTION: EDIT PAJANGAN -->
+                        <div class="standee-top-action-bar">
+                            <button class="standee-edit-btn" onclick="openSkinModal()">
+                                <span>🖼️</span> Edit Pajangan
+                            </button>
+                        </div>
+ 
+                        <!-- VIDEO STANDEE (UNTUK TIER OMEGA & OMEGA SPESIAL) -->
+                        <video class="standee-media-element" id="standeeVideo" loop muted playsinline style="display: none;">
+                        </video>
+ 
+                        <!-- FOTO POTRAIT STANDEE (UNTUK TIER REGULER / MYTH / LEGEND / RARE) -->
+                        <img class="standee-media-element" id="standeeImage" style="display: none;">
+ 
+                        <!-- FLOOR SUMMONING PEDESTAL RUNE -->
+                        <div class="summon-pedestal-rune"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TAB 2: PAJANGAN KARTU SKIN & KOLEKTOR (FOTO 2) -->
+            <div class="tab-pane" id="skinTab">
+                <div class="collector-hub-layout">
+                    <div class="showcase-grid-8" id="skinShowcaseGrid"></div>
+
+                    <div class="collector-side-card">
+                        <img src="../beranda/KRISTAL_OMEGA.PNG" class="collector-trophy-img" id="sideCollectorTrophy">
+                        <div class="collector-title-display" id="sideCollectorTitle">Kolektor Have</div>
+                        <div class="collector-points-badge" id="sideCollectorScore">Poin: 480 / 670</div>
+
+                        <div class="breakdown-matrix" id="collectorBreakdown">
+                            <div class="matrix-pill">💎 Omega: <span id="cntOmega">0</span></div>
+                            <div class="matrix-pill">👑 Myth: <span id="cntMyth">0</span></div>
+                            <div class="matrix-pill">🔥 Legend: <span id="cntLegend">0</span></div>
+                            <div class="matrix-pill">⭐ Rare: <span id="cntRare">0</span></div>
+                            <div class="matrix-pill">✨ Uncommon: <span id="cntUncommon">0</span></div>
+                            <div class="matrix-pill">🎁 Total: <span id="cntTotal">0</span></div>
+                        </div>
+
+                        <div style="display: flex; gap: 8px; width: 100%; margin-top: 10px;">
+                            <button class="custom-btn-action" style="flex: 1;" onclick="openSkinModal()">Pilih Pajangan</button>
+                            <button class="custom-btn-action" style="flex: 1;" onclick="copyProfileLink()">Bagikan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: RIWAYAT GAME (FOTO 5) -->
+            <div class="tab-pane" id="historyTab">
+                <div class="history-grid-4" id="matchHistoryList"></div>
+            </div>
+
+            <!-- TAB 4: STATISTIK (FOTO 4) -->
+            <div class="tab-pane" id="statsTab">
+                <div class="stats-dashboard-grid">
+                    <div class="setting-panel">
+                        <div class="rings-summary-row">
+                            <div class="stat-circle-ring"><span id="statMatches">0</span><small style="font-size:9px;">Matches</small></div>
+                            <div class="stat-circle-ring"><span id="statWinRate">0%</span><small style="font-size:9px;">Win Rate</small></div>
+                            <div class="stat-circle-ring"><span id="statMvp">0</span><small style="font-size:9px;">MVP</small></div>
+                        </div>
+
+                        <div class="breakdown-matrix" style="grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                            <div class="matrix-pill">👑 Legendary: <b id="statLegendary">0</b></div>
+                            <div class="matrix-pill">⚡ Savage: <b id="statSavage">0</b></div>
+                            <div class="matrix-pill">🔥 Maniac: <b id="statManiac">0</b></div>
+                            <div class="matrix-pill">🎯 Triple Kill: <b id="statTriple">0</b></div>
+                            <div class="matrix-pill">⚔️ Double Kill: <b id="statDouble">0</b></div>
+                            <div class="matrix-pill">🛡️ MVP Kalah: <b id="statMvpLose">0</b></div>
+                        </div>
+                    </div>
+
+                    <div class="setting-panel" style="display: flex; flex-direction: column; align-items: center;">
+                        <h4 style="margin-bottom: 10px; font-weight: 900; color: #ffd700;">Radar Kinerja Pertandingan</h4>
+                        <div class="radar-canvas-container">
+                            <svg width="220" height="220" viewBox="0 0 200 200">
+                                <polygon points="100,10 180,55 180,145 100,190 20,145 20,55" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+                                <polygon points="100,35 155,70 155,130 100,165 45,130 45,70" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+                                <polygon points="100,20 170,60 160,140 100,175 35,135 30,60" fill="rgba(0, 212, 255, 0.4)" stroke="#00d4ff" stroke-width="2.5"/>
+                                <text x="100" y="8" fill="#fff" font-size="10" font-weight="800" text-anchor="middle">Push</text>
+                                <text x="190" y="60" fill="#fff" font-size="10" font-weight="800">KDA</text>
+                                <text x="185" y="155" fill="#fff" font-size="10" font-weight="800">Team Fight</text>
+                                <text x="100" y="200" fill="#fff" font-size="10" font-weight="800" text-anchor="middle">Farm</text>
+                                <text x="5" y="155" fill="#fff" font-size="10" font-weight="800">Survival</text>
+                                <text x="5" y="60" fill="#fff" font-size="10" font-weight="800">Damage</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: HUBUNGAN / AFFINITY (FOTO 3) -->
+            <div class="tab-pane" id="affinityTab">
+                <div class="setting-panel affinity-radar-stage">
+                    <div class="concentric-ring ring-1"></div>
+                    <div class="concentric-ring ring-2"></div>
+                    <div class="concentric-ring ring-3"></div>
+
+                    <div class="center-user-node">
+                        <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" id="affinityCenterAvatar">
+                    </div>
+
+                    <div class="orbit-node-item" style="top: 15%; left: 50%; transform: translate(-50%, 0);">
+                        <span class="node-heart-icon">🌹</span>
+                        <div class="node-avatar-circle"><img src="../kitty.png.png" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';"></div>
+                        <span>Bestie Lv.12</span>
+                    </div>
+                    <div class="orbit-node-item" style="bottom: 15%; left: 50%; transform: translate(-50%, 0);">
+                        <span class="node-heart-icon">🤝</span>
+                        <div class="node-avatar-circle"><img src="../kitty.png.png" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';"></div>
+                        <span>Partner Lv.8</span>
+                    </div>
+                    <div class="orbit-node-item" style="top: 50%; left: 15%; transform: translate(0, -50%);">
+                        <span class="node-heart-icon">🦄</span>
+                        <div class="node-avatar-circle"><img src="../kitty.png.png" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';"></div>
+                        <span>Duo Lv.15</span>
+                    </div>
+                    <div class="orbit-node-item" style="top: 50%; right: 15%; transform: translate(0, -50%);">
+                        <span class="node-heart-icon">💖</span>
+                        <div class="node-avatar-circle"><img src="../kitty.png.png" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';"></div>
+                        <span>Karib Lv.6</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 6: PENGATURAN AKUN & CUSTOM WOTA -->
+            <div class="tab-pane" id="settingsTab">
+                <div class="settings-card-grid">
+                    
+                    <!-- CUSTOM KUSTOMISASI PROFIL WOTA (TIM, ROLE, GEN, OSHI) -->
+                    <div class="setting-panel" style="grid-column: span 2;">
+                        <div class="setting-panel-title">🎭 Kustomisasi Tim, Role Wota, Generasi & Oshi</div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                            <div>
+                                <label style="font-size: 11px; font-weight: 800; color: #ffd700;">🔴 Pilih Tim:</label>
+                                <select id="editTeamSelect" class="custom-select">
+                                    <option value="Tim J">Tim J (Red Fire)</option>
+                                    <option value="Tim KIII">Tim KIII (Yellow Sun)</option>
+                                    <option value="Tim T">Tim T (Cyan Wings)</option>
+                                    <option value="Tim Passion">Tim Passion (Blazing)</option>
+                                    <option value="Tim Dream">Tim Dream (Cosmic)</option>
+                                    <option value="Tim Love">Tim Love (Sweet Heart)</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label style="font-size: 11px; font-weight: 800; color: #ffd700;">⭐ Pilih Generasi:</label>
+                                <select id="editGenSelect" class="custom-select">
+                                    <option value="Gen 1">Gen 1</option>
+                                    <option value="Gen 2">Gen 2</option>
+                                    <option value="Gen 3">Gen 3</option>
+                                    <option value="Gen 4">Gen 4</option>
+                                    <option value="Gen 5">Gen 5</option>
+                                    <option value="Gen 6">Gen 6</option>
+                                    <option value="Gen 7">Gen 7</option>
+                                    <option value="Gen 8">Gen 8</option>
+                                    <option value="Gen 9">Gen 9</option>
+                                    <option value="Gen 10">Gen 10</option>
+                                    <option value="Gen 11">Gen 11</option>
+                                    <option value="Gen 12">Gen 12</option>
+                                    <option value="Gen 13">Gen 13</option>
+                                    <option value="Gen 14">Gen 14</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label style="font-size: 11px; font-weight: 800; color: #ffd700;">👑 Pilih Role Wota:</label>
+                                <select id="editRoleSelect" class="custom-select">
+                                    <option value="wotagrapher">Wotagrapher</option>
+                                    <option value="wotasepuh">Wotasepuh</option>
+                                    <option value="wotafosil">Wotafosil</option>
+                                    <option value="wotarusuh">Wotarusuh</option>
+                                    <option value="wotabising">Wotabising</option>
+                                    <option value="wotatenang">Wotatenang</option>
+                                    <option value="wotafomo">Wotafomo</option>
+                                    <option value="wotagadungan">Wotagadungan</option>
+                                    <option value="wotasiluman">Wotasiluman</option>
+                                    <option value="wotanormal">Wotanormal</option>
+                                    <option value="wotanewbie">Wotanewbie</option>
+                                    <option value="wotawotaan">Wotawotaan</option>
+                                    <option value="wotaingfo">Wotaingfo</option>
+                                    <option value="wotapolice">Wotapolice</option>
+                                    <option value="wotatubir">Wotatubir</option>
+                                    <option value="wotabul">Wotabul</option>
+                                    <option value="wotaalay">Wotaalay</option>
+                                    <option value="wotawibu">Wotawibu</option>
+                                    <option value="wotaarmy">Wotaarmy</option>
+                                    <option value="wotapinter">Wotapinter</option>
+                                    <option value="wotasukses">Wotasukses</option>
+                                    <option value="wotasultan">Wotasultan</option>
+                                    <option value="wotapinggirjurang">Wotapinggirjurang</option>
+                                    <option value="wotabaik">Wotabaik</option>
+                                    <option value="wotajahat">Wotajahat</option>
+                                    <option value="wotakesepian">Wotakesepian</option>
+                                    <option value="wotajuragan">Wotajuragan</option>
+                                    <option value="wotaintrovert">Wotaintrovert</option>
+                                    <option value="wotahebat">Wotahebat</option>
+                                    <option value="wotaekstrovet">Wotaekstrovet</option>
+                                    <option value="wotakoleris">Wotakoleris</option>
+                                    <option value="wotasanguinis">Wotasanguinis</option>
+                                    <option value="wotamelankolis">Wotamelankolis</option>
+                                    <option value="wotaplegmatis">Wotaplegmatis</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label style="font-size: 11px; font-weight: 800; color: #ffd700;">💖 Oshi Saya:</label>
+                                <input type="text" id="editOshiInput" class="custom-input" placeholder="Nama Oshi (e.g. Shani, Christy, Freya)">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px;">
+                            <div>
+                                <label style="font-size: 11px; font-weight: 800; color: #ffd700;">✏️ Nama Tampilan:</label>
+                                <input type="text" id="editNameInput" class="custom-input" placeholder="Nama Baru">
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; font-weight: 800; color: #ffd700;">💬 Bio / Status:</label>
+                                <input type="text" id="editBioInput" class="custom-input" placeholder="Bio Pribadi">
+                            </div>
+                        </div>
+
+                        <button class="custom-btn-action" style="margin-top: 6px;" onclick="saveCustomWotaProfile()">💾 Simpan Kustomisasi Profil Wota</button>
+                    </div>
+
+                    <!-- GANTI USERNAME (COOLDOWN 7 HARI) -->
+                    <div class="setting-panel">
+                        <div class="setting-panel-title">🆔 Ganti Username (Cooldown 7 Hari)</div>
+                        <div id="usernameCooldownNotice" style="font-size:12px; color:#ffd700; padding:6px 10px; background:rgba(255,215,0,0.1); border-radius:8px; border:1px solid rgba(255,215,0,0.3);">
+                            ⏱️ Status Cooldown: <b id="cooldownStatusText">Tersedia</b>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="editUsernameInput" class="custom-input" placeholder="Username Baru (tanpa @)" style="flex: 2;">
+                            <button class="custom-btn-action" style="flex: 1;" onclick="changeUsername()">Ganti</button>
+                        </div>
+                    </div>
+
+                    <!-- GANTI FOTO PROFIL (IMGBB / TEMPLATE OS) -->
+                    <div class="setting-panel">
+                        <div class="setting-panel-title">📸 Ganti Foto Profil</div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
+                            <button class="custom-btn-action" style="font-size:11px; padding:6px 4px;" onclick="useTemplatePP('pp.png')">Template 1</button>
+                            <button class="custom-btn-action" style="font-size:11px; padding:6px 4px;" onclick="useTemplatePP('thebeyonce.png')">Template 2</button>
+                            <button class="custom-btn-action" style="font-size:11px; padding:6px 4px;" onclick="useTemplatePP('download.png')">Template 3</button>
+                        </div>
+
+                        <label class="custom-btn-action" style="display:block; text-align:center; cursor:pointer; background:linear-gradient(135deg, #e91e63, #9c27b0);">
+                            📤 Upload Foto Profil Sendiri (ImgBB)
+                            <input type="file" accept="image/*" style="display:none;" onchange="handleDirectAvatarUpload(event)">
+                        </label>
+                    </div>
+
+                    <!-- MANAJEMEN AKUN & KEAMANAN -->
+                    <div class="setting-panel">
+                        <div class="setting-panel-title">🔐 Hubungkan / Putuskan Akun</div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; background:rgba(0,0,0,0.4); padding:8px 12px; border-radius:10px;">
+                                <span>🌐 Google Account</span>
+                                <button class="custom-btn-action custom-btn-danger" style="padding:4px 10px; font-size:11px;" onclick="disconnectProvider('google')">Disconnect</button>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; background:rgba(0,0,0,0.4); padding:8px 12px; border-radius:10px;">
+                                <span>📱 Telegram Account</span>
+                                <button class="custom-btn-action custom-btn-danger" style="padding:4px 10px; font-size:11px;" onclick="disconnectProvider('telegram')">Disconnect</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GANTI PASSWORD & LOGOUT -->
+                    <div class="setting-panel">
+                        <div class="setting-panel-title">🛡️ Keamanan & Keluar</div>
+                        <input type="password" id="oldPwInput" class="custom-input" placeholder="Password Lama">
+                        <input type="password" id="newPwInput" class="custom-input" placeholder="Password Baru">
+                        <div style="display: flex; gap: 8px;">
+                            <button class="custom-btn-action" style="flex:1;" onclick="changePassword()">Ganti Sandi</button>
+                            <button class="custom-btn-action custom-btn-danger" style="flex:1;" onclick="logout()">Logout</button>
+                        </div>
+                        <div style="border-top: 1px solid rgba(255,255,255,0.15); margin-top: 12px; padding-top: 12px; text-align: center;">
+                            <button class="custom-btn-action custom-btn-danger" style="width: 100%; background: linear-gradient(135deg, #ff1744, #d50000); font-weight: 900; box-shadow: 0 4px 15px rgba(255, 23, 68, 0.4);" onclick="destroyAccountPermanently()">💥 Hancurkan Akun Permanen</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- MODAL EDIT PAJANGAN SKIN -->
+    <div class="skin-modal-overlay" id="skinModalOverlay" onclick="if(event.target===this) closeSkinModal()">
+        <div class="skin-modal-content">
+            <div class="skin-modal-header">
+                <div class="skin-modal-title">✨ Pilih Skin Pajangan Profil Anda</div>
+                <button class="close-modal-btn" onclick="closeSkinModal()">✕</button>
+            </div>
+            <div class="skin-modal-body" id="modalSkinList"></div>
+        </div>
+    </div>
+
+    <script>
+        // SMART MULTI-ORIGIN URL RESOLVER
+        const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+        // PRIMARY_URL harus selalu ke backend HuggingFace, bukan domain GitHub Pages!
+        // Kondisi lama (startsWith("http")) salah karena domain GH Pages juga https.
+        const PRIMARY_URL = (window.location.origin && window.location.origin.includes("hf.space")) 
+            ? window.location.origin 
+            : BACKEND_URL;
+        const FALLBACK_URL = BACKEND_URL;
+        const DEFAULT_TEMPLATE_PP = "https://i.ibb.co.com/Y4JdtfGH/download.png";
+
+        let ownedSkinsData = [];
+
+        // DESKRIPSI & IKON DINAMIS TIM, ROLE & GENERASI
+        const TEAM_META = {
+            "Tim J": { icon: "🔴", desc: "Team of Passion" },
+            "Tim KIII": { icon: "🟡", desc: "Team of Sun Glory" },
+            "Tim T": { icon: "🔵", desc: "Team of Cyan Wings" },
+            "Tim Passion": { icon: "🔥", desc: "Blazing Spirit" },
+            "Tim Dream": { icon: "🌌", desc: "Cosmic Dreamers" },
+            "Tim Love": { icon: "💖", desc: "Pure Love & Care" }
+        };
+
+        const GEN_META = {
+            "Gen 1": "Pioneer Era", "Gen 2": "Golden Era", "Gen 3": "Rising Star", "Gen 4": "Brave Heart",
+            "Gen 5": "New Horizon", "Gen 6": "Shining Wave", "Gen 7": "Cosmic Power", "Gen 8": "Glorious",
+            "Gen 9": "Future Sparks", "Gen 10": "New Revolution", "Gen 11": "Youth Energy", "Gen 12": "Next Miracle",
+            "Gen 13": "Fresh Spirit", "Gen 14": "Dreamers Era"
+        };
+
+        const OMEGA_DATA = {
+            "DKTY": { name: "Dedek Kitty (Spesial)", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!" },
+            "CSHN": { name: "Ci Shani (Spesial)", jiko: "Semanis cokelat, selembut sutra. Halo semuanya, aku Shani" },
+            "CGRC": { name: "Ci Gre (Spesial)", jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!" },
+            "CFNI": { name: "Ci Feni (Spesial)", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!" },
+            "CELI": { name: "Ci Eli (Spesial)", jiko: "Bagai lembayung senja, dengan energi kegembiraanku, Aku akan menghangatkan suasana. Halo, aku Eli!" },
+            "FCHR": { name: "Full Color: Christy", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!" },
+            "FSHN": { name: "Full Color: Shani", jiko: "Semanis cokelat, selembut sutra. Halo semuanya, aku Shani" },
+            "FGRC": { name: "Full Color: Gracia", jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!" },
+            "FCHK": { name: "Full Color: Chika", jiko: "Meskipun kadang-kadang menyebalkan, tapi aku selalu dirindukan. Panggil aku Chika!" },
+            "FFNI": { name: "Full Color: Feni", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!" },
+            "FJIN": { name: "Full Color: Jinan", jiko: "Seperti bintang kejora yang bersinar terang, halo aku Jinan!" },
+            "FFIO": { name: "Full Color: Fiony", jiko: "Seperti simfoni yang menenangkan hati. Halo, aku Fiony!" },
+            "FMAR": { name: "Full Color: Marsha", jiko: "Seperti pizza yang selalu dinanti-nantikan semua orang, selalu nantikan aku, ya? Halo, aku Marsha!" },
+            "FAAZ": { name: "Full Color: Zee", jiko: "Si gadis tomboy yang semangatnya meletup-letup. Halo semuanya, aku Zee!" },
+            "PFNI": { name: "Prime: Feni", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!" },
+            "PCHR": { name: "Prime: Christy", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!" },
+            "PLLU": { name: "Prime: Lulu", jiko: "Terang seperti bulan, bersinar seperti bintang. Halo, aku Lulu!" },
+            "PGRC": { name: "Prime: Gracia", jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!" },
+            "PONL": { name: "Prime: Oniel", jiko: "Seperti teka-teki, kalian akan selalu penasaran denganku. Halo, aku Oniel!" },
+            "PFNY": { name: "Prime: Fiony", jiko: "Like simfoni yang menenangkan hati. Halo, aku Fiony!" },
+            "PMSH": { name: "Prime: Marsha", jiko: "Seperti pizza yang selalu dinanti-nantikan semua orang, selalu nantikan aku, ya? Halo, aku Marsha!" },
+            "PFYR": { name: "Prime: Freya", jiko: "Gadis koleris yang suka berimajinasi, terangi harimu dengan senyuman karamelku. Halo, aku Freya!" },
+            "PGTS": { name: "Prime: Gita", jiko: "Diam bukan berarti tak memperhatikanmmu. Aku Gita!" },
+            "PLAI": { name: "Prime: Aurelia", jiko: "Si social butterfly yang energik dan periang! Halo, aku Lia!" },
+            "PJCC": { name: "Prime: Jessi", jiko: "Suka menari dan akan selalu berusaha untuk menjadi sumber energimu. Halo, aku Jessi!" },
+            "PMUT": { name: "Prime: Muthe", jiko: "Dengan kelincahanku, Aku akan menari setiap hari. Panggil Aku, Mu mu mu mu-the!" },
+            "SCHR": { name: "SSK: Angelina Christy", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!" },
+            "SMAR": { name: "SSK: Marsha Lenathea", jiko: "Seperti pizza yang selalu dinanti-nantikan semua orang, selalu nantikan aku, ya? Halo, aku Marsha!" },
+            "SAMA": { name: "SSK: Amanda Sukma", jiko: "Aku akan membuat hatimu berdebar kencang seperti lagu dengan 1.000 BPM. Halo, aku Amanda!" },
+            "SFLO": { name: "SSK: Flora Shafiq", jiko: "Ada yang mau ikut aku? Ayo ikut ke dunia Flora! Simsalabim, akan kubuat hatimu menjadi berbunga-bunga!" },
+            "SIND": { name: "SSK: Indira Seruni", jiko: "Senyuman dalam mataku menatap lurus kepadamu. Smiley eyes? Indira!" },
+            "SMUT": { name: "SSK: Mutiara Azzahra", jiko: "Dengan kelincahanku, Aku akan menari setiap hari. Panggil Aku, Mu mu mu mu-the!" },
+            "SMOR": { name: "SSK: Letycia Moreen", jiko: "Sweet as bubble gum, graceful as a princess. Siapakah itu? One and only, Moreen!" },
+            "SLYN": { name: "SSK: Jesslyn Elly", jiko: "Seperti ombak laut yang tenang, tiba-tiba aku akan menyapumu dengan banyak cinta! Halo, aku Lyn!" },
+            "SGRE": { name: "SSK: Greesella Adhalia", jiko: "Pandangan mataku akan menyinari hatimu bagaikan kunang-kunang di malam hari. Halo, aku Greesel!" },
+            "STRI": { name: "SSK: Jazzlyn Trisha", jiko: "Pelukis yang hadir di mimpi-mimpi indahmu. One, two, three...sha! Halo, aku Trisha!" },
+            "SNAL": { name: "SSK: Shabilqis Naila", jiko: "Roar! Si singa pemberani yang siap menyemangati harimu. Halo, aku Nala!" },
+            "SLIL": { name: "SSK: Michelle Alexandra", jiko: "Always your number one, till infinity and beyond. Hello everyone, it's Michie!" },
+            "SNAY": { name: "SSK: Nayla Suji", jiko: "Moshi moshi, welcome Naylalaland! Halo semuanya, bakkyun! Aku Nayla!" },
+            "SCYN": { name: "SSK: Cynthia Yaputera", jiko: "Semangatku terus menerus meluap. POP! POP! Aku Cynthia yang selalu semangat!" },
+            "SOLI": { name: "SSK: Oline Manuel", jiko: "Semangat ku full terus! Gas, gas, gas-Oline!" },
+            "SDAN": { name: "SSK: Danella Piawahan", jiko: "Tok-tok! Si penari yang akan menarikmu ke duniaku! Halo, aku Danella!" },
+            "SFRE": { name: "SSK: Freya Jayawardana", jiko: "Gadis koleris yang suka berimajinasi, terangi harimu dengan senyuman karamelku. Halo, aku Freya!" },
+            "SARA": { name: "SSK: Abigail Rachel", jiko: "Seperti bunga yang mekar, aku akan membuat kamu, kamu, dan kamu terbayang-bayang. Halo, aku Aralie!" },
+            "SFIO": { name: "SSK: Fiony Alveria", jiko: "Seperti simfoni yang menenangan hati. Halo, aku Fiony!" },
+            "SJES": { name: "SSK: Jessica Chandra", jiko: "Suka menari dan akan selalu berusaha untuk menjadi sumber energimu. Halo, aku Jessi!" },
+            "SERI": { name: "SSK: Catherina Vallencia", jiko: "Hadir dengan seribu kejutan, Checkmate! Siap memenangkan hatimu. Halo, aku Erine!" },
+            "SRAI": { name: "SSK: Raisha Syifa", jiko: "Kalau sakura itu kembang, Aku itu kembanggaanmu! Halo, aku Raisha!" },
+            "SMIC": { name: "SSK: Michelle Levia", jiko: "Are you ready? Jalani hari ini dengan menari bersamaku. Yuhu, Aku Levi!" },
+            "SELN": { name: "SSK: Regina Wilian", jiko: "Semanis permen kapas dan seindah bunga lavender. Halo, aku Eline!" },
+            "SONI": { name: "SSK: Cornelia Vanisa", jiko: "Seperti teka-teki, kalian akan selalu penasaran denganku. Halo, aku Oniel!" },
+            "SGIT": { name: "SSK: Gita Sekar Andarini", jiko: "Diam bukan berarti tak memperhatikanmmu. Aku Gita!" },
+            "SFEN": { name: "SSK: Feni Fitriyanti", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!" },
+            "SKIM": { name: "SSK: Victoria Kimberly", jiko: "Baby hamster yang lincah, aku akan berlari-lari di pikiranmu! Haloha, katakan Kimmy!" },
+            "SLIA": { name: "SSK: Aurellia", jiko: "Si social butterfly yang energik dan periang! Halo, aku Lia!" },
+            "SLEV": { name: "SSK: Michelle Levia", jiko: "Are you ready? Jalani hari ini dengan menari bersamaku. Yuhu, Aku Levi!" },
+            "SCAT": { name: "SSK: Cathleen Nixie", jiko: "Tring! Si peri cantik jelita, itulah Aku, Cathy." },
+            "SDEL": { name: "SSK: Delynn Asizi", jiko: "Nyemangatin dan ngangenin, siapa yang kamu pikirin? Pyong pyong, Aku Delynn!" },
+            "SREG": { name: "SSK: Regina Putri", jiko: "Bagai Kalium yang bereaksi dengan air, aku akan meledak dengan semangatku. BOOM! Halo, aku Regie!" },
+            "SKAT": { name: "SSK: Kathrina Irene", jiko: "Never miss a chance to be a star! Halo, aku Kathrina!" },
+            "SANI": { name: "SSK: Anindya Ramadhani", jiko: "Si mungil hadir semanis mangga. Halo, aku Anin!" },
+            "SLAN": { name: "SSK: Aurel Alana", jiko: "Dengan kekuatan bulan, aku akan menyihirmu dengan pesonaku. Halo, aku Lana!" },
+            "SRIB": { name: "SSK: Ribka Budiman", jiko: "Mirror mirror on the wall, who's the sweetest in here? It's me, Ribka." },
+            "SIDH": { name: "SSK: Indah Cahya", jiko: "Tak banyak bicara, bercerita melalui tulisan. Halo, aku Indah!" },
+            "SOLL": { name: "SSK: Febriola Sinambela", jiko: "Dengan keajaibanku, aku akan membuat kalian selalu tertawa. Halo, Aku Olla si mechanic girl!" },
+            "SCHE": { name: "SSK: Chelsea Davina", jiko: "As bright as a shooting star in the starry night sky! Halo, aku Chelsea!" },
+            "SGRC": { name: "SSK: Grace Octaviani", jiko: "Manis seperti gulali, imut seperti kelinci. Cie cie cie, Gracie!" },
+            "SGRA": { name: "SSK: Shania Gracia", jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!" },
+            "SFRI": { name: "SSK: Fritzy Rosmerian", jiko: "Abracadabra! Si pesulap yang siap membuat hatimu terpikat. It's me, Fritzy!" },
+            "SALY": { name: "SSK: Alya Amanda", jiko: "Jika hatimu sedang menangis, Aku akan datang sebagai pelangi. Halo, aku Alya!" },
+            "SCAL": { name: "SSK: Callista Alifia", jiko: "Si beruang madu penyuka madu. Halo, aku Callie!" },
+            "SLUL": { name: "SSK: Lulu Salsabila", jiko: "Terang seperti bulan, bersinar seperti bintang. Halo, aku Lulu!" },
+            "SDAI": { name: "SSK: Desy Natalia", jiko: "Seperti bunga daisy, aku akan memancarkan kesegaran dan kebahagiaan! Halo, aku Daisy!" },
+            "SNAC": { name: "SSK: Nina Tutachia", jiko: "Si panda unyu yang selalu ceria! Aku Nachia, bikin kamu bahagia!" },
+            "SGEN": { name: "SSK: Gendis Mayrannisa", jiko: "Bonjour! Periang dan pencair suasana, itulah aku, Gendis." },
+            "SELI": { name: "SSK: Helisma Putri", jiko: "Bagai lembayung senja, dengan energi kegembiraanku, Aku akan menghangatkan suasana. Halo, aku Eli!" },
+            "SELL": { name: "SSK: Gabriela Abigail", jiko: "Ohayo! Konnichiwa! Oyasumi! Aku ingin ada di setiap harimu. Halo, aku Ella!" }
+        };
+
+        const ALL_REGULER_SKINS = [
+            "ABIGAIL_RACHEL_LEGEND", "ABIGAIL_RACHEL_MYTH", "ABIGAIL_RACHEL_RARE", "ABIGAIL_RACHEL_UNCOMMON",
+            "ADELINE_WIJAYA_LEGEND", "ADELINE_WIJAYA_MYTH", "ADELINE_WIJAYA_RARE", "ADELINE_WIJAYA_UNCOMMON",
+            "ADHISTY_ZARA_LEGEND", "ADHISTY_ZARA_MYTH", "ADHISTY_ZARA_RARE", "ADHISTY_ZARA_UNCOMMON",
+            "ADZANA_ASHEL_LEGEND", "ADZANA_ASHEL_MYTH", "ADZANA_ASHEL_RARE", "ADZANA_ASHEL_UNCOMMON",
+            "AFERA_THALIA_UNCOMMON", "ALYA_AMANDA_LEGEND", "ALYA_AMANDA_MYTH", "ALYA_AMANDA_RARE", "ALYA_AMANDA_UNCOMMON",
+            "AMANDA_SUKMA_LEGEND", "AMANDA_SUKMA_MYTH", "AMANDA_SUKMA_RARE", "AMANDA_SUKMA_UNCOMMON",
+            "ANGELINA_CHRISTY_LEGEND", "ANGELINA_CHRISTY_MYTH", "ANGELINA_CHRISTY_RARE", "ANGELINA_CHRISTY_UNCOMMON",
+            "ANINDYA_RAMADHANI_LEGEND", "ANINDYA_RAMADHANI_MYTH", "ANINDYA_RAMADHANI_RARE", "ANINDYA_RAMADHANI_UNCOMMON",
+            "ARA_LEGEND", "ARA_MYTH", "ARA_RARE", "ARA_UNCOMMON",
+            "AURELLIA_LIA_LEGEND", "AURELLIA_LIA_MYTH", "AURELLIA_LIA_RARE", "AURELLIA_LIA_UNCOMMON",
+            "AUREL_MAYORI_LEGEND", "AUREL_MAYORI_MYTH", "AUREL_MAYORI_RARE", "AUREL_MAYORI_UNCOMMON",
+            "AURHEL_ALANA_LEGEND", "AURHEL_ALANA_MYTH", "AURHEL_ALANA_RARE", "AURHEL_ALANA_UNCOMMON",
+            "AYANA_SHAHAB_LEGEND", "AYANA_SHAHAB_MYTH", "AYANA_SHAHAB_RARE", "AYANA_SHAHAB_UNCOMMON",
+            "AZIZI_ASSADEL_LEGEND", "AZIZI_ASSADEL_MYTH", "AZIZI_ASSADEL_RARE", "AZIZI_ASSADEL_UNCOMMON",
+            "CATHERINA_VALLENCIA_LEGEND", "CATHERINA_VALLENCIA_MYTH", "CATHERINA_VALLENCIA_RARE", "CATHERINA_VALLENCIA_UNCOMMON",
+            "CATHLEEN_NIXIE_LEGEND", "CATHLEEN_NIXIE_MYTH", "CATHLEEN_NIXIE_RARE", "CATHLEEN_NIXIE_UNCOMMON",
+            "CELLINE_THEFANI_LEGEND", "CELLINE_THEFANI_MYTH", "CELLINE_THEFANI_RARE", "CELLINE_THEFANI_UNCOMMON",
+            "CHELSEA_DEVINA_LEGEND", "CHELSEA_DEVINA_MYTH", "CHELSEA_DEVINA_RARE", "CHELSEA_DEVINA_UNCOMMON",
+            "CINDY_YUVIA_LEGEND", "CINDY_YUVIA_MYTH", "CINDY_YUVIA_RARE", "CINDY_YUVIA_UNCOMMON",
+            "CORNELIA_VANISA_LEGEND", "CORNELIA_VANISA_MYTH", "CORNELIA_VANISA_RARE", "CORNELIA_VANISA_UNCOMMON",
+            "CYNTHIA_YAPUTERA_LEGEND", "CYNTHIA_YAPUTERA_MYTH", "CYNTHIA_YAPUTERA_RARE", "CYNTHIA_YAPUTERA_UNCOMMON",
+            "DENA_NATALIA_LEGEND", "DENA_NATALIA_MYTH", "DENA_NATALIA_RARE", "DENA_NATALIA_UNCOMMON",
+            "DESY_NATALIA_LEGEND", "DESY_NATALIA_MYTH", "DESY_NATALIA_RARE", "DESY_NATALIA_UNCOMMON",
+            "FEBRIOLA_SINAMBELLA_LEGEND", "FEBRIOLA_SINAMBELLA_MYTH", "FEBRIOLA_SINAMBELLA_RARE", "FEBRIOLA_SINAMBELLA_UNCOMMON",
+            "FENI_FITRIYANTI_LEGEND", "FENI_FITRIYANTI_MYTH", "FENI_FITRIYANTI_RARE", "FENI_FITRIYANTI_UNCOMMON",
+            "FIONY_ALVERIA_LEGEND", "FIONY_ALVERIA_MYTH", "FIONY_ALVERIA_RARE", "FIONY_ALVERIA_UNCOMMON",
+            "FLORA_SHAFIQ_LEGEND", "FLORA_SHAFIQ_MYTH", "FLORA_SHAFIQ_RARE", "FLORA_SHAFIQ_UNCOMMON",
+            "FREYA_JAYAWARDANA_LEGEND", "FREYA_JAYAWARDANA_MYTH", "FREYA_JAYAWARDANA_RARE", "FREYA_JAYAWARDANA_UNCOMMON",
+            "FRIESKA_LEGEND", "FRIESKA_MYTH", "FRIESKA_RARE", "FRIESKA_UNCOMMON",
+            "FRITZY_ROSMERIAN_LEGEND", "FRITZY_ROSMERIAN_MYTH", "FRITZY_ROSMERIAN_RARE", "FRITZY_ROSMERIAN_UNCOMMON",
+            "GABRIELA_ABIGAIL_LEGEND", "GABRIELA_ABIGAIL_MYTH", "GABRIELA_ABIGAIL_RARE", "GABRIELA_ABIGAIL_UNCOMMON",
+            "GENDIS_MAYRANNISA_LEGEND", "GENDIS_MAYRANNISA_MYTH", "GENDIS_MAYRANNISA_RARE", "GENDIS_MAYRANNISA_UNCOMMON",
+            "GISELE_GEN_10_LEGEND", "GISELE_GEN_10_MYTH", "GISELE_GEN_10_RARE", "GISELE_GEN_10_UNCOMMON",
+            "GITA_SEKAR_LEGEND", "GITA_SEKAR_MYTH", "GITA_SEKAR_RARE", "GITA_SEKAR_UNCOMMON",
+            "GRACE_OCTAVIANI_LEGEND", "GRACE_OCTAVIANI_MYTH", "GRACE_OCTAVIANI_RARE", "GRACE_OCTAVIANI_UNCOMMON",
+            "GREESELA_ADHALIA_LEGEND", "GREESELA_ADHALIA_MYTH", "GREESELA_ADHALIA_RARE", "GREESELA_ADHALIA_UNCOMMON",
+            "HELISMA_PUTRI_LEGEND", "HELISMA_PUTRI_MYTH", "HELISMA_PUTRI_RARE", "HELISMA_PUTRI_UNCOMMON",
+            "HILLARY_ABIGAIL_LEGEND", "HILLARY_ABIGAIL_MYTH", "HILLARY_ABIGAIL_RARE", "HILLARY_ABIGAIL_UNCOMMON",
+            "INDAH_CAHYA_LEGEND", "INDAH_CAHYA_MYTH", "INDAH_CAHYA_RARE", "INDAH_CAHYA_UNCOMMON",
+            "INDIRA_PUTRI_LEGEND", "INDIRA_PUTRI_MYTH", "INDIRA_PUTRI_RARE", "INDIRA_PUTRI_UNCOMMON",
+            "JAZZLYN_TRISHA_LEGEND", "JAZZLYN_TRISHA_MYTH", "JAZZLYN_TRISHA_RARE", "JAZZLYN_TRISHA_UNCOMMON",
+            "JESSICA_CHANDRA_LEGEND", "JESSICA_CHANDRA_MYTH", "JESSICA_CHANDRA_RARE", "JESSICA_CHANDRA_UNCOMMON",
+            "JESSLYN_CALLISTA_LEGEND", "JESSLYN_CALLISTA_MYTH", "JESSLYN_CALLISTA_RARE", "JESSLYN_CALLISTA_UNCOMMON",
+            "JESSLYN_ELLY_LEGEND", "JESSLYN_ELLY_MYTH", "JESSLYN_ELLY_RARE", "JESSLYN_ELLY_UNCOMMON",
+            "JINAN_LEGEND", "JINAN_MYTH", "JINAN_RARE", "JINAN_UNCOMMON",
+            "KATHRINA_IRENE_LEGEND", "KATHRINA_IRENE_MYTH", "KATHRINA_IRENE_RARE", "KATHRINA_IRENE_UNCOMMON",
+            "LETYCIA_MOREEN_MYTH", "LETYCIA_MOREEN_UNCOMMON",
+            "LULU_SALSABILA_LEGEND", "LULU_SALSABILA_MYTH", "LULU_SALSABILA_RARE", "LULU_SALSABILA_UNCOMMON",
+            "MARSHA_LENATHEA_LEGEND", "MARSHA_LENATHEA_MYTH", "MARSHA_LENATHEA_RARE", "MARSHA_LENATHEA_UNCOMMON",
+            "MELATI_LEGEND", "MELATI_MYTH", "MELATI_RARE", "MELATI_UNCOMMON",
+            "MELODY_LAKSANI_LEGEND", "MELODY_LAKSANI_MYTH", "MELODY_LAKSANI_RARE", "MELODY_LAKSANI_UNCOMMON",
+            "MICHELLE_ALEXANDRA_LEGEND", "MICHELLE_ALEXANDRA_MYTH", "MICHELLE_ALEXANDRA_RARE", "MICHELLE_ALEXANDRA_UNCOMMON",
+            "MICHELLE_LEVIA_LEGEND", "MICHELLE_LEVIA_MYTH", "MICHELLE_LEVIA_RARE", "MICHELLE_LEVIA_UNCOMMON",
+            "MUTIARA_AZZAHRA_LEGEND", "MUTIARA_AZZAHRA_MYTH", "MUTIARA_AZZAHRA_RARE", "MUTIARA_AZZAHRA_UNCOMMON",
+            "NABILAH_GEN_1_LEGEND", "NABILAH_GEN_1_MYTH", "NABILAH_GEN_1_RARE", "NABILAH_GEN_1_UNCOMMON",
+            "NABILA_FITRIANA_LEGEND", "NABILA_FITRIANA_MYTH", "NABILA_FITRIANA_RARE", "NABILA_FITRIANA_UNCOMMON",
+            "NAYLA_SUJI_LEGEND", "NAYLA_SUJI_MYTH", "NAYLA_SUJI_RARE", "NAYLA_SUJI_UNCOMMON",
+            "NINA_TUTACHIA_LEGEND", "NINA_TUTACHIA_MYTH", "NINA_TUTACHIA_RARE", "NINA_TUTACHIA_UNCOMMON",
+            "OLINE_MANUEL_LEGEND", "OLINE_MANUEL_MYTH", "OLINE_MANUEL_RARE", "OLINE_MANUEL_UNCOMMON",
+            "RAISHA_SYIFA_LEGEND", "RAISHA_SYIFA_MYTH", "RAISHA_SYIFA_RARE", "RAISHA_SYIFA_UNCOMMON",
+            "REGINA_WILLIAM_MYTH", "REGINA_WILLIAM_UNCOMMON",
+            "REVA_FIDELA_LEGEND", "REVA_FIDELA_MYTH", "REVA_FIDELA_RARE", "REVA_FIDELA_UNCOMMON",
+            "RIBKA_BUDIMAN_LEGEND", "RIBKA_BUDIMAN_MYTH", "RIBKA_BUDIMAN_RARE", "RIBKA_BUDIMAN_UNCOMMON",
+            "SHABILQIS_NAILA_LEGEND", "SHABILQIS_NAILA_MYTH", "SHABILQIS_NAILA_RARE", "SHABILQIS_NAILA_UNCOMMON",
+            "SHANIA_GRACIA_LEGEND", "SHANIA_GRACIA_MYTH", "SHANIA_GRACIA_RARE", "SHANIA_GRACIA_UNCOMMON",
+            "SHANI_INDIRA_LEGEND", "SHANI_INDIRA_MYTH", "SHANI_INDIRA_RARE", "SHANI_INDIRA_UNCOMMON",
+            "SHANJU_MYTH", "SHANJU_RARE", "SHANJU_UNCOMMON",
+            "SISCA_SARAS_LEGEND", "SISCA_SARAS_MYTH", "SISCA_SARAS_RARE", "SISCA_SARAS_UNCOMMON",
+            "TAN_ZHI_HUI_CELINE_LEGEND", "TAN_ZHI_HUI_CELINE_MYTH", "TAN_ZHI_HUI_CELINE_RARE", "TAN_ZHI_HUI_CELINE_UNCOMMON",
+            "VICTORIA_KIMBERLY_LEGEND", "VICTORIA_KIMBERLY_MYTH", "VICTORIA_KIMBERLY_RARE", "VICTORIA_KIMBERLY_UNCOMMON",
+            "YESICA_TAMARA_LEGEND", "YESICA_TAMARA_MYTH", "YESICA_TAMARA_RARE", "YESICA_TAMARA_UNCOMMON"
+        ];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderShowcaseGrid([]);
+            renderMatchHistory([]);
+
+            loadUserProfileData();
+            loadStatusSkinData();
+        });
+
+        function getCookie(name) {
+            let nameEQ = name + "="; let ca = document.cookie.split(';');
+            for(let i=0; i < ca.length; i++) {
+                let c = ca[i]; while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            } return null;
+        }
+
+        function deleteCookie(name) {
+            document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/web-the-beyonce/;";
+            document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/frontend/;";
+            document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+        }
+
+        function getTargetUser() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id') || urlParams.get('user') || null;
+        }
+
+        function getActiveSession() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('session') || 
+                   getCookie("user_session") || 
+                   getCookie("session_key") || 
+                   getCookie("sessionCookie") || 
+                   localStorage.getItem("user_session") || 
+                   localStorage.getItem("session_key") || 
+                   sessionStorage.getItem("user_session") || 
+                   "demo_user";
+        }
+
+        async function fetchSafeApi(endpoint, bodyData) {
+            const session = getActiveSession();
+            const targetUser = getTargetUser();
+            const payload = Object.assign({
+                session_cookie: session,
+                session_key: session,
+                sessionCookie: session,
+                target_user: targetUser
+            }, bodyData || {});
+
+            try {
+                const res = await fetch(`${PRIMARY_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) return await res.json();
+            } catch (err) {
+                console.warn(`Primary endpoint ${endpoint} failed, trying fallback:`, err);
+            }
+
+            try {
+                const resFallback = await fetch(`${FALLBACK_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (resFallback.ok) return await resFallback.json();
+            } catch (err2) {
+                console.warn(`Fallback endpoint ${endpoint} failed:`, err2);
+            }
+            return null;
+        }
+
+        function toggleSidebar() {
+            document.getElementById("leftSidebar").classList.toggle("open");
+            document.getElementById("sidebarOverlay").classList.toggle("active");
+        }
+
+        function switchTab(tabId, el) {
+            document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+            document.querySelectorAll(".side-item").forEach(s => s.classList.remove("active"));
+            document.getElementById(tabId).classList.add("active");
+            if (el) el.classList.add("active");
+            if (window.innerWidth <= 860) toggleSidebar();
+        }
+
+        function getRankBadgeUrl(badgeName) {
+            const name = String(badgeName || "").toLowerCase().trim();
+            const mapping = {
+                "bronze.png": "https://static.wikia.nocookie.net/mobile-legends/images/0/07/Rank_Warrior.png",
+                "silver.png": "https://static.wikia.nocookie.net/mobile-legends/images/a/ae/Rank_Elite.png",
+                "titanium.png": "https://static.wikia.nocookie.net/mobile-legends/images/e/ec/Rank_Master.png",
+                "gold.png": "https://static.wikia.nocookie.net/mobile-legends/images/5/5a/Rank_Grandmaster.png",
+                "ruby.png": "https://static.wikia.nocookie.net/mobile-legends/images/0/0d/Rank_Epic.png",
+                "emerald.png": "https://static.wikia.nocookie.net/mobile-legends/images/c/c5/Rank_Legend.png",
+                "diamond.png": "https://static.wikia.nocookie.net/mobile-legends/images/9/9b/Rank_Mythic.png",
+                "myth.png": "https://static.wikia.nocookie.net/mobile-legends/images/c/c8/Rank_Mythic_Honor.png",
+                "myth_honor.png": "https://static.wikia.nocookie.net/mobile-legends/images/c/c8/Rank_Mythic_Honor.png",
+                "myth_glory.png": "https://static.wikia.nocookie.net/mobile-legends/images/c/c2/Rank_Mythical_Glory.png",
+                "myth_imo.png": "https://static.wikia.nocookie.net/mobile-legends/images/f/f9/Rank_Mythic_Immortal.png",
+                "master.png": "https://static.wikia.nocookie.net/mobile-legends/images/c/c2/Rank_Mythical_Glory.png",
+                "grandmaster.png": "https://static.wikia.nocookie.net/mobile-legends/images/c/c2/Rank_Mythical_Glory.png",
+                "omega.png": "https://static.wikia.nocookie.net/mobile-legends/images/f/f9/Rank_Mythic_Immortal.png",
+                "omega_spesial.png": "https://static.wikia.nocookie.net/mobile-legends/images/f/f9/Rank_Mythic_Immortal.png"
+            };
+            return mapping[name] || "https://static.wikia.nocookie.net/mobile-legends/images/0/07/Rank_Warrior.png";
+        }
+
+        function getTeamEmblemUrl(teamName) {
+            const name = String(teamName || "").toLowerCase().trim();
+            if (name.includes("passion")) return "../Passion.png";
+            if (name.includes("dream")) return "../dream.png";
+            if (name.includes("love")) return "../love.png";
+            if (name.includes("kiii")) return "https://static.wikia.nocookie.net/akb48/images/1/11/JKT48_Team_KIII_Logo.png";
+            if (name.includes("team t") || name.endsWith(" t")) return "https://static.wikia.nocookie.net/akb48/images/7/77/JKT48_Team_T_Logo.png";
+            if (name.includes("team j") || name.endsWith(" j")) return "https://static.wikia.nocookie.net/akb48/images/a/a9/JKT48_Team_J_Logo.png";
+            return null;
+        }
+
+        function getGenBadgeUrl(genName) {
+            const name = String(genName || "").toLowerCase().trim();
+            if (name.includes("gen 1") && !name.includes("gen 10") && !name.includes("gen 11") && !name.includes("gen 12") && !name.includes("gen 13") && !name.includes("gen 14")) return "https://static.wikia.nocookie.net/mobile-legends/images/b/b8/Emblem_Physical.png";
+            if (name.includes("gen 2")) return "https://static.wikia.nocookie.net/mobile-legends/images/a/a2/Emblem_Magic.png";
+            if (name.includes("gen 3")) return "https://static.wikia.nocookie.net/mobile-legends/images/1/1a/Emblem_Tank.png";
+            if (name.includes("gen 4")) return "https://static.wikia.nocookie.net/mobile-legends/images/e/e2/Emblem_Jungle.png";
+            if (name.includes("gen 5")) return "https://static.wikia.nocookie.net/mobile-legends/images/7/7b/Emblem_Assassin.png";
+            if (name.includes("gen 6")) return "https://static.wikia.nocookie.net/mobile-legends/images/8/87/Emblem_Mage.png";
+            if (name.includes("gen 7")) return "https://static.wikia.nocookie.net/mobile-legends/images/f/fe/Emblem_Fighter.png";
+            if (name.includes("gen 8")) return "https://static.wikia.nocookie.net/mobile-legends/images/8/8a/Emblem_Support.png";
+            if (name.includes("gen 9")) return "https://static.wikia.nocookie.net/mobile-legends/images/2/29/Emblem_Marksman.png";
+            if (name.includes("gen 10")) return "https://static.wikia.nocookie.net/mobile-legends/images/9/91/Emblem_Common_Magic.png";
+            if (name.includes("gen 11")) return "https://static.wikia.nocookie.net/mobile-legends/images/b/b8/Emblem_Physical.png";
+            if (name.includes("gen 12")) return "https://static.wikia.nocookie.net/mobile-legends/images/a/a2/Emblem_Magic.png";
+            if (name.includes("gen 13")) return "https://static.wikia.nocookie.net/mobile-legends/images/1/1a/Emblem_Tank.png";
+            if (name.includes("gen 14")) return "https://static.wikia.nocookie.net/mobile-legends/images/e/e2/Emblem_Jungle.png";
+            return null;
+        }
+
+        function getCollectorBadgeUrl(badgeName) {
+            const name = String(badgeName || "").toLowerCase().trim();
+            const mapping = {
+                "kolektor_newbie.png": "https://static.wikia.nocookie.net/mobile-legends/images/1/1a/Item_Magic_Necklace.png",
+                "kolektor_senior.png": "https://static.wikia.nocookie.net/mobile-legends/images/c/c5/Item_Book_of_Sages.png",
+                "kolektor_have.png": "https://static.wikia.nocookie.net/mobile-legends/images/7/7b/Item_Enchanted_Talisman.png",
+                "kolektor_elit.png": "https://static.wikia.nocookie.net/mobile-legends/images/b/bd/Item_Glowing_Wand.png",
+                "kolektor_epic.png": "https://static.wikia.nocookie.net/mobile-legends/images/1/1f/Item_Holy_Crystal.png",
+                "kolektor_legend.png": "https://static.wikia.nocookie.net/mobile-legends/images/c/c2/Item_Blood_Wings.png",
+                "kolektor_master.png": "https://static.wikia.nocookie.net/mobile-legends/images/4/4d/Item_Concentrated_Energy.png"
+            };
+            return mapping[name] || "https://static.wikia.nocookie.net/mobile-legends/images/1/1a/Item_Magic_Necklace.png";
+        }
+
+        function formatWotaRoleName(role) {
+            if (!role) return "Wotasepuh";
+            return role.charAt(0).toUpperCase() + role.slice(1);
+        }
+
+        async function loadUserProfileData() {
+            const json = await fetchSafeApi('/api/user/status');
+            if (json && json.data) {
+                const d = json.data;
+
+                // NAMA & USERNAME
+                document.getElementById("heroUserName").innerText = d.nama || "User";
+                let rawUser = d.username || d.userId || "user";
+                if (rawUser.includes("@")) rawUser = rawUser.split("@")[0];
+                document.getElementById("heroUserTag").innerText = "@" + rawUser;
+                
+                // AVATAR
+                const avatarSrc = d.photoProfile || DEFAULT_TEMPLATE_PP;
+                document.getElementById("heroUserAvatar").src = avatarSrc;
+                document.getElementById("affinityCenterAvatar").src = avatarSrc;
+
+                // POPULARITAS, KUNJUNGAN, SUKA
+                if (document.getElementById("flameCount")) {
+                    document.getElementById("flameCount").innerText = Number(d.popularity || 0).toLocaleString();
+                }
+                if (document.getElementById("visitCount")) {
+                    document.getElementById("visitCount").innerText = Number(d.visits || 0).toLocaleString();
+                }
+                if (document.getElementById("likesCount")) {
+                    document.getElementById("likesCount").innerText = Number(d.likes || 0).toLocaleString();
+                }
+
+                // OSHI
+                const oshiVal = d.oshi && d.oshi !== "None" && d.oshi !== "" ? d.oshi : "None";
+                document.getElementById("heroOshiText").innerText = oshiVal;
+                document.getElementById("editOshiInput").value = oshiVal === "None" ? "" : oshiVal;
+
+                // TIM (KIRI)
+                const teamVal = d.team && d.team !== "None" && d.team !== "" ? d.team : "None";
+                document.getElementById("displayTeamTitle").innerText = teamVal;
+                document.getElementById("editTeamSelect").value = teamVal === "None" ? "" : teamVal;
+                const teamMeta = TEAM_META[teamVal] || { icon: "⚪", desc: "None" };
+                document.getElementById("displayTeamDesc").innerText = teamMeta.desc;
+                
+                const teamImgUrl = getTeamEmblemUrl(teamVal);
+                const teamEmblemIcon = document.getElementById("teamEmblemIcon");
+                if (teamImgUrl) {
+                    teamEmblemIcon.innerHTML = `<img src="${teamImgUrl}" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;">`;
+                } else {
+                    teamEmblemIcon.innerHTML = teamMeta.icon;
+                }
+
+                // ROLE WOTA (TENGAH)
+                const roleVal = d.wota_role && d.wota_role !== "None" && d.wota_role !== "" ? d.wota_role : "None";
+                document.getElementById("displayRoleTitle").innerText = roleVal === "None" ? "None" : formatWotaRoleName(roleVal);
+                document.getElementById("editRoleSelect").value = roleVal === "None" ? "" : roleVal;
+                document.getElementById("displayRoleDesc").innerText = roleVal === "None" ? "Belum Memilih" : "Dedicated Wota Fan";
+
+                // GENERASI (KANAN)
+                const genVal = d.generation && d.generation !== "None" && d.generation !== "" ? d.generation : "None";
+                document.getElementById("displayGenTitle").innerText = genVal;
+                document.getElementById("editGenSelect").value = genVal === "None" ? "" : genVal;
+                document.getElementById("displayGenDesc").innerText = genVal === "None" ? "Belum Memilih" : (GEN_META[genVal] || "None");
+                
+                const genImgUrl = getGenBadgeUrl(genVal);
+                const genEmblemIcon = document.getElementById("genEmblemIcon");
+                if (genImgUrl) {
+                    genEmblemIcon.innerHTML = `<img src="${genImgUrl}" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;">`;
+                } else {
+                    genEmblemIcon.innerHTML = "⭐";
+                }
+
+                // STATUS COOLDOWN USERNAME
+                if (d.username_cooldown) {
+                    const cd = d.username_cooldown;
+                    const statusText = document.getElementById("cooldownStatusText");
+                    const notice = document.getElementById("usernameCooldownNotice");
+                    if (statusText) statusText.innerText = cd.text || (cd.is_cooldown ? `${cd.days_left} hari ${cd.hours_left} jam` : "Tersedia");
+                    if (cd.is_cooldown && notice) {
+                        notice.style.borderColor = "rgba(255,82,82,0.5)";
+                        notice.style.background = "rgba(255,82,82,0.15)";
+                        notice.style.color = "#ff8080";
+                    } else if (notice) {
+                        notice.style.borderColor = "rgba(0,230,118,0.4)";
+                        notice.style.background = "rgba(0,230,118,0.1)";
+                        notice.style.color = "#00e676";
+                    }
+                }
+
+                // RANK
+                if (d.rank_name && d.rank_name !== "None") {
+                    document.getElementById("currentRankName").innerText = `${d.rank_name} (${d.rank_score} Pts)`;
+                    document.getElementById("currentRankBadge").src = getRankBadgeUrl(d.rank_badge);
+                    document.getElementById("currentRankBadge").style.display = "block";
+                    
+                    document.getElementById("highestRankName").innerText = d.rank_name;
+                    document.getElementById("highestRankBadge").src = getRankBadgeUrl(d.rank_badge);
+                    document.getElementById("highestRankBadge").style.display = "block";
+                } else {
+                    document.getElementById("currentRankName").innerText = "None";
+                    document.getElementById("currentRankBadge").style.display = "none";
+                    document.getElementById("highestRankName").innerText = "None";
+                    document.getElementById("highestRankBadge").style.display = "none";
+                }
+
+                // LEVEL KOLEKTOR (KOTAK KE-3)
+                const collTitle = d.collector_title && d.collector_title !== "None" ? d.collector_title : "None";
+                const collPts = d.collector_points || 0;
+                if (document.getElementById("heroCollectorVal")) {
+                    document.getElementById("heroCollectorVal").innerText = collTitle === "None" ? "None" : `${collTitle} (${collPts} Pts)`;
+                }
+                if (document.getElementById("sideCollectorTitle")) {
+                    document.getElementById("sideCollectorTitle").innerText = collTitle;
+                }
+                if (document.getElementById("sideCollectorScore")) {
+                    document.getElementById("sideCollectorScore").innerText = `Poin: ${collPts} / 670`;
+                }
+                if (collTitle === "None") {
+                    document.getElementById("heroCollectorBadge").style.display = "none";
+                } else {
+                    document.getElementById("heroCollectorBadge").src = getCollectorBadgeUrl(d.collector_badge);
+                    document.getElementById("heroCollectorBadge").style.display = "block";
+                }
+
+                // BREAKDOWN
+                const b = d.collector_breakdown || {};
+                document.getElementById("cntOmega").innerText = b.omega || 0;
+                document.getElementById("cntMyth").innerText = b.myth || 0;
+                document.getElementById("cntLegend").innerText = b.legend || 0;
+                document.getElementById("cntRare").innerText = b.rare || 0;
+                document.getElementById("cntUncommon").innerText = b.uncommon || 0;
+                document.getElementById("cntTotal").innerText = (d.all_skins || []).length || 0;
+
+                // STANDEE SKIN & JIKO — cari detail rarity dari ownedSkinsData bila sudah diload
+                const standeeCode = d.standee_skin && d.standee_skin !== "None" && d.standee_skin !== "" ? d.standee_skin : null;
+                const standeeDetail = standeeCode ? (ownedSkinsData.find(s => {
+                    const fc = (s.code || "").replace(/BORDER_/gi, "").replace(/CHAT_/gi, "").replace(/\.png$/i, "").replace(/\.jpg$/i, "").trim();
+                    return fc === standeeCode || s.code === standeeCode;
+                }) || null) : null;
+                renderStandeeDisplay(standeeCode, d.custom_bio, standeeDetail);
+
+                // HIDE / SHOW EDIT CONTROLS BASED ON OWNER
+                const isOwner = json.is_owner !== false;
+                const editPills = document.querySelector(".wota-quick-bar");
+                const standeeEditBtn = document.querySelector(".standee-top-action-bar");
+                if (!isOwner) {
+                    if (editPills) editPills.style.display = "none";
+                    if (standeeEditBtn) standeeEditBtn.style.display = "none";
+                } else {
+                    if (editPills) editPills.style.display = "flex";
+                    if (standeeEditBtn) standeeEditBtn.style.display = "flex";
+                }
+
+                if (d.nama) document.getElementById("editNameInput").value = d.nama;
+                if (d.custom_bio) document.getElementById("editBioInput").value = (d.custom_bio === "None" ? "" : d.custom_bio);
+
+                // STATS (TAB 4)
+                if (d.stats) {
+                    const st = d.stats;
+                    if (document.getElementById("statMatches")) document.getElementById("statMatches").innerText = Number(st.matches || 0).toLocaleString();
+                    if (document.getElementById("statWinRate")) document.getElementById("statWinRate").innerText = st.win_rate || "0%";
+                    if (document.getElementById("statMvp")) document.getElementById("statMvp").innerText = Number(st.mvp || 0).toLocaleString();
+                    
+                    if (document.getElementById("statLegendary")) document.getElementById("statLegendary").innerText = Number(st.legendary || 0).toLocaleString();
+                    if (document.getElementById("statSavage")) document.getElementById("statSavage").innerText = Number(st.savage || 0).toLocaleString();
+                    if (document.getElementById("statManiac")) document.getElementById("statManiac").innerText = Number(st.maniac || 0).toLocaleString();
+                    if (document.getElementById("statTriple")) document.getElementById("statTriple").innerText = Number(st.triple_kill || 0).toLocaleString();
+                    if (document.getElementById("statDouble")) document.getElementById("statDouble").innerText = Number(st.double_kill || 0).toLocaleString();
+                    if (document.getElementById("statMvpLose")) document.getElementById("statMvpLose").innerText = Number(st.mvp_lose || st.mvp_kalah || 0).toLocaleString();
+                }
+
+                renderShowcaseGrid(d.all_skins || []);
+                renderMatchHistory(d.history || []);
+            }
+        }
+
+        async function loadStatusSkinData() {
+            const json = await fetchSafeApi('/statusskin');
+            if (!json) return;
+            // Simpan data skin yang dimiliki
+            if (json.skins_detail && json.skins_detail.length > 0) {
+                ownedSkinsData = json.skins_detail;
+            }
+            
+            const isOwner = json.is_owner !== false;
+            const editPills = document.querySelector(".wota-quick-bar");
+            const standeeEditBtn = document.querySelector(".standee-top-action-bar");
+            if (!isOwner) {
+                if (editPills) editPills.style.display = "none";
+                if (standeeEditBtn) standeeEditBtn.style.display = "none";
+            } else {
+                if (editPills) editPills.style.display = "flex";
+                if (standeeEditBtn) standeeEditBtn.style.display = "flex";
+            }
+            
+            // Tampilkan standee dari backend (standee yang dipajang user)
+            const standeeSkin = json.current_standee && json.current_standee !== "None" && json.current_standee !== "" ? json.current_standee : null;
+            const jikoBio = json.current_bio || json.jiko || null;
+            if (standeeSkin) {
+                const skinDetail = ownedSkinsData.find(s => s.code === standeeSkin) || null;
+                renderStandeeDisplay(standeeSkin, jikoBio, skinDetail);
+            } else {
+                renderStandeeDisplay(null, null, null);
+            }
+        }
+
+        /**
+         * renderStandeeDisplay
+         * @param {string} skinCode - kode skin (e.g. CSHN, DKTY, FIONY_ALVERIA_MYTH)
+         * @param {string|null} bioQuote - teks jiko / bio
+         * @param {object|null} skinDetail - detail skin dari backend (rarity, media_type, jiko)
+         */
+        function renderStandeeDisplay(skinCode, bioQuote, skinDetail) {
+            const vidEl = document.getElementById("standeeVideo");
+            const imgEl = document.getElementById("standeeImage");
+            const jikoEl = document.getElementById("standeeJikoText");
+            const jikoBoxEl = document.getElementById("standeeJikoBox");
+
+            if (!skinCode || skinCode === "None" || skinCode === "") {
+                if (vidEl) { vidEl.pause(); vidEl.style.display = "none"; }
+                if (imgEl) { imgEl.style.display = "none"; }
+                if (jikoBoxEl) { jikoBoxEl.style.display = "none"; }
+                return;
+            }
+
+            const cleanCode = (skinCode || "CSHN")
+                .replace(/BORDER_/gi, "")
+                .replace(/CHAT_/gi, "")
+                .replace(/\.png$/i, "")
+                .replace(/\.jpg$/i, "")
+                .trim();
+
+            // ===== DETEKSI OMEGA/VIDEO =====
+            let isOmegaVideo = false;
+            if (OMEGA_DATA[cleanCode]) {
+                isOmegaVideo = true;
+            } else if (skinDetail) {
+                const mt = (skinDetail.media_type || "").toLowerCase();
+                const rar = (skinDetail.rarity || "").toLowerCase();
+                if (mt === "video" || rar.includes("omega") || rar.includes("mso")) isOmegaVideo = true;
+            }
+            if (!isOmegaVideo && ownedSkinsData.length > 0) {
+                const found = ownedSkinsData.find(s => {
+                    const fc = (s.code || "")
+                        .replace(/BORDER_/gi, "").replace(/CHAT_/gi, "")
+                        .replace(/\.png$/i, "").replace(/\.jpg$/i, "").trim();
+                    return fc === cleanCode || s.code === cleanCode;
+                });
+                if (found) {
+                    const mt = (found.media_type || "").toLowerCase();
+                    const rar = (found.rarity || "").toLowerCase();
+                    if (mt === "video" || rar.includes("omega") || rar.includes("mso")) isOmegaVideo = true;
+                }
+            }
+
+            // Tampilkan / Sembunyikan jiko banner bubble berdasarkan status skin Omega
+            if (isOmegaVideo) {
+                if (jikoBoxEl) jikoBoxEl.style.display = "block";
+                const jikoText = (bioQuote && bioQuote !== "None" && bioQuote !== "")
+                    ? bioQuote
+                    : ((skinDetail && skinDetail.jiko && skinDetail.jiko !== "None") 
+                        ? skinDetail.jiko 
+                        : ((OMEGA_DATA[cleanCode] && OMEGA_DATA[cleanCode].jiko) ? OMEGA_DATA[cleanCode].jiko : "None"));
+                if (jikoEl) jikoEl.innerText = jikoText;
+            } else {
+                if (jikoBoxEl) jikoBoxEl.style.display = "none";
+            }
+
+            if (isOmegaVideo) {
+                // Tampilkan VIDEO untuk skin Omega & Omega Spesial (dari folder gacha-skin)
+                if (vidEl) {
+                    const newSrc = `../gacha-skin/preview_${cleanCode}.webm`;
+                    if (!vidEl.currentSrc || !vidEl.currentSrc.endsWith(`preview_${cleanCode}.webm`)) {
+                        vidEl.src = newSrc;
+                        vidEl.load();
+                    }
+                    vidEl.style.display = "block";
+                    vidEl.play().catch(() => {});
+                }
+                if (imgEl) imgEl.style.display = "none";
+            } else {
+                // Tampilkan FOTO POTRAIT untuk skin Regular/Rare/Legend/Myth (dari folder skin)
+                if (vidEl) { vidEl.pause(); vidEl.style.display = "none"; }
+                if (imgEl) {
+                    imgEl.style.display = "block";
+                    imgEl.src = `../skin/CHAT_${cleanCode}.png`;
+                    imgEl.onerror = function() {
+                        this.onerror = null;
+                        this.src = `../skin/${cleanCode}.jpg`;
+                        this.onerror = function() {
+                            this.onerror = null;
+                            this.src = 'https://i.ibb.co.com/Y4JdtfGH/download.png';
+                        };
+                    };
+                }
+            }
+        }
+
+        function triggerAvatarUpload() {
+            document.getElementById("directAvatarPicker").click();
+        }
+
+        function handleDirectAvatarUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function() {
+                const base64 = reader.result;
+                document.getElementById("heroUserAvatar").src = base64;
+                document.getElementById("affinityCenterAvatar").src = base64;
+                
+                const j = await fetchSafeApi('/api/user/upload-avatar', { image_data: base64 });
+                if (j && j.status === "success") {
+                    alert("Foto profil berhasil di-upload ke Cloud ImgBB!");
+                    loadUserProfileData();
+                    loadStatusSkinData();
+                } else {
+                    alert("Foto profil telah diperbarui secara lokal!");
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function useTemplatePP(templateChoice) {
+            const chosen = templateChoice || "pp.png";
+            const j = await fetchSafeApi('/api/user/upload-avatar', { image_data: chosen });
+            const templateImg = (chosen === "thebeyonce.png") ? "https://i.ibb.co.com/Y4JdtfGH/download.png" : DEFAULT_TEMPLATE_PP;
+            document.getElementById("heroUserAvatar").src = templateImg;
+            document.getElementById("affinityCenterAvatar").src = templateImg;
+            alert(`Foto profil berhasil diubah ke Template OS (${chosen})!`);
+            loadUserProfileData();
+            loadStatusSkinData();
+        }
+
+        async function changeUsername() {
+            const raw = document.getElementById("editUsernameInput").value.trim().replace("@", "");
+            if (!raw) return alert("Masukkan username baru yang diinginkan!");
+            if (raw.length < 3) return alert("Username minimal harus 3 karakter!");
+
+            const j = await fetchSafeApi('/api/user/change-username', { new_username: raw });
+            if (j && j.status === "success") {
+                alert(j.message || `Username berhasil diganti menjadi @${raw}!`);
+                document.getElementById("heroUserTag").innerText = "@" + raw;
+                document.getElementById("editUsernameInput").value = "";
+                loadUserProfileData();
+                loadStatusSkinData();
+            } else {
+                alert("Gagal Ganti Username:\n" + (j ? j.detail || j.message : "Sistem cooldown aktif atau server offline."));
+            }
+        }
+
+        async function saveCustomWotaProfile() {
+            const team = document.getElementById("editTeamSelect").value;
+            const gen = document.getElementById("editGenSelect").value;
+            const role = document.getElementById("editRoleSelect").value;
+            const oshi = document.getElementById("editOshiInput").value.trim();
+            const name = document.getElementById("editNameInput").value.trim();
+            const bio = document.getElementById("editBioInput").value.trim();
+
+            const payload = {
+                team: team,
+                generation: gen,
+                wota_role: role,
+                oshi: oshi || "None",
+                nama: name,
+                custom_bio: bio
+            };
+
+            const j = await fetchSafeApi('/api/user/update-profile', payload);
+            // Kirim juga ke PortSQL
+            fetchSafeApi('/portsql', payload).catch(err => console.warn("PortSQL sync failed:", err));
+            
+            alert("Kustomisasi Tim, Role, Generasi, dan Oshi berhasil disimpan!");
+            loadUserProfileData();
+            loadStatusSkinData();
+        }
+
+        function openSkinModal() {
+            const modalList = document.getElementById("modalSkinList");
+            modalList.innerHTML = "";
+
+            // Jika belum ada data skin, fetch dulu dari backend
+            if (!ownedSkinsData || ownedSkinsData.length === 0) {
+                modalList.innerHTML = `<div style="grid-column:span 3; text-align:center; padding:30px; color:#ffd700;">⏳ Memuat koleksi skin Anda...</div>`;
+                document.getElementById("skinModalOverlay").classList.add("open");
+                loadStatusSkinData().then(() => {
+                    if (ownedSkinsData.length > 0) {
+                        document.getElementById("skinModalOverlay").classList.remove("open");
+                        openSkinModal();
+                    } else {
+                        modalList.innerHTML = `<div style="grid-column:span 3; text-align:center; padding:30px; color:#ff8080;">❌ Belum punya skin. Lakukan gacha dulu!</div>`;
+                    }
+                });
+                return;
+            }
+
+            ownedSkinsData.forEach(skin => {
+                const card = document.createElement("div");
+                card.className = "skin-choice-card";
+
+                const cleanCode = (skin.code || "")
+                    .replace(/BORDER_/gi, "")
+                    .replace(/CHAT_/gi, "")
+                    .replace(/\.png$/i, "")
+                    .replace(/\.jpg$/i, "")
+                    .trim();
+
+                const mt = (skin.media_type || "").toLowerCase();
+                const rar = (skin.rarity || "").toLowerCase();
+                const isVid = mt === "video" || rar.includes("omega") || rar.includes("mso");
+
+                const thumbSrc = skin.media_url || `../skin/${cleanCode}.jpg`;
+                const rarityLabel = skin.rarity || (isVid ? "Omega Spesial" : "Regular");
+                const rarityColor = rar.includes("omega") ? "#00d4ff"
+                    : rar.includes("myth") ? "#ffd700"
+                    : rar.includes("legend") ? "#ff7700"
+                    : rar.includes("rare") ? "#c084fc"
+                    : "#94a3b8";
+
+                card.innerHTML = `
+                    <div style="font-size: 10px; font-weight: 900; color: ${rarityColor}; text-transform: uppercase;">
+                        ${isVid ? "🎬 " : "🖼️ "}${rarityLabel}
+                    </div>
+                    <img src="${thumbSrc}" class="skin-choice-thumb" loading="lazy"
+                        onerror="this.onerror=null; this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
+                    <div class="skin-choice-name">${skin.nama || cleanCode}</div>
+                `;
+
+                card.onclick = async () => {
+                    renderStandeeDisplay(cleanCode, skin.jiko, skin);
+                    await fetchSafeApi('/api/user/update-profile', { standee_skin: cleanCode });
+                    closeSkinModal();
+                    loadStatusSkinData();
+                };
+
+                modalList.appendChild(card);
+            });
+
+            document.getElementById("skinModalOverlay").classList.add("open");
+        }
+
+        function closeSkinModal() {
+            document.getElementById("skinModalOverlay").classList.remove("open");
+        }
+
+        function renderShowcaseGrid(skins) {
+            const grid = document.getElementById("skinShowcaseGrid");
+            grid.innerHTML = "";
+            
+            // Konversi skin yang dimiliki ke huruf besar agar seragam saat pencocokan
+            const ownedList = skins.map(s => String(s).toUpperCase().trim());
+
+            // 1. Render Skin OMEGA terlebih dahulu
+            Object.entries(OMEGA_DATA).forEach(([code, data]) => {
+                const cleanCode = code.toUpperCase().trim();
+                const isOwned = ownedList.includes(cleanCode);
+                const frame = document.createElement("div");
+                frame.className = `skin-card-frame ${isOwned ? "" : "locked"}`;
+                
+                if (isOwned) {
+                    frame.innerHTML = `
+                        <span class="skin-tag-badge bg-omega">OMEGA</span>
+                        <video class="skin-card-img" autoplay loop muted playsinline src="../gacha-skin/preview_${code}.webm" style="object-fit: cover; width: 100%; height: 100%;"></video>
+                    `;
+                } else {
+                    frame.innerHTML = `
+                        <span class="skin-tag-badge bg-omega">OMEGA</span>
+                        <div class="lock-icon" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; font-size: 20px; color: #fff; text-shadow: 0 0 4px rgba(0,0,0,0.8);">🔒</div>
+                        <img src="../skin_jpg/${code}.jpg" class="skin-card-img" style="filter: grayscale(1) brightness(0.65); object-fit: cover;" loading="lazy">
+                    `;
+                }
+                frame.onclick = () => openSkinModal();
+                grid.appendChild(frame);
+            });
+
+            // 2. Render Skin Reguler (Myth, Legend, Rare, Uncommon)
+            ALL_REGULER_SKINS.forEach(code => {
+                const cleanCode = code.toUpperCase().trim();
+                const isOwned = ownedList.includes(cleanCode);
+                const frame = document.createElement("div");
+                frame.className = `skin-card-frame ${isOwned ? "" : "locked"}`;
+                
+                // Deteksi rarity untuk badge
+                let rarityClass = "bg-uncommon";
+                let rarityName = "UNCOMMON";
+                if (code.includes("MYTH")) {
+                    rarityClass = "bg-myth";
+                    rarityName = "MYTH";
+                } else if (code.includes("LEGEND")) {
+                    rarityClass = "bg-legend";
+                    rarityName = "LEGEND";
+                } else if (code.includes("RARE")) {
+                    rarityClass = "bg-rare";
+                    rarityName = "RARE";
+                }
+
+                if (isOwned) {
+                    frame.innerHTML = `
+                        <span class="skin-tag-badge ${rarityClass}">${rarityName}</span>
+                        <img src="../skin/${code}.jpg" class="skin-card-img" loading="lazy" onerror="this.onerror=null; this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
+                    `;
+                } else {
+                    frame.innerHTML = `
+                        <span class="skin-tag-badge ${rarityClass}">${rarityName}</span>
+                        <div class="lock-icon" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2; font-size: 20px; color: #fff; text-shadow: 0 0 4px rgba(0,0,0,0.8);">🔒</div>
+                        <img src="../skin/${code}_grey.jpg" class="skin-card-img" loading="lazy" onerror="this.onerror=null; this.src='../skin/${code}.jpg'; this.onerror=function(){this.onerror=null;this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';};">
+                    `;
+                }
+                frame.onclick = () => openSkinModal();
+                grid.appendChild(frame);
+            });
+        }
+
+        function renderDefaultHistory() {
+            renderMatchHistory([
+                {"result": "Victory", "hero": "FIONY_ALVERIA_MYTH", "type": "Ranked", "kda": "14/0/8", "mvp": true, "date": "08-08 19:40"},
+                {"result": "Victory", "hero": "DKTY", "type": "Ranked", "kda": "12/2/15", "mvp": true, "date": "08-08 18:25"},
+                {"result": "Victory", "hero": "CSHN", "type": "Classic", "kda": "10/1/12", "mvp": true, "date": "08-08 17:10"},
+                {"result": "Defeat", "hero": "CGRC", "type": "Ranked", "kda": "8/4/6", "mvp": false, "date": "08-08 15:50"}
+            ]);
+        }
+
+        function renderMatchHistory(hist) {
+            const list = document.getElementById("matchHistoryList");
+            list.innerHTML = "";
+            hist.forEach(m => {
+                const isWin = m.result.toLowerCase() === "victory";
+                const card = document.createElement("div");
+                card.className = `match-card-tall ${isWin ? 'win' : 'lose'}`;
+                const heroClean = (m.hero || 'CSHN').replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.png/i, "").replace(/\.jpg/i, "");
+                card.innerHTML = `
+                    <div class="match-header-banner">
+                        <span style="color: ${isWin ? '#00e676' : '#ff5252'}">${m.result}</span>
+                        <span style="font-size:10px; color:#ffd700;">${m.type || 'Ranked'}</span>
+                    </div>
+                    <div class="match-hero-tall-box">
+                        <img src="../skin/CHAT_${heroClean}.png" class="match-hero-tall-img" onerror="this.onerror=null; this.src='../skin/${heroClean}.jpg'; this.onerror=function(){this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';};">
+                    </div>
+                    <div class="match-kda-footer">
+                        <div class="kda-num-bold">${m.kda || '12/2/8'}</div>
+                        <div style="font-size:10px; color:rgba(255,255,255,0.7);">${m.date || 'Hari ini'}</div>
+                        ${m.mvp ? '<span class="mvp-badge-pill">MVP 👑</span>' : ''}
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        async function disconnectProvider(provider) {
+            if (!confirm(`Yakin ingin memutuskan akun ${provider}?`)) return;
+            const j = await fetchSafeApi('/api/user/disconnect-account', { provider: provider });
+            if (j && j.status === "success") {
+                alert(j.message);
+                loadUserProfileData();
+            } else {
+                alert("Gagal: " + (j ? j.detail : "Tidak dapat memutuskan"));
+            }
+        }
+
+        async function changePassword() {
+            const oldP = document.getElementById("oldPwInput").value;
+            const newP = document.getElementById("newPwInput").value;
+            if (!oldP || !newP) return alert("Isi password lama dan baru!");
+            
+            const j = await fetchSafeApi('/api/user/change-password', { old_password: oldP, new_password: newP });
+            if (j && j.status === "success") {
+                alert("Password berhasil diganti!");
+                document.getElementById("oldPwInput").value = "";
+                document.getElementById("newPwInput").value = "";
+            } else {
+                alert(j ? j.detail : "Password lama salah");
+            }
+        }
+
+        async function giveLike() {
+            const j = await fetchSafeApi('/api/user/like');
+            if (j && j.status === "success") {
+                const el = document.getElementById("likesCount");
+                if (el) el.innerText = Number(j.likes).toLocaleString();
+                alert("Terima kasih sudah memberikan Suka!");
+                loadUserProfileData(); // Refresh profile to compute/update popularity
+            } else {
+                alert("Gagal memberikan suka.");
+            }
+        }
+
+        function copyProfileLink() {
+            navigator.clipboard.writeText(window.location.href);
+            alert("Tautan profil berhasil disalin ke clipboard!");
+        }
+
+        function logout() {
+            deleteCookie("user_session");
+            deleteCookie("session_key");
+            deleteCookie("sessionCookie");
+            localStorage.clear();
+            sessionStorage.clear();
+            alert("Anda telah berhasil logout.");
+            window.location.href = "../";
+        }
+
+        async function destroyAccountPermanently() {
+            const conf = prompt('⚠️ PERINGATAN KERAS! Akun Anda beserta seluruh saldo koin, kristal, token, dan skin yang dikoleksi akan DIHAPUS TOTAL secara permanen. Tindakan ini TIDAK dapat dibatalkan.\n\nKetik "Yakin" untuk mengonfirmasi penghapusan akun:');
+            if (conf !== "Yakin") {
+                alert("Tindakan penghapusan akun dibatalkan.");
+                return;
+            }
+
+            const j = await fetchSafeApi('/api/user/destroy-account');
+            if (j && j.status === "success") {
+                alert("Akun Anda telah berhasil dihancurkan secara permanen!");
+                deleteCookie("user_session");
+                deleteCookie("session_key");
+                deleteCookie("sessionCookie");
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = "../";
+            } else {
+                alert("Gagal menghapus akun secara permanen: " + (j ? j.detail || j.message : "Koneksi server offline."));
+            }
+        }
+    </script>
+</body>
+</html>
+

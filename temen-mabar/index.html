@@ -1,0 +1,410 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>galery alcsta48 - cari teman mabar & game</title>
+    <link rel="icon" type="image/png" href="../icon.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .video-bg {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; z-index: -2;
+            filter: brightness(0.6);
+            transform: translateZ(0);
+            will-change: transform;
+            contain: strict;
+        }
+
+        .corner-glows {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden; contain: strict;
+        }
+        .glow { position: absolute; width: 50vw; height: 50vw; max-width: 500px; max-height: 500px; border-radius: 50%; opacity: 0.2; pointer-events: none; }
+        .glow-tl { top: -10%; left: -10%; background: radial-gradient(circle, #ff007f 0%, transparent 70%); }
+        .glow-tr { top: -10%; right: -10%; background: radial-gradient(circle, #ff7700 0%, transparent 70%); }
+        .glow-bl { bottom: -10%; left: -10%; background: radial-gradient(circle, #0088ff 0%, transparent 70%); }
+        .glow-br { bottom: -10%; right: -10%; background: radial-gradient(circle, #ffffff 0%, transparent 70%); opacity: 0.15; }
+
+        .left-sidebar {
+            width: 90px;
+            background: rgba(11, 17, 33, 0.85);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px 5px; gap: 12px; z-index: 100;
+            overflow-y: auto; flex-shrink: 0;
+            transform: translateZ(0); will-change: transform;
+            -webkit-overflow-scrolling: touch;
+            transition: transform 0.25s ease-out;
+        }
+        .left-sidebar::-webkit-scrollbar { display: none; }
+
+        .side-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-decoration: none; color: #fff; font-weight: 700; font-size: 10px;
+            background: rgba(255, 255, 255, 0.1); width: 70px; height: 60px; border-radius: 16px;
+            transition: transform 0.15s ease, background 0.15s ease; border: 1px solid rgba(255, 255, 255, 0.18); text-align: center;
+            gap: 4px; flex-shrink: 0; contain: content;
+        }
+        .side-item:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.03); }
+        .side-item.active { background: rgba(255, 255, 255, 0.9); color: #1a5cff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .side-icon { font-size: 20px; }
+
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6);
+            z-index: 90; opacity: 0; transition: opacity 0.25s ease;
+        }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        .main-content {
+            flex-grow: 1; display: flex; flex-direction: column;
+            position: relative; height: 100%; overflow: hidden; z-index: 10;
+        }
+
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 25px; z-index: 20; width: 100%;
+        }
+
+        .left-group { display: flex; align-items: center; gap: 12px; }
+        .sidebar-toggle-btn {
+            display: none; background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #fff; font-size: 18px; padding: 6px 12px;
+            border-radius: 12px; cursor: pointer; flex-shrink: 0;
+        }
+
+        .brand-logo {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            padding: 6px 16px; border-radius: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .logo-main { height: 35px; width: auto; border-radius: 50%; }
+        .brand-text { font-weight: 800; font-size: 15px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+
+        .sub-nav-container {
+            display: flex; gap: 10px; padding: 0 25px 12px 25px; overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .sub-nav-container::-webkit-scrollbar { display: none; }
+        .pill-tab {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #fff; padding: 8px 18px; border-radius: 20px;
+            font-weight: 700; font-size: 13px; cursor: pointer;
+            transition: transform 0.15s ease, background 0.15s ease; white-space: nowrap;
+        }
+        .pill-tab:hover { background: rgba(255, 255, 255, 0.25); }
+        .pill-tab.active { background: #fff; color: #1a5cff; border-color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+
+        .stage-container {
+            flex-grow: 1; overflow-y: auto; padding: 10px 25px 30px 25px;
+            display: flex; flex-direction: column; gap: 20px;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            will-change: scroll-position;
+        }
+        .stage-container::-webkit-scrollbar { width: 6px; }
+        .stage-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.78);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 24px; padding: 24px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+            contain: content;
+        }
+        .card-title { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
+
+        .lobby-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px;
+        }
+        .lobby-card {
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15);
+            padding: 16px; border-radius: 18px; display: flex; flex-direction: column; gap: 10px;
+        }
+        .lobby-header { display: flex; justify-content: space-between; align-items: center; }
+        .lobby-game { font-weight: 800; font-size: 14px; color: #00d4ff; }
+        .lobby-status { font-size: 11px; background: rgba(0,255,136,0.2); color: #00ff88; padding: 3px 8px; border-radius: 8px; font-weight: 700; }
+        .lobby-title { font-size: 13px; font-weight: 700; color: #fff; }
+        .join-lobby-btn {
+            background: linear-gradient(135deg, #1a5cff, #00d4ff); border: none; color: white;
+            padding: 8px; border-radius: 12px; font-weight: 800; font-size: 12px; cursor: pointer; transition: 0.2s;
+        }
+        .join-lobby-btn:hover { transform: scale(1.03); }
+
+        /* TICTACTOE BOARD */
+        .tictactoe-grid {
+            display: grid; grid-template-columns: repeat(3, 90px); gap: 10px; margin: 20px auto; width: fit-content;
+        }
+        .tictactoe-cell {
+            width: 90px; height: 90px; background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 16px; display: flex; align-items: center; justify-content: center;
+            font-size: 32px; font-weight: 900; cursor: pointer; transition: 0.2s;
+        }
+        .tictactoe-cell:hover { border-color: #ffd700; background: rgba(255,215,0,0.1); }
+
+        @media screen and (max-width: 768px) {
+            .left-sidebar {
+                position: fixed; top: 0; left: 0; height: 100%;
+                width: 180px; padding: 25px 10px; gap: 10px;
+                transform: translateX(-100%);
+            }
+            .left-sidebar.open { transform: translateX(0); }
+            .side-item { width: 100%; height: 44px; flex-direction: row; justify-content: flex-start; padding: 0 15px; font-size: 12px; border-radius: 12px; }
+            .sidebar-toggle-btn { display: block; }
+            .top-bar { padding: 10px 15px; }
+            .sub-nav-container { padding: 0 15px 10px 15px; }
+            .stage-container { padding: 10px 15px 20px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <video class="video-bg" autoplay loop muted playsinline>
+        <source src="../beranda/latarglobal.webm" type="video/webm">
+    </video>
+
+    <div class="corner-glows">
+        <div class="glow glow-tl"></div><div class="glow glow-tr"></div>
+        <div class="glow glow-bl"></div><div class="glow glow-br"></div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+            <aside class="left-sidebar" id="leftSidebar">
+        <a href="../beranda/" class="side-item"><span class="side-icon">💬</span>Beranda</a>
+        <a href="../profil/" class="side-item"><span class="side-icon">👤</span>Profil</a>
+        <a href="../gacha-skin/" class="side-item"><span class="side-icon">🎁</span>Gacha</a>
+        <a href="../live-jkt48/" class="side-item"><span class="side-icon">🎤</span>Live JKT</a>
+        <a href="../alcstify/" class="side-item"><span class="side-icon">🎵</span>Alcstify</a>
+        <a href="../mini-games/" class="side-item"><span class="side-icon">🎮</span>Mini Games</a>
+        <a href="../grup/" class="side-item"><span class="side-icon">👥</span>Grup</a>
+        <a href="#" class="side-item active"><span class="side-icon">⚔️</span>Mabar</a>
+        <a href="../medsos-saver/" class="side-item"><span class="side-icon">📥</span>Saver</a>
+        <a href="../koleksi-kartu/" class="side-item"><span class="side-icon">🃏</span>Kartu</a>
+        <a href="../bio-member/" class="side-item"><span class="side-icon">📖</span>Bio</a>
+        <a href="../link-shortcut/" class="side-item"><span class="side-icon">🔗</span>Shortcut</a>
+        <a href="../update-member/" class="side-item"><span class="side-icon">📱</span>Update Sosmed</a>
+        <a href="../tentang/" class="side-item"><span class="side-icon">ℹ️</span>Tentang</a>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="left-group">
+                <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
+                <div class="brand-logo">
+                    <img src="../logo.png.png" alt="Logo" class="logo-main" onerror="this.onerror=null; this.src='../logo.png';">
+                    <span class="brand-text">Alcsta Mabar Hub & Mini-Game</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="sub-nav-container">
+            <button class="pill-tab active" onclick="switchTab('lobbyTab', this)">⚔️ Lobby Mabar</button>
+            <button class="pill-tab" onclick="switchTab('tictactoeTab', this)">🎮 TicTacToe Oshi</button>
+            <button class="pill-tab" onclick="switchTab('newsTab', this)">📰 Berita Game & Esports</button>
+        </div>
+
+        <div class="stage-container">
+            <!-- TAB 1: LOBBY MABAR -->
+            <div id="lobbyTab" class="tab-content">
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <span class="card-title" style="margin-bottom: 0;">⚔️ Ruang Tunggu Mabar (Cari Teman Main)</span>
+                        <button class="join-lobby-btn" style="padding: 8px 16px;" onclick="alert('Fitur buat room mabar aktif!')">+ Buat Room Baru</button>
+                    </div>
+                    
+                    <div class="lobby-grid">
+                        <div class="lobby-card">
+                            <div class="lobby-header">
+                                <span class="lobby-game">Mobile Legends (MLBB)</span>
+                                <span class="lobby-status">3 / 5 Pemain</span>
+                            </div>
+                            <div class="lobby-title">Push Rank Mythic bareng Fans Christy! 💖</div>
+                            <button class="join-lobby-btn" onclick="alert('Bergabung ke room MLBB...')">Masuk Room</button>
+                        </div>
+
+                        <div class="lobby-card">
+                            <div class="lobby-header">
+                                <span class="lobby-game">Free Fire</span>
+                                <span class="lobby-status">2 / 4 Pemain</span>
+                            </div>
+                            <div class="lobby-title">Mabar Santai Malam Minggu Oshi Freya ⚡</div>
+                            <button class="join-lobby-btn" onclick="alert('Bergabung ke room Free Fire...')">Masuk Room</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: TICTACTOE OSHI (FROM JKT48LIVE/TICTACTOE) -->
+            <div id="tictactoeTab" class="tab-content" style="display: none;">
+                <div class="glass-card" style="text-align: center; max-width: 500px; margin: 0 auto;">
+                    <span class="card-title" style="justify-content: center;">🎮 Mini-Game TicTacToe Oshi</span>
+                    <p style="font-size: 13px; color: rgba(255,255,255,0.8);">Bermain melawan Bot Wota! Giliran Anda: <b>💖 (X)</b> vs Bot: <b>⭐ (O)</b></p>
+                    
+                    <div style="display: flex; justify-content: center; gap: 16px; margin: 12px 0;">
+                        <div style="background: rgba(0,0,0,0.4); padding: 8px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);">
+                            <span style="font-size: 11px; color: #00ff88; font-weight: 800;">MENANG</span>
+                            <div id="scoreWin" style="font-size: 18px; font-weight: 900; color: #fff;">0</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.4); padding: 8px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);">
+                            <span style="font-size: 11px; color: #ffd700; font-weight: 800;">SERI</span>
+                            <div id="scoreDraw" style="font-size: 18px; font-weight: 900; color: #fff;">0</div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.4); padding: 8px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);">
+                            <span style="font-size: 11px; color: #ff007f; font-weight: 800;">KALAH</span>
+                            <div id="scoreLose" style="font-size: 18px; font-weight: 900; color: #fff;">0</div>
+                        </div>
+                    </div>
+
+                    <div class="tictactoe-grid" id="tttGrid">
+                        <div class="tictactoe-cell" onclick="playTicTacToe(0)"></div>
+                        <div class="tictactoe-cell" onclick="playTicTacToe(1)"></div>
+                        <div class="tictactoe-cell" onclick="playTicTacToe(2)"></div>
+                        <div class="tictactoe-cell" onclick="playTicTacToe(3)"></div>
+                        <div class="tictactoe-cell" onclick="playTicTacToe(4)"></div>
+                        <div class="tictactoe-cell" onclick="playTicTacToe(5)"></div>
+                        <div class="tictactoe-cell" onclick="playTicTacToe(6)"></div>
+                        <div class="tictactoe-cell" onclick="playTicTacToe(7)"></div>
+                        <div class="tictactoe-cell" onclick="playTicTacToe(8)"></div>
+                    </div>
+
+                    <div id="tttGameStatus" style="font-size: 14px; font-weight: 800; color: #ffd700; margin: 10px 0;">Giliran Anda jalan!</div>
+                    <button class="pill-tab" style="margin-top: 5px;" onclick="resetTicTacToe()">🔄 Main Lagi / Reset</button>
+                </div>
+            </div>
+
+            <!-- TAB 3: GAMING NEWS (THE LAZY MEDIA INTEGRATION) -->
+            <div id="newsTab" class="tab-content" style="display: none;">
+                <div class="glass-card">
+                    <span class="card-title">📰 Kabar Berita Game & Esports Populer</span>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="background: rgba(0,0,0,0.35); padding: 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);">
+                            <b style="font-size: 14px; color: #ffd700;">Turnamen MPL ID Season Baru Dimulai!</b>
+                            <p style="font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px;">Daftar tim terkuat siap bertanding memperebutkan gelar juara musim ini.</p>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.35); padding: 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);">
+                            <b style="font-size: 14px; color: #00d4ff;">Update Patch MLBB: Hero Favorit Oshi Dapat Buff</b>
+                            <p style="font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px;">Penyesuaian meta terbaru hero mage dan marksman.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById("leftSidebar").classList.toggle("open");
+            document.getElementById("sidebarOverlay").classList.toggle("active");
+        }
+
+        function switchTab(tabId, btnEl) {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.pill-tab').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).style.display = 'block';
+            btnEl.classList.add('active');
+        }
+
+        let board = ["", "", "", "", "", "", "", "", ""];
+        let isGameOver = false;
+        let scores = { win: 0, draw: 0, lose: 0 };
+
+        const winCombos = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        function checkWinner(p) {
+            return winCombos.some(combo => combo.every(idx => board[idx] === p));
+        }
+
+        function playTicTacToe(idx) {
+            if (board[idx] !== "" || isGameOver) return;
+            
+            const cells = document.querySelectorAll('.tictactoe-cell');
+            board[idx] = "💖";
+            cells[idx].innerText = "💖";
+            
+            if (checkWinner("💖")) {
+                isGameOver = true;
+                scores.win++;
+                document.getElementById("scoreWin").innerText = scores.win;
+                document.getElementById("tttGameStatus").innerText = "🎉 SELAMAT! Anda Menang!";
+                return;
+            }
+
+            if (!board.includes("")) {
+                isGameOver = true;
+                scores.draw++;
+                document.getElementById("scoreDraw").innerText = scores.draw;
+                document.getElementById("tttGameStatus").innerText = "🤝 Permainan Seri!";
+                return;
+            }
+
+            document.getElementById("tttGameStatus").innerText = "⏳ Bot Wota sedang berpikir...";
+
+            // Bot Move (Minimax or intelligent picker)
+            setTimeout(() => {
+                if (isGameOver) return;
+                const emptyIndices = board.map((v, i) => v === "" ? i : null).filter(v => v !== null);
+                if (emptyIndices.length > 0) {
+                    const botPick = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+                    board[botPick] = "⭐";
+                    cells[botPick].innerText = "⭐";
+
+                    if (checkWinner("⭐")) {
+                        isGameOver = true;
+                        scores.lose++;
+                        document.getElementById("scoreLose").innerText = scores.lose;
+                        document.getElementById("tttGameStatus").innerText = "😢 Bot Wota Menang! Coba lagi ya!";
+                    } else if (!board.includes("")) {
+                        isGameOver = true;
+                        scores.draw++;
+                        document.getElementById("scoreDraw").innerText = scores.draw;
+                        document.getElementById("tttGameStatus").innerText = "🤝 Permainan Seri!";
+                    } else {
+                        document.getElementById("tttGameStatus").innerText = "💖 Giliran Anda!";
+                    }
+                }
+            }, 300);
+        }
+
+        function resetTicTacToe() {
+            board = ["", "", "", "", "", "", "", "", ""];
+            isGameOver = false;
+            document.querySelectorAll('.tictactoe-cell').forEach(c => c.innerText = "");
+            document.getElementById("tttGameStatus").innerText = "💖 Giliran Anda jalan!";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Misi - The Beyonce</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+            background-color: #0f172a;
+        }
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: -1;
+        }
+        .mission-container {
+            max-width: 650px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .mission-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .mission-item:last-child {
+            border-bottom: none;
+        }
+        .mission-info {
+            flex: 1;
+        }
+        .mission-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            margin-bottom: 5px;
+        }
+        .mission-progress {
+            font-size: 13px;
+            color: #ddd;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+        .mission-reward {
+            display: flex;
+            align-items: center;
+            margin: 0 15px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .reward-icon {
+            width: 22px;
+            height: 22px;
+            margin-right: 5px;
+        }
+        .reward-amount {
+            font-size: 15px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .btn-claim {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100px;
+            text-align: center;
+        }
+        .btn-disabled {
+            background: rgba(255, 255, 255, 0.3);
+            color: #aaa;
+            cursor: not-allowed;
+        }
+        .btn-ready {
+            background: linear-gradient(180deg, #f3db95 0%, #c49a45 100%);
+            color: #3b2a0c;
+            box-shadow: 0 0 8px rgba(196, 154, 69, 0.8);
+        }
+        .btn-go {
+            background: linear-gradient(180deg, #5b9ce6 0%, #2962ff 100%);
+            color: #ffffff;
+            box-shadow: 0 0 8px rgba(41, 98, 255, 0.6);
+        }
+        .back-nav {
+            max-width: 650px;
+            margin: 0 auto 15px auto;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .btn-back {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+    <video class="video-bg" autoplay loop muted playsinline>
+        <source src="https://thebeyonce48.my.id/gacha-skin/latargacha.webm" type="video/webm">
+    </video>
+
+    <div class="back-nav">
+        <a href="/gacha-skin" class="btn-back">← Kembali ke Gacha</a>
+    </div>
+
+    <div class="mission-container" id="mission-list">
+        <!-- Render Otomatis dari JS -->
+    </div>
+
+<script>
+    // Konfigurasi Link Frontend
+    const CONFIG = {
+        LINK_TIKTOK: "https://www.tiktok.com/@contoh/video/123",
+        LINK_TELE_MSG: "https://t.me/grup_anda",
+        LINK_ABSEN: "https://t.me/grup_anda/absen",
+        TOKEN_IMG: "https://thebeyonce48.my.id/gacha-skin/ONCETOKEN.PNG"
+    };
+
+    // Konfigurasi Backend API HF Space
+    const API_BASE_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+
+    const MISSIONS = [
+        { id: "daily_login", title: "(Harian) Login ke web", type: "daily", target: 1, reward: 20 },
+        { id: "daily_tiktok", title: "(Harian) Nonton video TikTok", type: "daily", target: 1, reward: 30, link: CONFIG.LINK_TIKTOK, special: "tiktok" },
+        { id: "daily_absen", title: "(Harian) Absen di Grup", type: "daily", target: 1, reward: 20, link: CONFIG.LINK_ABSEN },
+        
+        { id: "msg_50", title: "(Mingguan) Kirim 50 Pesan", type: "weekly", target: 50, reward: 5, link: CONFIG.LINK_TELE_MSG },
+        { id: "msg_100", title: "(Mingguan) Kirim 100 Pesan", type: "weekly", target: 100, reward: 5, link: CONFIG.LINK_TELE_MSG },
+        { id: "msg_200", title: "(Mingguan) Kirim 200 Pesan", type: "weekly", target: 200, reward: 5, link: CONFIG.LINK_TELE_MSG },
+        { id: "msg_300", title: "(Mingguan) Kirim 300 Pesan", type: "weekly", target: 300, reward: 5, link: CONFIG.LINK_TELE_MSG },
+        { id: "msg_400", title: "(Mingguan) Kirim 400 Pesan", type: "weekly", target: 400, reward: 10, link: CONFIG.LINK_TELE_MSG },
+        { id: "msg_600", title: "(Mingguan) Kirim 600 Pesan", type: "weekly", target: 600, reward: 10, link: CONFIG.LINK_TELE_MSG },
+        { id: "msg_700", title: "(Mingguan) Kirim 700 Pesan", type: "weekly", target: 700, reward: 10, link: CONFIG.LINK_TELE_MSG },
+        { id: "msg_900", title: "(Mingguan) Kirim 900 Pesan", type: "weekly", target: 900, reward: 10, link: CONFIG.LINK_TELE_MSG },
+        { id: "msg_1200", title: "(Mingguan) Kirim 1200 Pesan", type: "weekly", target: 1200, reward: 12, link: CONFIG.LINK_TELE_MSG },
+        { id: "msg_1400", title: "(Mingguan) Kirim 1400 Pesan", type: "weekly", target: 1400, reward: 12, link: CONFIG.LINK_TELE_MSG },
+        { id: "msg_1900", title: "(Mingguan) Kirim 1900 Pesan", type: "weekly", target: 1900, reward: 13, link: CONFIG.LINK_TELE_MSG },
+        { id: "msg_2500", title: "(Mingguan) Kirim 2500 Pesan", type: "weekly", target: 2500, reward: 15, link: CONFIG.LINK_TELE_MSG },
+        { id: "msg_3000", title: "(Mingguan) Kirim 3000 Pesan", type: "weekly", target: 3000, reward: 25, link: CONFIG.LINK_TELE_MSG },
+        { id: "msg_3500", title: "(Mingguan) Kirim 3500 Pesan", type: "weekly", target: 3500, reward: 25, link: CONFIG.LINK_TELE_MSG },
+        
+        { id: "future_1", title: "(Kosong) Misi Segera Hadir", type: "weekly", target: 1, reward: 0 },
+        { id: "future_2", title: "(Kosong) Misi Segera Hadir", type: "weekly", target: 1, reward: 0 }
+    ];
+
+    let userProgress = { total_messages: 0, daily_claims: [], weekly_claims: [] };
+
+    // FUNGSI UTAMA HASIL ADOPSI DARI FILE GACHA
+    function getSessionCookie() {
+        const possibleKeys = [
+            'session_cookie', 'session', 'session_id', 'user_id', 
+            'token', 'access_token', 'user_session', 'auth_token', 'sessionKey'
+        ];
+
+        // 1. Cek Parameter URL
+        const urlParams = new URLSearchParams(window.location.search);
+        for (let key of possibleKeys) {
+            if (urlParams.has(key) && urlParams.get(key)) return urlParams.get(key);
+        }
+
+        // 2. Cek LocalStorage
+        for (let key of possibleKeys) {
+            const val = localStorage.getItem(key);
+            if (val) return val;
+        }
+
+        // 3. Cek SessionStorage
+        for (let key of possibleKeys) {
+            const val = sessionStorage.getItem(key);
+            if (val) return val;
+        }
+
+        // 4. Cek Cookie Browser (document.cookie)
+        if (document.cookie) {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const parts = cookie.trim().split('=');
+                if (possibleKeys.includes(parts[0]) && parts[1]) {
+                    return decodeURIComponent(parts[1]);
+                }
+            }
+        }
+
+        return ""; 
+    }
+
+    function renderMissions() {
+        const container = document.getElementById("mission-list");
+        container.innerHTML = ""; 
+
+        MISSIONS.forEach(misi => {
+            const isClaimed = (misi.type === "daily" && userProgress.daily_claims.includes(misi.id)) || 
+                              (misi.type === "weekly" && userProgress.weekly_claims.includes(misi.id));
+            
+            let currentProgress = 0;
+            let btnHTML = "";
+
+            if (misi.id.startsWith("msg_")) {
+                currentProgress = userProgress.total_messages;
+            } else if (misi.id === "daily_login") {
+                currentProgress = 1; 
+            }
+
+            let displayProgress = currentProgress > misi.target ? misi.target : currentProgress;
+
+            if (misi.id.startsWith("future_")) {
+                btnHTML = `<button class="btn-claim btn-disabled" disabled>Klaim</button>`;
+            } else if (isClaimed) {
+                btnHTML = `<button class="btn-claim btn-disabled" disabled>Diklaim</button>`;
+            } else if (misi.id === "daily_tiktok") {
+                btnHTML = `<button id="btn-${misi.id}" class="btn-claim btn-go" onclick="handleTikTok('${misi.id}', '${misi.link}')">Nonton</button>`;
+            } else if (misi.id === "daily_absen") {
+                btnHTML = `<button id="btn-${misi.id}" class="btn-claim btn-go" onclick="handleLink('${misi.id}', '${misi.link}')">Pergi</button>`;
+            } else if (displayProgress >= misi.target) {
+                btnHTML = `<button id="btn-${misi.id}" class="btn-claim btn-ready" onclick="claimMisi('${misi.id}', ${misi.reward}, '${misi.type}')">Klaim</button>`;
+            } else {
+                btnHTML = `<button class="btn-claim btn-go" onclick="window.open('${misi.link}', '_blank')">Kirim</button>`;
+            }
+
+            const item = document.createElement("div");
+            item.className = "mission-item";
+            item.innerHTML = `
+                <div class="mission-info">
+                    <div class="mission-title">${misi.title}</div>
+                    <div class="mission-progress">${displayProgress}/${misi.target}</div>
+                </div>
+                <div class="mission-reward">
+                    <img src="${CONFIG.TOKEN_IMG}" class="reward-icon" alt="Token">
+                    <div class="reward-amount">${misi.reward}</div>
+                </div>
+                ${btnHTML}
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    async function syncStatusMisi() {
+        const sessionKey = getSessionCookie();
+        
+        if (!sessionKey) {
+            console.warn("Sesi tidak ditemukan. Pastikan user sudah login.");
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/statusmisi`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    session_cookie: sessionKey,
+                    sessionKey: sessionKey 
+                })
+            });
+            const data = await res.json();
+            
+            if (res.ok && data.status === "success") {
+                userProgress.total_messages = data.total_messages || 0;
+                userProgress.daily_claims = data.daily_claims || []; 
+                userProgress.weekly_claims = data.weekly_claims || []; 
+                renderMissions();
+            }
+        } catch (err) {
+            console.error("Gagal sync status misi:", err);
+        }
+    }
+
+    function handleTikTok(misiId, link) {
+        window.open(link, "_blank"); 
+        const btn = document.getElementById(`btn-${misiId}`);
+        btn.disabled = true;
+        btn.className = "btn-claim btn-disabled";
+        
+        let timeLeft = 10;
+        btn.innerText = `${timeLeft}s`;
+
+        const timer = setInterval(() => {
+            timeLeft--;
+            btn.innerText = `${timeLeft}s`;
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                btn.disabled = false;
+                btn.className = "btn-claim btn-ready";
+                btn.innerText = "Klaim";
+                btn.onclick = () => claimMisi(misiId, 30, 'daily');
+            }
+        }, 1000);
+    }
+
+    function handleLink(misiId, link) {
+        window.open(link, "_blank");
+        const btn = document.getElementById(`btn-${misiId}`);
+        btn.className = "btn-claim btn-ready";
+        btn.innerText = "Klaim";
+        btn.onclick = () => claimMisi(misiId, 20, 'daily');
+    }
+
+    async function claimMisi(misiId, rewardAmount, type) {
+        const sessionKey = getSessionCookie();
+        
+        if (!sessionKey) {
+            alert("Session cookie tidak terdeteksi. Silakan login kembali!");
+            return;
+        }
+
+        const btn = document.getElementById(`btn-${misiId}`);
+        btn.innerText = "...";
+        btn.disabled = true;
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/misi`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    session_cookie: sessionKey, 
+                    sessionKey: sessionKey, 
+                    mission_id: misiId, 
+                    reward: rewardAmount, 
+                    type: type 
+                })
+            });
+
+            const data = await res.json();
+            
+            if (res.ok && data.status === "success") {
+                btn.className = "btn-claim btn-disabled";
+                btn.innerText = "Diklaim";
+                
+                if (type === 'daily') userProgress.daily_claims.push(misiId);
+                if (type === 'weekly') userProgress.weekly_claims.push(misiId);
+            } else {
+                alert("Gagal Klaim: " + (data.message || data.detail || "Terjadi kesalahan"));
+                btn.className = "btn-claim btn-ready";
+                btn.innerText = "Klaim";
+                btn.disabled = false;
+            }
+        } catch (err) {
+            console.error("Error klaim:", err);
+            btn.className = "btn-claim btn-ready";
+            btn.innerText = "Klaim";
+            btn.disabled = false;
+            alert("Terjadi kesalahan jaringan.");
+        }
+    }
+
+    // Inisialisasi awal
+    document.addEventListener('DOMContentLoaded', () => {
+        renderMissions();
+        syncStatusMisi();
+    });
+</script>
+</body>
+</html>

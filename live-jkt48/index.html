@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>galery alcsta48 - live stream member jkt48 & replay video</title>
+    <link rel="icon" type="image/png" href="../icon.png">
+    <script src="../config.js"></script>
+    <script src="https://player.live-video.net/1.24.0/amazon-ivs-player.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #030712;
+            color: #fff;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .video-bg {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; z-index: -2;
+            filter: brightness(0.45);
+            transform: translateZ(0);
+            contain: strict;
+        }
+
+        .corner-glows {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden; contain: strict;
+        }
+        .glow { position: absolute; width: 50vw; height: 50vw; max-width: 450px; max-height: 450px; border-radius: 50%; opacity: 0.2; pointer-events: none; }
+        .glow-tl { top: -10%; left: -10%; background: radial-gradient(circle, #ff007f 0%, transparent 70%); }
+        .glow-tr { top: -10%; right: -10%; background: radial-gradient(circle, #ffd700 0%, transparent 70%); }
+        .glow-bl { bottom: -10%; left: -10%; background: radial-gradient(circle, #0088ff 0%, transparent 70%); }
+        .glow-br { bottom: -10%; right: -10%; background: radial-gradient(circle, #9d4edd 0%, transparent 70%); opacity: 0.15; }
+
+        /* RESTRUCTURED SIDEBAR */
+        .left-sidebar {
+            width: 90px;
+            background: rgba(11, 17, 33, 0.85);
+            contain: content; transform: translateZ(0); will-change: transform;
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px 5px; gap: 12px; z-index: 100;
+            overflow-y: auto; flex-shrink: 0;
+            transform: translateZ(0); will-change: transform;
+            -webkit-overflow-scrolling: touch;
+            transition: transform 0.25s ease-out;
+        }
+        .left-sidebar::-webkit-scrollbar { display: none; }
+
+        .side-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-decoration: none; color: #fff; font-weight: 700; font-size: 10px;
+            background: rgba(255, 255, 255, 0.1); width: 70px; height: 60px; border-radius: 16px;
+            transition: transform 0.15s ease, background 0.15s ease; border: 1px solid rgba(255, 255, 255, 0.18); text-align: center;
+            gap: 4px; flex-shrink: 0; contain: content;
+        }
+        .side-item:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.03); }
+        .side-item.active { background: rgba(255, 255, 255, 0.9); color: #1a5cff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .side-icon { font-size: 20px; }
+
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6);
+            z-index: 90; opacity: 0; transition: opacity 0.25s ease;
+        }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        .main-content {
+            flex-grow: 1; display: flex; flex-direction: column;
+            position: relative; height: 100%; overflow: hidden; z-index: 10;
+        }
+
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 24px; z-index: 20; width: 100%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(11, 17, 33, 0.6);
+        }
+
+        .left-group { display: flex; align-items: center; gap: 12px; }
+        .sidebar-toggle-btn {
+            display: none; background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #fff; font-size: 18px; padding: 6px 12px;
+            border-radius: 12px; cursor: pointer; flex-shrink: 0;
+        }
+
+        .brand-logo {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(15, 23, 42, 0.8);
+            contain: content; transform: translateZ(0); will-change: transform;
+            padding: 6px 16px; border-radius: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        .logo-main { height: 32px; width: auto; border-radius: 50%; }
+        .brand-text { font-weight: 800; font-size: 14px; color: #fff; }
+
+        .sub-nav-container {
+            display: flex; gap: 8px; padding: 12px 24px; overflow-x: auto;
+            -webkit-overflow-scrolling: touch; background: rgba(11, 17, 33, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            flex-shrink: 0;
+        }
+        .sub-nav-container::-webkit-scrollbar { display: none; }
+        .pill-tab {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #cbd5e1; padding: 7px 18px; border-radius: 20px;
+            font-weight: 700; font-size: 12px; cursor: pointer;
+            transition: all 0.2s ease; white-space: nowrap;
+        }
+        .pill-tab:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
+        .pill-tab.active { background: #fff; color: #1a5cff; border-color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.25); }
+
+        .stage-container {
+            flex-grow: 1; overflow-y: auto; padding: 16px 24px 40px 24px;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            will-change: scroll-position;
+        }
+        .stage-container::-webkit-scrollbar { width: 6px; }
+        .stage-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 4px; }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.82);
+            contain: content; transform: translateZ(0); will-change: transform;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 22px; padding: 22px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+            max-width: 980px; margin: 0 auto; width: 100%;
+            word-break: break-word; overflow-wrap: break-word;
+        }
+        .card-title { font-size: 17px; font-weight: 800; color: #ffd700; display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-family: 'Cinzel', serif; }
+
+        /* LIVE STREAM PLAYER & OFFLINE OVERLAY */
+        .mirror-layout {
+            display: grid; grid-template-columns: 1fr 320px; gap: 16px; margin-top: 10px;
+        }
+        .mirror-video-wrapper {
+            position: relative; width: 100%; padding-top: 56.25%; /* 16:9 Aspect */
+            background: #000; border-radius: 18px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+        }
+        .mirror-video-frame {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; object-fit: cover;
+        }
+
+        .stream-offline-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(11,17,33,0.95), rgba(3,7,18,0.98));
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 20px; z-index: 10;
+        }
+
+        /* CINEMA SHOWCASE HERO */
+        .cinema-showcase-box {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 20px; box-sizing: border-box;
+            background-color: #0b1121;
+        }
+        .cinema-showcase-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(3,7,18,0.1) 0%, rgba(3,7,18,0.92) 100%);
+            z-index: 1;
+        }
+        .cinema-showcase-content {
+            position: relative; z-index: 2; display: flex; flex-direction: column; gap: 8px;
+        }
+        .pulse-play-center {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+            width: 70px; height: 70px; border-radius: 50%;
+            background: linear-gradient(135deg, #ff0055, #ff5500);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 26px; cursor: pointer; text-decoration: none;
+            box-shadow: 0 0 25px rgba(255,0,85,0.7); z-index: 3;
+            transition: all 0.25s ease;
+        }
+        .pulse-play-center:hover {
+            transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 35px rgba(255,0,85,0.95);
+        }
+
+        /* LIVE CHAT CONTAINER (BERANDA STYLE AVATAR, BORDER & CHAT SKINS) */
+        .live-chat-box {
+            background: rgba(11, 17, 33, 0.94); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 18px; display: flex; flex-direction: column; height: 100%; min-height: 420px;
+            overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+        .chat-header {
+            padding: 10px 14px; background: rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 12px; font-weight: 800; color: #00ff88; display: flex; justify-content: space-between; align-items: center;
+        }
+        .chat-messages {
+            flex: 1; padding: 12px 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+            font-size: 12px; font-family: 'Nunito', sans-serif;
+            scroll-behavior: smooth;
+        }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 4px; }
+
+        .live-msg {
+            display: flex; flex-direction: column; max-width: 90%;
+            contain: content;
+        }
+        .live-msg.user { align-self: flex-end; align-items: flex-end; }
+        .live-msg.peer { align-self: flex-start; align-items: flex-start; }
+
+        .live-msg-header { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+        .live-msg.user .live-msg-header { flex-direction: row-reverse; }
+
+        .live-avatar-wrapper {
+            position: relative; width: 28px; height: 28px; min-width: 28px; min-height: 28px; flex-shrink: 0;
+        }
+        .live-avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #fff; }
+        .live-border-img {
+            position: absolute; top: 51%; left: 49%; transform: translate(-50%, -50%);
+            width: 135%; height: 120%; pointer-events: none; z-index: 2; object-fit: contain;
+            mix-blend-mode: multiply; filter: contrast(1.15) brightness(1.05);
+        }
+
+        .live-name-time { display: flex; flex-direction: column; font-size: 10.5px; }
+        .live-msg.user .live-name-time { align-items: flex-end; }
+        .live-user-name { font-weight: 800; color: #ffd700; }
+        .live-msg-time { font-size: 9px; color: rgba(255,255,255,0.6); }
+
+        .live-msg-bubble {
+            font-size: 12.5px; line-height: 1.4; word-break: break-word; font-weight: 700; position: relative;
+        }
+
+        .chat-user-preview-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 5px 12px; background: rgba(0,0,0,0.6); border-top: 1px solid rgba(255,255,255,0.08);
+            font-size: 11px; color: rgba(255,255,255,0.8);
+        }
+        .chat-user-preview-bar .user-badge {
+            display: flex; align-items: center; gap: 6px; font-weight: 800; color: #00d4ff;
+        }
+        .chat-user-preview-bar .user-avatar-sm {
+            width: 20px; height: 20px; border-radius: 50%; object-fit: cover; border: 1px solid #ffd700;
+        }
+
+        .chat-input-row {
+            padding: 8px 10px; background: rgba(0,0,0,0.7); border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; gap: 6px; align-items: center;
+        }
+        .chat-input {
+            flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 12px; padding: 7px 12px; color: #fff; font-size: 12px; outline: none; font-weight: 700;
+        }
+        .chat-input:focus { border-color: #00d4ff; background: rgba(255,255,255,0.15); }
+        .chat-send-btn {
+            background: linear-gradient(135deg, #1a5cff, #00d4ff); border: none; color: #fff;
+            padding: 7px 14px; border-radius: 12px; font-weight: 800; font-size: 11.5px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chat-send-btn:hover { transform: scale(1.05); }
+
+        /* MEMBER ON-AIR CHIPS (USING HIGHEST TIER SKIN CARDS) */
+        .onair-rooms-container {
+            margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .search-room-bar {
+            display: flex; gap: 10px; margin-bottom: 12px; align-items: center;
+        }
+        .room-search-input {
+            flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px; padding: 8px 14px; color: #fff; font-size: 12px; font-weight: 700;
+        }
+        .member-chips-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;
+            max-height: 250px; overflow-y: auto; padding-right: 4px;
+        }
+        .member-chips-grid::-webkit-scrollbar { width: 5px; }
+        .member-chips-grid::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+
+        .member-chip {
+            background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 16px; padding: 8px 10px; cursor: pointer; display: flex;
+            align-items: center; justify-content: space-between; gap: 8px; transition: 0.2s; font-size: 11px; font-weight: 800;
+        }
+        .member-chip:hover {
+            background: rgba(26,92,255,0.25); border-color: #00d4ff; transform: translateY(-2px);
+        }
+        .member-chip.active {
+            background: linear-gradient(135deg, #1a5cff, #00d4ff); border-color: #ffd700; color: #fff; box-shadow: 0 4px 15px rgba(0,212,255,0.4);
+        }
+        .chip-left { display: flex; align-items: center; gap: 8px; overflow: hidden; }
+        .chip-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1.5px solid #ffd700; flex-shrink: 0; background: #000; }
+        .chip-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .badge-live-pulse {
+            padding: 3px 6px; border-radius: 8px; background: #ff007f; color: #fff; font-size: 8px; font-weight: 900;
+            box-shadow: 0 0 10px rgba(255,0,127,0.7); animation: pulseLive 1.5s infinite; flex-shrink: 0;
+        }
+        @keyframes pulseLive {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* REPLAY GRID */
+        .replay-filter-row {
+            display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; align-items: center;
+        }
+        .replay-search-input {
+            flex: 1; min-width: 220px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px; padding: 10px 14px; color: #fff; font-size: 13px; font-weight: 700;
+        }
+        .replay-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px;
+        }
+        .replay-card {
+            background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 18px; overflow: hidden; display: flex; flex-direction: column;
+            transition: all 0.25s ease;
+        }
+        .replay-card:hover {
+            transform: translateY(-3px); border-color: #00d4ff; background: rgba(0,212,255,0.12);
+            box-shadow: 0 8px 25px rgba(0,212,255,0.25);
+        }
+        .replay-thumb-box {
+            position: relative; width: 100%; height: 152px; background: #000; overflow: hidden; cursor: pointer;
+        }
+        .replay-thumb-img {
+            width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;
+        }
+        .replay-card:hover .replay-thumb-img { transform: scale(1.05); }
+        .replay-badge-platform {
+            position: absolute; top: 8px; left: 8px; padding: 3px 8px; border-radius: 8px;
+            font-size: 10px; font-weight: 800; background: rgba(0,0,0,0.8); color: #ff007f;
+            backdrop-filter: blur(4px); border: 1px solid rgba(255,0,127,0.4);
+        }
+        .replay-info { padding: 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+        .replay-title { font-size: 13px; font-weight: 800; color: #fff; line-height: 1.35; }
+        .replay-meta-sub { font-size: 11px; color: rgba(255,255,255,0.6); }
+
+        .btn-action-row {
+            display: flex; gap: 6px; margin-top: 8px;
+        }
+        .btn-action {
+            flex: 1; padding: 8px 12px; border-radius: 12px; font-size: 11px; font-weight: 800;
+            text-align: center; text-decoration: none; border: none; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+            transition: all 0.2s;
+        }
+        .btn-yt { background: #ff0000; color: #fff; }
+        .btn-yt:hover { background: #cc0000; }
+        .btn-preset { background: linear-gradient(135deg, #1a5cff, #00d4ff); color: #fff; }
+        .btn-preset:hover { opacity: 0.9; }
+
+        /* IN-WEB VIDEO CINEMA MODAL */
+        .cinema-modal-backdrop {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.88); 
+            z-index: 999; align-items: center; justify-content: center; padding: 20px;
+        }
+        .cinema-modal-backdrop.active { display: flex; }
+        .cinema-modal-box {
+            background: #0b1121; border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 24px; width: 100%; max-width: 860px; overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8); display: flex; flex-direction: column;
+            animation: modalFade 0.25s ease-out;
+        }
+        @keyframes modalFade {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-header {
+            padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04);
+        }
+        .modal-title { font-size: 14px; font-weight: 800; color: #ffd700; }
+        .modal-close-btn {
+            background: rgba(255,255,255,0.15); border: none; color: #fff;
+            width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .modal-close-btn:hover { background: #ff0055; }
+        .modal-video-area {
+            position: relative; width: 100%; padding-top: 56.25%; background: #000;
+        }
+        .modal-video-frame {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
+        }
+
+        @media screen and (max-width: 868px) {
+            .mirror-layout { grid-template-columns: 1fr; }
+            .left-sidebar {
+                position: fixed; top: 0; left: 0; height: 100%;
+                width: 180px; padding: 25px 10px; gap: 10px;
+                transform: translateX(-100%);
+            }
+            .left-sidebar.open { transform: translateX(0); }
+            .side-item { width: 100%; height: 44px; flex-direction: row; justify-content: flex-start; padding: 0 15px; font-size: 12px; border-radius: 12px; }
+            .sidebar-toggle-btn { display: block; }
+            .top-bar { padding: 10px 14px; }
+            .sub-nav-container { padding: 8px 14px; }
+            .stage-container { padding: 12px 14px 20px 14px; }
+            .replay-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <video class="video-bg" autoplay loop muted playsinline>
+        <source src="../beranda/latarglobal.webm" type="video/webm">
+    </video>
+
+    <div class="corner-glows">
+        <div class="glow glow-tl"></div><div class="glow glow-tr"></div>
+        <div class="glow glow-bl"></div><div class="glow glow-br"></div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- RESTRUCTURED SIDEBAR -->
+            <aside class="left-sidebar" id="leftSidebar">
+        <a href="../beranda/" class="side-item"><span class="side-icon">💬</span>Beranda</a>
+        <a href="../profil/" class="side-item"><span class="side-icon">👤</span>Profil</a>
+        <a href="../gacha-skin/" class="side-item"><span class="side-icon">🎁</span>Gacha</a>
+        <a href="#" class="side-item active"><span class="side-icon">🎤</span>Live JKT</a>
+        <a href="../alcstify/" class="side-item"><span class="side-icon">🎵</span>Alcstify</a>
+        <a href="../mini-games/" class="side-item"><span class="side-icon">🎮</span>Mini Games</a>
+        <a href="../grup/" class="side-item"><span class="side-icon">👥</span>Grup</a>
+        <a href="../temen-mabar/" class="side-item"><span class="side-icon">⚔️</span>Mabar</a>
+        <a href="../medsos-saver/" class="side-item"><span class="side-icon">📥</span>Saver</a>
+        <a href="../koleksi-kartu/" class="side-item"><span class="side-icon">🃏</span>Kartu</a>
+        <a href="../bio-member/" class="side-item"><span class="side-icon">📖</span>Bio</a>
+        <a href="../link-shortcut/" class="side-item"><span class="side-icon">🔗</span>Shortcut</a>
+        <a href="../update-member/" class="side-item"><span class="side-icon">📱</span>Update Sosmed</a>
+        <a href="../tentang/" class="side-item"><span class="side-icon">ℹ️</span>Tentang</a>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="left-group">
+                <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
+                <div class="brand-logo">
+                    <img src="../logo.png.png" alt="Logo" class="logo-main" onerror="this.onerror=null; this.src='../logo.png';">
+                    <span class="brand-text">Alcsta Live Stream Player & Replay Engine</span>
+                </div>
+            </div>
+            <div class="right-group" style="display: flex; align-items: center; gap: 10px;">
+                <div class="profile-card" style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.08); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);">
+                    <div style="position: relative; width: 28px; height: 28px;">
+                        <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" id="topBarUserAvatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" onerror="this.src='../kitty.png.png';">
+                        <img id="topBarUserBorder" src="" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 140%; height: 130%; display: none; pointer-events: none; mix-blend-mode: multiply;">
+                    </div>
+                    <span id="topBarUserName" style="font-size: 11.5px; font-weight: 800; color: #00d4ff;">Akun Pengguna</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="sub-nav-container">
+            <button class="pill-tab active" onclick="switchTab('mirrorTab', this)">🔴 Live Stream Mirroring</button>
+            <button class="pill-tab" onclick="switchTab('replayTab', this)">📹 Replay Live Video (1.700+ Arsip & Search Realtime)</button>
+            <button class="pill-tab" onclick="switchTab('theaterTab', this)">🎭 Live Theater JKT48</button>
+        </div>
+
+        <div class="stage-container">
+            <!-- SUB-TAB 1: LIVE STREAM MIRRORING -->
+            <div id="mirrorTab" class="tab-content">
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+                        <span class="card-title" style="margin-bottom: 0;" id="currentMirrorTitle">🔴 Live Mirroring: Lulu Salsabila (JKT48)</span>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span class="badge-live-pulse" id="onAirBadge">🔴 0 MEMBER ON-AIR</span>
+                        </div>
+                    </div>
+
+                    <div class="mirror-layout">
+                        <!-- DIRECT HTML5 LIVE STREAM VIDEO PLAYER -->
+                        <div class="mirror-video-wrapper">
+                            <video id="hlsVideoPlayer" class="mirror-video-frame" controls autoplay playsinline></video>
+
+                            <!-- STREAM BUFFERING / LOADING SPINNER -->
+                            <div id="streamLoadingSpinner" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; flex-direction:column; gap:12px; z-index:8; pointer-events:none;">
+                                <div style="font-size:36px; animation:spin 1s linear infinite;">⏳</div>
+                                <span style="font-size:13px; font-weight:800; color:#00ff88; text-shadow:0 0 10px rgba(0,255,136,0.6);" id="loadingSpinnerText">Menghubungkan Live Stream HD...</span>
+                            </div>
+
+                            <!-- UNMUTE BUTTON OVERLAY -->
+                            <button id="unmuteLiveBtn" onclick="toggleMuteLive()" style="display:none; position:absolute; bottom:16px; left:16px; z-index:15; background:rgba(11,17,33,0.85); border:1px solid #00ff88; color:#00ff88; font-weight:800; font-size:12px; padding:8px 16px; border-radius:20px; cursor:pointer; align-items:center; gap:6px; backdrop-filter:blur(8px); box-shadow:0 4px 15px rgba(0,0,0,0.6); transition:all 0.2s;">
+                                <span style="font-size:14px;">🔊</span> <span id="unmuteBtnText">Nyalakan Suara</span>
+                            </button>
+
+                            <!-- OFFLINE NOTICE OVERLAY -->
+                            <div id="streamOfflineNotice" class="stream-offline-overlay">
+                                <div style="font-size: 42px; margin-bottom: 10px;">📡</div>
+                                <h3 style="color: #ffd700; font-size: 18px; font-weight: 900; font-family: 'Cinzel', serif;">Stream Sedang Offline</h3>
+                                <p style="color: rgba(255,255,255,0.75); font-size: 13px; margin-top: 6px; max-width: 400px;">
+                                    Saat ini <b id="offlineMemberName" style="color: #00d4ff;">Member</b> belum memulai siaran live. Silakan pilih member yang sedang <span style="color:#ff007f; font-weight:900;">LIVE</span> di bawah atau buka tab <b>Replay Live Video</b>!
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- LIVE CHAT REALTIME (DENGAN AKUN POSTGRESQL & SKIN BERANDA) -->
+                        <div class="live-chat-box">
+                            <div class="chat-header">
+                                <span>💬 Komentar Live Realtime</span>
+                                <span style="font-size: 10px; color: #00ff88;" id="onlineViewersCount">● Live Stream Room</span>
+                            </div>
+                            <div class="chat-messages" id="chatMessagesBox"></div>
+                            <div class="chat-user-preview-bar">
+                                <div class="user-badge">
+                                    <div style="position: relative; width: 22px; height: 22px;">
+                                        <img src="https://i.ibb.co.com/Y4JdtfGH/download.png" id="chatUserAvatarSmall" class="user-avatar-sm" style="width: 100%; height: 100%;" onerror="this.src='../kitty.png.png';">
+                                        <img id="chatUserBorderSmall" src="" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 140%; height: 130%; display: none; pointer-events: none; mix-blend-mode: multiply;">
+                                    </div>
+                                    <span id="chatUserLabel">Memuat akun...</span>
+                                </div>
+                                <span style="font-size:10px; color:rgba(255,255,255,0.5);">Auto-Sync PostgreSQL</span>
+                            </div>
+                            <div class="chat-input-row">
+                                <input type="text" id="chatInputText" class="chat-input" placeholder="Tulis komentar kamu..." onkeydown="if(event.key==='Enter') sendLiveChat()">
+                                <button class="chat-send-btn" onclick="sendLiveChat()">Kirim ➤</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; flex-wrap:wrap; gap:8px;">
+                        <span style="font-size:12px; color:#00ff88; font-weight:800;" id="liveStatusSubtitle">● Siaran Live Mirroring Siap Diputar di Web</span>
+                    </div>
+
+                    <!-- REALTIME MEMBER ON-AIR ROOM DETECTOR (ALL MEMBERS USING HIGHEST SKIN PHOTOS) -->
+                    <div class="onair-rooms-container">
+                        <div class="search-room-bar">
+                            <b style="font-size: 13px; color: #ffd700; white-space: nowrap;">🌟 88 Member Terdaftar:</b>
+                            <input type="text" id="searchMemberRoomInput" class="room-search-input" placeholder="🔍 Cari nama member (Christy, Freya, Marsha, Oniel, Gita, Michie, Lulu, dll)..." oninput="renderOnAirRooms()">
+                            <span style="font-size: 11px; color: #00ff88; white-space: nowrap;" id="engineDetectorStatus">● Live Stream Engine Active</span>
+                        </div>
+                        
+                        <div class="member-chips-grid" id="onAirChipsContainer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-TAB 2: REPLAY LIVE VIDEO (1,700+ ARCHIVES & INSTANT SEARCH) -->
+            <div id="replayTab" class="tab-content" style="display: none;">
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span class="card-title" style="margin-bottom: 0;">📹 Pemutar Replay Video Siaran Member JKT48</span>
+                        <span style="font-size: 11px; color: #00ff88;" id="replayScraperBadge">● 1.700+ Arsip Replay Aktif</span>
+                    </div>
+                    <p style="font-size: 13px; color: rgba(255,255,255,0.75); margin-bottom: 16px;">Tonton langsung ribuan rekaman siaran IDN Live & Showroom langsung di web ini!</p>
+
+                    <!-- ACTIVE REPLAY VIDEO SHOWCASE HERO -->
+                    <div style="margin-bottom: 20px;">
+                        <div class="mirror-video-wrapper" style="border: 2px solid rgba(255,215,0,0.4);">
+                            <div class="cinema-showcase-box" id="cinemaShowcaseBg" style="background-image: url('https://jkt48.preset.id/data/thumbs/VCL82u71y6H.jpg');">
+                                <div class="cinema-showcase-overlay"></div>
+                                <div id="heroPulsePlayBtn" onclick="playInWebModal(activeReplayObj)" class="pulse-play-center" title="Putar Video Sekarang">▶</div>
+                                <div class="cinema-showcase-content">
+                                    <span style="font-size: 12px; color: #00ff88; font-weight: 800;" id="currentReplayMeta">IDN Live HD • Lulu JKT48 • 15 Agustus 2026</span>
+                                    <h3 style="color: #fff; font-size: 16px; font-weight: 900; line-height: 1.3;" id="currentReplayTitle">LIVE IDN Lulu JKT48 - 15 Agustus 2026 | 09:52 WIB</h3>
+                                    
+                                    <div class="btn-action-row" style="max-width: 480px;">
+                                        <button onclick="playInWebModal(activeReplayObj)" class="btn-action btn-preset">
+                                            <span style="font-size: 14px;">▶</span> Putar Langsung di Web
+                                        </button>
+                                        <a id="heroDirectYtBtn" href="https://www.youtube.com/watch?v=5XRrAuhPQZA" target="_blank" rel="noopener noreferrer" class="btn-action btn-yt">
+                                            <span>▶</span> Buka YouTube
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SEARCH & FILTER BAR -->
+                    <div class="replay-filter-row">
+                        <input type="text" id="replaySearch" class="replay-search-input" placeholder="🔍 Ketik nama member (Christy, Michie, Freya, Marsha, Gita, Zee, Adel, Muthe, Kathrina, Lulu, Eli)..." oninput="onSearchInputChanged()">
+                        <button class="pill-tab active" onclick="filterPlatform('all', this)">Semua</button>
+                        <button class="pill-tab" onclick="filterPlatform('IDN Live', this)">IDN Live</button>
+                        <button class="pill-tab" onclick="filterPlatform('SHOWROOM', this)">SHOWROOM</button>
+                    </div>
+
+                    <!-- SCRAPED REPLAY CARDS GRID -->
+                    <div class="replay-grid" id="replayGridContainer"></div>
+                </div>
+            </div>
+
+            <!-- SUB-TAB 3: LIVE THEATER JKT48 -->
+            <div id="theaterTab" class="tab-content" style="display: none;">
+                <div class="glass-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                        <span class="card-title" style="margin-bottom: 0;">🎭 Panggung Live Theater JKT48 (fX Sudirman)</span>
+                        <span class="badge-live-pulse" style="background: linear-gradient(135deg, #ffd700, #ff7700); color: #000;">🏛️ OFFICIAL THEATER HUB</span>
+                    </div>
+                    <p style="font-size: 13px; color: rgba(255,255,255,0.75); margin-bottom: 16px;">Pantau pertunjukan show teater resmi JKT48, jadwal setlist, dan siaran panggung langsung!</p>
+
+                    <!-- THEATER STAGE PLAYER -->
+                    <div class="mirror-layout" style="margin-bottom: 20px;">
+                        <div class="mirror-video-wrapper" style="border: 2px solid rgba(255,215,0,0.5);">
+                            <div class="stream-offline-overlay">
+                                <div style="font-size: 48px; margin-bottom: 8px;">🎭</div>
+                                <h3 style="color: #ffd700; font-size: 18px; font-weight: 900; font-family: 'Cinzel', serif;">Panggung Teater Sedang Beristirahat</h3>
+                                <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 6px; max-width: 450px;">
+                                    Saat ini belum ada show teater yang sedang berlangsung. Pertunjukan berikutnya akan dimulai sesuai jadwal di bawah ini!
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- THEATER LIVE CHAT -->
+                        <div class="live-chat-box">
+                            <div class="chat-header">
+                                <span>💬 Komentar Penonton Teater</span>
+                                <span style="font-size: 10px; color: #ffd700;">● Live Theater JKT48</span>
+                            </div>
+                            <div class="chat-messages" id="theaterChatBox">
+                                <div class="chat-msg-item" style="color:rgba(255,255,255,0.7);"><span class="chat-user" style="color:#00ff88;">TeaterBot:</span> Selamat datang di Panggung Teater Resmi JKT48. Tulis pesan Anda di bawah!</div>
+                            </div>
+                            <div class="chat-input-row">
+                                <input type="text" id="theaterChatInput" class="chat-input" placeholder="Tulis pesan untuk penonton teater..." onkeydown="if(event.key==='Enter') sendTheaterChat()">
+                                <button class="chat-send-btn" onclick="sendTheaterChat()">Kirim ➤</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SETLIST & JADWAL SHOW CARDS -->
+                    <h3 style="color: #ffd700; font-size: 15px; font-weight: 800; margin-bottom: 12px; font-family: 'Cinzel', serif;">📋 Jadwal & Setlist Pertunjukan</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">
+                        <div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,215,0,0.25); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 900; color: #00ff88; font-size: 13px;">🥤 Cara Meminum Ramune</span>
+                                <span style="font-size: 10px; padding: 2px 8px; border-radius: 6px; background: rgba(0,255,136,0.2); color: #00ff88; font-weight: 800;">REGULER</span>
+                            </div>
+                            <p style="font-size: 11px; color: rgba(255,255,255,0.7); line-height: 1.4;">Pertunjukan penuh energi dan keceriaan dengan lagu-lagu ikonik Ramune no Nomikata.</p>
+                            <div style="font-size: 11px; color: #ffd700; font-weight: 800; margin-top: 4px;">📅 Hari Ini • 19:00 WIB</div>
+                        </div>
+
+                        <div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 900; color: #ff007f; font-size: 13px;">🚫 Aturan Anti Cinta</span>
+                                <span style="font-size: 10px; padding: 2px 8px; border-radius: 6px; background: rgba(255,0,127,0.2); color: #ff007f; font-weight: 800;">POPULAR</span>
+                            </div>
+                            <p style="font-size: 11px; color: rgba(255,255,255,0.7); line-height: 1.4;">Renai Kinshi Jourei — Kisah cinta remaja penuh emosi dan koreografi tajam.</p>
+                            <div style="font-size: 11px; color: #ffd700; font-weight: 800; margin-top: 4px;">📅 Besok • 15:00 WIB</div>
+                        </div>
+
+                        <div style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 900; color: #00d4ff; font-size: 13px;">🔔 Tunas di Balik Salju</span>
+                                <span style="font-size: 10px; padding: 2px 8px; border-radius: 6px; background: rgba(0,212,255,0.2); color: #00d4ff; font-weight: 800;">TRAINEE</span>
+                            </div>
+                            <p style="font-size: 11px; color: rgba(255,255,255,0.7); line-height: 1.4;">Saishuu Bell ga Naru — Panggung unjuk gigi bakat generasi penerus JKT48.</p>
+                            <div style="font-size: 11px; color: #ffd700; font-weight: 800; margin-top: 4px;">📅 Minggu • 14:00 WIB</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </main>
+
+    <!-- IN-WEB HTML5 MP4 STREAM VIDEO CINEMA MODAL -->
+    <div class="cinema-modal-backdrop" id="cinemaModal" onclick="closeCinemaModal(event)">
+        <div class="cinema-modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <span class="modal-title" id="modalVideoTitle">▶ Pemutar Siaran Replay JKT48</span>
+                <button class="modal-close-btn" onclick="closeCinemaModal()">✕</button>
+            </div>
+            <div class="modal-video-area">
+                <video id="modalDirectVideoPlayer" class="modal-video-frame" controls autoplay playsinline preload="auto"></video>
+                <iframe id="modalYoutubeFrame" class="modal-video-frame" style="display:none; width:100%; height:100%; border:none;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture"></iframe>
+                <div id="modalLoadingSpinner" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:#000; align-items:center; justify-content:center; color:#00d4ff; font-weight:800; z-index:5;">
+                    ⏳ Menyiapkan video HD...
+                </div>
+            </div>
+            <div style="padding: 14px 20px; background: rgba(0,0,0,0.5); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <span style="font-size: 12px; color: #00ff88;" id="modalVideoMeta">● Video HD Diputar Langsung di Web</span>
+                <a id="modalDirectYt" href="#" target="_blank" rel="noopener noreferrer" class="btn-action btn-yt" style="max-width: 180px;">
+                    ▶ Buka di YouTube
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById("leftSidebar").classList.toggle("open");
+            document.getElementById("sidebarOverlay").classList.toggle("active");
+        }
+
+        function switchTab(tabId, btnEl) {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.pill-tab').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).style.display = 'block';
+            btnEl.classList.add('active');
+
+            // Otomatis mandiri: jika membuka tab Replay, langsung muat & sinkronisasi arsip replay terbaru
+            if (tabId === 'replayTab') {
+                fetchBackendReplays();
+            }
+        }
+
+        // =======================================================
+        // SCRAPED REPLAY DATABASE STATE (1,700+ ITEMS)
+        // =======================================================
+        let ALL_REPLAYS_CATALOG = [];
+        let CURRENT_DISPLAYED_REPLAYS = [];
+        let activeReplayObj = { 
+            id: "5XRrAuhPQZA", 
+            raw_id: "VCL82u71y6H", 
+            title: "LIVE IDN Lulu JKT48 - 15 Agustus 2026 | 09:52 WIB", 
+            member: "Lulu JKT48", 
+            platform: "IDN Live",
+            video_url: "https://jkt48.preset.id/media/archive/IDN/Lulu/2026/08/15/Lulu_IDN_masaakk-260815095226_20260815_095241/Lulu_IDN_masaakk-260815095226_20260815_095241_faststart.mp4"
+        };
+        let searchDebounceTimer = null;
+
+        let currentReplayLimit = 60;
+
+        async function fetchBackendReplays() {
+            let loadedCatalog = [];
+
+            // 1. Load full 1,794+ direct faststart MP4 replay archives
+            try {
+                const resLocal = await fetch('../mapped_replays.json');
+                if (resLocal.ok) {
+                    const raw = await resLocal.json();
+                    if (Array.isArray(raw) && raw.length > 0) {
+                        loadedCatalog = raw;
+                    }
+                }
+            } catch(e) {
+                console.log("Local mapped_replays note:", e);
+            }
+
+            // 2. Query backend replays API as fallback
+            if (loadedCatalog.length === 0) {
+                try {
+                    const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : "https://ashazeneca-botanalistiktl.hf.space";
+                    const res = await fetch(`${apiBase}/api/yt/replays`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && Array.isArray(data.items)) {
+                            loadedCatalog = data.items;
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            ALL_REPLAYS_CATALOG = loadedCatalog;
+            CURRENT_DISPLAYED_REPLAYS = ALL_REPLAYS_CATALOG.slice(0, currentReplayLimit);
+            if (ALL_REPLAYS_CATALOG[0]) activeReplayObj = ALL_REPLAYS_CATALOG[0];
+
+            document.getElementById("replayScraperBadge").innerText = `● ${ALL_REPLAYS_CATALOG.length.toLocaleString('id-ID')} Total Arsip Replay Live`;
+            renderReplays(CURRENT_DISPLAYED_REPLAYS);
+        }
+
+        function loadMoreReplays() {
+            currentReplayLimit += 60;
+            const query = (document.getElementById("replaySearch")?.value || "").trim().toLowerCase();
+            if (query) {
+                const matches = ALL_REPLAYS_CATALOG.filter(r => 
+                    (r.title && r.title.toLowerCase().includes(query)) || (r.member && r.member.toLowerCase().includes(query))
+                );
+                CURRENT_DISPLAYED_REPLAYS = matches.slice(0, currentReplayLimit);
+            } else {
+                CURRENT_DISPLAYED_REPLAYS = ALL_REPLAYS_CATALOG.slice(0, currentReplayLimit);
+            }
+            renderReplays(CURRENT_DISPLAYED_REPLAYS);
+        }
+
+        async function onSearchInputChanged() {
+            clearTimeout(searchDebounceTimer);
+            const query = document.getElementById("replaySearch").value.trim().toLowerCase();
+            
+            if (!query) {
+                CURRENT_DISPLAYED_REPLAYS = ALL_REPLAYS_CATALOG.slice(0, 50);
+                renderReplays(CURRENT_DISPLAYED_REPLAYS);
+                document.getElementById("replayScraperBadge").innerText = `● 1.700+ Arsip Replay Aktif`;
+                return;
+            }
+
+            searchDebounceTimer = setTimeout(async () => {
+                document.getElementById("replayScraperBadge").innerText = `⏳ Mencari video ${query}...`;
+
+                // 1. Query backend search
+                try {
+                    const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : "https://ashazeneca-botanalistiktl.hf.space";
+                    const res = await fetch(`${apiBase}/api/yt/search?q=${encodeURIComponent(query)}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && Array.isArray(data.items) && data.items.length > 0) {
+                            CURRENT_DISPLAYED_REPLAYS = data.items;
+                            document.getElementById("replayScraperBadge").innerText = `● Ditemukan ${data.items.length} Video (${query})`;
+                            renderReplays(CURRENT_DISPLAYED_REPLAYS);
+                            return;
+                        }
+                    }
+                } catch(e) {
+                    console.log("Backend search note:", e);
+                }
+
+                // 2. Client-side local search fallback
+                const matches = ALL_REPLAYS_CATALOG.filter(r => 
+                    (r.title && r.title.toLowerCase().includes(query)) || (r.member && r.member.toLowerCase().includes(query))
+                );
+                CURRENT_DISPLAYED_REPLAYS = matches;
+                document.getElementById("replayScraperBadge").innerText = `● Ditemukan ${matches.length} Video (${query})`;
+                renderReplays(matches);
+            }, 150);
+        }
+
+        // =======================================================
+        // HIGH-SPEED CORS-PROXY LOADER ENGINE FOR AMAZON IVS & SHOWROOM
+        // =======================================================
+        const CORS_PROXIES = [
+            "https://cors.luckydesigner.workers.dev/?",
+            "https://cors-prod.spotifie.workers.dev/?",
+            "https://lingering-poetry-44bc.seniorious.workers.dev/?",
+            "https://jolly-silence-2d9d.mundi-xu.workers.dev/?",
+            "https://cors-anywhere.deqing.workers.dev/?",
+            "https://bread.bid-multipliers.workers.dev/?",
+            "https://cors.bsmijatim.workers.dev/?",
+            "https://zy01.pearlchocolate.workers.dev/?"
+        ];
+
+        function createProxyLoader(proxyUrls) {
+            const BaseLoader = window.Hls.DefaultConfig.loader;
+            const proxies = Array.isArray(proxyUrls) ? proxyUrls.filter(Boolean) : [proxyUrls].filter(Boolean);
+
+            return class ProxyLoader extends BaseLoader {
+                constructor(config) {
+                    super(config);
+                    this.config = config;
+                    this.activeLoader = null;
+                    this.activeProxyIndex = 0;
+                    this.context = null;
+                    this.callbacks = null;
+                    this.loaderConfig = null;
+                }
+
+                load(context, config, callbacks) {
+                    this.context = context;
+                    this.loaderConfig = config;
+                    this.callbacks = callbacks;
+                    this.activeProxyIndex = 0;
+                    this.loadWithProxy(this.activeProxyIndex);
+                }
+
+                loadWithProxy(proxyIndex) {
+                    const proxyUrl = proxies[proxyIndex];
+                    if (!proxyUrl) {
+                        this.callbacks?.onError?.({ code: 0, text: "All proxies failed" }, this.context, null);
+                        return;
+                    }
+
+                    this.activeProxyIndex = proxyIndex;
+                    this.activeLoader = new BaseLoader(this.config);
+
+                    const targetUrl = this.context.url;
+                    // Auto route Amazon IVS & Showroom through CORS proxies (prevent double-proxying)
+                    let finalUrl = targetUrl;
+                    if (!targetUrl.includes("workers.dev") && (targetUrl.includes("live-video.net") || targetUrl.includes("showroom"))) {
+                        finalUrl = `${proxyUrl}${encodeURIComponent(targetUrl)}`;
+                    }
+
+                    const nextContext = {
+                        ...this.context,
+                        url: finalUrl
+                    };
+
+                    const wrappedCallbacks = {
+                        ...this.callbacks,
+                        onSuccess: (response, stats, context, networkDetails) => {
+                            this.callbacks?.onSuccess?.(response, stats, this.context, networkDetails);
+                        },
+                        onError: (error, context, networkDetails) => {
+                            if (proxyIndex < proxies.length - 1) {
+                                this.activeLoader?.destroy?.();
+                                this.loadWithProxy(proxyIndex + 1);
+                                return;
+                            }
+                            this.callbacks?.onError?.(error, this.context, networkDetails);
+                        },
+                        onTimeout: (stats, context, networkDetails) => {
+                            if (proxyIndex < proxies.length - 1) {
+                                this.activeLoader?.destroy?.();
+                                this.loadWithProxy(proxyIndex + 1);
+                                return;
+                            }
+                            this.callbacks?.onTimeout?.(stats, this.context, networkDetails);
+                        }
+                    };
+
+                    this.activeLoader.load(nextContext, this.loaderConfig, wrappedCallbacks);
+                }
+
+                destroy() {
+                    this.activeLoader?.destroy?.();
+                    super.destroy();
+                }
+
+                abort() {
+                    this.activeLoader?.abort?.();
+                    super.abort();
+                }
+            };
+        }
+
+        // =======================================================
+        // VIDEO PLAYER ENGINE (PROXIED HLS.JS & NATIVE STREAM)
+        // =======================================================
+        let hlsInstance = null;
+        let currentLoadedStreamUrl = null;
+        let streamTimeoutTimer = null;
+
+        function cleanupPlayers() {
+            clearTimeout(streamTimeoutTimer);
+            if (hlsInstance) {
+                try {
+                    hlsInstance.destroy();
+                } catch(e) {}
+                hlsInstance = null;
+            }
+            const hlsVideo = document.getElementById("hlsVideoPlayer");
+            if (hlsVideo) {
+                hlsVideo.removeAttribute('src');
+                try { hlsVideo.load(); } catch(e) {}
+            }
+        }
+
+        function handleStreamOfflineOrEnded(msg) {
+            console.warn("Stream status:", msg);
+            cleanupPlayers();
+            const hlsVideo = document.getElementById("hlsVideoPlayer");
+            const offlineNotice = document.getElementById("streamOfflineNotice");
+            const streamLoading = document.getElementById("streamLoadingSpinner");
+            const unmuteBtn = document.getElementById("unmuteLiveBtn");
+
+            if (streamLoading) streamLoading.style.display = "none";
+            if (unmuteBtn) unmuteBtn.style.display = "none";
+            if (hlsVideo) hlsVideo.style.display = "none";
+            if (offlineNotice) offlineNotice.style.display = "flex";
+        }
+
+        function toggleMuteLive() {
+            const hlsVideo = document.getElementById("hlsVideoPlayer");
+            const btn = document.getElementById("unmuteLiveBtn");
+            const btnText = document.getElementById("unmuteBtnText");
+            if (!hlsVideo) return;
+            hlsVideo.muted = !hlsVideo.muted;
+            if (hlsVideo.muted) {
+                if (btn) btn.style.display = "flex";
+                if (btnText) btnText.innerText = "Nyalakan Suara";
+            } else {
+                if (btn) btn.style.display = "none";
+            }
+        }
+
+        async function loadVideoStream(streamUrl) {
+            const hlsVideo = document.getElementById("hlsVideoPlayer");
+            const offlineNotice = document.getElementById("streamOfflineNotice");
+            const unmuteBtn = document.getElementById("unmuteLiveBtn");
+            const streamLoading = document.getElementById("streamLoadingSpinner");
+
+            cleanupPlayers();
+
+            if (!streamUrl) {
+                handleStreamOfflineOrEnded("Stream offline");
+                return;
+            }
+
+            currentLoadedStreamUrl = streamUrl;
+            offlineNotice.style.display = "none";
+            hlsVideo.style.display = "block";
+            hlsVideo.muted = true; // Required for browser autoplay
+            if (unmuteBtn) unmuteBtn.style.display = "flex";
+            if (streamLoading) streamLoading.style.display = "flex";
+
+            streamTimeoutTimer = setTimeout(() => {
+                if (hlsVideo.paused || hlsVideo.readyState === 0) {
+                    console.warn("Stream buffering wait note");
+                    if (streamLoading) streamLoading.style.display = "none";
+                }
+            }, 12000);
+
+            const onPlaying = () => {
+                clearTimeout(streamTimeoutTimer);
+                if (streamLoading) streamLoading.style.display = "none";
+            };
+            hlsVideo.onplaying = onPlaying;
+            hlsVideo.oncanplay = onPlaying;
+
+            // 1. High-Performance Hls.js with CORS Proxy Loader
+            if (window.Hls && Hls.isSupported()) {
+                const ProxyLoaderClass = createProxyLoader(CORS_PROXIES);
+                hlsInstance = new Hls({
+                    loader: ProxyLoaderClass,
+                    enableWorker: true,
+                    lowLatencyMode: true,
+                    backBufferLength: 0,
+                    maxBufferLength: 6,
+                    maxMaxBufferLength: 12,
+                    liveSyncDurationCount: 2,
+                    liveMaxLatencyDurationCount: 5,
+                    manifestLoadingTimeOut: 15000,
+                    levelLoadingTimeOut: 15000,
+                    fragLoadingTimeOut: 15000
+                });
+
+                hlsInstance.attachMedia(hlsVideo);
+                hlsInstance.on(Hls.Events.MEDIA_ATTACHED, function () {
+                    hlsInstance.loadSource(streamUrl);
+                });
+
+                hlsInstance.on(Hls.Events.MANIFEST_PARSED, function () {
+                    clearTimeout(streamTimeoutTimer);
+                    if (streamLoading) streamLoading.style.display = "none";
+                    hlsVideo.play().catch(e => console.log("Autoplay caught:", e));
+                });
+
+                hlsInstance.on(Hls.Events.FRAG_LOADED, function () {
+                    clearTimeout(streamTimeoutTimer);
+                    if (streamLoading) streamLoading.style.display = "none";
+                });
+
+                hlsInstance.on(Hls.Events.ERROR, function (event, data) {
+                    if (data.fatal) {
+                        switch (data.type) {
+                            case Hls.ErrorTypes.NETWORK_ERROR:
+                                console.warn("HLS network auto-recovery with proxy fallback...");
+                                hlsInstance.startLoad();
+                                break;
+                            case Hls.ErrorTypes.MEDIA_ERROR:
+                                console.warn("HLS media auto-recovery...");
+                                hlsInstance.recoverMediaError();
+                                break;
+                            default:
+                                console.warn("HLS fatal error caught, maintaining stream...");
+                                break;
+                        }
+                    }
+                });
+            } else if (hlsVideo.canPlayType('application/vnd.apple.mpegurl')) {
+                // Native Safari HLS with direct proxy
+                const proxiedUrl = streamUrl.includes("live-video.net")
+                    ? `https://cors.luckydesigner.workers.dev/?${encodeURIComponent(streamUrl)}`
+                    : streamUrl;
+                hlsVideo.src = proxiedUrl;
+                hlsVideo.addEventListener('loadedmetadata', function () {
+                    clearTimeout(streamTimeoutTimer);
+                    if (streamLoading) streamLoading.style.display = "none";
+                    hlsVideo.play().catch(() => {});
+                });
+            } else {
+                hlsVideo.src = streamUrl;
+                hlsVideo.play().catch(() => {});
+            }
+        }
+
+        // =======================================================
+        // REALTIME ROOM DETECTOR (ALL MEMBERS USING HIGHEST TIER SKIN CARDS)
+        // =======================================================
+        let ALL_MEMBER_ROOMS = [
+    {
+        "name":  "Abigail Rachel (Aralie)",
+        "roomId":  "0",
+        "avatar":  "../skin/ABIGAIL_RACHEL_MYTH.jpg",
+        "idnSlug":  "jkt48_abigail",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AbigailRachel",
+        "isLive":  false
+    },
+    {
+        "name":  "Adeline Wijaya (Delynn)",
+        "roomId":  "0",
+        "avatar":  "../skin/ADELINE_WIJAYA_MYTH.jpg",
+        "idnSlug":  "jkt48_adeline",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AdelineWijaya",
+        "isLive":  false
+    },
+    {
+        "name":  "Adhisty Zara",
+        "roomId":  "0",
+        "avatar":  "../skin/ADHISTY_ZARA_MYTH.jpg",
+        "idnSlug":  "jkt48_adhisty",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AdhistyZara",
+        "isLive":  false
+    },
+    {
+        "name":  "Adzana Ashel",
+        "roomId":  "0",
+        "avatar":  "../skin/ADZANA_ASHEL_MYTH.jpg",
+        "idnSlug":  "jkt48_adzana",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AdzanaAshel",
+        "isLive":  false
+    },
+    {
+        "name":  "Afera Thalia (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/AFERA_THALIA_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_afera",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AferaThalia",
+        "isLive":  false
+    },
+    {
+        "name":  "Alya Amanda",
+        "roomId":  "0",
+        "avatar":  "../skin/ALYA_AMANDA_MYTH.jpg",
+        "idnSlug":  "jkt48_alya",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AlyaAmanda",
+        "isLive":  false
+    },
+    {
+        "name":  "Amanda Sukma",
+        "roomId":  "0",
+        "avatar":  "../skin/AMANDA_SUKMA_MYTH.jpg",
+        "idnSlug":  "jkt48_amanda",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AmandaSukma",
+        "isLive":  false
+    },
+    {
+        "name":  "Angelina Christy",
+        "roomId":  "0",
+        "avatar":  "../skin/ANGELINA_CHRISTY_MYTH.jpg",
+        "idnSlug":  "jkt48_angelina",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AngelinaChristy",
+        "isLive":  false
+    },
+    {
+        "name":  "Anindya Ramadhani",
+        "roomId":  "0",
+        "avatar":  "../skin/ANINDYA_RAMADHANI_MYTH.jpg",
+        "idnSlug":  "jkt48_anindya",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AnindyaRamadhani",
+        "isLive":  false
+    },
+    {
+        "name":  "Zahra Nur (Ara)",
+        "roomId":  "0",
+        "avatar":  "../skin/ARA_MYTH.jpg",
+        "idnSlug":  "jkt48_ara",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_Ara",
+        "isLive":  false
+    },
+    {
+        "name":  "Astrella Virgiananda (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/ASTRELLA_VIRGIANANDA_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_astrella",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AstrellaVirgiananda",
+        "isLive":  false
+    },
+    {
+        "name":  "Aulia Riza (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/AULIA_RIZA_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_aulia",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AuliaRiza",
+        "isLive":  false
+    },
+    {
+        "name":  "Aurel Mayori (Yori)",
+        "roomId":  "0",
+        "avatar":  "../skin/AUREL_MAYORI_MYTH.jpg",
+        "idnSlug":  "jkt48_aurel",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AurelMayori",
+        "isLive":  false
+    },
+    {
+        "name":  "Aurellia (Lia)",
+        "roomId":  "0",
+        "avatar":  "../skin/AURELLIA_LIA_MYTH.jpg",
+        "idnSlug":  "jkt48_aurellia",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AurelliaLia",
+        "isLive":  false
+    },
+    {
+        "name":  "Aurhel Alana (Lana)",
+        "roomId":  "0",
+        "avatar":  "../skin/AURHEL_ALANA_MYTH.jpg",
+        "idnSlug":  "jkt48_aurhel",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AurhelAlana",
+        "isLive":  false
+    },
+    {
+        "name":  "Ayana Shahab",
+        "roomId":  "0",
+        "avatar":  "../skin/AYANA_SHAHAB_MYTH.jpg",
+        "idnSlug":  "jkt48_ayana",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AyanaShahab",
+        "isLive":  false
+    },
+    {
+        "name":  "Azizi Asadel (Zee)",
+        "roomId":  "0",
+        "avatar":  "../skin/AZIZI_ASSADEL_MYTH.jpg",
+        "idnSlug":  "jkt48_azizi",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_AziziAssadel",
+        "isLive":  false
+    },
+    {
+        "name":  "Bong Aprilli (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/BONG_APRILLI_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_bong",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_BongAprilli",
+        "isLive":  false
+    },
+    {
+        "name":  "Carissa Dini (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/CARISSA_DINI_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_carissa",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_CarissaDini",
+        "isLive":  false
+    },
+    {
+        "name":  "Catherina Vallencia (Erine)",
+        "roomId":  "0",
+        "avatar":  "../skin/CATHERINA_VALLENCIA_MYTH.jpg",
+        "idnSlug":  "jkt48_catherina",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_CatherinaVallencia",
+        "isLive":  false
+    },
+    {
+        "name":  "Cathleen Nixie (Cathy)",
+        "roomId":  "0",
+        "avatar":  "../skin/CATHLEEN_NIXIE_MYTH.jpg",
+        "idnSlug":  "jkt48_cathleen",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_CathleenNixie",
+        "isLive":  false
+    },
+    {
+        "name":  "Celline Thefani (Elin)",
+        "roomId":  "0",
+        "avatar":  "../skin/CELLINE_THEFANI_MYTH.jpg",
+        "idnSlug":  "jkt48_celline",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_CellineThefani",
+        "isLive":  false
+    },
+    {
+        "name":  "Chelsea Devina",
+        "roomId":  "0",
+        "avatar":  "../skin/CHELSEA_DEVINA_MYTH.jpg",
+        "idnSlug":  "jkt48_chelsea",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_ChelseaDevina",
+        "isLive":  false
+    },
+    {
+        "name":  "Christabella Bonita (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/CHRISTABELLA_BONITA_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_christabella",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_ChristabellaBonita",
+        "isLive":  false
+    },
+    {
+        "name":  "Cindy Yuvia (Yupi)",
+        "roomId":  "0",
+        "avatar":  "../skin/CINDY_YUVIA_MYTH.jpg",
+        "idnSlug":  "jkt48_cindy",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_CindyYuvia",
+        "isLive":  false
+    },
+    {
+        "name":  "Cornelia Vanisa (Oniel)",
+        "roomId":  "0",
+        "avatar":  "../skin/CORNELIA_VANISA_MYTH.jpg",
+        "idnSlug":  "jkt48_cornelia",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_CorneliaVanisa",
+        "isLive":  false
+    },
+    {
+        "name":  "Cynthia Yaputera",
+        "roomId":  "0",
+        "avatar":  "../skin/CYNTHIA_YAPUTERA_MYTH.jpg",
+        "idnSlug":  "jkt48_cynthia",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_CynthiaYaputera",
+        "isLive":  false
+    },
+    {
+        "name":  "Dena Natalia (Danella)",
+        "roomId":  "0",
+        "avatar":  "../skin/DENA_NATALIA_MYTH.jpg",
+        "idnSlug":  "jkt48_dena",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_DenaNatalia",
+        "isLive":  false
+    },
+    {
+        "name":  "Desy Natalia (Daisy)",
+        "roomId":  "0",
+        "avatar":  "../skin/DESY_NATALIA_MYTH.jpg",
+        "idnSlug":  "jkt48_desy",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_DesyNatalia",
+        "isLive":  false
+    },
+    {
+        "name":  "Fahira Putri (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/FAHIRA_PUTRI_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_fahira",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_FahiraPutri",
+        "isLive":  false
+    },
+    {
+        "name":  "Fatimah Azzahra (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/FATIMAH_AZZAHRA_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_fatimah",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_FatimahAzzahra",
+        "isLive":  false
+    },
+    {
+        "name":  "Febriola Sinambela (Olla)",
+        "roomId":  "0",
+        "avatar":  "../skin/FEBRIOLA_SINAMBELLA_MYTH.jpg",
+        "idnSlug":  "jkt48_febriola",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_FebriolaSinambella",
+        "isLive":  false
+    },
+    {
+        "name":  "Feni Fitriyanti",
+        "roomId":  "0",
+        "avatar":  "../skin/FENI_FITRIYANTI_MYTH.jpg",
+        "idnSlug":  "jkt48_feni",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_FeniFitriyanti",
+        "isLive":  false
+    },
+    {
+        "name":  "Fiony Alveria",
+        "roomId":  "0",
+        "avatar":  "../skin/FIONY_ALVERIA_MYTH.jpg",
+        "idnSlug":  "jkt48_fiony",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_FionyAlveria",
+        "isLive":  false
+    },
+    {
+        "name":  "Flora Shafiq",
+        "roomId":  "0",
+        "avatar":  "../skin/FLORA_SHAFIQ_MYTH.jpg",
+        "idnSlug":  "jkt48_flora",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_FloraShafiq",
+        "isLive":  false
+    },
+    {
+        "name":  "Freya Jayawardana",
+        "roomId":  "0",
+        "avatar":  "../skin/FREYA_JAYAWARDANA_MYTH.jpg",
+        "idnSlug":  "jkt48_freya",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_FreyaJayawardana",
+        "isLive":  false
+    },
+    {
+        "name":  "Frieska Anastasia",
+        "roomId":  "0",
+        "avatar":  "../skin/FRIESKA_MYTH.jpg",
+        "idnSlug":  "jkt48_frieska",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_Frieska",
+        "isLive":  false
+    },
+    {
+        "name":  "Fritzy Rosmerian",
+        "roomId":  "0",
+        "avatar":  "../skin/FRITZY_ROSMERIAN_MYTH.jpg",
+        "idnSlug":  "jkt48_fritzy",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_FritzyRosmerian",
+        "isLive":  false
+    },
+    {
+        "name":  "Gabriela Abigail (Ella)",
+        "roomId":  "0",
+        "avatar":  "../skin/GABRIELA_ABIGAIL_MYTH.jpg",
+        "idnSlug":  "jkt48_gabriela",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_GabrielaAbigail",
+        "isLive":  false
+    },
+    {
+        "name":  "Gendis Mayrannisa",
+        "roomId":  "0",
+        "avatar":  "../skin/GENDIS_MAYRANNISA_MYTH.jpg",
+        "idnSlug":  "jkt48_gendis",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_GendisMayrannisa",
+        "isLive":  false
+    },
+    {
+        "name":  "Gisele",
+        "roomId":  "0",
+        "avatar":  "../skin/GISELE_GEN_10_MYTH.jpg",
+        "idnSlug":  "jkt48_gisele",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_GiseleGen10",
+        "isLive":  false
+    },
+    {
+        "name":  "Gita Sekar Andarini",
+        "roomId":  "0",
+        "avatar":  "../skin/GITA_SEKAR_MYTH.jpg",
+        "idnSlug":  "jkt48_gita",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_GitaSekar",
+        "isLive":  false
+    },
+    {
+        "name":  "Grace Octaviani (Gracie)",
+        "roomId":  "0",
+        "avatar":  "../skin/GRACE_OCTAVIANI_MYTH.jpg",
+        "idnSlug":  "jkt48_grace",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_GraceOctaviani",
+        "isLive":  false
+    },
+    {
+        "name":  "Greesella Adhalia (Greesel)",
+        "roomId":  "0",
+        "avatar":  "../skin/GREESELA_ADHALIA_MYTH.jpg",
+        "idnSlug":  "jkt48_greesela",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_GreeselaAdhalia",
+        "isLive":  false
+    },
+    {
+        "name":  "Hagia Sopia (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/HAGIA_SOPIA_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_hagia",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_HagiaSopia",
+        "isLive":  false
+    },
+    {
+        "name":  "Heida Suyangga (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/HEIDA_SUYANGGA_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_heida",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_HeidaSuyangga",
+        "isLive":  false
+    },
+    {
+        "name":  "Helisma Putri (Eli)",
+        "roomId":  "0",
+        "avatar":  "../skin/HELISMA_PUTRI_MYTH.jpg",
+        "idnSlug":  "jkt48_helisma",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_HelismaPutri",
+        "isLive":  false
+    },
+    {
+        "name":  "Hillary Abigail (Lily)",
+        "roomId":  "0",
+        "avatar":  "../skin/HILLARY_ABIGAIL_MYTH.jpg",
+        "idnSlug":  "jkt48_hillary",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_HillaryAbigail",
+        "isLive":  false
+    },
+    {
+        "name":  "Humaira Ramadhani (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/HUMAIRA_RAMADHANI_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_humaira",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_HumairaRamadhani",
+        "isLive":  false
+    },
+    {
+        "name":  "Indah Cahya",
+        "roomId":  "0",
+        "avatar":  "../skin/INDAH_CAHYA_MYTH.jpg",
+        "idnSlug":  "jkt48_indah",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_IndahCahya",
+        "isLive":  false
+    },
+    {
+        "name":  "Indira Putri (Indira)",
+        "roomId":  "0",
+        "avatar":  "../skin/INDIRA_PUTRI_MYTH.jpg",
+        "idnSlug":  "jkt48_indira",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_IndiraPutri",
+        "isLive":  false
+    },
+    {
+        "name":  "Jacqueline Immanuela (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/JACQUELINE_IMMANUELA_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_jacqueline",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_JacquelineImmanuela",
+        "isLive":  false
+    },
+    {
+        "name":  "Jazzlyn Trisha (Trisha)",
+        "roomId":  "0",
+        "avatar":  "../skin/JAZZLYN_TRISHA_MYTH.jpg",
+        "idnSlug":  "jkt48_jazzlyn",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_JazzlynTrisha",
+        "isLive":  false
+    },
+    {
+        "name":  "Jemima Evodie (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/JEMIMA_EVODIE_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_jemima",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_JemimaEvodie",
+        "isLive":  false
+    },
+    {
+        "name":  "Jessica Chandra (Jessi)",
+        "roomId":  "0",
+        "avatar":  "../skin/JESSICA_CHANDRA_MYTH.jpg",
+        "idnSlug":  "jkt48_jessica",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_JessicaChandra",
+        "isLive":  false
+    },
+    {
+        "name":  "Jesslyn Callista",
+        "roomId":  "0",
+        "avatar":  "../skin/JESSLYN_CALLISTA_MYTH.jpg",
+        "idnSlug":  "jkt48_jesslyn",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_JesslynCallista",
+        "isLive":  false
+    },
+    {
+        "name":  "Jesslyn Elly (Lyn)",
+        "roomId":  "0",
+        "avatar":  "../skin/JESSLYN_ELLY_MYTH.jpg",
+        "idnSlug":  "jkt48_jesslyn",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_JesslynElly",
+        "isLive":  false
+    },
+    {
+        "name":  "Jinan Safa Safira",
+        "roomId":  "0",
+        "avatar":  "../skin/JINAN_MYTH.jpg",
+        "idnSlug":  "jkt48_jinan",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_Jinan",
+        "isLive":  false
+    },
+    {
+        "name":  "Kathrina Irene",
+        "roomId":  "0",
+        "avatar":  "../skin/KATHRINA_IRENE_MYTH.jpg",
+        "idnSlug":  "jkt48_kathrina",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_KathrinaIrene",
+        "isLive":  false
+    },
+    {
+        "name":  "Lulu Salsabila",
+        "roomId":  "0",
+        "avatar":  "../skin/LULU_SALSABILA_MYTH.jpg",
+        "idnSlug":  "jkt48_lulu",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_LuluSalsabila",
+        "isLive":  false
+    },
+    {
+        "name":  "Maegan Jovanka (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/MAEGAN_JOVANKA_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_maegan",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_MaeganJovanka",
+        "isLive":  false
+    },
+    {
+        "name":  "Marsha Lenathea",
+        "roomId":  "0",
+        "avatar":  "../skin/MARSHA_LENATHEA_MYTH.jpg",
+        "idnSlug":  "jkt48_marsha",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_MarshaLenathea",
+        "isLive":  false
+    },
+    {
+        "name":  "Maxine Faye (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/MAXINE_FAYE_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_maxine",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_MaxineFaye",
+        "isLive":  false
+    },
+    {
+        "name":  "Melati Sesilia",
+        "roomId":  "0",
+        "avatar":  "../skin/MELATI_MYTH.jpg",
+        "idnSlug":  "jkt48_melati",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_Melati",
+        "isLive":  false
+    },
+    {
+        "name":  "Michelle Alexandra (Michie)",
+        "roomId":  "0",
+        "avatar":  "../skin/MICHELLE_ALEXANDRA_MYTH.jpg",
+        "idnSlug":  "jkt48_michelle",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_MichelleAlexandra",
+        "isLive":  false
+    },
+    {
+        "name":  "Michelle Levia (Levi)",
+        "roomId":  "0",
+        "avatar":  "../skin/MICHELLE_LEVIA_MYTH.jpg",
+        "idnSlug":  "jkt48_michelle",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_MichelleLevia",
+        "isLive":  false
+    },
+    {
+        "name":  "Mikaela Kusjanto (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/MIKAELA_KUSJANTO_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_mikaela",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_MikaelaKusjanto",
+        "isLive":  false
+    },
+    {
+        "name":  "Mutiara Azzahra (Muthe)",
+        "roomId":  "0",
+        "avatar":  "../skin/MUTIARA_AZZAHRA_MYTH.jpg",
+        "idnSlug":  "jkt48_mutiara",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_MutiaraAzzahra",
+        "isLive":  false
+    },
+    {
+        "name":  "Nabila Fitriana (Lala)",
+        "roomId":  "0",
+        "avatar":  "../skin/NABILA_FITRIANA_MYTH.jpg",
+        "idnSlug":  "jkt48_nabila",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_NabilaFitriana",
+        "isLive":  false
+    },
+    {
+        "name":  "Nabilah Ratna Ayu",
+        "roomId":  "0",
+        "avatar":  "../skin/NABILAH_GEN_1_MYTH.jpg",
+        "idnSlug":  "jkt48_nabilah",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_NabilahGen1",
+        "isLive":  false
+    },
+    {
+        "name":  "Nayla Suji",
+        "roomId":  "0",
+        "avatar":  "../skin/NAYLA_SUJI_MYTH.jpg",
+        "idnSlug":  "jkt48_nayla",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_NaylaSuji",
+        "isLive":  false
+    },
+    {
+        "name":  "Nina Tutachia (Nachia)",
+        "roomId":  "0",
+        "avatar":  "../skin/NINA_TUTACHIA_MYTH.jpg",
+        "idnSlug":  "jkt48_nina",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_NinaTutachia",
+        "isLive":  false
+    },
+    {
+        "name":  "Nur Intan (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/NUR_INTAN_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_nur",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_NurIntan",
+        "isLive":  false
+    },
+    {
+        "name":  "Oline Manuel",
+        "roomId":  "0",
+        "avatar":  "../skin/OLINE_MANUEL_MYTH.jpg",
+        "idnSlug":  "jkt48_oline",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_OlineManuel",
+        "isLive":  false
+    },
+    {
+        "name":  "Putri Jazyta (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/PUTRI_JAZYTA_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_putri",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_PutriJazyta",
+        "isLive":  false
+    },
+    {
+        "name":  "Raisha Syifa",
+        "roomId":  "0",
+        "avatar":  "../skin/RAISHA_SYIFA_MYTH.jpg",
+        "idnSlug":  "jkt48_raisha",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_RaishaSyifa",
+        "isLive":  false
+    },
+    {
+        "name":  "Ralyne Van (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/RALYNE_VAN_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_ralyne",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_RalyneVan",
+        "isLive":  false
+    },
+    {
+        "name":  "Reva Fidela (Adel)",
+        "roomId":  "0",
+        "avatar":  "../skin/REVA_FIDELA_MYTH.jpg",
+        "idnSlug":  "jkt48_reva",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_RevaFidela",
+        "isLive":  false
+    },
+    {
+        "name":  "Ribka Budiman",
+        "roomId":  "0",
+        "avatar":  "../skin/RIBKA_BUDIMAN_MYTH.jpg",
+        "idnSlug":  "jkt48_ribka",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_RibkaBudiman",
+        "isLive":  false
+    },
+    {
+        "name":  "Shabilqis Naila (Nala)",
+        "roomId":  "0",
+        "avatar":  "../skin/SHABILQIS_NAILA_MYTH.jpg",
+        "idnSlug":  "jkt48_shabilqis",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_ShabilqisNaila",
+        "isLive":  false
+    },
+    {
+        "name":  "Shani Indira",
+        "roomId":  "0",
+        "avatar":  "../skin/SHANI_INDIRA_MYTH.jpg",
+        "idnSlug":  "jkt48_shani",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_ShaniIndira",
+        "isLive":  false
+    },
+    {
+        "name":  "Shania Gracia",
+        "roomId":  "0",
+        "avatar":  "../skin/SHANIA_GRACIA_MYTH.jpg",
+        "idnSlug":  "jkt48_shania",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_ShaniaGracia",
+        "isLive":  false
+    },
+    {
+        "name":  "Shania Junianatha",
+        "roomId":  "0",
+        "avatar":  "../skin/SHANJU_MYTH.jpg",
+        "idnSlug":  "jkt48_shanju",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_Shanju",
+        "isLive":  false
+    },
+    {
+        "name":  "Sisca Saras",
+        "roomId":  "0",
+        "avatar":  "../skin/SISCA_SARAS_MYTH.jpg",
+        "idnSlug":  "jkt48_sisca",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_SiscaSaras",
+        "isLive":  false
+    },
+    {
+        "name":  "Sona Kalyana (Gen 13)",
+        "roomId":  "0",
+        "avatar":  "../skin/SONA_KALYANA_UNCOMMON.jpg",
+        "idnSlug":  "jkt48_sona",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_SonaKalyana",
+        "isLive":  false
+    },
+    {
+        "name":  "Tan Zhi Hui Celine",
+        "roomId":  "0",
+        "avatar":  "../skin/TAN_ZHI_HUI_CELINE_MYTH.jpg",
+        "idnSlug":  "jkt48_tan",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_TanZhiHuiCeline",
+        "isLive":  false
+    },
+    {
+        "name":  "Victoria Kimberly (Kimmy)",
+        "roomId":  "0",
+        "avatar":  "../skin/VICTORIA_KIMBERLY_MYTH.jpg",
+        "idnSlug":  "jkt48_victoria",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_VictoriaKimberly",
+        "isLive":  false
+    },
+    {
+        "name":  "Yesica Tamara (Chika)",
+        "roomId":  "0",
+        "avatar":  "../skin/YESICA_TAMARA_MYTH.jpg",
+        "idnSlug":  "jkt48_yesica",
+        "platform":  "IDN Live",
+        "roomKey":  "JKT48_YesicaTamara",
+        "isLive":  false
+    }
+];
+
+        let activeMirrorMember = ALL_MEMBER_ROOMS[0];
+        let tempChatStore = [];
+
+        let hasAutoSelectedInitialStream = false;
+
+        let isFetchingLiveRooms = false;
+        async function fetchRealtimeLiveRooms() {
+            if (isFetchingLiveRooms) return;
+            isFetchingLiveRooms = true;
+            try {
+                const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : "https://ashazeneca-botanalistiktl.hf.space";
+                const res = await fetch(`${apiBase}/api/live/onlives`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && Array.isArray(data.rooms)) {
+                        const backendMap = new Map();
+                        data.rooms.forEach(r => backendMap.set(r.roomKey, r));
+                        
+                        ALL_MEMBER_ROOMS.forEach(m => {
+                            if (backendMap.has(m.roomKey)) {
+                                const info = backendMap.get(m.roomKey);
+                                m.isLive = !!info.isLive;
+                                m.streamUrl = info.stream_url || info.streamUrl || null;
+                                m.stream_url = m.streamUrl;
+                                if (info.title) m.title = info.title;
+                            }
+                        });
+
+                        // Add any newly discovered dynamic live streams to the top (Strict JKT48-only)
+                        data.rooms.forEach(r => {
+                            const rName = (r.name || "").toLowerCase();
+                            const rKey = (r.roomKey || "").toLowerCase();
+                            const rSlug = (r.idnSlug || "").toLowerCase();
+
+                            // Discard non-JKT48 creators (Pamela, Citra, Akemi, random IDN streamers)
+                            const isBlocked = rName.includes("pamela") || rName.includes("citra") || rName.includes("akemi") || rKey.includes("ake-") || rSlug.includes("pamela") || rSlug.includes("citra");
+                            const isJkt = rName.includes("jkt48") || rKey.includes("jkt48") || rSlug.startsWith("jkt48_") || rKey.startsWith("sr_");
+
+                            if (r.isLive && isJkt && !isBlocked) {
+                                r.streamUrl = r.stream_url || r.streamUrl;
+                                r.stream_url = r.streamUrl;
+                                const existingIdx = ALL_MEMBER_ROOMS.findIndex(m => m.roomKey === r.roomKey || m.name === r.name);
+                                if (existingIdx === -1) {
+                                    ALL_MEMBER_ROOMS.unshift(r);
+                                } else {
+                                    ALL_MEMBER_ROOMS[existingIdx].isLive = true;
+                                    ALL_MEMBER_ROOMS[existingIdx].streamUrl = r.streamUrl;
+                                    ALL_MEMBER_ROOMS[existingIdx].stream_url = r.streamUrl;
+                                }
+                            }
+                        });
+
+                        // Auto-select and play first LIVE member if current member is offline or on initial load
+                        const liveMembers = ALL_MEMBER_ROOMS.filter(m => m.isLive && (m.streamUrl || m.stream_url));
+                        if (liveMembers.length > 0) {
+                            const isCurrentMemberLive = activeMirrorMember && activeMirrorMember.isLive && (activeMirrorMember.streamUrl || activeMirrorMember.stream_url);
+                            if (!hasAutoSelectedInitialStream || !isCurrentMemberLive) {
+                                hasAutoSelectedInitialStream = true;
+                                switchMirrorMember(liveMembers[0]);
+                            } else {
+                                const updatedActive = ALL_MEMBER_ROOMS.find(m => m.name === activeMirrorMember.name || m.roomKey === activeMirrorMember.roomKey);
+                                if (updatedActive) {
+                                    activeMirrorMember = updatedActive;
+                                    const stream = updatedActive.streamUrl || updatedActive.stream_url;
+                                    if (stream && stream !== currentLoadedStreamUrl) {
+                                        loadVideoStream(stream);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch(e) {
+                console.warn("fetchRealtimeLiveRooms note:", e);
+            } finally {
+                isFetchingLiveRooms = false;
+                renderOnAirRooms();
+            }
+        }
+
+        function renderOnAirRooms() {
+            const container = document.getElementById("onAirChipsContainer");
+            container.innerHTML = "";
+
+            const query = (document.getElementById("searchMemberRoomInput").value || "").toLowerCase();
+            const liveMembers = ALL_MEMBER_ROOMS.filter(m => m.isLive);
+            document.getElementById("onAirBadge").innerText = `🔴 ${liveMembers.length} MEMBER ON-AIR`;
+            document.getElementById("engineDetectorStatus").innerText = `● ${ALL_MEMBER_ROOMS.length} Kamar Member Siap`;
+
+            const sortedList = [...ALL_MEMBER_ROOMS].sort((a, b) => (b.isLive ? 1 : 0) - (a.isLive ? 1 : 0));
+            const filtered = sortedList.filter(m => m.name.toLowerCase().includes(query) || m.roomKey.toLowerCase().includes(query));
+
+            filtered.forEach(m => {
+                const chip = document.createElement("div");
+                chip.className = `member-chip ${m.name === activeMirrorMember.name ? 'active' : ''}`;
+                chip.onclick = () => switchMirrorMember(m);
+
+                chip.innerHTML = `
+                    <div class="chip-left">
+                        <img src="${m.avatar}" class="chip-avatar" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
+                        <span class="chip-name">${m.name}</span>
+                    </div>
+                    ${m.isLive ? '<span class="badge-live-pulse">LIVE</span>' : '<span style="font-size:9px; color:rgba(255,255,255,0.4);">Off</span>'}
+                `;
+                container.appendChild(chip);
+            });
+        }
+
+        async function switchMirrorMember(memberObj) {
+            activeMirrorMember = memberObj;
+            document.getElementById("currentMirrorTitle").innerText = `🔴 Live Mirroring: ${memberObj.name} (JKT48)`;
+            document.getElementById("offlineMemberName").innerText = memberObj.name;
+
+            const subTitle = document.getElementById("liveStatusSubtitle");
+            if (subTitle) {
+                subTitle.innerText = memberObj.isLive ? `● ${memberObj.name} Sedang On-Air (${memberObj.platform}) - Diputar di Web` : `● ${memberObj.name} Sedang Offline`;
+                subTitle.style.color = memberObj.isLive ? "#00ff88" : "rgba(255,255,255,0.5)";
+            }
+
+            if (memberObj.isLive && (memberObj.streamUrl || memberObj.stream_url)) {
+                const stream = memberObj.streamUrl || memberObj.stream_url;
+                loadVideoStream(stream);
+            } else {
+                loadVideoStream(null);
+            }
+
+            tempChatStore = [
+                { user: "SystemBot", text: `Kamar ${memberObj.name} terpilih.` }
+            ];
+            renderLiveChats();
+            renderOnAirRooms();
+        }
+
+        // =======================================================
+        // POSTGRESQL REAL USER DATA & BERANDA SKIN CHAT ENGINE
+        // =======================================================
+        const SKIN_FOLDER_URL = "../skin/";
+        const DEFAULT_TEMPLATE_PP = "https://i.ibb.co.com/Y4JdtfGH/download.png";
+
+        let currentAccountUser = {
+            userId: getCookie("user_session") || getCookie("session_key") || localStorage.getItem("user_session") || localStorage.getItem("session_key") || "demo_user",
+            username: "User",
+            linkProfil: DEFAULT_TEMPLATE_PP,
+            skinBorderCode: "",
+            skinChatCode: ""
+        };
+
+        function getCookie(name) {
+            let nameEQ = name + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        function getCurrentTimeStr() {
+            const d = new Date();
+            return d.getHours().toString().padStart(2, '0') + ":" + d.getMinutes().toString().padStart(2, '0');
+        }
+
+        async function loadUserAccountFromPostgres() {
+            try {
+                const sessionKey = getCookie("user_session") || getCookie("session_key") || getCookie("sessionCookie") || localStorage.getItem("user_session") || localStorage.getItem("session_key") || sessionStorage.getItem("user_session") || "demo_user";
+                const ACCOUNT_BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+
+                let response;
+                try {
+                    response = await fetch(`${ACCOUNT_BACKEND_URL}/statuschat`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ session_cookie: sessionKey, sessionCookie: sessionKey, session_key: sessionKey })
+                    });
+                } catch(e) {
+                    console.warn("Direct statuschat fetch failed, trying fallback:", e);
+                    response = await fetch(`https://ashazeneca-botanalistiktl.hf.space/statuschat`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ session_cookie: sessionKey, sessionCookie: sessionKey, session_key: sessionKey })
+                    });
+                }
+
+                if (response && response.ok) {
+                    const data = await response.json();
+                    const p = data.data || data.profile;
+                    if (p) {
+                        let namaUser = p.nama || p.name || p.username || "User";
+                        if (namaUser.toLowerCase() === "belum terdaftar" || !namaUser.trim()) {
+                            namaUser = p.username || "User";
+                        }
+                        currentAccountUser.username = namaUser;
+
+                        let userPhoto = p.photoProfile || p.linkProfil || "";
+                        if (!userPhoto || userPhoto.trim() === "" || userPhoto.toLowerCase() === "none") {
+                            userPhoto = DEFAULT_TEMPLATE_PP;
+                        }
+                        currentAccountUser.linkProfil = userPhoto;
+
+                        let rawBorderCode = "";
+                        let rawChatCode = "";
+                        if (p.skins) {
+                            rawBorderCode = p.skins.border_skin || "";
+                            rawChatCode = p.skins.chat_skin || "";
+                        } else if (p.skin) {
+                            rawBorderCode = typeof p.skin === 'string' ? p.skin : (p.skin.border || p.skin.border_skin || "");
+                            rawChatCode = typeof p.skin === 'string' ? p.skin : (p.skin.chat || p.skin.chat_skin || "");
+                        }
+
+                        if (rawBorderCode) {
+                            let baseCode = rawBorderCode.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
+                            currentAccountUser.skinBorderCode = "BORDER_" + baseCode;
+                        }
+                        if (rawChatCode) {
+                            let baseCode = rawChatCode.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
+                            currentAccountUser.skinChatCode = "CHAT_" + baseCode;
+                        }
+
+                        // Update label & avatar in chat input preview bar
+                        const userLabel = document.getElementById("chatUserLabel");
+                        if (userLabel) userLabel.innerText = currentAccountUser.username;
+                        
+                        const avatarSm = document.getElementById("chatUserAvatarSmall");
+                        if (avatarSm) avatarSm.src = currentAccountUser.linkProfil;
+                        
+                        const borderSm = document.getElementById("chatUserBorderSmall");
+                        if (borderSm && currentAccountUser.skinBorderCode) {
+                            borderSm.src = SKIN_FOLDER_URL + currentAccountUser.skinBorderCode + ".png";
+                            borderSm.style.display = "block";
+                        }
+
+                        // Update top-bar user profile badge
+                        const topAvatar = document.getElementById("topBarUserAvatar");
+                        if (topAvatar) topAvatar.src = currentAccountUser.linkProfil;
+                        const topName = document.getElementById("topBarUserName");
+                        if (topName) topName.innerText = currentAccountUser.username;
+                        const topBorder = document.getElementById("topBarUserBorder");
+                        if (topBorder && currentAccountUser.skinBorderCode) {
+                            topBorder.src = SKIN_FOLDER_URL + currentAccountUser.skinBorderCode + ".png";
+                            topBorder.style.display = "block";
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("loadUserAccount error:", e);
+                const userLabel = document.getElementById("chatUserLabel");
+                if (userLabel) userLabel.innerText = currentAccountUser.username;
+            }
+        }
+
+        async function sendLiveChat() {
+            const input = document.getElementById("chatInputText");
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.value = "";
+
+            const payload = {
+                room: activeMirrorMember.roomKey || "JKT48_Live",
+                user: currentAccountUser.username,
+                text: text,
+                avatar: currentAccountUser.linkProfil,
+                border: currentAccountUser.skinBorderCode,
+                skin: currentAccountUser.skinChatCode,
+                waktu: getCurrentTimeStr(),
+                isSelf: true
+            };
+
+            tempChatStore.push(payload);
+            renderLiveChats();
+
+            // Send to Backend
+            try {
+                const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : "https://ashazeneca-botanalistiktl.hf.space";
+                await fetch(`${apiBase}/api/chat/send`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        room: activeMirrorMember.roomKey,
+                        user: currentAccountUser.username,
+                        text: text,
+                        avatar: currentAccountUser.linkProfil,
+                        border: currentAccountUser.skinBorderCode,
+                        skin: currentAccountUser.skinChatCode
+                    })
+                });
+            } catch(e) {}
+        }
+
+        function renderLiveChats() {
+            const box = document.getElementById("chatMessagesBox");
+            box.innerHTML = "";
+
+            tempChatStore.forEach(c => {
+                const isSelf = c.isSelf || (c.user === currentAccountUser.username);
+                const sideClass = isSelf ? "user" : "peer";
+                const displayName = isSelf ? "Kamu" : (c.user || "Wota");
+                const timeStr = c.waktu || getCurrentTimeStr();
+
+                let bgStyle = "";
+                let borderHTML = "";
+                let rawSkin = c.skin || c.border || (isSelf ? currentAccountUser.skinChatCode : "");
+
+                let rawBorderSkin = c.border || (isSelf ? currentAccountUser.skinBorderCode : "");
+                let rawChatSkin = c.skin || (isSelf ? currentAccountUser.skinChatCode : "");
+
+                if (rawChatSkin || rawBorderSkin) {
+                    let baseCode = (rawChatSkin || rawBorderSkin).replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
+                    let chatSkinUrl = SKIN_FOLDER_URL + "CHAT_" + baseCode + ".png";
+                    bgStyle = `
+                        border-style: solid !important;
+                        border-width: 45px 50px 45px 80px !important;
+                        border-image-source: url('${chatSkinUrl}') !important;
+                        border-image-slice: 70 90 60 130 fill !important;
+                        border-image-repeat: stretch !important;
+                        background: transparent !important;
+                        box-shadow: none !important;
+                        color: #4a3b32 !important;
+                        border-radius: 0 !important;
+                        padding: 5px 25px !important;
+                        min-width: 150px !important;
+                        min-height: 75px !important;
+                        width: fit-content !important;
+                        max-width: 100% !important;
+                        display: flex !important;
+                        align-items: center !important;
+                        word-break: break-word !important;
+                        font-size: 12.5px !important;
+                    `;
+
+                    let borderFallbackPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".png";
+                    let borderFullPath = SKIN_FOLDER_URL + "BORDER_" + baseCode + ".jpg";
+                    borderHTML = `<img src="${borderFallbackPath}" class="live-border-img" onerror="this.src='${borderFullPath}'; this.onerror=null;">`;
+                } else {
+                    if (isSelf) {
+                        bgStyle = `
+                            background: rgba(255, 255, 255, 0.9);
+                            border-radius: 14px 14px 2px 14px;
+                            border-right: 3px solid #00d4ff;
+                            padding: 6px 12px;
+                            border: 1px solid rgba(255, 255, 255, 0.8);
+                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                            color: #111827;
+                        `;
+                    } else {
+                        bgStyle = `
+                            background: rgba(15, 23, 42, 0.85);
+                            border-radius: 14px 14px 14px 2px;
+                            border-left: 3px solid #ff007f;
+                            padding: 6px 12px;
+                            border: 1px solid rgba(255, 255, 255, 0.18);
+                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                            color: #fff;
+                        `;
+                    }
+                }
+
+                let ppSrc = c.avatar || (isSelf ? currentAccountUser.linkProfil : DEFAULT_TEMPLATE_PP);
+
+                const item = document.createElement("div");
+                item.className = `live-msg ${sideClass}`;
+                item.innerHTML = `
+                    <div class="live-msg-header">
+                        <div class="live-avatar-wrapper">
+                            <img src="${ppSrc}" class="live-avatar-img" onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
+                            ${borderHTML}
+                        </div>
+                        <div class="live-name-time">
+                            <span class="live-user-name">${displayName}</span>
+                            <span class="live-msg-time">${timeStr}</span>
+                        </div>
+                    </div>
+                    <div class="live-msg-bubble" style="${bgStyle}">${c.text}</div>
+                `;
+                box.appendChild(item);
+            });
+            box.scrollTop = box.scrollHeight;
+        }
+
+        let isFetchingChats = false;
+        async function fetchLiveRoomChats() {
+            if (!activeMirrorMember || !activeMirrorMember.roomKey || isFetchingChats || document.hidden) return;
+            isFetchingChats = true;
+            try {
+                const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : "https://ashazeneca-botanalistiktl.hf.space";
+                const res = await fetch(`${apiBase}/api/chat/get?room=${encodeURIComponent(activeMirrorMember.roomKey)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && Array.isArray(data.messages) && data.messages.length > 0) {
+                        tempChatStore = data.messages;
+                        renderLiveChats();
+                    }
+                }
+            } catch(e) {
+            } finally {
+                isFetchingChats = false;
+            }
+        }
+
+        // =======================================================
+        // REPLAY GRID RENDER & DIRECT MP4 IN-WEB MODAL
+        // =======================================================
+        let selectedPlatform = "all";
+
+        function renderReplays(list) {
+            const container = document.getElementById("replayGridContainer");
+            container.innerHTML = "";
+
+            if (!list || list.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: rgba(255,255,255,0.6); padding: 30px 0;">Tidak ada rekaman video yang sesuai kata kunci pencarian.</div>`;
+                return;
+            }
+
+            list.forEach(rep => {
+                const card = document.createElement("div");
+                card.className = "replay-card";
+                
+                const thumbUrl = rep.thumb || `https://jkt48.preset.id/data/thumbs/${rep.raw_id || rep.id}.jpg`;
+                const ytUrl = `https://www.youtube.com/watch?v=${rep.id}`;
+
+                card.innerHTML = `
+                    <div class="replay-thumb-box" onclick="selectReplayHero(this, ${JSON.stringify(rep).replace(/"/g, '&quot;')})">
+                        <img src="${thumbUrl}" class="replay-thumb-img" alt="${rep.title}" 
+                             onerror="this.src='https://i.ibb.co.com/Y4JdtfGH/download.png';">
+                        <span class="replay-badge-platform">${rep.platform}</span>
+                    </div>
+                    <div class="replay-info">
+                        <div class="replay-title">${rep.title}</div>
+                        <div class="replay-meta-sub">${rep.member} • ${rep.meta || rep.date || ''}</div>
+                        <div class="btn-action-row">
+                            <button class="btn-action btn-preset" onclick="playInWebModal(${JSON.stringify(rep).replace(/"/g, '&quot;')})">
+                                ▶ Putar di Web
+                            </button>
+                            <a href="${ytUrl}" target="_blank" rel="noopener noreferrer" class="btn-action btn-yt">
+                                ↗ YouTube
+                            </a>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Add Load More Button if catalog has more videos
+            if (ALL_REPLAYS_CATALOG.length > CURRENT_DISPLAYED_REPLAYS.length) {
+                const loadMoreBox = document.createElement("div");
+                loadMoreBox.style.gridColumn = "1 / -1";
+                loadMoreBox.style.textAlign = "center";
+                loadMoreBox.style.padding = "20px 0";
+                loadMoreBox.innerHTML = `
+                    <button class="pill-tab" style="padding: 10px 30px; font-size: 13px; font-weight: 800; cursor: pointer; background: linear-gradient(135deg, #1a5cff, #00d4ff);" onclick="loadMoreReplays()">
+                        📂 Muat 60 Rekaman Lagi (${CURRENT_DISPLAYED_REPLAYS.length} dari ${ALL_REPLAYS_CATALOG.length} Video)
+                    </button>
+                `;
+                container.appendChild(loadMoreBox);
+            }
+        }
+
+        function selectReplayHero(el, rep) {
+            activeReplayObj = rep;
+            document.getElementById("currentReplayTitle").innerText = rep.title;
+            document.getElementById("currentReplayMeta").innerText = `${rep.platform} HD • ${rep.member}`;
+
+            const ytUrl = `https://www.youtube.com/watch?v=${rep.id}`;
+            document.getElementById("heroDirectYtBtn").href = ytUrl;
+            document.getElementById("cinemaShowcaseBg").style.backgroundImage = `url('${rep.thumb}')`;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function playInWebModal(rep) {
+            activeReplayObj = rep;
+            document.getElementById("modalVideoTitle").innerText = `▶ ${rep.title}`;
+            document.getElementById("modalVideoMeta").innerText = `${rep.platform} HD • ${rep.member}`;
+            const ytLink = rep.raw_id || rep.id ? `https://www.youtube.com/watch?v=${rep.raw_id || rep.id}` : (rep.video_url || "#");
+            document.getElementById("modalDirectYt").href = ytLink;
+
+            const vidPlayer = document.getElementById("modalDirectVideoPlayer");
+            const spinner = document.getElementById("modalLoadingSpinner");
+            const bgVideo = document.querySelector(".video-bg");
+            
+            if (bgVideo) bgVideo.pause(); // Free GPU/CPU rendering resources
+
+            spinner.style.display = "flex";
+            spinner.innerHTML = `<span>⏳ Menyiapkan video HD...</span>`;
+            vidPlayer.style.display = "none";
+            vidPlayer.pause();
+            vidPlayer.src = "";
+
+            document.getElementById("cinemaModal").classList.add("active");
+
+            // 1. Direct Stream from CDN / Storage (0 MB RAM Load on Backend Server)
+            let directUrl = "";
+            let sourcePath = "";
+
+            if (rep.video_url) {
+                if (rep.video_url.startsWith("http")) {
+                    directUrl = rep.video_url;
+                    try { sourcePath = new URL(rep.video_url).pathname; } catch(e) { sourcePath = rep.video_url; }
+                } else {
+                    sourcePath = rep.video_url;
+                    directUrl = `https://jkt48.preset.id${rep.video_url.startsWith('/') ? '' : '/'}${rep.video_url}`;
+                }
+            }
+
+            if (directUrl) {
+                vidPlayer.src = directUrl;
+                spinner.style.display = "none";
+                vidPlayer.style.display = "block";
+                
+                vidPlayer.play().catch(err => {
+                    console.log("Direct play caught, trying backend stream fallback:", err);
+                    const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : "https://ashazeneca-botanalistiktl.hf.space";
+                    vidPlayer.src = `${apiBase}/api/yt/proxy_stream?path=${encodeURIComponent(sourcePath)}`;
+                    vidPlayer.play().catch(e => console.warn("Fallback player note:", e));
+                });
+            } else {
+                spinner.innerHTML = `<span>⚠️ Video arsip sedang diproses.</span>`;
+            }
+        }
+
+        function closeCinemaModal(e) {
+            try {
+                const vidPlayer = document.getElementById("modalDirectVideoPlayer");
+                if (vidPlayer) {
+                    vidPlayer.pause();
+                    vidPlayer.removeAttribute("src");
+                    try { vidPlayer.load(); } catch(err) {}
+                }
+                const ytFrame = document.getElementById("modalYoutubeFrame");
+                if (ytFrame) {
+                    ytFrame.src = "about:blank";
+                    ytFrame.style.display = "none";
+                }
+            } catch(err) {}
+
+            const modal = document.getElementById("cinemaModal");
+            if (modal) modal.classList.remove("active");
+
+            const bgVideo = document.querySelector(".video-bg");
+            if (bgVideo) bgVideo.play().catch(() => {});
+        }
+
+        function filterPlatform(platform, el) {
+            selectedPlatform = platform;
+            document.querySelectorAll('.replay-filter-row .pill-tab').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            
+            if (platform === "all") {
+                renderReplays(CURRENT_DISPLAYED_REPLAYS);
+            } else {
+                const filtered = CURRENT_DISPLAYED_REPLAYS.filter(r => r.platform.toLowerCase().includes(platform.toLowerCase()));
+                renderReplays(filtered);
+            }
+        }
+
+        function sendTheaterChat() {
+            const input = document.getElementById("theaterChatInput");
+            const text = input.value.trim();
+            if (!text) return;
+
+            const box = document.getElementById("theaterChatBox");
+            const item = document.createElement("div");
+            item.className = "chat-msg-item";
+            item.innerHTML = `<span class="chat-user">Kamu:</span> ${text}`;
+            box.appendChild(item);
+            box.scrollTop = box.scrollHeight;
+            input.value = "";
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadUserAccountFromPostgres();
+            fetchRealtimeLiveRooms();
+            fetchBackendReplays();
+            
+            // 1 & 2. Smart Adaptive Polling (Hemat 80% Bebas Beban Server saat tab diminimize)
+            let roomPollTimer = null;
+            let chatPollTimer = null;
+
+            function startAdaptivePolling() {
+                if (roomPollTimer) clearInterval(roomPollTimer);
+                if (chatPollTimer) clearInterval(chatPollTimer);
+
+                const isHidden = document.hidden;
+                // Saat tab aktif: cek live room tiap 20s, chat tiap 5s
+                // Saat tab di-minimize/background: cek live room tiap 60s, chat mati total (0 request)
+                const roomInterval = isHidden ? 60000 : 20000;
+                const chatInterval = isHidden ? 0 : 5000;
+
+                roomPollTimer = setInterval(fetchRealtimeLiveRooms, roomInterval);
+                if (chatInterval > 0) {
+                    chatPollTimer = setInterval(fetchLiveRoomChats, chatInterval);
+                }
+            }
+
+            document.addEventListener("visibilitychange", () => {
+                if (!document.hidden) {
+                    fetchRealtimeLiveRooms();
+                    fetchLiveRoomChats();
+                }
+                startAdaptivePolling();
+            });
+
+            startAdaptivePolling();
+
+            // 3. Otomatis mandiri muat & update arsip replay video setiap 1 jam (3.600.000 ms)
+            setInterval(fetchBackendReplays, 3600000);
+            
+            // 4. Auto-Scroll Observer: Otomatis muat 60 video lagi saat scroll mendekati bawah
+            const mainContent = document.querySelector('.main-content');
+            if (mainContent) {
+                mainContent.addEventListener('scroll', () => {
+                    const replayTab = document.getElementById('replayTab');
+                    if (replayTab && replayTab.style.display !== 'none') {
+                        if (mainContent.scrollTop + mainContent.clientHeight >= mainContent.scrollHeight - 300) {
+                            if (ALL_REPLAYS_CATALOG.length > CURRENT_DISPLAYED_REPLAYS.length) {
+                                loadMoreReplays();
+                            }
+                        }
+                    }
+                });
+            }
+
+            tempChatStore = [{ user: "SystemBot", text: "Selamat datang di Alcsta48 Live & Replay Engine.", avatar: "https://i.ibb.co.com/Y4JdtfGH/download.png" }];
+            renderLiveChats();
+        });
+    </script>
+</body>
+</html>

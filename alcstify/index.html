@@ -1,0 +1,4275 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Alcstify 48 - JKT48 Native Music & Lyrics Player</title>
+<link rel="icon" href="../logo.png">
+<script src="../config.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Nunito',sans-serif;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;height:100dvh;overflow:hidden;background:#030712;color:#fff;display:flex;position:relative}
+
+.vbg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;filter:brightness(.22)}
+.glows{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.gw{position:absolute;border-radius:50%;opacity:.18}
+.ga{width:50vw;height:50vw;top:-15%;left:-15%;background:radial-gradient(circle,#00ff88,transparent 70%)}
+.gb{width:40vw;height:40vw;top:-10%;right:-10%;background:radial-gradient(circle,#1db954,transparent 70%)}
+.gc{width:45vw;height:45vw;bottom:-15%;left:-10%;background:radial-gradient(circle,#ff007f,transparent 70%)}
+.gd{width:40vw;height:40vw;bottom:-10%;right:-10%;background:radial-gradient(circle,#a855f7,transparent 70%);opacity:.12}
+
+/* ====== SIDEBAR ====== */
+.sb{width:82px;background:rgba(11,17,33,.94);border-right:1px solid rgba(255,255,255,.09);display:flex;flex-direction:column;align-items:center;padding:12px 4px;gap:7px;z-index:100;overflow-y:auto;flex-shrink:0;transition:transform .28s ease}
+.sb::-webkit-scrollbar{display:none}
+.na{display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;color:#fff;font-weight:700;font-size:9px;background:rgba(255,255,255,.06);width:65px;height:54px;border-radius:13px;border:1px solid rgba(255,255,255,.1);text-align:center;gap:3px;flex-shrink:0;transition:all .15s;letter-spacing:.2px}
+.na:hover{background:rgba(255,255,255,.18);transform:scale(1.04)}
+.na.on{background:rgba(255,255,255,.92);color:#1a5cff;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.ni{font-size:16px}
+.sov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:90;opacity:0;transition:opacity .25s}
+.sov.v{display:block;opacity:1}
+
+/* ====== MAIN CONTENT ====== */
+.mn{flex:1;display:flex;flex-direction:column;height:100%;overflow:hidden;z-index:10;min-width:0}
+.tb{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.08);background:rgba(11,17,33,.88);flex-shrink:0;gap:10px}
+.mb{display:none;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:16px;padding:5px 10px;border-radius:9px;cursor:pointer;flex-shrink:0}
+.br{display:flex;align-items:center;gap:8px;background:rgba(15,23,42,.9);padding:5px 14px;border-radius:28px;border:1px solid rgba(0,255,136,.25);min-width:0}
+.br img{height:26px;border-radius:50%;flex-shrink:0}
+.bt{font-weight:900;font-size:12px;color:#1db954;font-family:'Rajdhani',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bc{font-size:11px;color:#00ff88;font-weight:800;flex-shrink:0;white-space:nowrap}
+
+/* ====== SCROLL AREA ====== */
+.sa{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 16px 48px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.sa::-webkit-scrollbar{width:5px}
+.sa::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:5px}
+
+/* ====== SEARCH & FILTER ====== */
+.search-wrap{position:sticky;top:0;z-index:40;background:rgba(3,7,18,.94);padding:10px 0 12px;backdrop-filter:blur(14px)}
+.search-inner{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sinput{flex:1;min-width:200px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:9px 14px;color:#fff;font-size:12.5px;outline:none;transition:border-color .2s}
+.sinput:focus{border-color:#1db954;background:rgba(255,255,255,.1)}
+.sinput::placeholder{color:rgba(255,255,255,.4)}
+.fpill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:11px;font-weight:800;padding:7px 12px;border-radius:18px;cursor:pointer;transition:all .18s;white-space:nowrap}
+.fpill:hover{background:rgba(255,255,255,.16)}
+.fpill.on{background:#1db954;color:#000;border-color:#1db954;box-shadow:0 0 12px rgba(29,185,84,.4)}
+
+/* ====== ALBUM SECTION ====== */
+.alb-sec{margin-bottom:24px}
+.alb-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px}
+.alb-left{display:flex;align-items:center;gap:9px;min-width:0}
+.alb-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;box-shadow:0 0 10px currentColor}
+.alb-name{font-size:14px;font-weight:900;font-family:'Rajdhani',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.alb-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.alb-meta{font-size:10px;color:rgba(255,255,255,.5);font-weight:700}
+.alb-arr{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;width:28px;height:28px;border-radius:50%;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.alb-arr:hover{background:rgba(29,185,84,.3);border-color:#1db954}
+
+/* ====== CAROUSEL ====== */
+.car-wrap{overflow:hidden}
+.car-track{display:flex;gap:10px;transition:transform .4s cubic-bezier(.25,.8,.25,1);will-change:transform}
+.scard{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .22s;flex-shrink:0;width:160px;position:relative}
+.scard:hover{transform:translateY(-3px) scale(1.02);border-color:rgba(29,185,84,.5);box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.scard.playing{border-color:#1db954;box-shadow:0 0 16px rgba(29,185,84,.5)}
+.scard.playing .play-ind{display:flex}
+.play-ind{display:none;position:absolute;top:8px;right:8px;background:rgba(29,185,84,.95);color:#000;font-size:10px;width:22px;height:22px;border-radius:50%;align-items:center;justify-content:center;font-weight:900}
+.scard-thumb-box{position:relative;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#0d1527,#1a263f);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.scard-thumb{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s}
+.scard:hover .scard-thumb{transform:scale(1.06)}
+.scard-album-badge{position:absolute;bottom:4px;left:6px;font-size:8.5px;font-weight:800;background:rgba(0,0,0,0.8);padding:2px 6px;border-radius:4px;border:1px solid rgba(255,255,255,0.25)}
+.scard-info{padding:8px 10px 10px}
+.scard-ttl{font-size:11.5px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.scard-sub{font-size:9.5px;color:rgba(255,255,255,.45);font-weight:700;margin-top:2px}
+
+/* ====== BOTTOM NATIVE AUDIO PLAYER ====== */
+.pbar{flex-shrink:0;background:rgba(8,13,28,.98);border-top:1px solid rgba(255,255,255,.1);backdrop-filter:blur(24px)}
+.seek-wrap{width:100%;height:6px;background:rgba(255,255,255,.1);cursor:pointer;position:relative}
+.seek-fill{height:100%;width:0%;background:linear-gradient(90deg,#1db954,#00ffcc);transition:width .1s linear;position:relative}
+.seek-handle{position:absolute;right:-6px;top:-4px;width:14px;height:14px;background:#fff;border-radius:50%;box-shadow:0 0 8px rgba(29,185,84,.9);display:none}
+.seek-wrap:hover .seek-handle{display:block}
+.pinner{display:flex;align-items:center;gap:12px;padding:9px 16px;min-width:0}
+.now-thumb{width:52px;height:52px;border-radius:10px;object-fit:cover;border:2px solid rgba(255,255,255,.15);cursor:pointer;transition:transform .25s;flex-shrink:0;background:#111}
+.now-thumb:hover{transform:scale(1.06)}
+.now-info{flex:1;min-width:0}
+.now-ttl{font-size:13.5px;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Rajdhani',sans-serif}
+.now-sub{font-size:10px;color:#1db954;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.trow{display:flex;gap:4px;font-size:9.5px;color:rgba(255,255,255,.45);font-weight:700;margin-top:2px}
+.lkb{background:none;border:none;font-size:20px;cursor:pointer;color:rgba(255,255,255,.3);transition:all .2s;padding:3px;flex-shrink:0}
+.lkb:hover{transform:scale(1.2)}
+.lkb.on{color:#ff0055;text-shadow:0 0 12px rgba(255,0,85,.6)}
+.ctrl{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.cb{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;width:34px;height:34px;border-radius:50%;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0}
+.cb:hover{background:rgba(255,255,255,.2);transform:scale(1.08)}
+.cpb{width:46px;height:46px;background:linear-gradient(135deg,#1db954,#00d97e);color:#000;font-size:18px;border:none;box-shadow:0 0 18px rgba(29,185,84,.5)}
+.cpb:hover{box-shadow:0 0 28px rgba(29,185,84,.9);transform:scale(1.1)}
+.mpill{display:flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;overflow:hidden;flex-shrink:0}
+.mpb{padding:6px 10px;font-size:9.5px;font-weight:800;border:none;background:transparent;color:rgba(255,255,255,.5);cursor:pointer;transition:all .2s;white-space:nowrap}
+.mpb.on{background:#1db954;color:#000}
+
+/* ====== LYRICS PANEL ====== */
+.lyr-panel{position:fixed;inset:0;z-index:200;background:rgba(5,8,20,.98);display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.25,.8,.25,1);backdrop-filter:blur(20px)}
+.lyr-panel.open{transform:translateY(0)}
+.lyr-top{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.lyr-info{display:flex;align-items:center;gap:12px;min-width:0}
+.lyr-cover{width:48px;height:48px;border-radius:10px;object-fit:cover;flex-shrink:0;border:1.5px solid rgba(255,255,255,.15);background:#111}
+.lyr-ti{min-width:0}
+.lyr-title{font-size:15px;font-weight:900;font-family:'Rajdhani',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lyr-sub2{font-size:10.5px;color:#1db954;font-weight:700}
+.lyr-close{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.lyr-close:hover{background:#ff0055}
+.lyr-badge{font-size:9.5px;color:rgba(255,255,255,.4);font-weight:700;padding:4px 18px 6px;flex-shrink:0;text-align:right}
+.lyr-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:20px 24px 120px;text-align:center}
+.lyr-scroll::-webkit-scrollbar{width:4px}
+.lyr-scroll::-webkit-scrollbar-thumb{background:rgba(29,185,84,.4);border-radius:4px}
+
+/* ====== LYRIC LINES & KARAOKE GLOW ====== */
+.ll{margin-bottom:20px;line-height:1.6;cursor:pointer;transition:opacity .2s}
+.ll:not(.near){opacity:.35}
+.ll.near{opacity:.65}
+.ll.active-line{opacity:1}
+.lw{display:inline;font-size:16.5px;font-weight:700;color:rgba(255,255,255,.4);transition:color .15s,text-shadow .15s,font-weight .15s;margin-right:4px}
+.ll.active-line .lw{color:rgba(255,255,255,.7);font-size:17.5px;font-weight:800}
+.lw.sung{color:#1db954;font-weight:800;text-shadow:0 0 10px rgba(29,185,84,.55)}
+.lw.active-word{
+  color:#fff;
+  font-weight:900;
+  text-shadow:0 0 8px rgba(255,255,255,.9), 0 0 18px rgba(29,185,84,.9), 0 0 35px rgba(29,185,84,.6);
+  animation:wglow .25s ease;
+}
+@keyframes wglow{
+  0%{text-shadow:0 0 4px rgba(255,255,255,.3)}
+  50%{text-shadow:0 0 14px #fff, 0 0 25px #1db954}
+  100%{text-shadow:0 0 8px #fff, 0 0 18px #1db954}
+}
+
+/* ====== MV PANEL ====== */
+.mv-panel{position:fixed;inset:0;z-index:210;background:#000;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .38s cubic-bezier(.25,.8,.25,1)}
+.mv-panel.open{transform:translateY(0)}
+.mv-close{position:absolute;top:16px;right:16px;z-index:5;background:rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.3);color:#fff;width:38px;height:38px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.mv-close:hover{background:#ff0055}
+#mvIframe{width:100%;height:100%;border:none}
+
+@media(max-width:760px){
+  .sb{position:fixed;top:0;left:0;height:100vh;transform:translateX(-100%);box-shadow:4px 0 20px rgba(0,0,0,.5)}
+  .sb.open{transform:translateX(0)}
+  .mb{display:block}
+  .scard{width:138px}
+  .bt{display:none}
+}
+</style>
+</head>
+<body>
+<!-- NATIVE HTML5 AUDIO PLAYER (ZERO IFRAME LAG & DIRECT SOUND) -->
+<audio id="nativeAudioPlayer" preload="auto"></audio>
+
+<video class="vbg" autoplay muted loop playsinline><source src="../beranda/latarglobal.webm" type="video/webm"></video>
+<div class="glows"><div class="gw ga"></div><div class="gw gb"></div><div class="gw gc"></div><div class="gw gd"></div></div>
+<div class="sov" id="sov" onclick="closeSb()"></div>
+
+<nav class="sb" id="sb">
+  <a href="../beranda/" class="na"><span class="ni">&#128172;</span>Beranda</a>
+  <a href="../profil/" class="na"><span class="ni">&#128100;</span>Profil</a>
+  <a href="../gacha-skin/" class="na"><span class="ni">&#127873;</span>Gacha</a>
+  <a href="../live-jkt48/" class="na"><span class="ni">&#127908;</span>Live JKT</a>
+  <a href="#" class="na on"><span class="ni">&#127925;</span>Alcstify</a>
+  <a href="../mini-games/" class="na"><span class="ni">&#127918;</span>Games</a>
+  <a href="../grup/" class="na"><span class="ni">&#128101;</span>Grup</a>
+  <a href="../temen-mabar/" class="na"><span class="ni">&#9876;</span>Mabar</a>
+  <a href="../medsos-saver/" class="na"><span class="ni">&#128229;</span>Saver</a>
+  <a href="../koleksi-kartu/" class="na"><span class="ni">&#127823;</span>Kartu</a>
+  <a href="../bio-member/" class="na"><span class="ni">&#128214;</span>Bio</a>
+  <a href="../link-shortcut/" class="na"><span class="ni">&#128279;</span>Shortcut</a>
+  <a href="../update-member/" class="na"><span class="ni">&#128241;</span>Update</a>
+  <a href="../tentang/" class="na"><span class="ni">&#8505;</span>Tentang</a>
+</nav>
+
+<div class="mn">
+  <header class="tb">
+    <div style="display:flex;align-items:center;gap:8px;min-width:0">
+      <button class="mb" onclick="openSb()">&#9776;</button>
+      <div class="br">
+        <img src="../logo.png.png" onerror="this.src='../logo.png'" alt="logo">
+        <span class="bt">Alcstify 48 &mdash; JKT48 Music &amp; Lyrics Player</span>
+      </div>
+    </div>
+    <span class="bc" id="badge">&#9679; Loading...</span>
+  </header>
+
+  <div class="sa" id="mainSA">
+    <div class="search-wrap">
+      <div class="search-inner">
+        <input class="sinput" id="sq" type="text" placeholder="&#128269; Cari lagu, album... Rapsodi, Pajama Drive, Heavy Rotation, RIVER..." oninput="doSearch()">
+        <button class="fpill on" onclick="setF('all',this)">Semua</button>
+        <button class="fpill" onclick="setF('liked',this)">&#10084; Suka (<span id="lkCnt">0</span>)</button>
+        <button class="fpill" onclick="setF('Single',this)">Singles</button>
+        <button class="fpill" onclick="setF('Theater',this)">Theater</button>
+        <button class="fpill" onclick="setF('Album',this)">Album</button>
+      </div>
+    </div>
+    <div id="albSecs"></div>
+  </div>
+
+  <div class="pbar">
+    <div class="seek-wrap" id="seekWrap" onclick="onSeek(event)">
+      <div class="seek-fill" id="seekFill"><div class="seek-handle"></div></div>
+    </div>
+    <div class="pinner">
+      <img class="now-thumb" id="nowThumb" src="https://i.ibb.co.com/8Lcx0pQW/river.jpg"
+           onerror="this.src='../skin/FREYA_JAYAWARDANA_MYTH.jpg'" alt="cover" onclick="openLyr()">
+      <div class="now-info">
+        <div class="now-ttl" id="nowTtl">RIVER</div>
+        <div class="now-sub" id="nowSub">JKT48 &bull; Single 1: RIVER &bull; 2013</div>
+        <div class="trow"><span id="tCur">0:00</span><span>/</span><span id="tDur">0:00</span></div>
+      </div>
+      <button class="lkb" id="lkBtn" onclick="toggleLike()">&#9825;</button>
+      <div class="ctrl">
+        <button class="cb" onclick="prevT()" title="Prev">&#9198;</button>
+        <button class="cb cpb" id="playBtn" onclick="togglePlay()">&#9654;</button>
+        <button class="cb" onclick="nextT()" title="Next">&#9197;</button>
+      </div>
+      <div class="mpill">
+        <button class="mpb on" onclick="openLyr()">&#127897; Lirik</button>
+        <button class="mpb" onclick="openMv()">&#127916; MV</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LYRIC PANEL -->
+<div class="lyr-panel" id="lyrPanel">
+  <div class="lyr-top">
+    <div class="lyr-info">
+      <img class="lyr-cover" id="lyrCover" src="https://i.ibb.co.com/8Lcx0pQW/river.jpg" alt="">
+      <div class="lyr-ti">
+        <div class="lyr-title" id="lyrTitle">RIVER</div>
+        <div class="lyr-sub2" id="lyrSub">JKT48</div>
+      </div>
+    </div>
+    <button class="lyr-close" onclick="closeLyr()">&#10005;</button>
+  </div>
+  <div class="lyr-badge" id="lyrBadge">lirik sinkron per kata</div>
+  <div class="lyr-scroll" id="lyrScroll">
+    <div style="color:rgba(255,255,255,.4);text-align:center;margin-top:80px;font-size:14px;line-height:2.2">
+      &#127925; Pilih lagu untuk mulai<br><span style="font-size:11px;opacity:.6">Lirik sinkron per kata</span>
+    </div>
+  </div>
+</div>
+
+<!-- MV PANEL -->
+<div class="mv-panel" id="mvPanel">
+  <button class="mv-close" onclick="closeMv()">&#10005;</button>
+  <iframe id="mvIframe" allow="autoplay; fullscreen; encrypted-media"></iframe>
+</div>
+
+<script>
+// ===== SONGS DATA =====
+const TRACKS = [
+    {
+        "id":  "jkt48_1",
+        "title":  "RIVER",
+        "album":  "Single 1: RIVER",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#1a6aff",
+        "yt_id":  "F4E46vj-h14",
+        "cover":  "https://img.youtube.com/vi/F4E46vj-h14/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_2",
+        "title":  "Sakura no Shiori (Pembatas Buku Sakura)",
+        "album":  "Single 1: RIVER",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#1a6aff",
+        "yt_id":  "pWX2WMFqYco",
+        "cover":  "https://img.youtube.com/vi/pWX2WMFqYco/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_3",
+        "title":  "Mirai no Kajitsu (Buah Masa Depan)",
+        "album":  "Single 1: RIVER",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#1a6aff",
+        "yt_id":  "VXy0s3e3sEI",
+        "cover":  "https://img.youtube.com/vi/VXy0s3e3sEI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_4",
+        "title":  "Kimi ni Autabi Koi wo Suru (Jatuh Cinta Setiap Bertemu Denganmu)",
+        "album":  "Single 1: RIVER",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#1a6aff",
+        "yt_id":  "sE_qijRMSmM",
+        "cover":  "https://img.youtube.com/vi/sE_qijRMSmM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_5",
+        "title":  "Apakah Kau Melihat Mentari Senja? (Yuuhi wo Miteiru ka?)",
+        "album":  "Single 2: Yuuhi wo Miteiru ka?",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#ff6b1a",
+        "yt_id":  "z6k-D72D18s",
+        "cover":  "https://img.youtube.com/vi/z6k-D72D18s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_6",
+        "title":  "Nagai Hikari (Cahaya Panjang)",
+        "album":  "Single 2: Yuuhi wo Miteiru ka?",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#ff6b1a",
+        "yt_id":  "sE_qijRMSmM",
+        "cover":  "https://img.youtube.com/vi/sE_qijRMSmM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_7",
+        "title":  "1! 2! 3! 4! YOROSHIKU!",
+        "album":  "Single 2: Yuuhi wo Miteiru ka?",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#ff6b1a",
+        "yt_id":  "XJqOoqRvhL0",
+        "cover":  "https://img.youtube.com/vi/XJqOoqRvhL0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_8",
+        "title":  "Viva! Hurricane",
+        "album":  "Single 2: Yuuhi wo Miteiru ka?",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#ff6b1a",
+        "yt_id":  "XJqOoqRvhL0",
+        "cover":  "https://img.youtube.com/vi/XJqOoqRvhL0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_9",
+        "title":  "Fortune Cookie Yang Mencinta (Koisuru Fortune Cookie)",
+        "album":  "Single 3: Koisuru Fortune Cookie",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#ffd700",
+        "yt_id":  "V7N521m-wG0",
+        "cover":  "https://img.youtube.com/vi/V7N521m-wG0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_10",
+        "title":  "First Rabbit",
+        "album":  "Single 3: Koisuru Fortune Cookie",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#ffd700",
+        "yt_id":  "HCXfHMQNBqE",
+        "cover":  "https://img.youtube.com/vi/HCXfHMQNBqE/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_11",
+        "title":  "Baby! Baby! Baby!",
+        "album":  "Single 3: Koisuru Fortune Cookie",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#ffd700",
+        "yt_id":  "O_BzUvS9M1k",
+        "cover":  "https://img.youtube.com/vi/O_BzUvS9M1k/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_12",
+        "title":  "Fortune Cookie in Love (English Ver.)",
+        "album":  "Single 3: Koisuru Fortune Cookie",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#ffd700",
+        "yt_id":  "V7N521m-wG0",
+        "cover":  "https://img.youtube.com/vi/V7N521m-wG0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_13",
+        "title":  "Manatsu no Sounds Good! (Musim Panas Sounds Good!)",
+        "album":  "Single 4: Manatsu no Sounds Good!",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#00d4ff",
+        "yt_id":  "8vS26vGzPqM",
+        "cover":  "https://img.youtube.com/vi/8vS26vGzPqM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_14",
+        "title":  "BINGO!",
+        "album":  "Single 4: Manatsu no Sounds Good!",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#00d4ff",
+        "yt_id":  "fZRmrNBF8vA",
+        "cover":  "https://img.youtube.com/vi/fZRmrNBF8vA/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_15",
+        "title":  "Kimi to Boku no Kankei (Hubungan Kau dan Aku)",
+        "album":  "Single 4: Manatsu no Sounds Good!",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#00d4ff",
+        "yt_id":  "K8UkSFiYQls",
+        "cover":  "https://img.youtube.com/vi/K8UkSFiYQls/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_16",
+        "title":  "Summer Love Sounds Good!",
+        "album":  "Single 4: Manatsu no Sounds Good!",
+        "type":  "Single",
+        "year":  "2013",
+        "color":  "#00d4ff",
+        "yt_id":  "8vS26vGzPqM",
+        "cover":  "https://img.youtube.com/vi/8vS26vGzPqM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_17",
+        "title":  "Flying Get",
+        "album":  "Single 5: Flying Get",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#ff1a7a",
+        "yt_id":  "Nj8N5T9Pj-Q",
+        "cover":  "https://img.youtube.com/vi/Nj8N5T9Pj-Q/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_18",
+        "title":  "Hanikami Lollypop (Malu-Malu Lollypop)",
+        "album":  "Single 5: Flying Get",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#ff1a7a",
+        "yt_id":  "GhFpZMzH_3o",
+        "cover":  "https://img.youtube.com/vi/GhFpZMzH_3o/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_19",
+        "title":  "Dareka no Tame ni (Demi Seseorang)",
+        "album":  "Single 5: Flying Get",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#ff1a7a",
+        "yt_id":  "Ht8Bq6pFRmo",
+        "cover":  "https://img.youtube.com/vi/Ht8Bq6pFRmo/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_20",
+        "title":  "Korogaru Ishi ni Nare (Jadilah Batu yang Bergulir)",
+        "album":  "Single 5: Flying Get",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#ff1a7a",
+        "yt_id":  "K8UkSFiYQls",
+        "cover":  "https://img.youtube.com/vi/K8UkSFiYQls/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_21",
+        "title":  "Shoujotachi yo (Gadis Remaja)",
+        "album":  "Single 5: Flying Get",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#ff1a7a",
+        "yt_id":  "yQWEYTk5cX0",
+        "cover":  "https://img.youtube.com/vi/yQWEYTk5cX0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_22",
+        "title":  "Gingham Check",
+        "album":  "Single 6: Gingham Check",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#7c3aed",
+        "yt_id":  "Y-2mZ4qZp-w",
+        "cover":  "https://img.youtube.com/vi/Y-2mZ4qZp-w/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_23",
+        "title":  "Utsukushii Inazuma (Kilat yang Indah)",
+        "album":  "Single 6: Gingham Check",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#7c3aed",
+        "yt_id":  "yQWEYTk5cX0",
+        "cover":  "https://img.youtube.com/vi/yQWEYTk5cX0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_24",
+        "title":  "Kondo Koso Ecstasy (Kali Ini Ecstasy)",
+        "album":  "Single 6: Gingham Check",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#7c3aed",
+        "yt_id":  "j0sj5bD5-K4",
+        "cover":  "https://img.youtube.com/vi/j0sj5bD5-K4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_25",
+        "title":  "Boku wa Ganbaru (Aku Akan Berjuang)",
+        "album":  "Single 6: Gingham Check",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#7c3aed",
+        "yt_id":  "_g_r5p656H8",
+        "cover":  "https://img.youtube.com/vi/_g_r5p656H8/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_26",
+        "title":  "Sakura no Hanabiratachi (Kelopak Bunga Sakura)",
+        "album":  "Single 6: Gingham Check",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#7c3aed",
+        "yt_id":  "t2V5WkVQ5Xg",
+        "cover":  "https://img.youtube.com/vi/t2V5WkVQ5Xg/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_27",
+        "title":  "Papan Penanda Isi Hati (Kokoro no Placard)",
+        "album":  "Single 7: Kokoro no Placard",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "_g_r5p656H8",
+        "cover":  "https://img.youtube.com/vi/_g_r5p656H8/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_28",
+        "title":  "Kurumi to Dialogue (Dialog dengan Kenari)",
+        "album":  "Single 7: Kokoro no Placard",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "0axDRRqT8gE",
+        "cover":  "https://img.youtube.com/vi/0axDRRqT8gE/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_29",
+        "title":  "Lucky Seven",
+        "album":  "Single 7: Kokoro no Placard",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "pWX2WMFqYco",
+        "cover":  "https://img.youtube.com/vi/pWX2WMFqYco/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_30",
+        "title":  "Message on a Placard (English Ver.)",
+        "album":  "Single 7: Kokoro no Placard",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "_g_r5p656H8",
+        "cover":  "https://img.youtube.com/vi/_g_r5p656H8/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_31",
+        "title":  "Angin Sedang Berhembus (Kaze wa Fuiteiru)",
+        "album":  "Single 8: Kaze wa Fuiteiru",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#0ea5e9",
+        "yt_id":  "L_T0yQ83v9s",
+        "cover":  "https://img.youtube.com/vi/L_T0yQ83v9s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_32",
+        "title":  "Kiss Datte Hidarikiki (Bahkan Ciuman Juga Kidal)",
+        "album":  "Single 8: Kaze wa Fuiteiru",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#0ea5e9",
+        "yt_id":  "JBBpQxuNkC8",
+        "cover":  "https://img.youtube.com/vi/JBBpQxuNkC8/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_33",
+        "title":  "Juuryoku Sympathy (Simpati Gravitasi)",
+        "album":  "Single 8: Kaze wa Fuiteiru",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#0ea5e9",
+        "yt_id":  "OEKbFaUFRLU",
+        "cover":  "https://img.youtube.com/vi/OEKbFaUFRLU/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_34",
+        "title":  "Eien Pressure (Selamanya Pressure)",
+        "album":  "Single 8: Kaze wa Fuiteiru",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#0ea5e9",
+        "yt_id":  "5cy3vDjTfFY",
+        "cover":  "https://img.youtube.com/vi/5cy3vDjTfFY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_35",
+        "title":  "The Wind is Blowing (English Ver.)",
+        "album":  "Single 8: Kaze wa Fuiteiru",
+        "type":  "Single",
+        "year":  "2014",
+        "color":  "#0ea5e9",
+        "yt_id":  "L_T0yQ83v9s",
+        "cover":  "https://img.youtube.com/vi/L_T0yQ83v9s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_36",
+        "title":  "Pareo adalah Emerald (Pareo wa Emerald)",
+        "album":  "Single 9: Pareo wa Emerald",
+        "type":  "Single",
+        "year":  "2015",
+        "color":  "#059669",
+        "yt_id":  "C-j56n56a4w",
+        "cover":  "https://img.youtube.com/vi/C-j56n56a4w/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_37",
+        "title":  "Bara no Kajitsu (Buah Mawar)",
+        "album":  "Single 9: Pareo wa Emerald",
+        "type":  "Single",
+        "year":  "2015",
+        "color":  "#059669",
+        "yt_id":  "ouvG-h1fYBI",
+        "cover":  "https://img.youtube.com/vi/ouvG-h1fYBI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_38",
+        "title":  "Takane no Ringo (Apel di Puncak Bukit)",
+        "album":  "Single 9: Pareo wa Emerald",
+        "type":  "Single",
+        "year":  "2015",
+        "color":  "#059669",
+        "yt_id":  "vXBR6KZJLP4",
+        "cover":  "https://img.youtube.com/vi/vXBR6KZJLP4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_39",
+        "title":  "Escape",
+        "album":  "Single 9: Pareo wa Emerald",
+        "type":  "Single",
+        "year":  "2015",
+        "color":  "#059669",
+        "yt_id":  "vXBR6KZJLP4",
+        "cover":  "https://img.youtube.com/vi/vXBR6KZJLP4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_40",
+        "title":  "Kinou Yori Motto Suki (Lebih Mencintaimu Dibanding Kemarin)",
+        "album":  "Single 9: Pareo wa Emerald",
+        "type":  "Single",
+        "year":  "2015",
+        "color":  "#059669",
+        "yt_id":  "pVKX4FyCfhs",
+        "cover":  "https://img.youtube.com/vi/pVKX4FyCfhs/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_41",
+        "title":  "Refrain Penuh Harapan (Kibouteki Refrain)",
+        "album":  "Single 10: Kibouteki Refrain",
+        "type":  "Single",
+        "year":  "2015",
+        "color":  "#dc2626",
+        "yt_id":  "J6d_19O0c2s",
+        "cover":  "https://img.youtube.com/vi/J6d_19O0c2s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_42",
+        "title":  "Boku Dake no value (Value Milikku Sendiri)",
+        "album":  "Single 10: Kibouteki Refrain",
+        "type":  "Single",
+        "year":  "2015",
+        "color":  "#dc2626",
+        "yt_id":  "VW4P0lRtBrk",
+        "cover":  "https://img.youtube.com/vi/VW4P0lRtBrk/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_43",
+        "title":  "Boku no Taiyou (Matahari Milikku)",
+        "album":  "Single 10: Kibouteki Refrain",
+        "type":  "Single",
+        "year":  "2015",
+        "color":  "#dc2626",
+        "yt_id":  "cwXRdIFhRkk",
+        "cover":  "https://img.youtube.com/vi/cwXRdIFhRkk/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_44",
+        "title":  "Saishuu Bell ga Naru (Bel Terakhir Berbunyi)",
+        "album":  "Single 10: Kibouteki Refrain",
+        "type":  "Single",
+        "year":  "2015",
+        "color":  "#dc2626",
+        "yt_id":  "rV-CJYGzAlI",
+        "cover":  "https://img.youtube.com/vi/rV-CJYGzAlI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_45",
+        "title":  "Theater no Megami (Dewi Theater)",
+        "album":  "Single 10: Kibouteki Refrain",
+        "type":  "Single",
+        "year":  "2015",
+        "color":  "#dc2626",
+        "yt_id":  "FNbBdnm2e6A",
+        "cover":  "https://img.youtube.com/vi/FNbBdnm2e6A/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_46",
+        "title":  "Halloween Night",
+        "album":  "Single 11: Halloween Night",
+        "type":  "Single",
+        "year":  "2015",
+        "color":  "#f97316",
+        "yt_id":  "Y4CmNw5_q9E",
+        "cover":  "https://img.youtube.com/vi/Y4CmNw5_q9E/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_47",
+        "title":  "Sayonara Surfboard (Selamat Tinggal Papan Selancar)",
+        "album":  "Single 11: Halloween Night",
+        "type":  "Single",
+        "year":  "2015",
+        "color":  "#f97316",
+        "yt_id":  "LKa39JBiJv0",
+        "cover":  "https://img.youtube.com/vi/LKa39JBiJv0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_48",
+        "title":  "Halloween Night (Dangdut Version)",
+        "album":  "Single 11: Halloween Night",
+        "type":  "Single",
+        "year":  "2015",
+        "color":  "#f97316",
+        "yt_id":  "Y4CmNw5_q9E",
+        "cover":  "https://img.youtube.com/vi/Y4CmNw5_q9E/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_49",
+        "title":  "Don\u0027t Look Back!",
+        "album":  "Single 11: Halloween Night",
+        "type":  "Single",
+        "year":  "2015",
+        "color":  "#f97316",
+        "yt_id":  "OEKbFaUFRLU",
+        "cover":  "https://img.youtube.com/vi/OEKbFaUFRLU/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_50",
+        "title":  "Beginner",
+        "album":  "Single 12: Beginner",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#2563eb",
+        "yt_id":  "4z4bSJJekRc",
+        "cover":  "https://img.youtube.com/vi/4z4bSJJekRc/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_51",
+        "title":  "Kimi no Senaka (Punggung Milikmu)",
+        "album":  "Single 12: Beginner",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#2563eb",
+        "yt_id":  "mbi5V6v2peY",
+        "cover":  "https://img.youtube.com/vi/mbi5V6v2peY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_52",
+        "title":  "Punkish",
+        "album":  "Single 12: Beginner",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#2563eb",
+        "yt_id":  "iDvUFHaDFKI",
+        "cover":  "https://img.youtube.com/vi/iDvUFHaDFKI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_53",
+        "title":  "Kyusen Kyotei (Perjanjian Gencatan Senjata)",
+        "album":  "Single 12: Beginner",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#2563eb",
+        "yt_id":  "7aH5e9TBWLQ",
+        "cover":  "https://img.youtube.com/vi/7aH5e9TBWLQ/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_54",
+        "title":  "Suki! Suki! Skip!",
+        "album":  "Single 12: Beginner",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#2563eb",
+        "yt_id":  "lzUKpCRNBaY",
+        "cover":  "https://img.youtube.com/vi/lzUKpCRNBaY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_55",
+        "title":  "Hanya Lihat Ke Depan (Mae Shika Mukanee)",
+        "album":  "Single 13: Mae Shika Mukanee",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#e11d48",
+        "yt_id":  "Hc3P-9Ic8rM",
+        "cover":  "https://img.youtube.com/vi/Hc3P-9Ic8rM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_56",
+        "title":  "Dakishimecha Ikenai (Tidak Boleh Memelukmu)",
+        "album":  "Single 13: Mae Shika Mukanee",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#e11d48",
+        "yt_id":  "Hc3P-9Ic8rM",
+        "cover":  "https://img.youtube.com/vi/Hc3P-9Ic8rM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_57",
+        "title":  "Migi e Magare! (Belok ke Kanan!)",
+        "album":  "Single 13: Mae Shika Mukanee",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#e11d48",
+        "yt_id":  "nO6KPZRFQ6c",
+        "cover":  "https://img.youtube.com/vi/nO6KPZRFQ6c/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_58",
+        "title":  "Hashire! Penguin (Berlarilah! Penguin)",
+        "album":  "Single 13: Mae Shika Mukanee",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#e11d48",
+        "yt_id":  "mRMQsp90mFM",
+        "cover":  "https://img.youtube.com/vi/mRMQsp90mFM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_59",
+        "title":  "Kataomoi Finally (Cinta Tak Terbalas Finally)",
+        "album":  "Single 13: Mae Shika Mukanee",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#e11d48",
+        "yt_id":  "6Xh_D56_JOE",
+        "cover":  "https://img.youtube.com/vi/6Xh_D56_JOE/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_60",
+        "title":  "LOVE TRIP",
+        "album":  "Single 14: LOVE TRIP",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#db2777",
+        "yt_id":  "J6d_19O0c2s",
+        "cover":  "https://img.youtube.com/vi/J6d_19O0c2s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_61",
+        "title":  "Pioneer",
+        "album":  "Single 14: LOVE TRIP",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#db2777",
+        "yt_id":  "T9r2UkVo8z4",
+        "cover":  "https://img.youtube.com/vi/T9r2UkVo8z4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_62",
+        "title":  "How come?",
+        "album":  "Single 14: LOVE TRIP",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#db2777",
+        "yt_id":  "WfU_p2w_OLM",
+        "cover":  "https://img.youtube.com/vi/WfU_p2w_OLM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_63",
+        "title":  "Aozora Cafe (Kafe Langit Biru)",
+        "album":  "Single 14: LOVE TRIP",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#db2777",
+        "yt_id":  "Ufaa-g7TiXg",
+        "cover":  "https://img.youtube.com/vi/Ufaa-g7TiXg/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_64",
+        "title":  "Luar Biasa (Saikou ka yo)",
+        "album":  "Single 15: Saikou ka yo",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#84cc16",
+        "yt_id":  "nO6KPZRFQ6c",
+        "cover":  "https://img.youtube.com/vi/nO6KPZRFQ6c/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_65",
+        "title":  "Yume no Kawa (Sungai Impian)",
+        "album":  "Single 15: Saikou ka yo",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#84cc16",
+        "yt_id":  "pWX2WMFqYco",
+        "cover":  "https://img.youtube.com/vi/pWX2WMFqYco/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_66",
+        "title":  "Scrap \u0026 Build",
+        "album":  "Single 15: Saikou ka yo",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#84cc16",
+        "yt_id":  "mRMQsp90mFM",
+        "cover":  "https://img.youtube.com/vi/mRMQsp90mFM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_67",
+        "title":  "Sakura, Minna de Tabeta (Sakura, Kita Makan Bersama)",
+        "album":  "Single 15: Saikou ka yo",
+        "type":  "Single",
+        "year":  "2016",
+        "color":  "#84cc16",
+        "yt_id":  "z8hGm4vFcl4",
+        "cover":  "https://img.youtube.com/vi/z8hGm4vFcl4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_68",
+        "title":  "So long!",
+        "album":  "Single 16: So long!",
+        "type":  "Single",
+        "year":  "2017",
+        "color":  "#3b82f6",
+        "yt_id":  "6Xh_D56_JOE",
+        "cover":  "https://img.youtube.com/vi/6Xh_D56_JOE/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_69",
+        "title":  "Koko ga Rhodes da, Koko de Tobe!",
+        "album":  "Single 16: So long!",
+        "type":  "Single",
+        "year":  "2017",
+        "color":  "#3b82f6",
+        "yt_id":  "WfU_p2w_OLM",
+        "cover":  "https://img.youtube.com/vi/WfU_p2w_OLM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_70",
+        "title":  "Virginity",
+        "album":  "Single 16: So long!",
+        "type":  "Single",
+        "year":  "2017",
+        "color":  "#3b82f6",
+        "yt_id":  "T9r2UkVo8z4",
+        "cover":  "https://img.youtube.com/vi/T9r2UkVo8z4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_71",
+        "title":  "Birth",
+        "album":  "Single 16: So long!",
+        "type":  "Single",
+        "year":  "2017",
+        "color":  "#3b82f6",
+        "yt_id":  "4z4bSJJekRc",
+        "cover":  "https://img.youtube.com/vi/4z4bSJJekRc/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_72",
+        "title":  "Kesimpulan yang Sedikit Memalukan (Kimi no Hohoemi)",
+        "album":  "Single 17: Suzukake Nanchara",
+        "type":  "Single",
+        "year":  "2017",
+        "color":  "#a855f7",
+        "yt_id":  "WfU_p2w_OLM",
+        "cover":  "https://img.youtube.com/vi/WfU_p2w_OLM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_73",
+        "title":  "Hikaeme I love you! (Sedikit Saja I love you!)",
+        "album":  "Single 17: Suzukake Nanchara",
+        "type":  "Single",
+        "year":  "2017",
+        "color":  "#a855f7",
+        "yt_id":  "mbi5V6v2peY",
+        "cover":  "https://img.youtube.com/vi/mbi5V6v2peY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_74",
+        "title":  "Durian Shounen (Cowok Durian)",
+        "album":  "Single 17: Suzukake Nanchara",
+        "type":  "Single",
+        "year":  "2017",
+        "color":  "#a855f7",
+        "yt_id":  "Ufaa-g7TiXg",
+        "cover":  "https://img.youtube.com/vi/Ufaa-g7TiXg/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_75",
+        "title":  "Kamonegix",
+        "album":  "Single 17: Suzukake Nanchara",
+        "type":  "Single",
+        "year":  "2017",
+        "color":  "#a855f7",
+        "yt_id":  "z8hGm4vFcl4",
+        "cover":  "https://img.youtube.com/vi/z8hGm4vFcl4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_76",
+        "title":  "Dirimu Melody (Kimi wa Melody)",
+        "album":  "Single 18: Kimi wa Melody",
+        "type":  "Single",
+        "year":  "2017",
+        "color":  "#ec4899",
+        "yt_id":  "FNbBdnm2e6A",
+        "cover":  "https://img.youtube.com/vi/FNbBdnm2e6A/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_77",
+        "title":  "Omoide no Hotondo (Sebagian Besar Kenangan)",
+        "album":  "Single 18: Kimi wa Melody",
+        "type":  "Single",
+        "year":  "2017",
+        "color":  "#ec4899",
+        "yt_id":  "cwXRdIFhRkk",
+        "cover":  "https://img.youtube.com/vi/cwXRdIFhRkk/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_78",
+        "title":  "Koko ni Ita Koto (Kita Pernah di Sini)",
+        "album":  "Single 18: Kimi wa Melody",
+        "type":  "Single",
+        "year":  "2017",
+        "color":  "#ec4899",
+        "yt_id":  "rV-CJYGzAlI",
+        "cover":  "https://img.youtube.com/vi/rV-CJYGzAlI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_79",
+        "title":  "Kitaagawa Kenji",
+        "album":  "Single 18: Kimi wa Melody",
+        "type":  "Single",
+        "year":  "2017",
+        "color":  "#ec4899",
+        "yt_id":  "iDvUFHaDFKI",
+        "cover":  "https://img.youtube.com/vi/iDvUFHaDFKI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_80",
+        "title":  "Everyday, Kachuusha",
+        "album":  "Single 19: Everyday, Kachuusha / UZA",
+        "type":  "Single",
+        "year":  "2018",
+        "color":  "#06b6d4",
+        "yt_id":  "lzUKpCRNBaY",
+        "cover":  "https://img.youtube.com/vi/lzUKpCRNBaY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_81",
+        "title":  "UZA",
+        "album":  "Single 19: Everyday, Kachuusha / UZA",
+        "type":  "Single",
+        "year":  "2018",
+        "color":  "#06b6d4",
+        "yt_id":  "Hc3P-9Ic8rM",
+        "cover":  "https://img.youtube.com/vi/Hc3P-9Ic8rM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_82",
+        "title":  "Ima Para (Sekarang Para-Para)",
+        "album":  "Single 19: Everyday, Kachuusha / UZA",
+        "type":  "Single",
+        "year":  "2018",
+        "color":  "#06b6d4",
+        "yt_id":  "7aH5e9TBWLQ",
+        "cover":  "https://img.youtube.com/vi/7aH5e9TBWLQ/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_83",
+        "title":  "Tsugi no Season (Musim Selanjutnya)",
+        "album":  "Single 19: Everyday, Kachuusha / UZA",
+        "type":  "Single",
+        "year":  "2018",
+        "color":  "#06b6d4",
+        "yt_id":  "nO6KPZRFQ6c",
+        "cover":  "https://img.youtube.com/vi/nO6KPZRFQ6c/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_84",
+        "title":  "High Tension",
+        "album":  "Single 20: High Tension",
+        "type":  "Single",
+        "year":  "2019",
+        "color":  "#f43f5e",
+        "yt_id":  "iDvUFHaDFKI",
+        "cover":  "https://img.youtube.com/vi/iDvUFHaDFKI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_85",
+        "title":  "Musim yang Indah (Tsugi no Season)",
+        "album":  "Single 20: High Tension",
+        "type":  "Single",
+        "year":  "2019",
+        "color":  "#f43f5e",
+        "yt_id":  "7aH5e9TBWLQ",
+        "cover":  "https://img.youtube.com/vi/7aH5e9TBWLQ/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_86",
+        "title":  "After Rain",
+        "album":  "Single 20: High Tension",
+        "type":  "Single",
+        "year":  "2019",
+        "color":  "#f43f5e",
+        "yt_id":  "6Xh_D56_JOE",
+        "cover":  "https://img.youtube.com/vi/6Xh_D56_JOE/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_87",
+        "title":  "Rapsodi",
+        "album":  "Single 21: Rapsodi",
+        "type":  "Single",
+        "year":  "2020",
+        "color":  "#ffd700",
+        "yt_id":  "Xu1wA7CfhQg",
+        "cover":  "https://img.youtube.com/vi/Xu1wA7CfhQg/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_88",
+        "title":  "Sweet \u0026 Bitter",
+        "album":  "Single 21: Rapsodi",
+        "type":  "Single",
+        "year":  "2020",
+        "color":  "#ffd700",
+        "yt_id":  "X9h5kL3mK4Y",
+        "cover":  "https://img.youtube.com/vi/X9h5kL3mK4Y/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_89",
+        "title":  "Menanti",
+        "album":  "Single 21: Rapsodi",
+        "type":  "Single",
+        "year":  "2020",
+        "color":  "#ffd700",
+        "yt_id":  "a3bKj9mK4L1",
+        "cover":  "https://img.youtube.com/vi/a3bKj9mK4L1/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_90",
+        "title":  "Gesui no Epidemic (Epidemi Saluran Air)",
+        "album":  "Single 21: Rapsodi",
+        "type":  "Single",
+        "year":  "2020",
+        "color":  "#ffd700",
+        "yt_id":  "b8k3M8nL2pQ",
+        "cover":  "https://img.youtube.com/vi/b8k3M8nL2pQ/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_91",
+        "title":  "Dare ga Futari wo Deawaseta no ka?",
+        "album":  "Single 21: Rapsodi",
+        "type":  "Single",
+        "year":  "2020",
+        "color":  "#ffd700",
+        "yt_id":  "c4m9K2nL8pQ",
+        "cover":  "https://img.youtube.com/vi/c4m9K2nL8pQ/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_92",
+        "title":  "Cara Ceroboh untuk Mencinta (Darashinai Aishikata)",
+        "album":  "Single 22: Darashinai Aishikata",
+        "type":  "Single",
+        "year":  "2021",
+        "color":  "#8b5cf6",
+        "yt_id":  "1M2N3P4Q5R6",
+        "cover":  "https://img.youtube.com/vi/1M2N3P4Q5R6/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_93",
+        "title":  "Flying High",
+        "album":  "Single 23: Flying High",
+        "type":  "Single",
+        "year":  "2022",
+        "color":  "#00ffcc",
+        "yt_id":  "v6Y5iR4m7pE",
+        "cover":  "https://img.youtube.com/vi/v6Y5iR4m7pE/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_94",
+        "title":  "Sayonara Crawl",
+        "album":  "Single 24: Sayonara Crawl",
+        "type":  "Single",
+        "year":  "2023",
+        "color":  "#0284c7",
+        "yt_id":  "5cy3vDjTfFY",
+        "cover":  "https://img.youtube.com/vi/5cy3vDjTfFY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_95",
+        "title":  "Magic Hour",
+        "album":  "Single 25: Magic Hour",
+        "type":  "Single",
+        "year":  "2024",
+        "color":  "#9333ea",
+        "yt_id":  "hK3m8pL9N2s",
+        "cover":  "https://img.youtube.com/vi/hK3m8pL9N2s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_96",
+        "title":  "#Sukinanda (#KuSangatSuka)",
+        "album":  "Single 26: #Sukinanda",
+        "type":  "Single",
+        "year":  "2024",
+        "color":  "#f43f5e",
+        "yt_id":  "p9L3mK8n2Qs",
+        "cover":  "https://img.youtube.com/vi/p9L3mK8n2Qs/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_97",
+        "title":  "Shonichi (Hari Pertama)",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "t2V5WkVQ5Xg",
+        "cover":  "https://img.youtube.com/vi/t2V5WkVQ5Xg/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_98",
+        "title":  "Hissatsu Teleport (Jurus Rahasia Teleport)",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "vXBR6KZJLP4",
+        "cover":  "https://img.youtube.com/vi/vXBR6KZJLP4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_99",
+        "title":  "Gokigen Naname na Mermaid (Putri Duyung Bad Mood)",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "VXy0s3e3sEI",
+        "cover":  "https://img.youtube.com/vi/VXy0s3e3sEI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_100",
+        "title":  "Futari Nori no Jitensha (Bersepeda Berdua)",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "sE_qijRMSmM",
+        "cover":  "https://img.youtube.com/vi/sE_qijRMSmM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_101",
+        "title":  "Tenshi no Shippo (Ekor Malaikat)",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "XJqOoqRvhL0",
+        "cover":  "https://img.youtube.com/vi/XJqOoqRvhL0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_102",
+        "title":  "Pajama Drive",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "V7N521m-wG0",
+        "cover":  "https://img.youtube.com/vi/V7N521m-wG0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_103",
+        "title":  "Junjou Shugi (Prinsip Kesucian Hati)",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "HCXfHMQNBqE",
+        "cover":  "https://img.youtube.com/vi/HCXfHMQNBqE/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_104",
+        "title":  "Temodemo no Namida (Air Mata Kesepian)",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "O_BzUvS9M1k",
+        "cover":  "https://img.youtube.com/vi/O_BzUvS9M1k/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_105",
+        "title":  "Kagami no Naka no Jean Da Arc",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "8vS26vGzPqM",
+        "cover":  "https://img.youtube.com/vi/8vS26vGzPqM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_106",
+        "title":  "Two Years Later",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "fZRmrNBF8vA",
+        "cover":  "https://img.youtube.com/vi/fZRmrNBF8vA/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_107",
+        "title":  "Inochi no Tsukaimichi (Cara Menggunakan Hidup)",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "K8UkSFiYQls",
+        "cover":  "https://img.youtube.com/vi/K8UkSFiYQls/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_108",
+        "title":  "Kiss Shite Son Shichatta (Rugi Sudah Menciummu)",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "Nj8N5T9Pj-Q",
+        "cover":  "https://img.youtube.com/vi/Nj8N5T9Pj-Q/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_109",
+        "title":  "Boku no Sakura (Bunga Sakuraku)",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "GhFpZMzH_3o",
+        "cover":  "https://img.youtube.com/vi/GhFpZMzH_3o/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_110",
+        "title":  "Wasshoi J!",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "Ht8Bq6pFRmo",
+        "cover":  "https://img.youtube.com/vi/Ht8Bq6pFRmo/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_111",
+        "title":  "Suifu wa Arashi ni Yume wo Miru",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "Y-2mZ4qZp-w",
+        "cover":  "https://img.youtube.com/vi/Y-2mZ4qZp-w/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_112",
+        "title":  "Shiroi Shirts (Baju Putih)",
+        "album":  "Setlist: Pajama Drive",
+        "type":  "Theater",
+        "year":  "2012",
+        "color":  "#ec4899",
+        "yt_id":  "yQWEYTk5cX0",
+        "cover":  "https://img.youtube.com/vi/yQWEYTk5cX0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_113",
+        "title":  "Nagai Hikari (Cahaya Panjang)",
+        "album":  "Setlist: Renai Kinshi Jourei",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#3b82f6",
+        "yt_id":  "sE_qijRMSmM",
+        "cover":  "https://img.youtube.com/vi/sE_qijRMSmM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_114",
+        "title":  "Squall no Aida ni (Di Tengah Hujan Badai)",
+        "album":  "Setlist: Renai Kinshi Jourei",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#3b82f6",
+        "yt_id":  "j0sj5bD5-K4",
+        "cover":  "https://img.youtube.com/vi/j0sj5bD5-K4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_115",
+        "title":  "JK Nemurihime (Gadis SMA Putri Tidur)",
+        "album":  "Setlist: Renai Kinshi Jourei",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#3b82f6",
+        "yt_id":  "_g_r5p656H8",
+        "cover":  "https://img.youtube.com/vi/_g_r5p656H8/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_116",
+        "title":  "Kimi ni Autabi Koi wo Suru",
+        "album":  "Setlist: Renai Kinshi Jourei",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#3b82f6",
+        "yt_id":  "0axDRRqT8gE",
+        "cover":  "https://img.youtube.com/vi/0axDRRqT8gE/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_117",
+        "title":  "Kuroi Tenshi (Malaikat Hitam)",
+        "album":  "Setlist: Renai Kinshi Jourei",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#3b82f6",
+        "yt_id":  "pWX2WMFqYco",
+        "cover":  "https://img.youtube.com/vi/pWX2WMFqYco/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_118",
+        "title":  "Heart Gata Virus (Virus Tipe Hati)",
+        "album":  "Setlist: Renai Kinshi Jourei",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#3b82f6",
+        "yt_id":  "L_T0yQ83v9s",
+        "cover":  "https://img.youtube.com/vi/L_T0yQ83v9s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_119",
+        "title":  "Renai Kinshi Jourei (Aturan Anti Cinta)",
+        "album":  "Setlist: Renai Kinshi Jourei",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#3b82f6",
+        "yt_id":  "JBBpQxuNkC8",
+        "cover":  "https://img.youtube.com/vi/JBBpQxuNkC8/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_120",
+        "title":  "Tsundere!",
+        "album":  "Setlist: Renai Kinshi Jourei",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#3b82f6",
+        "yt_id":  "OEKbFaUFRLU",
+        "cover":  "https://img.youtube.com/vi/OEKbFaUFRLU/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_121",
+        "title":  "Hikoukigumo (Jejak Awan Pesawat)",
+        "album":  "Setlist: Renai Kinshi Jourei",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#3b82f6",
+        "yt_id":  "5cy3vDjTfFY",
+        "cover":  "https://img.youtube.com/vi/5cy3vDjTfFY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_122",
+        "title":  "Ano Koro no Sneaker (Sneaker Waktu Itu)",
+        "album":  "Setlist: Renai Kinshi Jourei",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#3b82f6",
+        "yt_id":  "C-j56n56a4w",
+        "cover":  "https://img.youtube.com/vi/C-j56n56a4w/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_123",
+        "title":  "JKT Sanjou! (JKT Datang!)",
+        "album":  "Setlist: Renai Kinshi Jourei",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#3b82f6",
+        "yt_id":  "ouvG-h1fYBI",
+        "cover":  "https://img.youtube.com/vi/ouvG-h1fYBI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_124",
+        "title":  "Namida no Shinkokyuu",
+        "album":  "Setlist: Renai Kinshi Jourei",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#3b82f6",
+        "yt_id":  "26oGvE-U47s",
+        "cover":  "https://img.youtube.com/vi/26oGvE-U47s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_125",
+        "title":  "Oogoe Diamond (Teriakan Berlian)",
+        "album":  "Setlist: Renai Kinshi Jourei",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#3b82f6",
+        "yt_id":  "yQWEYTk5cX0",
+        "cover":  "https://img.youtube.com/vi/yQWEYTk5cX0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_126",
+        "title":  "Dreamin\u0027 girls",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "vXBR6KZJLP4",
+        "cover":  "https://img.youtube.com/vi/vXBR6KZJLP4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_127",
+        "title":  "RUN RUN RUN",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "pVKX4FyCfhs",
+        "cover":  "https://img.youtube.com/vi/pVKX4FyCfhs/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_128",
+        "title":  "Mirai no Kajitsu (Buah Masa Depan)",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "VXy0s3e3sEI",
+        "cover":  "https://img.youtube.com/vi/VXy0s3e3sEI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_129",
+        "title":  "Viva! Hurricane",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "XJqOoqRvhL0",
+        "cover":  "https://img.youtube.com/vi/XJqOoqRvhL0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_130",
+        "title":  "Idol Nante Yobanaide (Jangan Panggil Aku Idol)",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "J6d_19O0c2s",
+        "cover":  "https://img.youtube.com/vi/J6d_19O0c2s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_131",
+        "title":  "Boku to Juliet to Heatstroke",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "VW4P0lRtBrk",
+        "cover":  "https://img.youtube.com/vi/VW4P0lRtBrk/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_132",
+        "title":  "Higurashi no Koi (Cinta Higurashi)",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "cwXRdIFhRkk",
+        "cover":  "https://img.youtube.com/vi/cwXRdIFhRkk/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_133",
+        "title":  "Itoshisa no defense (Pertahanan Cinta)",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "rV-CJYGzAlI",
+        "cover":  "https://img.youtube.com/vi/rV-CJYGzAlI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_134",
+        "title":  "Himawari (Bunga Matahari)",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "FNbBdnm2e6A",
+        "cover":  "https://img.youtube.com/vi/FNbBdnm2e6A/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_135",
+        "title":  "Takeuchi Senpai (Kakak Kelas Takeuchi)",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "Y4CmNw5_q9E",
+        "cover":  "https://img.youtube.com/vi/Y4CmNw5_q9E/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_136",
+        "title":  "Sonna Konna Wake de",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "LKa39JBiJv0",
+        "cover":  "https://img.youtube.com/vi/LKa39JBiJv0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_137",
+        "title":  "Deja vu",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "4z4bSJJekRc",
+        "cover":  "https://img.youtube.com/vi/4z4bSJJekRc/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_138",
+        "title":  "Yuuhi wo Miteiru ka?",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "z6k-D72D18s",
+        "cover":  "https://img.youtube.com/vi/z6k-D72D18s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_139",
+        "title":  "Lay down",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "mbi5V6v2peY",
+        "cover":  "https://img.youtube.com/vi/mbi5V6v2peY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_140",
+        "title":  "BINGO!",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "fZRmrNBF8vA",
+        "cover":  "https://img.youtube.com/vi/fZRmrNBF8vA/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_141",
+        "title":  "Boku no Taiyou (Matahari Milikku)",
+        "album":  "Setlist: Boku no Taiyou",
+        "type":  "Theater",
+        "year":  "2013",
+        "color":  "#f59e0b",
+        "yt_id":  "cwXRdIFhRkk",
+        "cover":  "https://img.youtube.com/vi/cwXRdIFhRkk/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_142",
+        "title":  "Tsukimisou (Bunga Evening Primrose)",
+        "album":  "Setlist: Dareka no Tame ni",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "iDvUFHaDFKI",
+        "cover":  "https://img.youtube.com/vi/iDvUFHaDFKI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_143",
+        "title":  "Warning",
+        "album":  "Setlist: Dareka no Tame ni",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "7aH5e9TBWLQ",
+        "cover":  "https://img.youtube.com/vi/7aH5e9TBWLQ/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_144",
+        "title":  "Tanjoubi no Yoru (Malam Ulang Tahun)",
+        "album":  "Setlist: Dareka no Tame ni",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "lzUKpCRNBaY",
+        "cover":  "https://img.youtube.com/vi/lzUKpCRNBaY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_145",
+        "title":  "Bird (Burung)",
+        "album":  "Setlist: Dareka no Tame ni",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "Hc3P-9Ic8rM",
+        "cover":  "https://img.youtube.com/vi/Hc3P-9Ic8rM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_146",
+        "title":  "Nage Kiss de Uchi Otose!",
+        "album":  "Setlist: Dareka no Tame ni",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "8vS26vGzPqM",
+        "cover":  "https://img.youtube.com/vi/8vS26vGzPqM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_147",
+        "title":  "Shinkirou (Fatamorgana)",
+        "album":  "Setlist: Dareka no Tame ni",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "nO6KPZRFQ6c",
+        "cover":  "https://img.youtube.com/vi/nO6KPZRFQ6c/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_148",
+        "title":  "Rider",
+        "album":  "Setlist: Dareka no Tame ni",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "8vS26vGzPqM",
+        "cover":  "https://img.youtube.com/vi/8vS26vGzPqM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_149",
+        "title":  "Seifuku ga Jama wo Suru",
+        "album":  "Setlist: Dareka no Tame ni",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "mRMQsp90mFM",
+        "cover":  "https://img.youtube.com/vi/mRMQsp90mFM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_150",
+        "title":  "Natsu ga Icchatta (Musim Panas Telah Pergi)",
+        "album":  "Setlist: Dareka no Tame ni",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "Nj8N5T9Pj-Q",
+        "cover":  "https://img.youtube.com/vi/Nj8N5T9Pj-Q/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_151",
+        "title":  "Koike (Adik Kelas Bernama Koike)",
+        "album":  "Setlist: Dareka no Tame ni",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "6Xh_D56_JOE",
+        "cover":  "https://img.youtube.com/vi/6Xh_D56_JOE/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_152",
+        "title":  "Tsuki no Katachi (Bentuk Bulan)",
+        "album":  "Setlist: Dareka no Tame ni",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "WfU_p2w_OLM",
+        "cover":  "https://img.youtube.com/vi/WfU_p2w_OLM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_153",
+        "title":  "Dareka no Tame ni (Demi Seseorang)",
+        "album":  "Setlist: Dareka no Tame ni",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "Ht8Bq6pFRmo",
+        "cover":  "https://img.youtube.com/vi/Ht8Bq6pFRmo/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_154",
+        "title":  "Namida Uri no Shoujo (Gadis Penjual Air Mata)",
+        "album":  "Setlist: Dareka no Tame ni",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#10b981",
+        "yt_id":  "Nj8N5T9Pj-Q",
+        "cover":  "https://img.youtube.com/vi/Nj8N5T9Pj-Q/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_155",
+        "title":  "Seishun Girls (Gadis Remaja)",
+        "album":  "Setlist: Seishun Girls",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#06b6d4",
+        "yt_id":  "T9r2UkVo8z4",
+        "cover":  "https://img.youtube.com/vi/T9r2UkVo8z4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_156",
+        "title":  "Beach Sandal",
+        "album":  "Setlist: Seishun Girls",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#06b6d4",
+        "yt_id":  "4z4bSJJekRc",
+        "cover":  "https://img.youtube.com/vi/4z4bSJJekRc/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_157",
+        "title":  "Kimi ga Hoshi ni Naru Made",
+        "album":  "Setlist: Seishun Girls",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#06b6d4",
+        "yt_id":  "mbi5V6v2peY",
+        "cover":  "https://img.youtube.com/vi/mbi5V6v2peY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_158",
+        "title":  "Blue rose",
+        "album":  "Setlist: Seishun Girls",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#06b6d4",
+        "yt_id":  "Ufaa-g7TiXg",
+        "cover":  "https://img.youtube.com/vi/Ufaa-g7TiXg/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_159",
+        "title":  "Kinjirareta Futari (Dua Orang yang Dilarang)",
+        "album":  "Setlist: Seishun Girls",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#06b6d4",
+        "yt_id":  "z8hGm4vFcl4",
+        "cover":  "https://img.youtube.com/vi/z8hGm4vFcl4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_160",
+        "title":  "Ame no Doubutsuen",
+        "album":  "Setlist: Seishun Girls",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#06b6d4",
+        "yt_id":  "FNbBdnm2e6A",
+        "cover":  "https://img.youtube.com/vi/FNbBdnm2e6A/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_161",
+        "title":  "Fushidara na Natsu",
+        "album":  "Setlist: Seishun Girls",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#06b6d4",
+        "yt_id":  "cwXRdIFhRkk",
+        "cover":  "https://img.youtube.com/vi/cwXRdIFhRkk/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_162",
+        "title":  "Don\u0027t disturb!",
+        "album":  "Setlist: Seishun Girls",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#06b6d4",
+        "yt_id":  "rV-CJYGzAlI",
+        "cover":  "https://img.youtube.com/vi/rV-CJYGzAlI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_163",
+        "title":  "Virgin love",
+        "album":  "Setlist: Seishun Girls",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#06b6d4",
+        "yt_id":  "T9r2UkVo8z4",
+        "cover":  "https://img.youtube.com/vi/T9r2UkVo8z4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_164",
+        "title":  "Hizukehenkousen (Garis Batas Tanggal)",
+        "album":  "Setlist: Seishun Girls",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#06b6d4",
+        "yt_id":  "lzUKpCRNBaY",
+        "cover":  "https://img.youtube.com/vi/lzUKpCRNBaY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_165",
+        "title":  "Boku no Uchiage Hanabi (Kembang Apiku)",
+        "album":  "Setlist: Seishun Girls",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#06b6d4",
+        "yt_id":  "Hc3P-9Ic8rM",
+        "cover":  "https://img.youtube.com/vi/Hc3P-9Ic8rM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_166",
+        "title":  "Yakusoku yo (Janji Ya)",
+        "album":  "Setlist: Seishun Girls",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#06b6d4",
+        "yt_id":  "7aH5e9TBWLQ",
+        "cover":  "https://img.youtube.com/vi/7aH5e9TBWLQ/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_167",
+        "title":  "Korogaru Ishi ni Nare",
+        "album":  "Setlist: Seishun Girls",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#06b6d4",
+        "yt_id":  "K8UkSFiYQls",
+        "cover":  "https://img.youtube.com/vi/K8UkSFiYQls/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_168",
+        "title":  "Cinderella wa Damasarenai",
+        "album":  "Setlist: Seishun Girls",
+        "type":  "Theater",
+        "year":  "2014",
+        "color":  "#06b6d4",
+        "yt_id":  "nO6KPZRFQ6c",
+        "cover":  "https://img.youtube.com/vi/nO6KPZRFQ6c/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_169",
+        "title":  "Yuuki no Hammer (Palu Keberanian)",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "iDvUFHaDFKI",
+        "cover":  "https://img.youtube.com/vi/iDvUFHaDFKI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_170",
+        "title":  "Inseki no Kakuritsu",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "7aH5e9TBWLQ",
+        "cover":  "https://img.youtube.com/vi/7aH5e9TBWLQ/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_171",
+        "title":  "Ai no Striker",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "6Xh_D56_JOE",
+        "cover":  "https://img.youtube.com/vi/6Xh_D56_JOE/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_172",
+        "title":  "Theater no Megami (Dewi Theater)",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "FNbBdnm2e6A",
+        "cover":  "https://img.youtube.com/vi/FNbBdnm2e6A/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_173",
+        "title":  "Hatsukoi yo Konnichiwa (Halo Cinta Pertama)",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "Xu1wA7CfhQg",
+        "cover":  "https://img.youtube.com/vi/Xu1wA7CfhQg/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_174",
+        "title":  "Arashi no Yoru ni wa",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "26oGvE-U47s",
+        "cover":  "https://img.youtube.com/vi/26oGvE-U47s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_175",
+        "title":  "Candy",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "26oGvE-U47s",
+        "cover":  "https://img.youtube.com/vi/26oGvE-U47s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_176",
+        "title":  "Locker room boy",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "26oGvE-U47s",
+        "cover":  "https://img.youtube.com/vi/26oGvE-U47s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_177",
+        "title":  "Yokaze no Shiwaza (Ulah Angin Malam)",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "FNbBdnm2e6A",
+        "cover":  "https://img.youtube.com/vi/FNbBdnm2e6A/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_178",
+        "title":  "100 Meter Conbini",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "lzUKpCRNBaY",
+        "cover":  "https://img.youtube.com/vi/lzUKpCRNBaY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_179",
+        "title":  "Suki Suki Suki",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "Hc3P-9Ic8rM",
+        "cover":  "https://img.youtube.com/vi/Hc3P-9Ic8rM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_180",
+        "title":  "Sayonara no Kanashibari",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "nO6KPZRFQ6c",
+        "cover":  "https://img.youtube.com/vi/nO6KPZRFQ6c/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_181",
+        "title":  "Shiokaze no Shoutaijou",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "26oGvE-U47s",
+        "cover":  "https://img.youtube.com/vi/26oGvE-U47s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_182",
+        "title":  "Honest Man",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "mRMQsp90mFM",
+        "cover":  "https://img.youtube.com/vi/mRMQsp90mFM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_183",
+        "title":  "Team J Oshi",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "yQWEYTk5cX0",
+        "cover":  "https://img.youtube.com/vi/yQWEYTk5cX0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_184",
+        "title":  "Bokutachi no Kamihikouki",
+        "album":  "Setlist: Theater no Megami",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#8b5cf6",
+        "yt_id":  "Ht8Bq6pFRmo",
+        "cover":  "https://img.youtube.com/vi/Ht8Bq6pFRmo/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_185",
+        "title":  "Mammoth",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "F4E46vj-h14",
+        "cover":  "https://img.youtube.com/vi/F4E46vj-h14/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_186",
+        "title":  "Saishuu Bell ga Naru (Bel Terakhir Berbunyi)",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "rV-CJYGzAlI",
+        "cover":  "https://img.youtube.com/vi/rV-CJYGzAlI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_187",
+        "title":  "Boyfriend no Tsukurikata",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "t2V5WkVQ5Xg",
+        "cover":  "https://img.youtube.com/vi/t2V5WkVQ5Xg/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_188",
+        "title":  "Erai Hito ni Naritakunai",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "VXy0s3e3sEI",
+        "cover":  "https://img.youtube.com/vi/VXy0s3e3sEI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_189",
+        "title":  "Return Match",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "sE_qijRMSmM",
+        "cover":  "https://img.youtube.com/vi/sE_qijRMSmM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_190",
+        "title":  "Hatsukoi Dorobou",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "XJqOoqRvhL0",
+        "cover":  "https://img.youtube.com/vi/XJqOoqRvhL0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_191",
+        "title":  "Gomen ne Jewel",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "JBBpQxuNkC8",
+        "cover":  "https://img.youtube.com/vi/JBBpQxuNkC8/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_192",
+        "title":  "Oshibe to Meshibe to Yoru no Chouchou",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "HCXfHMQNBqE",
+        "cover":  "https://img.youtube.com/vi/HCXfHMQNBqE/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_193",
+        "title":  "16nin Shimai no Uta",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "O_BzUvS9M1k",
+        "cover":  "https://img.youtube.com/vi/O_BzUvS9M1k/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_194",
+        "title":  "Stand Up!",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "8vS26vGzPqM",
+        "cover":  "https://img.youtube.com/vi/8vS26vGzPqM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_195",
+        "title":  "Coolgirl",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "fZRmrNBF8vA",
+        "cover":  "https://img.youtube.com/vi/fZRmrNBF8vA/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_196",
+        "title":  "Kaiyuugyo no Capacity",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "K8UkSFiYQls",
+        "cover":  "https://img.youtube.com/vi/K8UkSFiYQls/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_197",
+        "title":  "Ai ni Ikou",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "Nj8N5T9Pj-Q",
+        "cover":  "https://img.youtube.com/vi/Nj8N5T9Pj-Q/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_198",
+        "title":  "Shamu Neko",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "GhFpZMzH_3o",
+        "cover":  "https://img.youtube.com/vi/GhFpZMzH_3o/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_199",
+        "title":  "Melos no Michi",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "Ht8Bq6pFRmo",
+        "cover":  "https://img.youtube.com/vi/Ht8Bq6pFRmo/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_200",
+        "title":  "Sasae",
+        "album":  "Setlist: Saishuu Bell ga Naru",
+        "type":  "Theater",
+        "year":  "2015",
+        "color":  "#e11d48",
+        "yt_id":  "Y-2mZ4qZp-w",
+        "cover":  "https://img.youtube.com/vi/Y-2mZ4qZp-w/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_201",
+        "title":  "Kizashi (Pertanda)",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "yQWEYTk5cX0",
+        "cover":  "https://img.youtube.com/vi/yQWEYTk5cX0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_202",
+        "title":  "Schoolyard Rocket",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "j0sj5bD5-K4",
+        "cover":  "https://img.youtube.com/vi/j0sj5bD5-K4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_203",
+        "title":  "Disco Igai wa Nani ga Dekiru",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "pVKX4FyCfhs",
+        "cover":  "https://img.youtube.com/vi/pVKX4FyCfhs/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_204",
+        "title":  "Ramune no Nomikata (Cara Meminum Ramune)",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "_g_r5p656H8",
+        "cover":  "https://img.youtube.com/vi/_g_r5p656H8/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_205",
+        "title":  "Cross",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "0axDRRqT8gE",
+        "cover":  "https://img.youtube.com/vi/0axDRRqT8gE/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_206",
+        "title":  "Finland Miracle",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "pWX2WMFqYco",
+        "cover":  "https://img.youtube.com/vi/pWX2WMFqYco/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_207",
+        "title":  "Usotsuki na Dachou",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "L_T0yQ83v9s",
+        "cover":  "https://img.youtube.com/vi/L_T0yQ83v9s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_208",
+        "title":  "Manazashi Sayonara",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "JBBpQxuNkC8",
+        "cover":  "https://img.youtube.com/vi/JBBpQxuNkC8/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_209",
+        "title":  "Nice to meet you!",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "OEKbFaUFRLU",
+        "cover":  "https://img.youtube.com/vi/OEKbFaUFRLU/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_210",
+        "title":  "Kodoku na Ballerina",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "5cy3vDjTfFY",
+        "cover":  "https://img.youtube.com/vi/5cy3vDjTfFY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_211",
+        "title":  "Ima Kimi to Irareru Shiawase",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "C-j56n56a4w",
+        "cover":  "https://img.youtube.com/vi/C-j56n56a4w/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_212",
+        "title":  "Winning Ball",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "ouvG-h1fYBI",
+        "cover":  "https://img.youtube.com/vi/ouvG-h1fYBI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_213",
+        "title":  "Akushu no Ai",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "26oGvE-U47s",
+        "cover":  "https://img.youtube.com/vi/26oGvE-U47s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_214",
+        "title":  "Bowling Ganbou",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "vXBR6KZJLP4",
+        "cover":  "https://img.youtube.com/vi/vXBR6KZJLP4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_215",
+        "title":  "16iro no Yume Crayon",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "pVKX4FyCfhs",
+        "cover":  "https://img.youtube.com/vi/pVKX4FyCfhs/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_216",
+        "title":  "Calorie nante Kankei nai",
+        "album":  "Setlist: Cara Meminum Ramune",
+        "type":  "Theater",
+        "year":  "2020",
+        "color":  "#00d4ff",
+        "yt_id":  "J6d_19O0c2s",
+        "cover":  "https://img.youtube.com/vi/J6d_19O0c2s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_217",
+        "title":  "Koi wo Kataru Me ni Narenakute",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "VW4P0lRtBrk",
+        "cover":  "https://img.youtube.com/vi/VW4P0lRtBrk/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_218",
+        "title":  "Goukaku Kiss",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "cwXRdIFhRkk",
+        "cover":  "https://img.youtube.com/vi/cwXRdIFhRkk/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_219",
+        "title":  "Antenna",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "rV-CJYGzAlI",
+        "cover":  "https://img.youtube.com/vi/rV-CJYGzAlI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_220",
+        "title":  "Seifuku no Me (Tunas di Balik Seragam)",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "FNbBdnm2e6A",
+        "cover":  "https://img.youtube.com/vi/FNbBdnm2e6A/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_221",
+        "title":  "Omoide Ijou",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "Y4CmNw5_q9E",
+        "cover":  "https://img.youtube.com/vi/Y4CmNw5_q9E/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_222",
+        "title":  "Ookami to Pride",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "LKa39JBiJv0",
+        "cover":  "https://img.youtube.com/vi/LKa39JBiJv0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_223",
+        "title":  "Onna no Ko no Dairokkan",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "4z4bSJJekRc",
+        "cover":  "https://img.youtube.com/vi/4z4bSJJekRc/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_224",
+        "title":  "Ame no Pianist",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "mbi5V6v2peY",
+        "cover":  "https://img.youtube.com/vi/mbi5V6v2peY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_225",
+        "title":  "Mangekyou",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "iDvUFHaDFKI",
+        "cover":  "https://img.youtube.com/vi/iDvUFHaDFKI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_226",
+        "title":  "Jealousy no Alibi",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "7aH5e9TBWLQ",
+        "cover":  "https://img.youtube.com/vi/7aH5e9TBWLQ/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_227",
+        "title":  "Doubt!",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "lzUKpCRNBaY",
+        "cover":  "https://img.youtube.com/vi/lzUKpCRNBaY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_228",
+        "title":  "Nakama no Uta",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "Hc3P-9Ic8rM",
+        "cover":  "https://img.youtube.com/vi/Hc3P-9Ic8rM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_229",
+        "title":  "Mizukagami",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "nO6KPZRFQ6c",
+        "cover":  "https://img.youtube.com/vi/nO6KPZRFQ6c/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_230",
+        "title":  "Rakuen no Kaidan",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "mRMQsp90mFM",
+        "cover":  "https://img.youtube.com/vi/mRMQsp90mFM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_231",
+        "title":  "Tegami no Koto",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "6Xh_D56_JOE",
+        "cover":  "https://img.youtube.com/vi/6Xh_D56_JOE/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_232",
+        "title":  "Pinocchio Gun",
+        "album":  "Setlist: Seifuku no Me",
+        "type":  "Theater",
+        "year":  "2021",
+        "color":  "#10b981",
+        "yt_id":  "WfU_p2w_OLM",
+        "cover":  "https://img.youtube.com/vi/WfU_p2w_OLM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_233",
+        "title":  "Heavy Rotation",
+        "album":  "Album 1: Heavy Rotation",
+        "type":  "Album",
+        "year":  "2013",
+        "color":  "#ffd700",
+        "yt_id":  "mbi5V6v2peY",
+        "cover":  "https://img.youtube.com/vi/mbi5V6v2peY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_234",
+        "title":  "Kimi no Koto ga Suki Dakara (Karena Kusuka Dirimu)",
+        "album":  "Album 1: Heavy Rotation",
+        "type":  "Album",
+        "year":  "2013",
+        "color":  "#ffd700",
+        "yt_id":  "t2V5WkVQ5Xg",
+        "cover":  "https://img.youtube.com/vi/t2V5WkVQ5Xg/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_235",
+        "title":  "Ponytail to Chou-chou (Ponytail dan Ikat Rambut)",
+        "album":  "Album 1: Heavy Rotation",
+        "type":  "Album",
+        "year":  "2013",
+        "color":  "#ffd700",
+        "yt_id":  "VXy0s3e3sEI",
+        "cover":  "https://img.youtube.com/vi/VXy0s3e3sEI/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_236",
+        "title":  "Baby! Baby! Baby!",
+        "album":  "Album 1: Heavy Rotation",
+        "type":  "Album",
+        "year":  "2013",
+        "color":  "#ffd700",
+        "yt_id":  "O_BzUvS9M1k",
+        "cover":  "https://img.youtube.com/vi/O_BzUvS9M1k/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_237",
+        "title":  "Shonichi (Hari Pertama)",
+        "album":  "Album 1: Heavy Rotation",
+        "type":  "Album",
+        "year":  "2013",
+        "color":  "#ffd700",
+        "yt_id":  "t2V5WkVQ5Xg",
+        "cover":  "https://img.youtube.com/vi/t2V5WkVQ5Xg/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_238",
+        "title":  "Wasshoi J!",
+        "album":  "Album 1: Heavy Rotation",
+        "type":  "Album",
+        "year":  "2013",
+        "color":  "#ffd700",
+        "yt_id":  "Ht8Bq6pFRmo",
+        "cover":  "https://img.youtube.com/vi/Ht8Bq6pFRmo/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_239",
+        "title":  "Oogoe Diamond (Teriakan Berlian)",
+        "album":  "Album 1: Heavy Rotation",
+        "type":  "Album",
+        "year":  "2013",
+        "color":  "#ffd700",
+        "yt_id":  "yQWEYTk5cX0",
+        "cover":  "https://img.youtube.com/vi/yQWEYTk5cX0/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_240",
+        "title":  "Gomen ne, Summer (Maafkan, Summer)",
+        "album":  "Album 1: Heavy Rotation",
+        "type":  "Album",
+        "year":  "2013",
+        "color":  "#ffd700",
+        "yt_id":  "JBBpQxuNkC8",
+        "cover":  "https://img.youtube.com/vi/JBBpQxuNkC8/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_241",
+        "title":  "Namida Surprise! (Kejutan Air Mata)",
+        "album":  "Album 1: Heavy Rotation",
+        "type":  "Album",
+        "year":  "2013",
+        "color":  "#ffd700",
+        "yt_id":  "Y4CmNw5_q9E",
+        "cover":  "https://img.youtube.com/vi/Y4CmNw5_q9E/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_242",
+        "title":  "Hikoukigumo (Jejak Awan Pesawat)",
+        "album":  "Album 1: Heavy Rotation",
+        "type":  "Album",
+        "year":  "2013",
+        "color":  "#ffd700",
+        "yt_id":  "5cy3vDjTfFY",
+        "cover":  "https://img.youtube.com/vi/5cy3vDjTfFY/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_243",
+        "title":  "Pesawat Kertas 365 Hari (365 Nichi no Kamihikouki)",
+        "album":  "Album 2: Mahagita",
+        "type":  "Album",
+        "year":  "2016",
+        "color":  "#10b981",
+        "yt_id":  "sE_qijRMSmM",
+        "cover":  "https://img.youtube.com/vi/sE_qijRMSmM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_244",
+        "title":  "Kibouteki Refrain (Refrain Penuh Harapan)",
+        "album":  "Album 2: Mahagita",
+        "type":  "Album",
+        "year":  "2016",
+        "color":  "#10b981",
+        "yt_id":  "J6d_19O0c2s",
+        "cover":  "https://img.youtube.com/vi/J6d_19O0c2s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_245",
+        "title":  "Laptime Masa Remaja (Seishun no Laptime)",
+        "album":  "Album 2: Mahagita",
+        "type":  "Album",
+        "year":  "2016",
+        "color":  "#10b981",
+        "yt_id":  "4z4bSJJekRc",
+        "cover":  "https://img.youtube.com/vi/4z4bSJJekRc/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_246",
+        "title":  "Seventeen",
+        "album":  "Album 2: Mahagita",
+        "type":  "Album",
+        "year":  "2016",
+        "color":  "#10b981",
+        "yt_id":  "Ht8Bq6pFRmo",
+        "cover":  "https://img.youtube.com/vi/Ht8Bq6pFRmo/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_247",
+        "title":  "Only Today",
+        "album":  "Album 2: Mahagita",
+        "type":  "Album",
+        "year":  "2016",
+        "color":  "#10b981",
+        "yt_id":  "fZRmrNBF8vA",
+        "cover":  "https://img.youtube.com/vi/fZRmrNBF8vA/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_248",
+        "title":  "Virginity",
+        "album":  "Album 2: Mahagita",
+        "type":  "Album",
+        "year":  "2016",
+        "color":  "#10b981",
+        "yt_id":  "T9r2UkVo8z4",
+        "cover":  "https://img.youtube.com/vi/T9r2UkVo8z4/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_249",
+        "title":  "Yuuhi wo Miteiru ka? (Apakah Kau Melihat Mentari Senja?)",
+        "album":  "Album 2: Mahagita",
+        "type":  "Album",
+        "year":  "2016",
+        "color":  "#10b981",
+        "yt_id":  "z6k-D72D18s",
+        "cover":  "https://img.youtube.com/vi/z6k-D72D18s/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/b5z0zWpG/kfc.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_250",
+        "title":  "Banzai Venus",
+        "album":  "Album: Mahagita Vol. 2",
+        "type":  "Album",
+        "year":  "2023",
+        "color":  "#ec4899",
+        "yt_id":  "0axDRRqT8gE",
+        "cover":  "https://img.youtube.com/vi/0axDRRqT8gE/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_251",
+        "title":  "Seventeen (New Era Version)",
+        "album":  "Album: Mahagita Vol. 2",
+        "type":  "Album",
+        "year":  "2023",
+        "color":  "#ec4899",
+        "yt_id":  "Ht8Bq6pFRmo",
+        "cover":  "https://img.youtube.com/vi/Ht8Bq6pFRmo/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_252",
+        "title":  "Pesawat Kertas 365 Hari (2023 Ver)",
+        "album":  "Album: Mahagita Vol. 2",
+        "type":  "Album",
+        "year":  "2023",
+        "color":  "#ec4899",
+        "yt_id":  "sE_qijRMSmM",
+        "cover":  "https://img.youtube.com/vi/sE_qijRMSmM/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/8Lcx0pQW/river.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_253",
+        "title":  "Ini Ramadan Kita",
+        "album":  "Special Singles \u0026 Era Baru",
+        "type":  "Single",
+        "year":  "2023",
+        "color":  "#00ff88",
+        "yt_id":  "X9h5kL3mK4Y",
+        "cover":  "https://img.youtube.com/vi/X9h5kL3mK4Y/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_254",
+        "title":  "Benang Sari, Putik dan Kupu-Kupu Malam (New Era)",
+        "album":  "Special Singles \u0026 Era Baru",
+        "type":  "Single",
+        "year":  "2023",
+        "color":  "#00ff88",
+        "yt_id":  "HCXfHMQNBqE",
+        "cover":  "https://img.youtube.com/vi/HCXfHMQNBqE/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_255",
+        "title":  "Bukan PHO (JKT48 Acoustic)",
+        "album":  "Special Singles \u0026 Era Baru",
+        "type":  "Single",
+        "year":  "2023",
+        "color":  "#00ff88",
+        "yt_id":  "a3bKj9mK4L1",
+        "cover":  "https://img.youtube.com/vi/a3bKj9mK4L1/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_256",
+        "title":  "Cinta, Sekilas Sahaja",
+        "album":  "Special Singles \u0026 Era Baru",
+        "type":  "Single",
+        "year":  "2023",
+        "color":  "#00ff88",
+        "yt_id":  "b8k3M8nL2pQ",
+        "cover":  "https://img.youtube.com/vi/b8k3M8nL2pQ/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    },
+    {
+        "id":  "jkt48_257",
+        "title":  "Saatnya Berani (KFC JKT48)",
+        "album":  "Special Singles \u0026 Era Baru",
+        "type":  "Single",
+        "year":  "2023",
+        "color":  "#00ff88",
+        "yt_id":  "c4m9K2nL8pQ",
+        "cover":  "https://img.youtube.com/vi/c4m9K2nL8pQ/hqdefault.jpg",
+        "album_art":  "https://i.ibb.co.com/jP2Hq04t/yuuhi.jpg",
+        "artist":  "JKT48",
+        "likes":  0,
+        "has_lyrics":  true
+    }
+];
+
+// Build album map
+const ALB_MAP = new Map();
+TRACKS.forEach((t, i) => {
+  t._i = i;
+  if (!ALB_MAP.has(t.album)) ALB_MAP.set(t.album, { name:t.album, type:t.type, year:t.year, color:t.color, art:t.album_art, songs:[] });
+  ALB_MAP.get(t.album).songs.push(t);
+});
+
+document.getElementById('badge').textContent = '\u25cf ' + TRACKS.length + ' Lagu JKT48 Siap Putar';
+
+// ===== STATE =====
+let curIdx = 0;
+let liked = new Set(JSON.parse(localStorage.getItem('alc48v2_liked') || '[]'));
+let filt = 'all', q = '';
+const audio = document.getElementById('nativeAudioPlayer');
+
+// ===== NATIVE AUDIO EVENTS =====
+audio.addEventListener('play', () => {
+  document.getElementById('playBtn').innerHTML = '&#9646;&#9646;';
+});
+audio.addEventListener('pause', () => {
+  document.getElementById('playBtn').innerHTML = '&#9654;';
+});
+audio.addEventListener('ended', () => {
+  nextT();
+});
+audio.addEventListener('timeupdate', () => {
+  const cur = audio.currentTime || 0;
+  const dur = audio.duration || 1;
+  document.getElementById('seekFill').style.width = ((cur / dur) * 100).toFixed(2) + '%';
+  document.getElementById('tCur').textContent = fmt(cur);
+  document.getElementById('tDur').textContent = fmt(dur);
+  syncWords(cur);
+});
+
+// ===== LYRIC TIMINGS =====
+let wordTimings = [];
+let lastWordIdx = -1;
+
+function syncWords(t) {
+  if (!wordTimings.length) return;
+  let wi = -1;
+  for (let i = 0; i < wordTimings.length; i++) {
+    if (t >= wordTimings[i].t) wi = i; else break;
+  }
+  if (wi === lastWordIdx) return;
+  lastWordIdx = wi;
+
+  const scroll = document.getElementById('lyrScroll');
+  const lines = scroll.querySelectorAll('.ll');
+
+  const curLine = wi >= 0 ? wordTimings[wi].lineIdx : -1;
+  const curWordInLine = wi >= 0 ? wordTimings[wi].wordIdx : -1;
+
+  lines.forEach((line, li) => {
+    line.classList.remove('active-line', 'near');
+    if (li === curLine) {
+      line.classList.add('active-line');
+      const words = line.querySelectorAll('.lw');
+      words.forEach((w, wIdx) => {
+        w.classList.remove('sung', 'active-word');
+        if (wIdx < curWordInLine) w.classList.add('sung');
+        else if (wIdx === curWordInLine) w.classList.add('active-word');
+      });
+    } else if (Math.abs(li - curLine) === 1) {
+      line.classList.add('near');
+      const words = line.querySelectorAll('.lw');
+      words.forEach(w => w.classList.remove('active-word'));
+      if (li < curLine) words.forEach(w => w.classList.add('sung'));
+      else words.forEach(w => w.classList.remove('sung'));
+    } else {
+      const words = line.querySelectorAll('.lw');
+      words.forEach(w => w.classList.remove('active-word'));
+      if (li < curLine) words.forEach(w => w.classList.add('sung'));
+      else words.forEach(w => w.classList.remove('sung'));
+    }
+  });
+
+  if (curLine >= 0 && lines[curLine]) {
+    const el = lines[curLine];
+    const top = el.offsetTop - scroll.offsetTop - (scroll.clientHeight / 2) + 20;
+    scroll.scrollTo({ top, behavior: 'smooth' });
+  }
+}
+
+// ===== LYRICS GENERATOR & PARSER =====
+const KNOWN_LYRICS = {
+  "RIVER": `Forward, go ahead!
+Maju terus pantang mundur!
+RIVER!
+Menyeberanglah, lewati rintangan yang ada
+Jangan menyerah, walau arus begitu deras
+Masa depan membentang di hadapanmu!
+RIVER!`,
+  "Fortune Cookie": `Penampilan yang biasa saja
+Janganlah kau merasa putus asa
+Keberuntungan ada di dalam hatimu
+Senyumlah selalu
+Fortune Cookie yang mencinta
+Janganlah kau menyerah begitu saja
+Masa depan tidaklah seburuk itu
+Sambutlah hari esok dengan senyuman!`,
+  "Heavy Rotation": `I want you!
+I need you!
+I love you!
+Di dalam benakku selalu berputar
+Heavy Rotation!
+Perasaan yang takkan pernah pudar
+Cintaku kepadamu berputar kencang
+Selamanya!`,
+  "Pesawat Kertas 365 Hari": `Hidup bagaikan pesawat kertas
+Terus terbang melayang tinggi
+Menembus angin dan badai di langit luas
+Jangan pernah menyerah mengejar impianmu!`,
+  "Rapsodi": `Kelingking kita berjanji
+Jari manis jadi saksi
+Kau dan aku selamanya
+Dalam ikatan cinta suci
+Mengalir bagai melodi yang indah
+Rapsodi cinta kita!`,
+  "Flying High": `Flying high into the sky
+We will shine so bright
+Spread your wings and touch the light
+JKT48 flying high!`,
+  "Magic Hour": `It's our magic hour
+Underneath the shining stars
+Every dream comes alive
+Here with you tonight!`
+};
+
+function generateLyricsForTrack(t) {
+  let raw = KNOWN_LYRICS[t.title] || `[00:05.00] ${t.title} - JKT48
+[00:15.00] Bernyanyi bersama penuh semangat
+[00:25.00] Melangkah maju meraih mimpi kita
+[00:38.00] Jangan menyerah walau rintangan menghadang
+[00:50.00] Terus berlari menuju masa depan
+[01:05.00] Bersama JKT48 kita bersinar!
+[01:20.00] Senyum dan tawamu memberi kekuatan
+[01:35.00] Mari bernyanyi sekuat tenaga
+[01:50.00] Impian kita akan menjadi kenyataan!`;
+
+  if (!raw.includes('[')) {
+    const lines = raw.trim().split('\n').filter(l => l.trim().length > 0);
+    let time = 5.0;
+    let res = '';
+    lines.forEach(l => {
+      const m = Math.floor(time / 60);
+      const s = Math.floor(time % 60);
+      const mm = String(m).padStart(2, '0');
+      const ss = String(s).padStart(2, '0');
+      res += `[${mm}:${ss}.00] ${l.trim()}\n`;
+      time += 6.5;
+    });
+    raw = res;
+  }
+
+  const parsed = [];
+  const lines = raw.trim().split('\n');
+  lines.forEach(line => {
+    const match = line.match(/\[(\d{2}):(\d{2}(?:\.\d+)?)\](.*)/);
+    if (match) {
+      const min = parseInt(match[1], 10);
+      const sec = parseFloat(match[2]);
+      const text = match[3].trim();
+      if (text) parsed.push({ t: min * 60 + sec, text });
+    }
+  });
+
+  return parsed;
+}
+
+function loadLyrics(t) {
+  const scroll = document.getElementById('lyrScroll');
+  scroll.innerHTML = '';
+  wordTimings = [];
+  lastWordIdx = -1;
+
+  const lines = generateLyricsForTrack(t);
+  if (!lines.length) {
+    scroll.innerHTML = '<div style="color:rgba(255,255,255,.4);margin-top:80px;">Lirik sedang disiapkan...</div>';
+    return;
+  }
+
+  lines.forEach((lObj, lineIdx) => {
+    const div = document.createElement('div');
+    div.className = 'll';
+    div.dataset.t = lObj.t;
+    div.onclick = () => seekToTime(lObj.t);
+
+    const words = lObj.text.split(' ');
+    const nextLineTime = lines[lineIdx + 1] ? lines[lineIdx + 1].t : lObj.t + 5;
+    const lineDur = Math.max(1, nextLineTime - lObj.t);
+    const wordDur = lineDur / words.length;
+
+    words.forEach((w, wIdx) => {
+      const span = document.createElement('span');
+      span.className = 'lw';
+      span.textContent = w + ' ';
+      div.appendChild(span);
+
+      const wordTime = lObj.t + (wIdx * wordDur);
+      wordTimings.push({ t: wordTime, lineIdx, wordIdx: wIdx });
+    });
+
+    scroll.appendChild(div);
+  });
+}
+
+function seekToTime(t) {
+  if (audio) {
+    audio.currentTime = t;
+  }
+}
+
+// ===== PLAYBACK ENGINE =====
+function playTrack(idx) {
+  curIdx = (idx + TRACKS.length) % TRACKS.length;
+  const t = TRACKS[curIdx];
+
+  const coverSrc = t.album_art || t.cover || '../skin/FREYA_JAYAWARDANA_MYTH.jpg';
+  document.getElementById('nowThumb').src = coverSrc;
+  document.getElementById('nowTtl').textContent = t.title;
+  document.getElementById('nowSub').textContent = `JKT48 â€¢ ${t.album} â€¢ ${t.year}`;
+  
+  document.getElementById('lyrCover').src = coverSrc;
+  document.getElementById('lyrTitle').textContent = t.title;
+  document.getElementById('lyrSub').textContent = `${t.album} (${t.year})`;
+
+  updateLikeBtn();
+  loadLyrics(t);
+
+  document.querySelectorAll('.scard').forEach(el => el.classList.remove('playing'));
+  const activeEl = document.getElementById(`scard_${curIdx}`);
+  if (activeEl) activeEl.classList.add('playing');
+
+  // Direct Audio URL from backend audio streamer
+  const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : 'https://ashazeneca-botanalistiktl.hf.space';
+  const audioUrl = `${apiBase}/api/music/audio_stream?q=${encodeURIComponent(t.title)}&redirect=true`;
+
+  audio.src = audioUrl;
+  audio.play().catch(err => {
+    console.log("Audio autoplay note:", err);
+  });
+}
+
+function togglePlay() {
+  if (audio.paused) audio.play();
+  else audio.pause();
+}
+
+function nextT() { playTrack(curIdx + 1); }
+function prevT() { playTrack(curIdx - 1); }
+
+function onSeek(e) {
+  const rect = document.getElementById('seekWrap').getBoundingClientRect();
+  const pos = (e.clientX - rect.left) / rect.width;
+  if (audio.duration) {
+    audio.currentTime = pos * audio.duration;
+  }
+}
+
+function fmt(s) {
+  s = Math.floor(s || 0);
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${m}:${String(sec).padStart(2, '0')}`;
+}
+
+// ===== LIKES & PLAYLIST =====
+function updateLikeBtn() {
+  const btn = document.getElementById('lkBtn');
+  const t = TRACKS[curIdx];
+  if (liked.has(t.id)) {
+    btn.innerHTML = '&#10084;';
+    btn.classList.add('on');
+  } else {
+    btn.innerHTML = '&#9825;';
+    btn.classList.remove('on');
+  }
+  document.getElementById('lkCnt').textContent = liked.size;
+}
+
+function toggleLike() {
+  const t = TRACKS[curIdx];
+  if (liked.has(t.id)) liked.delete(t.id);
+  else liked.add(t.id);
+  localStorage.setItem('alc48v2_liked', JSON.stringify([...liked]));
+  updateLikeBtn();
+  if (filt === 'liked') renderSections();
+}
+
+// ===== RENDER ALBUM SECTIONS =====
+function renderSections() {
+  const container = document.getElementById('albSecs');
+  container.innerHTML = '';
+
+  let visibleCount = 0;
+
+  ALB_MAP.forEach(alb => {
+    let filteredSongs = alb.songs;
+
+    if (filt === 'liked') {
+      filteredSongs = filteredSongs.filter(s => liked.has(s.id));
+    } else if (filt !== 'all') {
+      if (alb.type !== filt) filteredSongs = [];
+    }
+
+    if (q) {
+      filteredSongs = filteredSongs.filter(s =>
+        s.title.toLowerCase().includes(q) ||
+        s.album.toLowerCase().includes(q) ||
+        s.year.includes(q)
+      );
+    }
+
+    if (!filteredSongs.length) return;
+    visibleCount += filteredSongs.length;
+
+    const sec = document.createElement('div');
+    sec.className = 'alb-sec';
+    sec.innerHTML = `
+      <div class="alb-hdr">
+        <div class="alb-left">
+          <span class="alb-dot" style="background:${alb.color};color:${alb.color};"></span>
+          <span class="alb-name">${alb.name}</span>
+        </div>
+        <div class="alb-right">
+          <span class="alb-meta">${filteredSongs.length} lagu &bull; ${alb.year}</span>
+          <button class="alb-arr" onclick="scrollAlbum('${alb.name.replace(/[^a-zA-Z0-9]/g, '_')}', -1)">&lang;</button>
+          <button class="alb-arr" onclick="scrollAlbum('${alb.name.replace(/[^a-zA-Z0-9]/g, '_')}', 1)">&rang;</button>
+        </div>
+      </div>
+      <div class="car-wrap" id="car_${alb.name.replace(/[^a-zA-Z0-9]/g, '_')}">
+        <div class="car-track">
+          ${filteredSongs.map(s => `
+            <div class="scard ${s._i === curIdx ? 'playing' : ''}" id="scard_${s._i}" onclick="playTrack(${s._i})">
+              <div class="scard-thumb-box">
+                <img class="scard-thumb" src="${s.album_art || s.cover}" loading="lazy" alt="${s.title}" onerror="this.src='../skin/FREYA_JAYAWARDANA_MYTH.jpg';">
+                <span class="scard-album-badge" style="color:${s.color};">${s.album.split(':')[0]}</span>
+              </div>
+              <span class="play-ind">&#9654;</span>
+              <div class="scard-info">
+                <div class="scard-ttl">${s.title}</div>
+                <div class="scard-sub">${s.year} &bull; JKT48</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+    container.appendChild(sec);
+  });
+
+  if (visibleCount === 0) {
+    container.innerHTML = '<div style="color:rgba(255,255,255,.4);text-align:center;padding:40px 0;">Tidak ada lagu yang sesuai kriteria.</div>';
+  }
+}
+
+function scrollAlbum(id, dir) {
+  const el = document.getElementById(`car_${id}`);
+  if (el) {
+    el.scrollBy({ left: dir * 300, behavior: 'smooth' });
+  }
+}
+
+function setF(f, el) {
+  filt = f;
+  document.querySelectorAll('.fpill').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  renderSections();
+}
+
+function doSearch() {
+  q = document.getElementById('sq').value.trim().toLowerCase();
+  renderSections();
+}
+
+// ===== PANELS =====
+function openLyr() { document.getElementById('lyrPanel').classList.add('open'); }
+function closeLyr() { document.getElementById('lyrPanel').classList.remove('open'); }
+function openMv() {
+  const t = TRACKS[curIdx];
+  const iframe = document.getElementById('mvIframe');
+  iframe.src = `https://www.youtube.com/embed/${t.yt_id}?autoplay=1`;
+  document.getElementById('mvPanel').classList.add('open');
+}
+function closeMv() {
+  const iframe = document.getElementById('mvIframe');
+  iframe.src = 'about:blank';
+  document.getElementById('mvPanel').classList.remove('open');
+}
+
+function openSb() {
+  document.getElementById('sb').classList.add('open');
+  document.getElementById('sov').classList.add('v');
+}
+function closeSb() {
+  document.getElementById('sb').classList.remove('open');
+  document.getElementById('sov').classList.remove('v');
+}
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', () => {
+  renderSections();
+  updateLikeBtn();
+  loadLyrics(TRACKS[0]);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,453 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>galery alcsta48 - tentang & arsitektur sistem</title>
+    <link rel="icon" type="image/png" href="../icon.png">
+    <script src="../config.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #030712;
+            color: #fff;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* DYNAMIC STARFIELD CANVAS */
+        #starsCanvas {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -2; pointer-events: none;
+            transform: translateZ(0);
+            contain: strict;
+        }
+
+        .corner-glows {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden; contain: strict;
+        }
+        .glow { position: absolute; width: 50vw; height: 50vw; max-width: 450px; max-height: 450px; border-radius: 50%; opacity: 0.2; pointer-events: none; }
+        .glow-tl { top: -10%; left: -10%; background: radial-gradient(circle, #ff007f 0%, transparent 70%); }
+        .glow-tr { top: -10%; right: -10%; background: radial-gradient(circle, #ff7700 0%, transparent 70%); }
+        .glow-bl { bottom: -10%; left: -10%; background: radial-gradient(circle, #0088ff 0%, transparent 70%); }
+        .glow-br { bottom: -10%; right: -10%; background: radial-gradient(circle, #9d4edd 0%, transparent 70%); opacity: 0.15; }
+
+        .left-sidebar {
+            width: 90px;
+            background: rgba(11, 17, 33, 0.85);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px 5px; gap: 12px; z-index: 100;
+            overflow-y: auto; flex-shrink: 0;
+            transform: translateZ(0); will-change: transform;
+            -webkit-overflow-scrolling: touch;
+            transition: transform 0.25s ease-out;
+        }
+        .left-sidebar::-webkit-scrollbar { display: none; }
+
+        .side-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-decoration: none; color: #fff; font-weight: 700; font-size: 10px;
+            background: rgba(255, 255, 255, 0.1); width: 70px; height: 60px; border-radius: 16px;
+            transition: transform 0.15s ease, background 0.15s ease; border: 1px solid rgba(255, 255, 255, 0.18); text-align: center;
+            gap: 4px; flex-shrink: 0; contain: content;
+        }
+        .side-item:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.03); }
+        .side-item.active { background: rgba(255, 255, 255, 0.9); color: #1a5cff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .side-icon { font-size: 20px; }
+
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6);
+            z-index: 90; opacity: 0; transition: opacity 0.25s ease;
+        }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        .main-content {
+            flex-grow: 1; display: flex; flex-direction: column;
+            position: relative; height: 100%; overflow: hidden; z-index: 10;
+        }
+
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 25px; z-index: 20; width: 100%;
+        }
+
+        .left-group { display: flex; align-items: center; gap: 12px; }
+        .sidebar-toggle-btn {
+            display: none; background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #fff; font-size: 18px; padding: 6px 12px;
+            border-radius: 12px; cursor: pointer; flex-shrink: 0;
+        }
+
+        .brand-logo {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            padding: 6px 16px; border-radius: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .logo-main { height: 35px; width: auto; border-radius: 50%; }
+        .brand-text { font-weight: 800; font-size: 15px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+
+        .stage-container {
+            flex-grow: 1; overflow-y: auto; padding: 10px 25px 40px 25px;
+            display: flex; flex-direction: column; gap: 24px;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            will-change: scroll-position;
+        }
+        .stage-container::-webkit-scrollbar { width: 6px; }
+        .stage-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.78);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 24px; padding: 24px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+            contain: content;
+        }
+        .stage-container::-webkit-scrollbar { width: 6px; }
+        .stage-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px; padding: 26px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .card-title { font-size: 19px; font-weight: 800; color: #ffd700; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; font-family: 'Cinzel', serif; }
+
+        /* FEATURE MATRIX GRID */
+        .feature-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin-top: 10px;
+        }
+        .feature-item-box {
+            background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px; padding: 18px; transition: 0.25s;
+        }
+        .feature-item-box:hover { border-color: #1a5cff; transform: translateY(-3px); background: rgba(26,92,255,0.12); }
+        .feature-badge { font-size: 24px; margin-bottom: 8px; display: inline-block; }
+        .feature-name { font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+        .feature-desc { font-size: 12px; color: rgba(255, 255, 255, 0.75); line-height: 1.5; }
+
+        /* CREATOR & PARTNERSHIP SECTION */
+        .creator-badge-card {
+            background: linear-gradient(135deg, rgba(255, 0, 127, 0.15), rgba(0, 212, 255, 0.15));
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px; padding: 22px; text-align: center;
+        }
+        .creator-handle { font-size: 22px; font-weight: 900; color: #ffd700; font-family: 'Rajdhani', sans-serif; }
+        .creator-role { font-size: 13px; color: #00d4ff; font-weight: 700; margin-top: 4px; }
+
+        .partner-pill-row {
+            display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 15px;
+        }
+        .partner-pill {
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; color: #fff;
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        .license-footer {
+            text-align: center; font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-top: 15px; line-height: 1.6;
+        }
+
+        @media screen and (max-width: 768px) {
+            .left-sidebar {
+                position: fixed; top: 0; left: 0; height: 100%;
+                width: 180px; padding: 25px 10px; gap: 10px;
+                transform: translateX(-100%);
+            }
+            .left-sidebar.open { transform: translateX(0); }
+            .side-item { width: 100%; height: 44px; flex-direction: row; justify-content: flex-start; padding: 0 15px; font-size: 12px; border-radius: 12px; }
+            .sidebar-toggle-btn { display: block; }
+            .top-bar { padding: 10px 15px; }
+            .stage-container { padding: 10px 15px 20px 15px; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- DYNAMIC STARFIELD CANVAS -->
+    <canvas id="starsCanvas"></canvas>
+
+    <div class="corner-glows">
+        <div class="glow glow-tl"></div><div class="glow glow-tr"></div>
+        <div class="glow glow-bl"></div><div class="glow glow-br"></div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+            <aside class="left-sidebar" id="leftSidebar">
+        <a href="../beranda/" class="side-item"><span class="side-icon">💬</span>Beranda</a>
+        <a href="../profil/" class="side-item"><span class="side-icon">👤</span>Profil</a>
+        <a href="../gacha-skin/" class="side-item"><span class="side-icon">🎁</span>Gacha</a>
+        <a href="../live-jkt48/" class="side-item"><span class="side-icon">🎤</span>Live JKT</a>
+        <a href="../alcstify/" class="side-item"><span class="side-icon">🎵</span>Alcstify</a>
+        <a href="../mini-games/" class="side-item"><span class="side-icon">🎮</span>Mini Games</a>
+        <a href="../grup/" class="side-item"><span class="side-icon">👥</span>Grup</a>
+        <a href="../temen-mabar/" class="side-item"><span class="side-icon">⚔️</span>Mabar</a>
+        <a href="../medsos-saver/" class="side-item"><span class="side-icon">📥</span>Saver</a>
+        <a href="../koleksi-kartu/" class="side-item"><span class="side-icon">🃏</span>Kartu</a>
+        <a href="../bio-member/" class="side-item"><span class="side-icon">📖</span>Bio</a>
+        <a href="../link-shortcut/" class="side-item"><span class="side-icon">🔗</span>Shortcut</a>
+        <a href="../update-member/" class="side-item"><span class="side-icon">📱</span>Update Sosmed</a>
+        <a href="#" class="side-item active"><span class="side-icon">ℹ️</span>Tentang</a>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="left-group">
+                <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
+                <div class="brand-logo">
+                    <img src="../logo.png.png" alt="Logo" class="logo-main" onerror="this.onerror=null; this.src='../logo.png';">
+                    <span class="brand-text">Galery Alcsta48 - Tentang Platform</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="stage-container">
+            <!-- HERO HEADER -->
+            <div class="glass-card" style="text-align: center;">
+                <h1 style="font-size: 28px; font-family: 'Cinzel', serif; color: #ffd700; margin-bottom: 8px;">Galery Alcsta48 (Kitty Tenacity)</h1>
+                <p style="font-size: 14px; color: rgba(255,255,255,0.85); max-width: 720px; margin: 0 auto; line-height: 1.6;">
+                    Platform super-ekosistem digital interaktif terintegrasi bagi penggemar JKT48 dan wota Indonesia. Menyatukan teknologi real-time microservices, streaming tracker, pemrosesan video Full HD dengan akselerasi FFmpeg, algoritma pairwise sorting, radio non-stop 24/7, dan simulator teater interaktif.
+                </p>
+            </div>
+
+            <!-- ARSITEKTUR SISTEM & 14 MODUL -->
+            <div class="glass-card">
+                <span class="card-title">🌐 Ekosistem 14 Modul Terpadu & Cara Kerja</span>
+                
+                <div class="feature-grid">
+                    <div class="feature-item-box">
+                        <span class="feature-badge">💬</span>
+                        <div class="feature-name">1. Beranda & Chat Global</div>
+                        <div class="feature-desc">Ruang obrolan wota real-time terenkripsi dengan animasi balon chat skin, saldo Kristal & TB Coin, serta mini gacha.</div>
+                    </div>
+
+                    <div class="feature-item-box">
+                        <span class="feature-badge">🎮</span>
+                        <div class="feature-name">2. Game The Beyonce48</div>
+                        <div class="feature-desc">Portal game arcade eksklusif bertema JKT48 dengan integrasi leaderboard skor global.</div>
+                    </div>
+
+                    <div class="feature-item-box">
+                        <span class="feature-badge">👤</span>
+                        <div class="feature-name">3. Profil MOBA HUD & Twibbon</div>
+                        <div class="feature-desc">Status wota modern dengan Oshikatsu Affinity Meter, piala pencapaian, standee video hero oshi, dan Studio Twibbon HTML5 Canvas HD.</div>
+                    </div>
+
+                    <div class="feature-item-box">
+                        <span class="feature-badge">🎤</span>
+                        <div class="feature-name">4. Live Multi-Stream & Arsip 5TB</div>
+                        <div class="feature-desc">Pemantau siaran langsung Showroom & IDN Live (40+ member) dengan pemutar video multi-stream dan arsip tayangan ulang otomatis pada drive 5TB.</div>
+                    </div>
+
+                    <div class="feature-item-box">
+                        <span class="feature-badge">🎟️</span>
+                        <div class="feature-name">5. Teater Hub & Bingo Simulator</div>
+                        <div class="feature-desc">Simulator undian bingo antrean teater FX Sudirman barisan 1-25, kamus chant wota interaktif, dan paspor kehadiran digital.</div>
+                    </div>
+
+                    <div class="feature-item-box">
+                        <span class="feature-badge">📻</span>
+                        <div class="feature-name">6. Radio Wota 24/7</div>
+                        <div class="feature-desc">Stasiun musik audio non-stop lagu-lagu JKT48, versi akustik, dan remix lo-fi malam dengan waveform visualizer dinamis.</div>
+                    </div>
+
+                    <div class="feature-item-box">
+                        <span class="feature-badge">🧩</span>
+                        <div class="feature-name">7. Kuis Jiko & Simulator Handshake</div>
+                        <div class="feature-desc">Kuis tebak jikoshoukai member, pengatur waktu sesi bicara bilik handshake/meet & greet 10-20 detik, dan pasar barter photocard.</div>
+                    </div>
+
+                    <div class="feature-item-box">
+                        <span class="feature-badge">📥</span>
+                        <div class="feature-name">8. Medsos Saver & FFmpeg HD Enhancer</div>
+                        <div class="feature-desc">Mesin pengunduh video TikTok, Instagram, X, YouTube tanpa watermark yang ditingkatkan otomatis dengan filter ketajaman Lanczos Full HD.</div>
+                    </div>
+
+                    <div class="feature-item-box">
+                        <span class="feature-badge">🃏</span>
+                        <div class="feature-name">9. Koleksi Kartu 3D & Oshi Sorter</div>
+                        <div class="feature-desc">Koleksi kartu holografis tier Omega/Myth/Legend serta mesin duel Merge Sort Pairwise untuk menentukan ranking oshi definitif.</div>
+                    </div>
+
+                    <div class="feature-item-box">
+                        <span class="feature-badge">📖</span>
+                        <div class="feature-name">10. Bio Member, Setlist & Peta Wota</div>
+                        <div class="feature-desc">Katalog profil member, lirik setlist teater lengkap, analisis klaster musik audio, dan peta sebaran regional member dan fans.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ARSITEKTUR INFRASTRUKTUR 6 NODE -->
+            <div class="glass-card">
+                <span class="card-title">🖥️ Spesifikasi Infrastruktur Server Multi-Node</span>
+                <p style="font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 14px;">
+                    Sistem beroperasi di atas klaster komputasi dengan total <b>12 vCPU Cores, 98GB RAM, 300GB System Disk, dan 5TB Dedicated High-Speed Storage</b> yang terdistribusi ke dalam 6 node mandiri:
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px;">
+                    <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);">
+                        <b style="color: #ffd700;">Node 1: Core Backend API</b>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 2px;">HF Space: <code>shinezzzz/gokgokgogkgokgok</code> (Chat, Gacha, Saldo, Akun)</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);">
+                        <b style="color: #00d4ff;">Node 2: Notifier & Sosmed Feed</b>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 2px;">HF Space: <code>shinezzzz/iddiletele</code> (Userbot, Notifikasi Grup & Auto-Sosmed)</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);">
+                        <b style="color: #ff007f;">Node 3: Live Stream Tracker</b>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 2px;">Showroom & IDN Live 40+ Room Real-time Poller Scraper</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);">
+                        <b style="color: #00ff88;">Node 4: Master Database & Storage</b>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 2px;">PostgreSQL & Redis Cache Cluster pada Storage 5TB</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);">
+                        <b style="color: #ff7700;">Node 5: Media Saver & HD Upscaler</b>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 2px;">HF Space: <code>ashazeneca/botanalistiktl</code> (FFmpeg HD Enhancer)</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.15);">
+                        <b style="color: #9d4edd;">Node 6: Theater & Radio 24/7</b>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 2px;">FastAPI Bingo Simulator, Kalkulator Tiket & Stream Radio</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TIM PENGEMBANG & PORTOFOLIO PROFESIONAL -->
+            <div class="glass-card">
+                <span class="card-title">👨‍💻 Tim Pengembang & Portofolio Arsitektur</span>
+                
+                <div class="creator-badge-card">
+                    <div style="display: inline-block; background: #ffd700; color: #000; font-weight: 900; font-size: 11px; padding: 3px 12px; border-radius: 12px; margin-bottom: 8px; text-transform: uppercase;">
+                        👑 Solo Developer & System Architect
+                    </div>
+                    <div class="creator-handle">@ashazzznc</div>
+                    <div class="creator-role">Lead Software Architect, Fullstack Engineer & Creator of Galery Alcsta48</div>
+                    <p style="font-size: 12px; color: rgba(255,255,255,0.85); max-width: 600px; margin: 10px auto 0 auto; line-height: 1.5;">
+                        Merancang seluruh arsitektur sistem backend microservices, logika pemrosesan media HD, algoritma sorting pairwise, serta tata kelola visual Glassmorphism Galery Alcsta48 secara mandiri sebagai <b>Solo Developer</b>.
+                    </p>
+                    <div style="font-size: 11px; color: #ffd700; margin-top: 8px; font-weight: 800;">
+                        🤖 Technical AI Pairing Assistant: Google Antigravity (DeepMind Advanced Agentic Coding)
+                    </div>
+
+                    <!-- CREATOR SOCIAL CONTACTS -->
+                    <div style="margin-top: 18px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 14px;">
+                        <b style="font-size: 12px; color: #00d4ff; text-transform: uppercase; letter-spacing: 0.5px;">Hubungi & Ikuti Pembuat (Solo Dev):</b>
+                        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 8px;">
+                            <a href="https://t.me/asha_zeneca" target="_blank" style="background: rgba(0,136,255,0.25); border: 1px solid #0088ff; color: #fff; padding: 6px 14px; border-radius: 14px; text-decoration: none; font-size: 11px; font-weight: 800;">
+                                ✈️ Telegram: @asha_zeneca
+                            </a>
+                            <a href="https://tiktok.com/@asha_zeneca" target="_blank" style="background: rgba(255,0,127,0.25); border: 1px solid #ff007f; color: #fff; padding: 6px 14px; border-radius: 14px; text-decoration: none; font-size: 11px; font-weight: 800;">
+                                🎵 TikTok: @asha_zeneca
+                            </a>
+                            <a href="https://instagram.com/ashazznc" target="_blank" style="background: rgba(255,119,0,0.25); border: 1px solid #ff7700; color: #fff; padding: 6px 14px; border-radius: 14px; text-decoration: none; font-size: 11px; font-weight: 800;">
+                                📸 Instagram: @ashazznc
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- OFFICIAL PLATFORM MEDIA -->
+                    <div style="margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
+                        <b style="font-size: 12px; color: #ffd700; text-transform: uppercase; letter-spacing: 0.5px;">Media Sosial Resmi Galery Alcsta48:</b>
+                        <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 8px;">
+                            <a href="https://tiktok.com/@galery.alcsta48ofc" target="_blank" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 6px 14px; border-radius: 14px; text-decoration: none; font-size: 11px; font-weight: 800;">
+                                🎵 TikTok: @galery.alcsta48ofc
+                            </a>
+                            <a href="https://instagram.com/galery_alcsta48ofc" target="_blank" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 6px 14px; border-radius: 14px; text-decoration: none; font-size: 11px; font-weight: 800;">
+                                📸 Instagram: @galery_alcsta48ofc
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DUKUNGAN INFRASTRUKTUR & PARTNER -->
+                <div class="partner-pill-row">
+                    <div class="partner-pill">⚡ Google Gemini AI</div>
+                    <div class="partner-pill">🚀 Google Antigravity</div>
+                    <div class="partner-pill">☁️ Google Cloud Platform</div>
+                    <div class="partner-pill">🧪 Google Colab</div>
+                    <div class="partner-pill">🛡️ Cloudflare CDN & Shield</div>
+                    <div class="partner-pill">🌐 Exabytes Cloud Hosting</div>
+                    <div class="partner-pill">⚡ Tencent Cloud</div>
+                    <div class="partner-pill">🤗 Hugging Face Space</div>
+                    <div class="partner-pill">🌐 Akamai CDN</div>
+                    <div class="partner-pill">🐙 GitHub Enterprise</div>
+                </div>
+
+                <div class="license-footer">
+                    <b>Official License:</b> Released under <b>MIT License</b> & Licensed by <b>NAI (Neo Alcsta Idol)</b> in Telegram.<br>
+                    Hak cipta © 2026 Galery Alcsta48 (Kitty Tenacity). All rights reserved. Open-source & Community Powered.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById("leftSidebar").classList.toggle("open");
+            document.getElementById("sidebarOverlay").classList.toggle("active");
+        }
+
+        // DYNAMIC STARFIELD CANVAS SCRIPT (LIGHTWEIGHT 120 FPS)
+        const canvas = document.getElementById('starsCanvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        const numStars = 35;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas, { passive: true });
+        resizeCanvas();
+
+        for (let i = 0; i < numStars; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 1.2 + 0.4,
+                alpha: Math.random(),
+                speed: Math.random() * 0.015 + 0.005
+            });
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let s of stars) {
+                s.alpha += s.speed;
+                if (s.alpha > 1 || s.alpha < 0) s.speed = -s.speed;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(s.alpha)})`;
+                ctx.fill();
+            }
+            requestAnimationFrame(drawStars);
+        }
+        requestAnimationFrame(drawStars);
+    </script>
+</body>
+</html>

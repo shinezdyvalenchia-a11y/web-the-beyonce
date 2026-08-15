@@ -1,0 +1,749 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>galery alcsta48 - twibbon maker, setlist & ekosistem wota</title>
+    <link rel="icon" type="image/png" href="../icon.png">
+    <script src="../config.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #030712;
+            color: #fff;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ANTI-LAG BACKGROUND */
+        .video-bg {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; z-index: -2;
+            filter: brightness(0.45);
+            transform: translateZ(0);
+            will-change: transform;
+            contain: strict;
+        }
+
+        .corner-glows {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; pointer-events: none; overflow: hidden; contain: strict;
+        }
+        .glow { position: absolute; width: 50vw; height: 50vw; max-width: 450px; max-height: 450px; border-radius: 50%; opacity: 0.2; pointer-events: none; }
+        .glow-tl { top: -10%; left: -10%; background: radial-gradient(circle, #ff007f 0%, transparent 70%); }
+        .glow-tr { top: -10%; right: -10%; background: radial-gradient(circle, #ffd700 0%, transparent 70%); }
+        .glow-bl { bottom: -10%; left: -10%; background: radial-gradient(circle, #0088ff 0%, transparent 70%); }
+        .glow-br { bottom: -10%; right: -10%; background: radial-gradient(circle, #9d4edd 0%, transparent 70%); opacity: 0.15; }
+
+        .left-sidebar {
+            width: 90px;
+            background: rgba(11, 17, 33, 0.85);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px 5px; gap: 12px; z-index: 100;
+            overflow-y: auto; flex-shrink: 0;
+            transform: translateZ(0); will-change: transform;
+            -webkit-overflow-scrolling: touch;
+            transition: transform 0.25s ease-out;
+        }
+        .left-sidebar::-webkit-scrollbar { display: none; }
+
+        .side-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-decoration: none; color: #fff; font-weight: 700; font-size: 10px;
+            background: rgba(255, 255, 255, 0.1); width: 70px; height: 60px; border-radius: 16px;
+            transition: transform 0.15s ease, background 0.15s ease; border: 1px solid rgba(255, 255, 255, 0.18); text-align: center;
+            gap: 4px; flex-shrink: 0; contain: content;
+        }
+        .side-item:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.03); }
+        .side-item.active { background: rgba(255, 255, 255, 0.9); color: #1a5cff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .side-icon { font-size: 20px; }
+
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6);
+            z-index: 90; opacity: 0; transition: opacity 0.25s ease;
+        }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        .main-content {
+            flex-grow: 1; display: flex; flex-direction: column;
+            position: relative; height: 100%; overflow: hidden; z-index: 10;
+        }
+
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 24px; z-index: 20; width: 100%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(11, 17, 33, 0.6);
+        }
+
+        .left-group { display: flex; align-items: center; gap: 12px; }
+        .sidebar-toggle-btn {
+            display: none; background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: #fff; font-size: 18px; padding: 6px 12px;
+            border-radius: 12px; cursor: pointer; flex-shrink: 0;
+        }
+
+        .brand-logo {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            padding: 6px 16px; border-radius: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        .logo-main { height: 32px; width: auto; border-radius: 50%; }
+        .brand-text { font-weight: 800; font-size: 14px; color: #fff; }
+
+        .sub-nav-container {
+            display: flex; gap: 8px; padding: 12px 24px; overflow-x: auto;
+            -webkit-overflow-scrolling: touch; background: rgba(11, 17, 33, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            flex-shrink: 0;
+        }
+        .sub-nav-container::-webkit-scrollbar { display: none; }
+        .pill-tab {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #cbd5e1; padding: 7px 18px; border-radius: 20px;
+            font-weight: 700; font-size: 12px; cursor: pointer;
+            transition: all 0.2s ease; white-space: nowrap;
+        }
+        .pill-tab:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
+        .pill-tab.active { background: #fff; color: #1a5cff; border-color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.25); }
+
+        .stage-container {
+            flex-grow: 1; overflow-y: auto; padding: 16px 24px 40px 24px;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            will-change: scroll-position;
+        }
+        .stage-container::-webkit-scrollbar { width: 6px; }
+        .stage-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 4px; }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.82);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 22px; padding: 22px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+            max-width: 850px; margin: 0 auto; width: 100%;
+            word-break: break-word; overflow-wrap: break-word;
+        }
+        .card-title { font-size: 17px; font-weight: 800; color: #ffd700; display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-family: 'Cinzel', serif; }
+
+        /* TWIBBON MAKER STYLES */
+        .twibbon-layout {
+            display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; align-items: flex-start;
+        }
+        .canvas-box {
+            position: relative; width: 320px; height: 320px; max-width: 100%;
+            border-radius: 20px; overflow: hidden; background: #000;
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            cursor: grab;
+        }
+        .canvas-box:active { cursor: grabbing; }
+        #twibbonCanvas { width: 100%; height: 100%; display: block; }
+
+        .twibbon-controls {
+            flex: 1; min-width: 280px; display: flex; flex-direction: column; gap: 14px;
+        }
+        .frame-picker-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px;
+            max-height: 160px; overflow-y: auto; padding-right: 4px;
+        }
+        .frame-thumb-btn {
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px; padding: 6px; cursor: pointer; text-align: center;
+            font-size: 10px; font-weight: 700; transition: 0.2s;
+        }
+        .frame-thumb-btn.active, .frame-thumb-btn:hover {
+            border-color: #00d4ff; background: rgba(0,212,255,0.2);
+        }
+        .frame-preview-img { width: 100%; height: 50px; object-fit: contain; border-radius: 6px; }
+
+        .control-group {
+            background: rgba(0,0,0,0.4); padding: 12px 14px; border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .control-label { font-size: 11px; font-weight: 800; color: #ffd700; display: block; margin-bottom: 6px; }
+        .pan-buttons-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 130px; margin: 0 auto;
+        }
+        .pan-btn {
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);
+            color: #fff; border-radius: 8px; padding: 6px 0; cursor: pointer; font-weight: 800;
+        }
+        .pan-btn:hover { background: #1a5cff; }
+
+        /* SETLIST & LYRICS EXPLORER */
+        .setlist-card {
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 16px; padding: 16px; margin-bottom: 12px; transition: 0.2s;
+        }
+        .setlist-header {
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+        }
+        .setlist-name { font-size: 15px; font-weight: 800; color: #00ff88; }
+        .setlist-sub { font-size: 11px; color: rgba(255,255,255,0.6); }
+        .song-list-container {
+            margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);
+            display: none;
+        }
+        .song-item {
+            padding: 8px 10px; background: rgba(255,255,255,0.05); border-radius: 8px;
+            margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;
+            font-size: 12px; cursor: pointer; transition: 0.2s;
+        }
+        .song-item:hover { background: rgba(26,92,255,0.3); border: 1px solid #1a5cff; }
+
+        /* WRAPPED STATS GENERATOR */
+        .wrapped-canvas-container {
+            width: 300px; height: 420px; border-radius: 20px; overflow: hidden;
+            margin: 15px auto; border: 2px solid #ffd700; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        #wrappedCanvas { width: 100%; height: 100%; }
+
+        @media screen and (max-width: 768px) {
+            .left-sidebar {
+                position: fixed; top: 0; left: 0; height: 100%;
+                width: 180px; padding: 25px 10px; gap: 10px;
+                transform: translateX(-100%);
+            }
+            .left-sidebar.open { transform: translateX(0); }
+            .side-item { width: 100%; height: 44px; flex-direction: row; justify-content: flex-start; padding: 0 15px; font-size: 12px; border-radius: 12px; }
+            .sidebar-toggle-btn { display: block; }
+            .top-bar { padding: 10px 14px; }
+            .sub-nav-container { padding: 8px 14px; }
+            .stage-container { padding: 12px 14px 20px 14px; }
+            .twibbon-layout { flex-direction: column; align-items: center; }
+            .canvas-box { width: 280px; height: 280px; }
+        }
+    </style>
+</head>
+<body>
+
+    <video class="video-bg" autoplay loop muted playsinline>
+        <source src="../beranda/latarglobal.webm" type="video/webm">
+    </video>
+
+    <div class="corner-glows">
+        <div class="glow glow-tl"></div><div class="glow glow-tr"></div>
+        <div class="glow glow-bl"></div><div class="glow glow-br"></div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR 16 TAB -->
+            <aside class="left-sidebar" id="leftSidebar">
+        <a href="../beranda/" class="side-item"><span class="side-icon">💬</span>Beranda</a>
+        <a href="../profil/" class="side-item"><span class="side-icon">👤</span>Profil</a>
+        <a href="../gacha-skin/" class="side-item"><span class="side-icon">🎁</span>Gacha</a>
+        <a href="../live-jkt48/" class="side-item"><span class="side-icon">🎤</span>Live JKT</a>
+        <a href="../alcstify/" class="side-item"><span class="side-icon">🎵</span>Alcstify</a>
+        <a href="../mini-games/" class="side-item"><span class="side-icon">🎮</span>Mini Games</a>
+        <a href="../grup/" class="side-item"><span class="side-icon">👥</span>Grup</a>
+        <a href="../temen-mabar/" class="side-item"><span class="side-icon">⚔️</span>Mabar</a>
+        <a href="../medsos-saver/" class="side-item"><span class="side-icon">📥</span>Saver</a>
+        <a href="../koleksi-kartu/" class="side-item"><span class="side-icon">🃏</span>Kartu</a>
+        <a href="../bio-member/" class="side-item"><span class="side-icon">📖</span>Bio</a>
+        <a href="#" class="side-item active"><span class="side-icon">🔗</span>Shortcut</a>
+        <a href="../update-member/" class="side-item"><span class="side-icon">📱</span>Update Sosmed</a>
+        <a href="../tentang/" class="side-item"><span class="side-icon">ℹ️</span>Tentang</a>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="left-group">
+                <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
+                <div class="brand-logo">
+                    <img src="../logo.png.png" alt="Logo" class="logo-main" onerror="this.onerror=null; this.src='../logo.png';">
+                    <span class="brand-text">Alcsta Tools & Ekosistem Mandiri</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="sub-nav-container">
+            <button class="pill-tab active" onclick="switchTab('twibbonTab', this)">🖼️ Twibbon Maker Mandiri</button>
+            <button class="pill-tab" onclick="switchTab('setlistTab', this)">📜 Database Setlist & Lirik Teater</button>
+            <button class="pill-tab" onclick="switchTab('wrappedTab', this)">🎁 JKT48 Wrapped Card Generator</button>
+        </div>
+
+        <div class="stage-container">
+            <!-- TAB 1: TWIBBON MAKER MANDIRI (NATIVE CANVAS ENGINE) -->
+            <div id="twibbonTab" class="tab-content">
+                <div class="glass-card">
+                    <span class="card-title">🖼️ Pembuat Twibbon JKT48 Mandiri (Editor Kanvas Native)</span>
+                    <p style="font-size: 13px; color: rgba(255,255,255,0.75); margin-bottom: 16px;">Unggah foto kamu, pilih bingkai resmi acara JKT48, atur posisi & skala foto, lalu unduh hasilnya dalam format HD PNG.</p>
+
+                    <div class="twibbon-layout">
+                        <!-- CANVAS DISPLAY -->
+                        <div>
+                            <div class="canvas-box" id="canvasBox">
+                                <canvas id="twibbonCanvas" width="600" height="600"></canvas>
+                            </div>
+                            <div style="text-align: center; margin-top: 10px;">
+                                <button class="pill-tab" style="background: linear-gradient(135deg, #00c853, #64dd17); color: #fff; width: 100%; font-size: 14px; padding: 10px 0;" onclick="downloadTwibbon()">💾 Unduh Twibbon HD (PNG)</button>
+                            </div>
+                        </div>
+
+                        <!-- CONTROLS -->
+                        <div class="twibbon-controls">
+                            <!-- 1. UPLOAD -->
+                            <div class="control-group">
+                                <span class="control-label">📁 1. Unggah Foto Kamu:</span>
+                                <input type="file" id="twibImageInput" accept="image/*" style="font-size: 12px; color: #fff; width: 100%;" onchange="handleImageUpload(event)">
+                            </div>
+
+                            <!-- 2. FRAME SELECTOR -->
+                            <div class="control-group">
+                                <span class="control-label">🎨 2. Pilih Bingkai / Frame Acara:</span>
+                                <div class="frame-picker-grid" id="framePicker">
+                                    <div class="frame-thumb-btn active" onclick="selectTwibbonFrame('https://jkt48live.github.io/twibbon/twibbon/Twibbon-Wonderland.png', 'Wonderland Concert', this)">
+                                        <img src="https://jkt48live.github.io/twibbon/twibbon/Twibbon-Wonderland.png" class="frame-preview-img">
+                                        <span>Wonderland</span>
+                                    </div>
+                                    <div class="frame-thumb-btn" onclick="selectTwibbonFrame('https://jkt48live.github.io/twibbon/twibbon/first-snow.png', 'First Snow Concert', this)">
+                                        <img src="https://jkt48live.github.io/twibbon/twibbon/first-snow.png" class="frame-preview-img">
+                                        <span>First Snow</span>
+                                    </div>
+                                    <div class="frame-thumb-btn" onclick="selectTwibbonFrame('https://jkt48live.github.io/twibbon/twibbon/flowerful.png', 'Flowerful Concert', this)">
+                                        <img src="https://jkt48live.github.io/twibbon/twibbon/flowerful.png" class="frame-preview-img">
+                                        <span>Flowerful</span>
+                                    </div>
+                                    <div class="frame-thumb-btn" onclick="selectTwibbonFrame('https://jkt48live.github.io/twibbon/twibbon/memberFrame.png', 'Kabesha Frame', this)">
+                                        <img src="https://jkt48live.github.io/twibbon/twibbon/memberFrame.png" class="frame-preview-img">
+                                        <span>Kabesha</span>
+                                    </div>
+                                    <div class="frame-thumb-btn" onclick="selectTwibbonFrame('https://jkt48live.github.io/twibbon/twibbon/Hagavi_JKT48V.png', 'Hagavi JKT48V', this)">
+                                        <img src="https://jkt48live.github.io/twibbon/twibbon/Hagavi_JKT48V.png" class="frame-preview-img">
+                                        <span>JKT48V</span>
+                                    </div>
+                                    <div class="frame-thumb-btn" onclick="selectTwibbonFrame('https://jkt48live.github.io/twibbon/twibbon/passion.png', 'Team Passion', this)">
+                                        <img src="https://jkt48live.github.io/twibbon/twibbon/passion.png" class="frame-preview-img">
+                                        <span>Passion</span>
+                                    </div>
+                                    <div class="frame-thumb-btn" onclick="selectTwibbonFrame('https://jkt48live.github.io/twibbon/twibbon/TeamDream.png', 'Team Dream', this)">
+                                        <img src="https://jkt48live.github.io/twibbon/twibbon/TeamDream.png" class="frame-preview-img">
+                                        <span>Dream</span>
+                                    </div>
+                                    <div class="frame-thumb-btn" onclick="selectTwibbonFrame('https://jkt48live.github.io/twibbon/twibbon/teamlove.png', 'Team Love', this)">
+                                        <img src="https://jkt48live.github.io/twibbon/twibbon/teamlove.png" class="frame-preview-img">
+                                        <span>Love</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. ZOOM & PAN CONTROLS -->
+                            <div class="control-group">
+                                <span class="control-label">🔍 3. Atur Zoom Foto:</span>
+                                <input type="range" id="zoomSlider" min="0.3" max="3" step="0.05" value="1" style="width: 100%;" oninput="handleZoom(this.value)">
+                                
+                                <div style="margin-top: 10px;">
+                                    <span class="control-label" style="text-align: center;">🕹️ Geser Posisi:</span>
+                                    <div class="pan-buttons-grid">
+                                        <div></div>
+                                        <button class="pan-btn" onclick="panImage(0, -15)">⬆️</button>
+                                        <div></div>
+                                        <button class="pan-btn" onclick="panImage(-15, 0)">⬅️</button>
+                                        <button class="pan-btn" onclick="resetPan()">🔄</button>
+                                        <button class="pan-btn" onclick="panImage(15, 0)">➡️</button>
+                                        <div></div>
+                                        <button class="pan-btn" onclick="panImage(0, 15)">⬇️</button>
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: DATABASE SETLIST & LIRIK TEATER (NATIVE EXPLORER) -->
+            <div id="setlistTab" class="tab-content" style="display: none;">
+                <div class="glass-card">
+                    <span class="card-title">📜 Database Setlist & Lirik Teater JKT48 Mandiri</span>
+                    <p style="font-size: 13px; color: rgba(255,255,255,0.75); margin-bottom: 16px;">Jelajahi seluruh daftar setlist panggung teater, urutan lagu, dan lirik lengkap (Ported dari setlistjkt48.com).</p>
+
+                    <!-- SEARCH BAR -->
+                    <input type="text" id="setlistSearchInput" placeholder="🔍 Cari setlist atau judul lagu..." style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 10px 14px; color: #fff; font-size: 13px; margin-bottom: 16px;" oninput="filterSetlists(this.value)">
+
+                    <div id="setlistContainer">
+                        <!-- 1. RAMUNE -->
+                        <div class="setlist-card">
+                            <div class="setlist-header" onclick="toggleSetlist('setlistRamune')">
+                                <div>
+                                    <div class="setlist-name">Cara Meminum Ramune (Ramune no Nomikata)</div>
+                                    <div class="setlist-sub">Team KIII / JKT48 • 16 Lagu Utama + Encore</div>
+                                </div>
+                                <span style="font-size: 18px;">▼</span>
+                            </div>
+                            <div class="song-list-container" id="setlistRamune">
+                                <div class="song-item" onclick="showLyrics('Kizashi (Pertanda)', 'Kabut tebal yang menyelimuti langkahku...\nMentari pagi tersenyum kembali menyapa!\n\nReff:\nKizashi! Rasakan embusan angin masa depan...')"><b>01. Kizashi (Pertanda)</b> <span>Lihat Lirik 📖</span></div>
+                                <div class="song-item" onclick="showLyrics('Schoolyard Crossed (Korekara...)', 'Di lapangan sekolah yang sunyi sepi...\nLangkah kaki kita berdua bergema...')"><b>02. Schoolyard Crossed</b> <span>Lihat Lirik 📖</span></div>
+                                <div class="song-item" onclick="showLyrics('Ramune no Nomikata', 'Kelereng kaca di dalam botol hijau bening...\nCara meminum ramune yang paling manis adalah bersamamu!')"><b>03. Ramune no Nomikata</b> <span>Lihat Lirik 📖</span></div>
+                                <div class="song-item" onclick="showLyrics('Cross', 'Di persimpangan jalan berdebu kita berjanji...\nMenatap langit yang membara!')"><b>04. Cross (Unit Song)</b> <span>Lihat Lirik 📖</span></div>
+                            </div>
+                        </div>
+
+                        <!-- 2. ATURAN ANTI CINTA -->
+                        <div class="setlist-card">
+                            <div class="setlist-header" onclick="toggleSetlist('setlistRKJ')">
+                                <div>
+                                    <div class="setlist-name">Aturan Anti Cinta (Renai Kinshi Jourei)</div>
+                                    <div class="setlist-sub">Team J / Trainee • 16 Lagu Utama + Encore</div>
+                                </div>
+                                <span style="font-size: 18px;">▼</span>
+                            </div>
+                            <div class="song-list-container" id="setlistRKJ">
+                                <div class="song-item" onclick="showLyrics('Nagai Hikari (Cahaya Panjang)', 'Cahaya panjang yang menembus jendela kamar...\nMengingatkanku pada hangatnya pelukanmu...')"><b>01. Nagai Hikari (Cahaya Panjang)</b> <span>Lihat Lirik 📖</span></div>
+                                <div class="song-item" onclick="showLyrics('Squall no Aida ni (Di Tengah Hujan Badai)', 'Tetes hujan membasahi trotoar basah...\nKita berlari mencari tempat berteduh...')"><b>02. Squall no Aida ni</b> <span>Lihat Lirik 📖</span></div>
+                                <div class="song-item" onclick="showLyrics('Renai Kinshi Jourei', 'Peraturan anti cinta telah dilanggar diam-diam...\nNamun rasa ini tak mampu kuhentikan!')"><b>03. Renai Kinshi Jourei (Unit Song)</b> <span>Lihat Lirik 📖</span></div>
+                                <div class="song-item" onclick="showLyrics('Tsundere!', 'Bukan berarti aku menyukaimu lho!\nJangan kegeeran melihat caraku menatapmu!')"><b>04. Tsundere! (Unit Song)</b> <span>Lihat Lirik 📖</span></div>
+                            </div>
+                        </div>
+
+                        <!-- 3. TUNAS DI BALIK BATU -->
+                        <div class="setlist-card">
+                            <div class="setlist-header" onclick="toggleSetlist('setlistSeifuku')">
+                                <div>
+                                    <div class="setlist-name">Tunas di Balik Batu (Seifuku no Me)</div>
+                                    <div class="setlist-sub">Team T / JKT48 • 16 Lagu Utama</div>
+                                </div>
+                                <span style="font-size: 18px;">▼</span>
+                            </div>
+                            <div class="song-list-container" id="setlistSeifuku">
+                                <div class="song-item" onclick="showLyrics('Koi wo Kataru Shijin ni Narenakute', 'Aku tak pandai merangkai puisi cinta...\nNamun degup jantung ini nyata kepadamu!')"><b>01. Koi wo Kataru Shijin ni Narenakute</b> <span>Lihat Lirik 📖</span></div>
+                                <div class="song-item" onclick="showLyrics('Goukaku Kiss (Ciuman Kelulusan)', 'Air mata di hari perpisahan sekolah...\nMenjadi saksi ciuman kelulusan yang manis...')"><b>02. Goukaku Kiss</b> <span>Lihat Lirik 📖</span></div>
+                                <div class="song-item" onclick="showLyrics('Kareha no Station (Stasiun Daun Kering)', 'Daun-daun kering berguguran di peron stasiun...\nKereta terakhir telah membawamu pergi...')"><b>03. Kareha no Station (Solo)</b> <span>Lihat Lirik 📖</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: WRAPPED CARD GENERATOR (NATIVE CANVAS ENGINE) -->
+            <div id="wrappedTab" class="tab-content" style="display: none;">
+                <div class="glass-card" style="text-align: center;">
+                    <span class="card-title" style="justify-content: center;">🎁 Generator Kartu Rekap Tahunan JKT48 Wrapped</span>
+                    <p style="font-size: 13px; color: rgba(255,255,255,0.75); margin-bottom: 16px;">Buat kartu kilas balik statistik oshikatsu tahunan kamu dan bagikan ke media sosial.</p>
+
+                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px;">
+                        <div>
+                            <label style="font-size: 11px; font-weight: 800;">Pilih Oshi Utama:</label>
+                            <select id="wrappedOshiSelect" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: #fff; padding: 6px 12px; font-size: 12px;" onchange="renderWrappedCard()">
+                                <option value="Angelina Christy">Angelina Christy</option>
+                                <option value="Freya Jayawardana">Freya Jayawardana</option>
+                                <option value="Marsha Lenathea">Marsha Lenathea</option>
+                                <option value="Shania Gracia">Shania Gracia</option>
+                                <option value="Azizi Asadel (Zee)">Azizi Asadel (Zee)</option>
+                                <option value="Feni Fitriyanti">Feni Fitriyanti</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size: 11px; font-weight: 800;">Tahun Rekap:</label>
+                            <select id="wrappedYearSelect" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; color: #fff; padding: 6px 12px; font-size: 12px;" onchange="renderWrappedCard()">
+                                <option value="2026">2026</option>
+                                <option value="2025">2025</option>
+                                <option value="2024">2024</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="wrapped-canvas-container">
+                        <canvas id="wrappedCanvas" width="600" height="840"></canvas>
+                    </div>
+
+                    <button class="pill-tab" style="background: linear-gradient(135deg, #1a5cff, #00d4ff); color: #fff; font-size: 14px; padding: 10px 24px;" onclick="downloadWrappedCard()">💾 Unduh Kartu Wrapped (PNG)</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById("leftSidebar").classList.toggle("open");
+            document.getElementById("sidebarOverlay").classList.toggle("active");
+        }
+
+        function switchTab(tabId, btnEl) {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.pill-tab').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).style.display = 'block';
+            btnEl.classList.add('active');
+
+            if (tabId === 'wrappedTab') {
+                setTimeout(renderWrappedCard, 100);
+            }
+        }
+
+        // =======================================================
+        // 1. TWIBBON MAKER NATIVE ENGINE
+        // =======================================================
+        const twibCanvas = document.getElementById('twibbonCanvas');
+        const twibCtx = twibCanvas.getContext('2d');
+        
+        let userImage = new Image();
+        let frameImage = new Image();
+        let userImageLoaded = false;
+        let frameImageLoaded = false;
+
+        let twibScale = 1;
+        let twibPos = { x: 0, y: 0 };
+        let isDraggingTwib = false;
+        let dragStartTwib = { x: 0, y: 0 };
+
+        // Default initial frame
+        frameImage.crossOrigin = "anonymous";
+        frameImage.src = 'https://jkt48live.github.io/twibbon/twibbon/Twibbon-Wonderland.png';
+        frameImage.onload = () => {
+            frameImageLoaded = true;
+            drawTwibbon();
+        };
+
+        // Draw blank initial avatar
+        userImage.crossOrigin = "anonymous";
+        userImage.src = 'https://i.ibb.co.com/Y4JdtfGH/download.png';
+        userImage.onload = () => {
+            userImageLoaded = true;
+            drawTwibbon();
+        };
+
+        function drawTwibbon() {
+            twibCtx.clearRect(0, 0, twibCanvas.width, twibCanvas.height);
+            
+            // 1. Draw user photo
+            if (userImageLoaded) {
+                twibCtx.save();
+                const drawW = userImage.width * twibScale;
+                const drawH = userImage.height * twibScale;
+                const drawX = (twibCanvas.width - drawW) / 2 + twibPos.x;
+                const drawY = (twibCanvas.height - drawH) / 2 + twibPos.y;
+                twibCtx.drawImage(userImage, drawX, drawY, drawW, drawH);
+                twibCtx.restore();
+            }
+
+            // 2. Draw frame overlay
+            if (frameImageLoaded) {
+                twibCtx.drawImage(frameImage, 0, 0, twibCanvas.width, twibCanvas.height);
+            }
+        }
+
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                userImage = new Image();
+                userImage.onload = () => {
+                    userImageLoaded = true;
+                    // Auto-scale to fill canvas
+                    const scaleFactor = Math.max(twibCanvas.width / userImage.width, twibCanvas.height / userImage.height);
+                    twibScale = scaleFactor;
+                    document.getElementById("zoomSlider").value = twibScale;
+                    twibPos = { x: 0, y: 0 };
+                    drawTwibbon();
+                };
+                userImage.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function selectTwibbonFrame(frameUrl, name, el) {
+            document.querySelectorAll('.frame-thumb-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+
+            frameImage = new Image();
+            frameImage.crossOrigin = "anonymous";
+            frameImage.onload = () => {
+                frameImageLoaded = true;
+                drawTwibbon();
+            };
+            frameImage.src = frameUrl;
+        }
+
+        function handleZoom(val) {
+            twibScale = parseFloat(val);
+            drawTwibbon();
+        }
+
+        function panImage(dx, dy) {
+            twibPos.x += dx;
+            twibPos.y += dy;
+            drawTwibbon();
+        }
+
+        function resetPan() {
+            twibPos = { x: 0, y: 0 };
+            twibScale = 1;
+            document.getElementById("zoomSlider").value = 1;
+            drawTwibbon();
+        }
+
+        function downloadTwibbon() {
+            const link = document.createElement('a');
+            link.download = 'jkt48-twibbon-alcsta.png';
+            link.href = twibCanvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Drag & pan canvas support
+        const canvasBox = document.getElementById('canvasBox');
+        canvasBox.addEventListener('mousedown', (e) => {
+            isDraggingTwib = true;
+            dragStartTwib = { x: e.clientX - twibPos.x, y: e.clientY - twibPos.y };
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (!isDraggingTwib) return;
+            twibPos.x = e.clientX - dragStartTwib.x;
+            twibPos.y = e.clientY - dragStartTwib.y;
+            drawTwibbon();
+        });
+        window.addEventListener('mouseup', () => { isDraggingTwib = false; });
+
+        // Touch support
+        canvasBox.addEventListener('touchstart', (e) => {
+            isDraggingTwib = true;
+            const t = e.touches[0];
+            dragStartTwib = { x: t.clientX - twibPos.x, y: t.clientY - twibPos.y };
+        }, { passive: true });
+        window.addEventListener('touchmove', (e) => {
+            if (!isDraggingTwib) return;
+            const t = e.touches[0];
+            twibPos.x = t.clientX - dragStartTwib.x;
+            twibPos.y = t.clientY - dragStartTwib.y;
+            drawTwibbon();
+        }, { passive: true });
+        window.addEventListener('touchend', () => { isDraggingTwib = false; });
+
+        // =======================================================
+        // 2. SETLIST & LYRICS EXPLORER
+        // =======================================================
+        function toggleSetlist(id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function showLyrics(title, lyrics) {
+            alert(`🎵 ${title}\n\n${lyrics}`);
+        }
+
+        function filterSetlists(q) {
+            const term = q.toLowerCase();
+            document.querySelectorAll('.setlist-card').forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(term) ? 'block' : 'none';
+            });
+        }
+
+        // =======================================================
+        // 3. JKT48 WRAPPED CANVAS GENERATOR
+        // =======================================================
+        function renderWrappedCard() {
+            const canvas = document.getElementById('wrappedCanvas');
+            const ctx = canvas.getContext('2d');
+            const oshi = document.getElementById('wrappedOshiSelect').value;
+            const year = document.getElementById('wrappedYearSelect').value;
+
+            // Background gradient
+            const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            grad.addColorStop(0, '#0f172a');
+            grad.addColorStop(0.5, '#1e1b4b');
+            grad.addColorStop(1, '#ff007f');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Header Banner
+            ctx.fillStyle = '#ffd700';
+            ctx.font = 'bold 36px Rajdhani';
+            ctx.textAlign = 'center';
+            ctx.fillText(`✨ JKT48 WRAPPED ${year} ✨`, canvas.width / 2, 70);
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.font = '18px Nunito';
+            ctx.fillText('Kilat Statistik Oshikatsu Resmi', canvas.width / 2, 105);
+
+            // Card Container
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.roundRect(40, 130, canvas.width - 80, 640, [25]);
+            ctx.fill();
+            ctx.stroke();
+
+            // Oshi Name
+            ctx.fillStyle = '#00ff88';
+            ctx.font = 'bold 28px Cinzel';
+            ctx.fillText(`👑 TOP OSHI: ${oshi}`, canvas.width / 2, 190);
+
+            // Stats Items
+            const stats = [
+                { label: "🎟️ Total Pertunjukan Teater:", val: "48 Show Ditonton" },
+                { label: "📱 Total Pesan PM Diterima:", val: "1,420 Pesan" },
+                { label: "📸 Foto & Media Disimpan:", val: "385 Berkas" },
+                { label: "🎙️ Voice Note Didengarkan:", val: "94 Rekaman" },
+                { label: "🔥 Rekor Streak Login:", val: "365 Hari Nonstop" },
+                { label: "🃏 Koleksi Photocard:", val: "SSR #01 Christy Legend" }
+            ];
+
+            let y = 260;
+            ctx.textAlign = 'left';
+            stats.forEach(s => {
+                ctx.fillStyle = '#ffd700';
+                ctx.font = 'bold 20px Nunito';
+                ctx.fillText(s.label, 70, y);
+
+                ctx.fillStyle = '#fff';
+                ctx.font = '22px Rajdhani';
+                ctx.fillText(s.val, 70, y + 30);
+
+                // Divider line
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.beginPath();
+                ctx.moveTo(70, y + 45);
+                ctx.lineTo(canvas.width - 70, y + 45);
+                ctx.stroke();
+
+                y += 65;
+            });
+
+            // Footer
+            ctx.textAlign = 'center';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.font = '16px Nunito';
+            ctx.fillText('Dibuat melalui galery alcsta48 (alcsta48.my.id)', canvas.width / 2, 800);
+        }
+
+        function downloadWrappedCard() {
+            const canvas = document.getElementById('wrappedCanvas');
+            const link = document.createElement('a');
+            link.download = 'jkt48-wrapped-2026.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            drawTwibbon();
+        });
+    </script>
+</body>
+</html>

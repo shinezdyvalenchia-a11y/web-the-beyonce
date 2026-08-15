@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>galery alcsta48 - gacha</title>
+    <link rel="icon" type="image/png" href="../icon.png">
+    <style>
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: #87CEEB;
+            color: #333;
+            height: 100vh; height: 100dvh;
+            overflow: hidden; position: relative;
+        }
+
+        /* 1. BACKGROUND */
+        .bg-video {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; object-fit: cover; z-index: 1;
+            transform: translateZ(0);
+            will-change: transform;
+            contain: strict;
+        }
+        .bg-overlay {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(135,206,235,0.7) 100%);
+            z-index: 2; transition: opacity 0.5s ease;
+            contain: strict;
+        }
+
+        /* 2. LAYOUT UTAMA */
+        .gacha-viewport {
+            position: relative; z-index: 10;
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 10px 15px; overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            transition: opacity 0.3s ease;
+        }
+
+        /* 3. TOP BAR */
+        .top-bar { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+        .top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .logo-img { height: 32px; object-fit: contain; max-width: 120px; }
+        .top-right-tools { display: flex; gap: 8px; align-items: center; }
+        .nav-btn {
+            background: rgba(255,255,255,0.85); border: none;
+            color: #0088ff; width: 32px; height: 32px;
+            border-radius: 50%; font-size: 14px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            display: flex; align-items: center; justify-content: center; text-decoration: none;
+        }
+
+        .top-tabs {
+            display: flex; justify-content: center; gap: 6px;
+            background: rgba(255, 255, 255, 0.45);
+            padding: 4px 8px; border-radius: 30px;
+            backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.6);
+            width: fit-content; margin: 0 auto;
+        }
+        .tab-btn {
+            background: transparent; border: none; color: #444; font-size: 12px; font-weight: 700;
+            padding: 6px 12px; border-radius: 20px; cursor: pointer; transition: 0.3s; white-space: nowrap;
+        }
+        .tab-btn.active { background: #fff; color: #0088ff; box-shadow: 0 2px 8px rgba(0, 136, 255, 0.2); }
+
+        /* 4. AREA KONTEN */
+        .main-content-area {
+            flex-grow: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 6px 0; overflow: hidden; width: 100%;
+        }
+
+        .sub-tab-bar { display: flex; justify-content: center; gap: 6px; margin-bottom: 8px; z-index: 5; flex-wrap: wrap; }
+        .sub-btn {
+            background: rgba(255,255,255,0.65); border: 1px solid #b3e5fc;
+            padding: 4px 10px; border-radius: 15px; font-size: 10px; font-weight: bold;
+            color: #0277bd; cursor: pointer; transition: 0.3s;
+        }
+        .sub-btn.active { background: #0277bd; color: #fff; }
+
+        .swipe-container {
+            width: 100%; max-width: 600px; display: flex; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .swipe-slide { min-width: 100%; box-sizing: border-box; display: flex; justify-content: center; }
+
+        .banner-card {
+            width: 100%; background: rgba(255, 255, 255, 0.8);
+            border-radius: 18px; border: 2px solid rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px); box-shadow: 0 10px 25px rgba(0, 136, 255, 0.15);
+            padding: 14px; display: flex; flex-direction: row; align-items: center; gap: 14px;
+        }
+        .preview-portrait {
+            width: 120px; height: 160px; border-radius: 10px; object-fit: cover;
+            border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background: #e0f2fe; flex-shrink: 0;
+        }
+        .preview-landscape {
+            width: 180px; height: 110px; border-radius: 10px; object-fit: cover;
+            border: 2px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background: #000; flex-shrink: 0;
+        }
+
+        .banner-info { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+        .series-badge {
+            background: #e0f7fa; color: #00acc1; padding: 3px 8px; border-radius: 10px; font-size: 9px; font-weight: 800; width: fit-content;
+        }
+        .series-title { font-size: 16px; font-weight: 800; color: #0277bd; line-height: 1.2; }
+        .series-desc { font-size: 10px; color: #555; line-height: 1.3; }
+        .prize-pool {
+            font-size: 9px; color: #555; background: rgba(255,255,255,0.7);
+            padding: 6px; border-radius: 6px; border: 1px dashed #b3e5fc;
+        }
+
+        /* SHOP CONTAINER & SUB TABS */
+        .shop-container {
+            display: none; width: 100%; max-width: 600px; height: 340px;
+            background: rgba(255, 255, 255, 0.85); border-radius: 16px;
+            backdrop-filter: blur(10px); padding: 10px; overflow-y: auto;
+        }
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(125px, 1fr)); gap: 8px; }
+        
+        .shop-item {
+            background: #fff; border-radius: 10px; padding: 8px;
+            display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #e1f5fe;
+        }
+        .shop-item-img { width: 100%; height: 70px; object-fit: contain; border-radius: 6px; border: 1px solid #e1f5fe; background: #f9f9f9; }
+        .shop-item-title { font-size: 10.5px; font-weight: bold; color: #0277bd; line-height: 1.1; }
+        .shop-buy-btn {
+            background: #0088ff; color: white; border: none; padding: 5px 8px;
+            border-radius: 6px; font-size: 9.5px; width: 100%; font-weight: bold; cursor: pointer; margin-top: auto;
+            display: flex; align-items: center; justify-content: center; gap: 3px;
+        }
+        .shop-buy-btn:disabled {
+            background: #999 !important;
+            cursor: not-allowed;
+            box-shadow: none !important;
+            color: #e0e0e0;
+        }
+
+        .card-omega-spesial {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border: 1.5px solid #ffb74d; box-shadow: 0 3px 10px rgba(230, 81, 0, 0.15);
+        }
+        .card-omega-spesial .shop-item-title { color: #d84315; }
+        .btn-omega-spesial { background: linear-gradient(135deg, #f57c00, #e65100); }
+
+        .card-omega-regular {
+            background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+            border: 1.5px solid #4fc3f7; box-shadow: 0 3px 10px rgba(2, 119, 189, 0.15);
+        }
+        .card-omega-regular .shop-item-title { color: #0277bd; }
+        .btn-omega-regular { background: linear-gradient(135deg, #0288d1, #01579b); }
+
+        /* 5. BOTTOM BAR & CURRENCY */
+        .bottom-bar {
+            display: flex; flex-direction: column; gap: 8px; width: 100%;
+            background: rgba(255,255,255,0.75); padding: 8px 12px; border-radius: 16px;
+            backdrop-filter: blur(10px); box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+        }
+        .bottom-left-tools { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
+        .action-btn {
+            background: #fff; border: 1px solid #b3e5fc; color: #0277bd;
+            padding: 5px 10px; border-radius: 15px; font-size: 10px; font-weight: bold; cursor: pointer;
+        }
+        .currency-chip {
+            background: #fff; padding: 3px 8px; border-radius: 15px;
+            display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 800;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e1f5fe;
+        }
+        .curr-img { width: 16px; height: 16px; object-fit: contain; min-width: 16px; }
+
+        .spin-section { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+        .skip-anim-container {
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            font-size: 11px; font-weight: bold; color: #0277bd;
+        }
+        .skip-anim-container input[type="checkbox"] { accent-color: #0088ff; width: 14px; height: 14px; cursor: pointer; }
+        .spin-actions { display: flex; gap: 8px; width: 100%; }
+        .spin-btn {
+            flex: 1; background: linear-gradient(135deg, #00b4db, #0083b0);
+            color: #fff; border: none; padding: 8px 10px; border-radius: 16px;
+            font-weight: 800; font-size: 12px; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 3px 10px rgba(0, 131, 176, 0.3); border: 1.5px solid #fff;
+        }
+        .spin-btn:active { transform: scale(0.96); }
+        .spin-cost { font-size: 10px; display: flex; align-items: center; gap: 3px; color: #e0f2fe; margin-top: 2px; }
+
+        /* OVERLAY GELAP & ANIMASI TOKEN MUTAR */
+        .overlay-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 100;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            overflow-y: auto; padding: 15px;
+        }
+        
+        .loading-wrapper {
+            display: none; flex-direction: column; align-items: center; justify-content: center; gap: 15px;
+        }
+        .spinner-ring-container {
+            position: relative; width: 80px; height: 80px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .spinner-ring {
+            position: absolute; width: 100%; height: 100%;
+            border: 4px solid rgba(255, 255, 255, 0.1); border-top: 4px solid #00b4db;
+            border-radius: 50%; animation: putarRing 1s linear infinite;
+        }
+        .spinner-token {
+            width: 40px; height: 40px; object-fit: contain; animation: detakToken 1.5s ease-in-out infinite;
+        }
+        .loading-text { color: #fff; font-size: 14px; font-weight: bold; letter-spacing: 1px; animation: kedip 1.5s infinite; }
+
+        @keyframes putarRing { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes detakToken { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+        @keyframes kedip { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        /* RESULT BOX & GRID KARTU GACHA */
+        .result-box {
+            background: #fff; padding: 16px; border-radius: 18px; text-align: center;
+            display: none; flex-direction: column; align-items: center; gap: 12px;
+            width: 95%; max-width: 620px; animation: popIn 0.3s ease-out;
+            max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .gacha-grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            width: 100%;
+            margin: 8px 0;
+            padding: 4px;
+        }
+
+        /* ANIMASI FLIP KARTU 3D */
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            aspect-ratio: 3/4;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flip-card-front {
+            background: linear-gradient(135deg, #0088ff 0%, #0277bd 100%);
+            color: white;
+        }
+        .flip-card-front img {
+            width: 50%;
+            height: 50%;
+            object-fit: contain;
+            opacity: 0.9;
+        }
+
+        .flip-card-back {
+            background: #fff;
+            transform: rotateY(180deg);
+        }
+        .flip-card-back img, .flip-card-back video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-label {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            font-size: 8px;
+            font-weight: bold;
+            padding: 3px 2px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .jiko-text {
+            font-size: 11px; font-style: italic; color: #555; background: #f5f5f5;
+            padding: 6px 10px; border-radius: 8px; border-left: 3px solid #0088ff; max-width: 100%;
+        }
+
+        @keyframes popIn { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        @media screen and (max-width: 600px) {
+            .banner-card { flex-direction: column; text-align: center; padding: 12px; gap: 8px; }
+            .banner-info { align-items: center; }
+            .preview-portrait { width: 110px; height: 145px; }
+            .preview-landscape { width: 90%; height: 190px; }
+            .series-title { font-size: 15px; }
+            .series-desc { font-size: 9.5px; }
+            
+            .gacha-grid-container {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 5px;
+            }
+            .card-label { font-size: 7px; padding: 2px 1px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- VIDEO BACKGROUND -->
+    <video class="bg-video" autoplay loop muted playsinline preload="auto">
+        <source src="latargacha.webm" type="video/webm">
+    </video>
+    <div class="bg-overlay" id="bgOverlay"></div>
+
+    <div class="gacha-viewport" id="uiMain">
+        <!-- HEADER -->
+        <header class="top-bar">
+            <div class="top-row">
+                <img src="thebeyonce.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+                <div class="top-right-tools">
+                    <a href="https://t.me/c/4374788445/4" target="_blank" class="nav-btn" title="Info">ℹ️</a>
+                    <button class="nav-btn" onclick="window.location.href='../beranda/'">✕</button>
+                </div>
+            </div>
+            
+            <nav class="top-tabs">
+                <button class="tab-btn active" onclick="switchMainTab('member')">📸 Member</button>
+                <button class="tab-btn" onclick="switchMainTab('web')">✈️ Skin Web</button>
+                <button class="tab-btn" onclick="switchMainTab('shop')">🛒 Toko Penukaran</button>
+            </nav>
+        </header>
+
+        <!-- KONTEN TENGAH -->
+        <main class="main-content-area">
+            
+            <!-- TAB 1: GACHA MEMBER -->
+            <div id="wrapperMember" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+                <div class="sub-tab-bar">
+                    <button id="subBtnReg" class="sub-btn active" onclick="swipeToSubTab(0)">Member Regular</button>
+                    <button id="subBtnMso" class="sub-btn" onclick="swipeToSubTab(1)">MSO (Omega)</button>
+                </div>
+
+                <div id="swipeArea" class="swipe-container">
+                    <div class="swipe-slide">
+                        <div class="banner-card">
+                            <img class="preview-portrait" src="preview_member.png" onerror="this.src='https://placehold.co/120x160/87CEEB/ffffff?text=Portrait'" alt="Preview Portrait">
+                            <div class="banner-info">
+                                <span class="series-badge">Uncommon - Mythic</span>
+                                <h1 class="series-title">Gacha Member Reguler</h1>
+                                <p class="series-desc">Koleksi skin oshi mu dan photocard webnya.</p>
+                                <div class="prize-pool">✈️ <b>Pool:</b> skin member, 20 coin, 15 coin, 10 coin, 5 coin.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swipe-slide">
+                        <div class="banner-card">
+                            <video class="preview-landscape omega-preview-vid" autoplay loop muted playsinline preload="auto" poster="preview_member.png" onerror="this.outerHTML='<img class=\'preview-landscape\' src=\'preview_member.png\'>'">
+                                <source src="previewgachamember.webm" type="video/webm">
+                            </video>
+                            <div class="banner-info">
+                                <span class="series-badge" style="background:#fff3e0; color:#e65100;">Tier Omega & Spesial</span>
+                                <h1 class="series-title">Gacha MSO Series</h1>
+                                <p class="series-desc">Koleksi skin eksklusif beranimasi oshi mu dan photocard webnya.</p>
+                                <div class="prize-pool">💎 <b>Pool:</b> 5 cristal, 30 coin, 20 coin, 5 coin.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: GACHA SKIN WEB -->
+            <div id="viewWeb" class="banner-card" style="display: none; max-width: 600px;">
+                <img class="preview-portrait" style="width:140px; height:110px;" src="previewgacha.png" alt="Preview Web" onerror="this.src='https://placehold.co/140x110/87CEEB/ffffff?text=Skin+Web'">
+                <div class="banner-info">
+                    <span class="series-badge">Tema Web Ekstra</span>
+                    <h1 class="series-title">Skin Web: 365 Nichi no Kamihikouki Series</h1>
+                    <p class="series-desc">Koleksi border avatar, latar profil, dan skin chat khusus bertema pesawat kertas.</p>
+                    <div class="prize-pool">✈️ <b>Pool:</b> 3 Skin Utama atau 5/10/20 TB Coin.</div>
+                </div>
+            </div>
+
+            <!-- TAB 3: TOKO PENUKARAN (SHOP) -->
+            <div id="viewShop" class="shop-container">
+                <div class="sub-tab-bar" style="margin-bottom: 10px;">
+                    <button id="shopTabMain" class="sub-btn active" onclick="switchShopSubTab('main')">Item & Fitur</button>
+                    <button id="shopTabSpesial" class="sub-btn" onclick="switchShopSubTab('spesial')">🌌 Omega Spesial (2💎)</button>
+                    <button id="shopTabOmega" class="sub-btn" onclick="switchShopSubTab('omega')">🌠 Tier Omega (1💎)</button>
+                </div>
+
+                <div id="shopGridMain" class="shop-grid">
+                    <!-- Item Baru: Profil Altar -->
+                    <div class="shop-item">
+                        <img src="preview_altar.png" class="shop-item-img" alt="Profil Altar" onerror="this.src='https://placehold.co/100x70?text=Profil+Altar'">
+                        <span class="shop-item-title">Profil Altar</span>
+                        <p style="font-size:9px; color:#666;">Background profil</p>
+                        <button class="shop-buy-btn" data-kode="PROFIL_ALTAR" onclick="prosesBeli('PROFIL_ALTAR', 'Profil Altar', 'Yakin ingin membeli Profil Altar seharga 600 TB Coin?')">600 TB Coin</button>
+                    </div>
+                    <div class="shop-item">
+                        <img src="preview_border.png" class="shop-item-img" alt="Border" onerror="this.src='https://placehold.co/100x70?text=Border'">
+                        <span class="shop-item-title">Border 365 Nichi</span>
+                        <p style="font-size:9px; color:#666;">Skin melingkar</p>
+                        <button class="shop-buy-btn" data-kode="BORDER_365" onclick="prosesBeli('BORDER_365', 'Border 365 Nichi', 'Yakin ingin membeli Border 365 Nichi seharga 310 TB Coin?')">310 TB Coin</button>
+                    </div>
+                    <div class="shop-item">
+                        <img src="preview_altar.png" class="shop-item-img" alt="Altar" onerror="this.src='https://placehold.co/100x70?text=Altar'">
+                        <span class="shop-item-title">365 Nichi Altar</span>
+                        <p style="font-size:9px; color:#666;">Latar profil</p>
+                        <button class="shop-buy-btn" data-kode="ALTAR_365" onclick="prosesBeli('ALTAR_365', '365 Nichi Altar', 'Yakin ingin membeli 365 Nichi Altar seharga 500 TB Coin?')">500 TB Coin</button>
+                    </div>
+                    <div class="shop-item">
+                        <img src="preview_chat.png" class="shop-item-img" alt="Chat Skin" onerror="this.src='https://placehold.co/100x70?text=Chat+Skin'">
+                        <span class="shop-item-title">365 Nichi Chat</span>
+                        <p style="font-size:9px; color:#666;">Skin chat</p>
+                        <button class="shop-buy-btn" data-kode="CHAT_365" onclick="prosesBeli('CHAT_365', '365 Nichi Chat Skin', 'Yakin ingin membeli 365 Nichi Chat Skin seharga 450 TB Coin?')">450 TB Coin</button>
+                    </div>
+                    <div class="shop-item">
+                        <img src="ONCETOKEN.PNG" class="shop-item-img" alt="ONCE Token" onerror="this.src='https://placehold.co/100x70?text=Token'">
+                        <span class="shop-item-title">2x ONCE Token</span>
+                        <p style="font-size:9px; color:#666;">Tukar koin</p>
+                        <button class="shop-buy-btn" data-kode="TUKAR_TOKEN_ONCE" onclick="prosesBeli('TUKAR_TOKEN_ONCE', '2x ONCE Token', 'Yakin ingin menukar 50 TB Coin untuk 2x ONCE Token?')">50 TB Coin</button>
+                    </div>
+                    <div class="shop-item" style="border:1px solid #ffe0b2; background:#fffde7;">
+                        <img src="KRISTAL_OMEGA.PNG" class="shop-item-img" style="border-color: #ffe0b2; background: #fff8e1;" alt="Kristal Omega" onerror="this.src='https://placehold.co/100x70?text=Kristal'">
+                        <span class="shop-item-title" style="color:#e65100;">1x Kristal Omega</span>
+                        <p style="font-size:9px; color:#666;">Craft dari Kristal</p>
+                        <button class="shop-buy-btn" style="background:#f57c00;" data-kode="CRAFT_KRISTAL_OMEGA" onclick="prosesBeli('CRAFT_KRISTAL_OMEGA', '1x Kristal Omega', 'Tukar 120 Kristal menjadi 1 Kristal Omega?')">Craft (120 Kristal)</button>
+                    </div>
+                </div>
+
+                <div id="shopGridSpesial" class="shop-grid" style="display: none;"></div>
+                <div id="shopGridOmega" class="shop-grid" style="display: none;"></div>
+            </div>
+        </main>
+
+        <!-- FOOTER / BOTTOM BAR -->
+        <footer class="bottom-bar">
+            <div class="bottom-left-tools">
+                <button class="action-btn" onclick="window.location.href='/gacha-skin/misi'">🎁 Klaim Token</button>
+
+                <div class="currency-chip">
+                    <img src="ONCETOKEN.PNG" class="curr-img" alt="T" onerror="this.style.display='none'">
+                    <span id="onceCount">0</span>
+                </div>
+                <div class="currency-chip" id="chipSecondary">
+                    <img id="imgSecondary" src="TBCOIN.PNG" class="curr-img" alt="C" onerror="this.style.display='none'">
+                    <span id="valSecondary">0</span>
+                </div>
+                <div class="currency-chip" id="chipTertiary">
+                    <img src="KRISTAL_OMEGA.PNG" class="curr-img" alt="O" onerror="this.style.display='none'">
+                    <span id="valTertiary">0</span>
+                </div>
+            </div>
+
+            <!-- BUTTON SPIN & SKIP -->
+            <div class="spin-section" id="spinSection">
+                <div class="skip-anim-container">
+                    <input type="checkbox" id="skipAnimasiCheck">
+                    <label for="skipAnimasiCheck">Skip Animasi</label>
+                </div>
+                <div class="spin-actions">
+                    <button class="spin-btn" onclick="tarikGacha(1)">
+                        SPIN 1x
+                        <span class="spin-cost" id="cost1x">
+                            <img src="ONCETOKEN.PNG" class="curr-img"> 1
+                        </span>
+                    </button>
+                    <button class="spin-btn" onclick="tarikGacha(10)">
+                        SPIN 10x
+                        <span class="spin-cost" id="cost10x">
+                            <img src="ONCETOKEN.PNG" class="curr-img"> 10
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- OVERLAY GELAP UNTUK ANIMASI & HASIL -->
+    <div id="overlay" class="overlay-screen">
+        <div id="loadingAnim" class="loading-wrapper">
+            <div class="spinner-ring-container">
+                <div class="spinner-ring"></div>
+                <img src="ONCETOKEN.PNG" class="spinner-token" onerror="this.style.display='none'">
+            </div>
+            <p class="loading-text">Membuka Gacha... ✈️</p>
+        </div>
+        
+        <div id="resultBox" class="result-box">
+            <h2 id="resultTitle" style="color:#0277bd; font-size:18px;">Selamat!</h2>
+            
+            <div id="gachaGridContainer" class="gacha-grid-container"></div>
+            
+            <div id="jikoContainer" class="jiko-text">"Salam kehangatan dari Oshi!"</div>
+            <button class="action-btn" style="background:#0277bd; color:white; padding:6px 20px; margin-top:8px; font-size:12px;" onclick="tutupOverlay()">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+        // PRIMARY_URL harus selalu ke backend HuggingFace, bukan domain GitHub Pages!
+        const PRIMARY_URL = (window.location.origin && window.location.origin.includes("hf.space")) 
+            ? window.location.origin 
+            : BACKEND_URL;
+        const FALLBACK_URL = BACKEND_URL;
+        const API_BASE = PRIMARY_URL;
+
+        function getSessionCookie() {
+            const possibleKeys = [
+                'session_cookie', 'session', 'session_id', 'user_id', 
+                'token', 'access_token', 'user_session', 'auth_token', 'session_key', 'sessionCookie'
+            ];
+
+            const urlParams = new URLSearchParams(window.location.search);
+            for (let key of possibleKeys) {
+                if (urlParams.has(key) && urlParams.get(key)) return urlParams.get(key);
+            }
+            for (let key of possibleKeys) {
+                const val = localStorage.getItem(key);
+                if (val) return val;
+            }
+            for (let key of possibleKeys) {
+                const val = sessionStorage.getItem(key);
+                if (val) return val;
+            }
+            if (document.cookie) {
+                const cookies = document.cookie.split(';');
+                for (let cookie of cookies) {
+                    const parts = cookie.trim().split('=');
+                    if (possibleKeys.includes(parts[0]) && parts[1]) {
+                        return decodeURIComponent(parts[1]);
+                    }
+                }
+            }
+            return ""; 
+        }
+
+        const OMEGA_SPESIAL_LIST = [
+            {"nama": "Dedek Kitty (Spesial)", "kode": "DKTY", "jiko": "Kecil-kecil cabe rawit, selalu bikin gemas!"},
+            {"nama": "Ci Shani (Spesial)", "kode": "CSHN", "jiko": "Semanis cokelat, sehangat mentari pagi."},
+            {"nama": "Ci Gre (Spesial)", "kode": "CGRC", "jiko": "Senyumku akan menerangi hari-harimu!"},
+            {"nama": "Ci Feni (Spesial)", "kode": "CFNI", "jiko": "Siap menghiburmu dengan sejuta pesona!"},
+            {"nama": "Ci Eli (Spesial)", "kode": "CELI", "jiko": "Penyemangat hari dengan tawa ceria."},
+            {"nama": "Full Color: Christy", "kode": "FCHR", "jiko": "Penuh warna dan energi tak terbatas!"},
+            {"nama": "Full Color: Shani", "kode": "FSHN", "jiko": "Keanggunan dalam balutan warna indah."},
+            {"nama": "Full Color: Gracia", "kode": "FGRC", "jiko": "Cahaya bersinar di setiap langkah."},
+            {"nama": "Full Color: Chika", "kode": "FCHK", "jiko": "Selalu ceria dan penuh kejutan!"},
+            {"nama": "Full Color: Feni", "kode": "FFNI", "jiko": "Penuh gaya, penuh warna!"},
+            {"nama": "Full Color: Jinan", "kode": "FJIN", "jiko": "Tenang namun memikat hati."},
+            {"nama": "Full Color: Fiony", "kode": "FFIO", "jiko": "Lembut dan manis bagai keajaiban."},
+            {"nama": "Full Color: Marsha", "kode": "FMAR", "jiko": "Siap membawamu ke dunia penuh warna."},
+            {"nama": "Full Color: Zee", "kode": "FAAZ", "jiko": "Siap melompat lebih tinggi!"},
+            {"nama": "Prime: Feni", "kode": "PFNI", "jiko": "Perform maksimal untukmu!"},
+            {"nama": "Prime: Christy", "kode": "PCHR", "jiko": "Bintang utama di atas panggung."},
+            {"nama": "Prime: Lulu", "kode": "PLLU", "jiko": "Kehangatan tulus di tiap aksi."},
+            {"nama": "Prime: Gracia", "kode": "PGRC", "jiko": "Pesona tak tertandingi!"},
+            {"nama": "Prime: Oniel", "kode": "PONL", "jiko": "Semangat membara tiada henti."},
+            {"nama": "Prime: Fiony", "kode": "PFNY", "jiko": "Indah bagaikan Bunga Mekar."},
+            {"nama": "Prime: Marsha", "kode": "PMSH", "jiko": "Sentuhan ajaib untuk hari bahagiamu."},
+            {"nama": "Prime: Freya", "kode": "PFYR", "jiko": "Freya siap menyemangati harimu!"},
+            {"nama": "Prime: Gita", "kode": "PGTS", "jiko": "Tenang, elegan, dan menawan."},
+            {"nama": "Prime: Aurelia", "kode": "PLAI", "jiko": "Kecantikan alami yang memukau."},
+            {"nama": "Prime: Jessi", "kode": "PJCC", "jiko": "Selalu hadir membawa tawa."},
+            {"nama": "Prime: Muthe", "kode": "PMUT", "jiko": "Manis dan menggemaskan!"}
+        ];
+
+        const OMEGA_LIST = [
+            {"nama": "SSK: Angelina Christy", "kode": "SCHR"}, {"nama": "SSK: Marsha Lenathea", "kode": "SMAR"},
+            {"nama": "SSK: Amanda Sukma", "kode": "SAMA"}, {"nama": "SSK: Flora Shafiq", "kode": "SFLO"},
+            {"nama": "SSK: Indira Seruni", "kode": "SIND"}, {"nama": "SSK: Mutiara Azzahra", "kode": "SMUT"},
+            {"nama": "SSK: Letycia Moreen", "kode": "SMOR"}, {"nama": "SSK: Jesslyn Elly", "kode": "SLYN"},
+            {"nama": "SSK: Greesella Adhalia", "kode": "SGRE"}, {"nama": "SSK: Jazzlyn Trisha", "kode": "STRI"},
+            {"nama": "SSK: Shabilqis Naila", "kode": "SNAL"}, {"nama": "SSK: Michelle Alexandra", "kode": "SLIL"},
+            {"nama": "SSK: Nayla Suji", "kode": "SNAY"}, {"nama": "SSK: Cynthia Yaputera", "kode": "SCYN"},
+            {"nama": "SSK: Oline Manuel", "kode": "SOLI"}, {"nama": "SSK: Danella Piawahan", "kode": "SDAN"},
+            {"nama": "SSK: Freya Jayawardana", "kode": "SFRE"}, {"nama": "SSK: Abigail Rachel", "kode": "SARA"},
+            {"nama": "SSK: Fiony Alveria", "kode": "SFIO"}, {"nama": "SSK: Jessica Chandra", "kode": "SJES"},
+            {"nama": "SSK: Catherina Vallencia", "kode": "SERI"}, {"nama": "SSK: Raisha Syifa", "kode": "SRAI"},
+            {"nama": "SSK: Michelle Levia", "kode": "SMIC"}, {"nama": "SSK: Regina Wilian", "kode": "SELN"},
+            {"nama": "SSK: Cornelia Vanisa", "kode": "SONI"}, {"nama": "SSK: Gita Sekar Andarini", "kode": "SGIT"},
+            {"nama": "SSK: Feni Fitriyanti", "kode": "SFEN"}, {"nama": "SSK: Victoria Kimberly", "kode": "SKIM"},
+            {"nama": "SSK: Aurellia", "kode": "SLIA"}, {"nama": "SSK: Michelle Levia", "kode": "SLEV"},
+            {"nama": "SSK: Cathleen Nixie", "kode": "SCAT"}, {"nama": "SSK: Delynn Asizi", "kode": "SDEL"},
+            {"nama": "SSK: Regina Putri", "kode": "SREG"}, {"nama": "SSK: Kathrina Irene", "kode": "SKAT"},
+            {"nama": "SSK: Anindya Ramadhani", "kode": "SANI"}, {"nama": "SSK: Aurel Alana", "kode": "SLAN"},
+            {"nama": "SSK: Ribka Budiman", "kode": "SRIB"}, {"nama": "SSK: Indah Cahya", "kode": "SIDH"},
+            {"nama": "SSK: Febriola Sinambela", "kode": "SOLL"}, {"nama": "SSK: Chelsea Davina", "kode": "SCHE"},
+            {"nama": "SSK: Grace Octaviani", "kode": "SGRC"}, {"nama": "SSK: Shania Gracia", "kode": "SGRA"},
+            {"nama": "SSK: Fritzy Rosmerian", "kode": "SFRI"}, {"nama": "SSK: Alya Amanda", "kode": "SALY"},
+            {"nama": "SSK: Callista Alifia", "kode": "SCAL"}, {"nama": "SSK: Lulu Salsabila", "kode": "SLUL"},
+            {"nama": "SSK: Desy Natalia", "kode": "SDAI"}, {"nama": "SSK: Nina Tutachia", "kode": "SNAC"},
+            {"nama": "SSK: Gendis Mayrannisa", "kode": "SGEN"}, {"nama": "SSK: Helisma Putri", "kode": "SELI"},
+            {"nama": "SSK: Gabriela Abigail", "kode": "SELL"}
+        ];
+
+        let currentMainTab = 'member';
+        let currentSubMemberIndex = 0;
+        let userBalance = { onceToken: 0, tbCoin: 0, kristal: 0, kristalOmega: 0 };
+        let userOwnedItems = [];
+
+        async function fetchUserStatus() {
+            const session = getSessionCookie();
+            if (!session) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/user/status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_cookie: session })
+                });
+
+                const resData = await response.json();
+                if (response.ok && resData.status === 'success' && resData.data) {
+                    userBalance.onceToken = resData.data.once_token ?? resData.data.onceToken ?? userBalance.onceToken;
+                    userBalance.tbCoin = resData.data.tb_coin ?? resData.data.tbCoin ?? userBalance.tbCoin;
+                    userBalance.kristal = resData.data.kristal ?? userBalance.kristal;
+                    userBalance.kristalOmega = resData.data.kristal_omega ?? resData.data.kristalOmega ?? userBalance.kristalOmega;
+                    
+                    if (resData.data.owned_items) {
+                        userOwnedItems = resData.data.owned_items;
+                    } else if (resData.data.owned) {
+                        userOwnedItems = resData.data.owned;
+                    }
+
+                    updateCurrencyUI();
+                    updateShopOwnedStatus();
+                }
+            } catch (err) {
+                console.error("Gagal menarik status dari server:", err);
+            }
+        }
+
+        function updateShopOwnedStatus() {
+            document.querySelectorAll('.shop-buy-btn').forEach(btn => {
+                const kodeItem = btn.getAttribute('data-kode');
+                if (kodeItem && userOwnedItems.includes(kodeItem)) {
+                    btn.innerText = 'Sudah Dimiliki';
+                    btn.disabled = true;
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.querySelector('.bg-video');
+            if(video) { video.muted = true; video.play().catch(e=>console.log(e)); }
+            setupSwipeGestures();
+            renderShopOmegaItems();
+            updateCurrencyUI();
+            fetchUserStatus();
+        });
+
+        function renderShopOmegaItems() {
+            const gridSpesial = document.getElementById('shopGridSpesial');
+            const gridOmega = document.getElementById('shopGridOmega');
+
+            gridSpesial.innerHTML = OMEGA_SPESIAL_LIST.map(item => `
+                <div class="shop-item card-omega-spesial">
+                    <video class="shop-item-img" autoplay loop muted playsinline style="object-fit:cover;">
+                        <source src="preview_${item.kode}.webm" type="video/webm">
+                        <source src="previewgachamember.webm" type="video/webm">
+                    </video>
+                    <span class="shop-item-title">${item.nama}</span>
+                    <button class="shop-buy-btn btn-omega-spesial" data-kode="${item.kode}" onclick="tukarSkinOmega('${item.nama}', '${item.kode}', 2, 'OMEGA SPESIAL', '${item.jiko || ''}')">
+                        Tukar 2 <img src="KRISTAL_OMEGA.PNG" style="width:11px; height:11px;">
+                    </button>
+                </div>
+            `).join('');
+
+            gridOmega.innerHTML = OMEGA_LIST.map(item => `
+                <div class="shop-item card-omega-regular">
+                    <video class="shop-item-img" autoplay loop muted playsinline style="object-fit:cover;">
+                        <source src="preview_${item.kode}.webm" type="video/webm">
+                        <source src="previewgachamember.webm" type="video/webm">
+                    </video>
+                    <span class="shop-item-title">${item.nama}</span>
+                    <button class="shop-buy-btn btn-omega-regular" data-kode="${item.kode}" onclick="tukarSkinOmega('${item.nama}', '${item.kode}', 1, 'OMEGA', 'Terima kasih telah mendukung oshi!')">
+                        Tukar 1 <img src="KRISTAL_OMEGA.PNG" style="width:11px; height:11px;">
+                    </button>
+                </div>
+            `).join('');
+            
+            updateShopOwnedStatus();
+        }
+
+        function switchShopSubTab(tab) {
+            document.getElementById('shopTabMain').classList.toggle('active', tab === 'main');
+            document.getElementById('shopTabSpesial').classList.toggle('active', tab === 'spesial');
+            document.getElementById('shopTabOmega').classList.toggle('active', tab === 'omega');
+
+            document.getElementById('shopGridMain').style.display = (tab === 'main') ? 'grid' : 'none';
+            document.getElementById('shopGridSpesial').style.display = (tab === 'spesial') ? 'grid' : 'none';
+            document.getElementById('shopGridOmega').style.display = (tab === 'omega') ? 'grid' : 'none';
+        }
+
+        function updateCurrencyUI() {
+            document.getElementById('onceCount').innerText = userBalance.onceToken;
+            const imgSec = document.getElementById('imgSecondary');
+            const valSec = document.getElementById('valSecondary');
+            const valTert = document.getElementById('valTertiary');
+
+            valTert.innerText = userBalance.kristalOmega;
+
+            if (currentMainTab === 'member' && currentSubMemberIndex === 1) {
+                imgSec.setAttribute("src", "KRISTAL.PNG");
+                valSec.innerText = userBalance.kristal;
+            } else {
+                imgSec.setAttribute("src", "TBCOIN.PNG");
+                valSec.innerText = userBalance.tbCoin;
+            }
+
+            const cost1x = document.getElementById('cost1x');
+            const cost10x = document.getElementById('cost10x');
+            const tokenImg = `<img src="ONCETOKEN.PNG" class="curr-img">`;
+            
+            if (currentMainTab === 'web') {
+                cost1x.innerHTML = `${tokenImg} 5`; cost10x.innerHTML = `${tokenImg} 50`;
+            } else {
+                cost1x.innerHTML = `${tokenImg} 1`; cost10x.innerHTML = `${tokenImg} 10`;
+            }
+        }
+
+        function switchMainTab(tab) {
+            currentMainTab = tab;
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById('wrapperMember').style.display = 'none';
+            document.getElementById('viewWeb').style.display = 'none';
+            document.getElementById('viewShop').style.display = 'none';
+            document.getElementById('spinSection').style.display = 'flex';
+
+            if (tab === 'member') {
+                tabs[0].classList.add('active');
+                document.getElementById('wrapperMember').style.display = 'flex';
+            } else if (tab === 'web') {
+                tabs[1].classList.add('active');
+                document.getElementById('viewWeb').style.display = 'flex';
+            } else if (tab === 'shop') {
+                tabs[2].classList.add('active');
+                document.getElementById('viewShop').style.display = 'block';
+                document.getElementById('spinSection').style.display = 'none';
+            }
+            updateCurrencyUI();
+        }
+
+        function swipeToSubTab(index) {
+            currentSubMemberIndex = index;
+            document.getElementById('swipeArea').style.transform = `translateX(-${index * 100}%)`;
+            document.getElementById('subBtnReg').classList.toggle('active', index === 0);
+            document.getElementById('subBtnMso').classList.toggle('active', index === 1);
+            updateCurrencyUI();
+        }
+
+        function setupSwipeGestures() {
+            const container = document.getElementById('swipeArea');
+            let startX = 0;
+            container.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, {passive: true});
+            container.addEventListener('touchend', e => {
+                let endX = e.changedTouches[0].clientX;
+                if (startX - endX > 40 && currentSubMemberIndex === 0) swipeToSubTab(1);
+                if (endX - startX > 40 && currentSubMemberIndex === 1) swipeToSubTab(0);
+            }, {passive: true});
+        }
+
+        async function tukarSkinOmega(nama, kode, hargaKristal, tier, jikoText) {
+            const sessionCookie = getSessionCookie();
+            if (!confirm(`Yakin ingin menukar ${hargaKristal} Kristal Omega untuk ${nama}?`)) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/shop/buy`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_cookie: sessionCookie,
+                        item_code: kode
+                    })
+                });
+
+                const resData = await response.json();
+
+                if (!response.ok) {
+                    alert("Transaksi Gagal: " + (resData.detail || "Gagal memproses penukaran."));
+                    return;
+                }
+
+                if (resData.updated_balance) {
+                    userBalance.kristalOmega = resData.updated_balance.kristal_omega ?? userBalance.kristalOmega;
+                    updateCurrencyUI();
+                }
+
+                tampilkanHasilModal({
+                    title: `SUKSES PENUKARAN TIER ${tier}! 🎉`,
+                    results: [{
+                        name: nama,
+                        media_url: `preview_${kode}.webm`,
+                        jiko: jikoText
+                    }]
+                });
+
+                await fetchUserStatus();
+
+            } catch (err) {
+                alert("Terjadi kesalahan koneksi ke server.");
+            }
+        }
+
+        async function tarikGacha(jumlahRoll) {
+            const isSkip = document.getElementById('skipAnimasiCheck').checked;
+            const sessionCookie = getSessionCookie();
+
+            let bannerType = "reguler";
+            if (currentMainTab === 'member') {
+                bannerType = (currentSubMemberIndex === 1) ? "mso" : "reguler";
+            } else if (currentMainTab === 'web') {
+                bannerType = "skin_web";
+            }
+
+            const uiMain = document.getElementById('uiMain');
+            const bgOverlay = document.getElementById('bgOverlay');
+            
+            if (!isSkip) {
+                uiMain.style.opacity = '0';
+                bgOverlay.style.opacity = '0';
+                document.getElementById('overlay').style.display = 'flex';
+                document.getElementById('overlay').style.background = 'rgba(0,0,0,0.85)';
+                document.getElementById('loadingAnim').style.display = 'flex';
+                document.getElementById('resultBox').style.display = 'none';
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/api/gacha/roll`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_cookie: sessionCookie,
+                        banner_type: bannerType,
+                        roll_count: jumlahRoll
+                    })
+                });
+
+                const resData = await response.json();
+
+                if (!response.ok) {
+                    alert("Gagal Roll: " + (resData.detail || "Terjadi kesalahan, mungkin sesi habis."));
+                    document.getElementById('overlay').style.display = 'none';
+                    uiMain.style.opacity = '1';
+                    bgOverlay.style.opacity = '1';
+                    return;
+                }
+
+                if (resData.remaining_balance) {
+                    userBalance.onceToken = resData.remaining_balance.once_token ?? userBalance.onceToken;
+                    userBalance.tbCoin = resData.remaining_balance.tb_coin ?? userBalance.tbCoin;
+                    userBalance.kristalOmega = resData.remaining_balance.kristal_omega ?? userBalance.kristalOmega;
+                    updateCurrencyUI();
+                }
+
+                const dataHasil = {
+                    title: `SELAMAT! HASIL (${resData.results ? resData.results.length : 0}x Roll)`,
+                    results: resData.results || []
+                };
+
+                if (!isSkip) {
+                    setTimeout(() => {
+                        uiMain.style.opacity = '1';
+                        bgOverlay.style.opacity = '1';
+                        document.getElementById('loadingAnim').style.display = 'none';
+                        tampilkanHasilModal(dataHasil);
+                    }, 1200);
+                } else {
+                    tampilkanHasilModal(dataHasil);
+                }
+
+                fetchUserStatus();
+
+            } catch (err) {
+                alert("Gagal terhubung ke server backend.");
+                document.getElementById('overlay').style.display = 'none';
+                uiMain.style.opacity = '1';
+                bgOverlay.style.opacity = '1';
+            }
+        }
+
+        function tampilkanHasilModal(data) {
+            const overlay = document.getElementById('overlay');
+            const resultBox = document.getElementById('resultBox');
+            const gridContainer = document.getElementById('gachaGridContainer');
+            const jikoBox = document.getElementById('jikoContainer');
+
+            document.getElementById('resultTitle').innerText = data.title;
+            gridContainer.innerHTML = '';
+
+            const results = data.results || [];
+
+            jikoBox.innerText = `"${results[0]?.jiko || 'Selamat atas koleksi barumu!'}"`;
+
+            results.forEach((item, index) => {
+                const mediaUrl = item.media_url || (currentSubMemberIndex === 1 ? 'previewgachamember.webm' : 'preview_member.png');
+                const isVideo = mediaUrl.endsWith('.webm');
+
+                let mediaHtml = isVideo 
+                    ? `<video autoplay loop muted playsinline><source src="${mediaUrl}" type="video/webm"></video>`
+                    : `<img src="${mediaUrl}" onerror="this.src='https://placehold.co/120x160/0088ff/ffffff?text=ITEM'">`;
+
+                const cardHtml = `
+                    <div class="flip-card" id="card-${index}" onclick="this.classList.toggle('flipped')">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <img src="thebeyonce.png" onerror="this.src='ONCETOKEN.PNG'" alt="Logo">
+                                <span style="font-size: 8px; margin-top:4px;">#${index+1}</span>
+                            </div>
+                            <div class="flip-card-back">
+                                ${mediaHtml}
+                                <div class="card-label">${item.name || 'Member'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                gridContainer.insertAdjacentHTML('beforeend', cardHtml);
+            });
+
+            if (results.length === 1) {
+                gridContainer.style.gridTemplateColumns = '1fr';
+                gridContainer.style.maxWidth = '160px';
+            } else {
+                gridContainer.style.gridTemplateColumns = 'repeat(5, 1fr)';
+                gridContainer.style.maxWidth = '100%';
+            }
+
+            overlay.style.display = 'flex';
+            resultBox.style.display = 'flex';
+
+            setTimeout(() => {
+                results.forEach((_, index) => {
+                    setTimeout(() => {
+                        const card = document.getElementById(`card-${index}`);
+                        if (card) card.classList.add('flipped');
+                    }, index * 150); 
+                });
+            }, 1200); 
+        }
+
+        function tutupOverlay() { 
+            document.getElementById('overlay').style.display = 'none'; 
+        }
+
+        async function prosesBeli(itemCode, namaItem, konfirmasiPesan) {
+            const sessionCookie = getSessionCookie();
+            if (!confirm(konfirmasiPesan)) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/shop/buy`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_cookie: sessionCookie,
+                        item_code: itemCode
+                    })
+                });
+
+                const resData = await response.json();
+
+                if (!response.ok) {
+                    alert("Transaksi Gagal: " + (resData.detail || "Saldo tidak cukup atau item tidak ditemukan."));
+                    return;
+                }
+
+                if (resData.updated_balance) {
+                    userBalance.tbCoin = resData.updated_balance.tb_coin ?? userBalance.tbCoin;
+                    userBalance.onceToken = resData.updated_balance.once_token ?? userBalance.onceToken;
+                    userBalance.kristal = resData.updated_balance.kristal ?? userBalance.kristal;
+                    userBalance.kristalOmega = resData.updated_balance.kristal_omega ?? userBalance.kristalOmega;
+                    updateCurrencyUI();
+                }
+
+                alert(`Transaksi ${namaItem} berhasil diproses! 🎉`);
+                await fetchUserStatus();
+
+            } catch (err) {
+                alert("Terjadi kesalahan koneksi ke server backend.");
+            }
+        }
+    </script>
+</body>
+</html>

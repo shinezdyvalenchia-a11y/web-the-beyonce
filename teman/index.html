@@ -1,0 +1,1507 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>galery alcsta48 - hubungan teman</title>
+    <link rel="icon" type="image/png" href="../icon.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 1. BACKGROUND VIDEO (SAMA PERSIS BERANDA) */
+        .video-bg {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover; z-index: -3;
+        }
+
+        .corner-glows {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2; pointer-events: none; overflow: hidden;
+        }
+        .glow { position: absolute; width: 50vw; height: 50vw; max-width: 500px; max-height: 500px; border-radius: 50%; filter: blur(140px); opacity: 0.15; }
+        .glow-tl { top: -10%; left: -10%; background: #ff007f; }
+        .glow-tr { top: -10%; right: -10%; background: #ff7700; }
+        .glow-bl { bottom: -10%; left: -10%; background: #0088ff; }
+        .glow-br { bottom: -10%; right: -10%; background: #ffffff; opacity: 0.1; }
+
+        /* 2. SIDEBAR KIRI (SAMA PERSIS BERANDA) */
+        .left-sidebar {
+            width: 90px;
+            background: rgba(20, 20, 30, 0.4);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 20px 5px; gap: 12px; z-index: 100;
+            overflow-y: auto; flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+        .left-sidebar::-webkit-scrollbar { display: none; }
+
+        .side-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-decoration: none; color: #fff; font-weight: 700; font-size: 10px;
+            background: rgba(255, 255, 255, 0.15); width: 70px; height: 60px; border-radius: 16px;
+            transition: 0.3s; border: 1px solid rgba(255, 255, 255, 0.25); text-align: center;
+            gap: 4px; flex-shrink: 0;
+        }
+        .side-item:hover { background: rgba(255, 255, 255, 0.35); transform: scale(1.03); }
+        .side-item.active { background: rgba(255, 255, 255, 0.85); color: #1a5cff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .side-icon { font-size: 20px; }
+
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+            z-index: 90; opacity: 0; transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.active { display: block; opacity: 1; }
+
+        /* 3. MAIN CONTAINER & TOP NAVBAR */
+        .main-content {
+            flex-grow: 1; display: flex; flex-direction: column;
+            position: relative; height: 100%; overflow: hidden; z-index: 10;
+        }
+
+        .top-navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 25px; z-index: 20; width: 100%;
+        }
+        .top-left { display: flex; align-items: center; gap: 12px; }
+        .top-right { display: flex; align-items: center; gap: 10px; }
+
+        .toggle-btn-mobile {
+            display: none; background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #fff; font-size: 18px; padding: 6px 12px;
+            border-radius: 12px; cursor: pointer; flex-shrink: 0;
+        }
+
+        .brand-logo {
+            display: flex; align-items: center; gap: 10px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            padding: 6px 16px; border-radius: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .logo-main { height: 35px; width: auto; border-radius: 50%; object-fit: contain; }
+        .brand-text { font-weight: 800; font-size: 15px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.4); white-space: nowrap; }
+
+        .nav-back-btn {
+            background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 6px 12px; border-radius: 15px;
+            color: #fff; font-size: 11px; font-weight: 800;
+            text-decoration: none; transition: 0.2s; white-space: nowrap;
+        }
+        .nav-back-btn:hover { background: rgba(255, 255, 255, 0.45); }
+
+        .inventory-bar {
+            display: flex; gap: 12px; align-items: center;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 6px 16px; border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .inv-item { display: flex; align-items: center; gap: 5px; color: #fff; font-size: 12px; font-weight: 800; }
+        .inv-item img { width: 18px; height: 18px; object-fit: contain; }
+
+        /* VIEWPORT LAYOUT: SPLIT PANEL */
+        .search-split-stage {
+            display: flex;
+            width: 100%;
+            height: calc(100vh - 75px);
+            overflow: hidden;
+        }
+
+        /* LEFT PANEL: SEARCH & LISTS (PUTIH TRANSPARAN) */
+        .search-manager-panel {
+            flex: 0 0 50%;
+            max-width: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+            padding: 20px 24px;
+        }
+
+        /* TAB BAR PERSIS MLBB */
+        .mlbb-tabs {
+            display: flex;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.25);
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        .mlbb-tab-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 15px;
+            font-weight: 800;
+            padding: 10px 5px;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+        .mlbb-tab-btn:hover { color: #fff; }
+        .mlbb-tab-btn.active {
+            color: #00d4ff;
+            text-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+        }
+        .mlbb-tab-btn.active::after {
+            content: '';
+            position: absolute; bottom: -2px; left: 0; width: 100%; height: 2px;
+            background: #00d4ff;
+            box-shadow: 0 0 8px #00d4ff;
+        }
+        .mlbb-badge {
+            background: #ff1744;
+            color: #fff;
+            font-size: 9px;
+            font-weight: 900;
+            padding: 1px 5px;
+            border-radius: 8px;
+            margin-left: 4px;
+        }
+
+        /* LIST VIEWPORT */
+        .list-viewport {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-right: 4px;
+        }
+        .list-viewport::-webkit-scrollbar { width: 4px; }
+        .list-viewport::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+
+        /* CARDS (PUTIH TRANSPARAN) */
+        .user-list-card {
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+        .user-list-card:hover {
+            background: rgba(255, 255, 255, 0.28);
+            transform: translateY(-1px);
+        }
+
+        .user-card-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+        .user-card-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            background: #fff;
+            flex-shrink: 0;
+        }
+        .user-card-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .user-card-name {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        .user-card-username {
+            font-size: 11px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 1px;
+        }
+        .user-card-rank-badge {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 900;
+            color: #ffd700;
+            padding: 1px 5px;
+            width: max-content;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        .user-card-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        /* ACTIONS BUTTONS */
+        .btn-card-action {
+            border: none;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #fff;
+        }
+        .btn-accept { background: linear-gradient(135deg, #00e676, #00b0ff); }
+        .btn-accept:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0, 230, 118, 0.35); }
+        
+        .btn-decline { background: linear-gradient(135deg, #ff1744, #ff5252); }
+        .btn-decline:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(255, 23, 68, 0.35); }
+
+        .btn-check-profile {
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .btn-check-profile:hover { background: rgba(255, 255, 255, 0.4); }
+
+        /* RIGHT PANEL: PROFILE PREVIEW (PUTIH TRANSPARAN) */
+        .profile-preview-panel {
+            flex: 0 0 50%;
+            max-width: 50%;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-left: 1px solid rgba(255, 255, 255, 0.25);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* PLACEHOLDER PREVIEW */
+        .preview-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.85);
+            padding: 30px;
+            gap: 15px;
+        }
+        .placeholder-icon {
+            font-size: 60px;
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+            animation: pulsePlaceholder 2.5s infinite alternate;
+        }
+        @keyframes pulsePlaceholder {
+            from { transform: scale(1); opacity: 0.6; }
+            to { transform: scale(1.08); opacity: 0.95; }
+        }
+
+        /* VIEWPORT CONTAINER PREVIEW */
+        .preview-content-stage {
+            display: none;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            position: relative;
+            padding: 20px 24px;
+        }
+        .preview-content-stage::-webkit-scrollbar { width: 4px; }
+        .preview-content-stage::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 10px; }
+
+        /* CLOSE PREVIEW FOR MOBILE */
+        .close-preview-btn {
+            display: none;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            color: #fff;
+            z-index: 110;
+        }
+
+        /* PROFILE VIEWS STYLE (PUTIH TRANSPARAN) */
+        .wota-user-header {
+            display: flex; gap: 18px; align-items: center; width: 100%;
+            margin-bottom: 20px;
+        }
+        .wota-avatar-box {
+            position: relative; width: 70px; height: 70px; flex-shrink: 0;
+            border-radius: 18px; padding: 2px;
+            background: linear-gradient(135deg, #ffd700, #ff007f);
+            box-shadow: 0 4px 15px rgba(255, 170, 0, 0.3);
+        }
+        .wota-avatar-img {
+            width: 100%; height: 100%; border-radius: 16px;
+            object-fit: cover; background: #fff;
+        }
+        .wota-user-meta {
+            display: flex; flex-direction: column; gap: 3px; flex-grow: 1; min-width: 0;
+        }
+        .wota-display-name {
+            font-size: 20px; font-weight: 900; color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .wota-oshi-badge {
+            background: rgba(255, 0, 127, 0.2); border: 1px solid rgba(255, 0, 127, 0.45);
+            padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 900; color: #ff007f;
+            width: max-content; margin-top: 2px;
+        }
+        .wota-stats-strip {
+            display: flex; gap: 8px; margin-top: 10px;
+        }
+        .wota-stat-box {
+            background: rgba(255, 255, 255, 0.18); border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px; padding: 4px 10px; display: flex; flex-direction: column;
+            font-size: 9px; font-weight: 800; color: rgba(255,255,255,0.7);
+        }
+        .wota-stat-box .val { font-size: 12px; font-weight: 900; color: #00d4ff; margin-top: 1px; }
+
+        .wota-medals-row {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;
+        }
+        .wota-medal-card {
+            background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px; padding: 10px 8px; display: flex; flex-direction: column;
+            align-items: center; text-align: center;
+        }
+        .wota-emblem-badge { font-size: 20px; margin-bottom: 4px; }
+        .wota-medal-category { font-size: 8px; font-weight: 800; color: rgba(255,255,255,0.6); text-transform: uppercase; }
+        .wota-medal-title { font-size: 12px; font-weight: 900; color: #fff; margin-top: 2px; }
+        .wota-medal-sub { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.75); margin-top: 1px; }
+
+        .wota-rank-row {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;
+        }
+        .wota-rank-box {
+            background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 14px; padding: 8px; display: flex; flex-direction: column; align-items: center; text-align: center;
+        }
+        .wota-rank-img { width: 34px; height: 34px; object-fit: contain; margin-bottom: 4px; }
+        .wota-rank-lbl { font-size: 8px; font-weight: 800; color: rgba(255,255,255,0.6); }
+        .wota-rank-val { font-size: 11px; font-weight: 900; color: #fff; margin-top: 2px; }
+
+        /* PREVIEW SUBTABS */
+        .preview-tabs {
+            display: flex; gap: 8px;
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+            padding: 4px; border-radius: 12px; margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        .preview-tabs::-webkit-scrollbar { display: none; }
+        .preview-tab-btn {
+            background: transparent; border: none; color: rgba(255,255,255,0.7);
+            font-size: 11px; font-weight: 800; padding: 8px 12px; border-radius: 8px;
+            cursor: pointer; transition: all 0.2s; white-space: nowrap;
+        }
+        .preview-tab-btn:hover { color: #fff; }
+        .preview-tab-btn.active {
+            background: rgba(255, 255, 255, 0.3); color: #00d4ff; font-weight: 900;
+        }
+
+        .preview-tab-pane { display: none; }
+        .preview-tab-pane.active { display: block; }
+
+        /* STANDEE VIEW (READ ONLY) */
+        .preview-standee-stage {
+            display: flex; gap: 14px; margin-top: 10px;
+        }
+        .preview-standee-left {
+            flex: 1; display: flex; flex-direction: column; gap: 14px;
+        }
+        .preview-standee-right {
+            flex: 0 0 200px; max-width: 200px;
+            height: 320px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.35);
+            background: rgba(0,0,0,0.45); overflow: hidden; position: relative;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .preview-standee-media {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .preview-standee-jiko {
+            position: absolute; bottom: 10px; left: 10px; right: 10px;
+            background: rgba(20,20,30,0.9); border: 1px solid rgba(255,255,255,0.2);
+            padding: 8px; border-radius: 10px; font-size: 9px; font-weight: 700;
+            color: #fff; text-align: center;
+        }
+        
+        .showcase-grid-cards {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+        }
+        .preview-showcase-card {
+            aspect-ratio: 2.2/3; background: rgba(0,0,0,0.5); border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.25); overflow: hidden; position: relative;
+        }
+        .preview-showcase-card img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .preview-bio-card {
+            background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 14px; padding: 14px; font-size: 12px; font-weight: 700;
+            color: #fff; line-height: 1.5;
+        }
+
+        /* STATS VIEW */
+        .preview-stats-panel {
+            background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 14px;
+        }
+        .rings-summary-row {
+            display: flex; justify-content: space-around; gap: 10px;
+        }
+        .stat-circle-ring {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: radial-gradient(closest-side, #0b0e14 78%, transparent 80% 100%),
+                        conic-gradient(#ff007f calc(75% * 1), rgba(255,255,255,0.15) 0);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 900; text-align: center;
+        }
+        .stat-circle-ring small { font-size: 8px; color: rgba(255,255,255,0.6); margin-top: 1px; }
+
+        .breakdown-matrix {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%;
+        }
+        .matrix-pill {
+            background: rgba(0,0,0,0.3); border-radius: 10px; padding: 6px 2px;
+            font-size: 10px; font-weight: 800; border: 1px solid rgba(255,255,255,0.15);
+            text-align: center;
+        }
+
+        /* HISTORY VIEW */
+        .preview-history-viewport {
+            max-height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
+        }
+        .preview-history-viewport::-webkit-scrollbar { display: none; }
+        .match-card-flat {
+            background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 14px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .match-card-flat.win { border-left: 4px solid #00e676; }
+        .match-card-flat.lose { border-left: 4px solid #ff3d00; }
+        .match-card-flat .hero-icon-name { display: flex; align-items: center; gap: 10px; }
+        .match-card-flat .hero-icon { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
+        .match-card-flat .match-kda { font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 900; }
+        .match-card-flat .match-result { font-weight: 900; font-size: 11px; text-transform: uppercase; }
+        .match-card-flat.win .match-result { color: #00e676; }
+        .match-card-flat.lose .match-result { color: #ff3d00; }
+
+        /* AFFINITY VIEW */
+        .preview-affinity-stage {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 320px; position: relative; background: rgba(255, 255, 255, 0.15); border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.25); overflow: hidden;
+        }
+        .concentric-ring {
+            position: absolute; border: 1px dashed rgba(255,255,255,0.3);
+            border-radius: 50%; pointer-events: none;
+        }
+        .ring-1 { width: 100px; height: 100px; }
+        .ring-2 { width: 200px; height: 200px; }
+        .ring-3 { width: 300px; height: 300px; }
+        .center-user-node {
+            width: 60px; height: 60px; border-radius: 50%;
+            border: 3px solid #ff007f; position: relative; z-index: 5;
+            background: #fff; overflow: hidden;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.6);
+        }
+        .center-user-node img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .orbit-node-item {
+            position: absolute; display: flex; flex-direction: column;
+            align-items: center; gap: 2px; font-size: 9px; font-weight: 800;
+            z-index: 4; text-align: center;
+        }
+        .node-avatar-circle {
+            width: 36px; height: 36px; border-radius: 50%;
+            border: 2px solid #ffd700; overflow: hidden; background: #fff;
+        }
+        .node-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+        .node-heart-icon { font-size: 12px; position: absolute; top: -4px; right: -4px; }
+
+        /* KOLEKSI TAB */
+        .preview-koleksi-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+            max-height: 350px; overflow-y: auto;
+        }
+        .preview-koleksi-grid::-webkit-scrollbar { display: none; }
+        .preview-skin-item {
+            aspect-ratio: 2.2/3; background: rgba(0,0,0,0.5); border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.25); overflow: hidden; position: relative;
+        }
+        .preview-skin-item img { width: 100%; height: 100%; object-fit: cover; }
+        .preview-skin-tag {
+            position: absolute; top: 4px; right: 4px; font-size: 7px; font-weight: 900;
+            color: #fff; padding: 1px 4px; border-radius: 4px; text-transform: uppercase;
+        }
+        .preview-skin-tag.myth { background: linear-gradient(135deg, #ff0055, #ffaa00); }
+        .preview-skin-tag.legend { background: linear-gradient(135deg, #b000ff, #00e5ff); }
+        .preview-skin-tag.rare { background: linear-gradient(135deg, #0077ff, #00ffd5); }
+        .preview-skin-tag.uncommon { background: linear-gradient(135deg, #00ff66, #aaff00); }
+        .preview-skin-tag.omega { background: linear-gradient(135deg, #ffaa00, #ff5500); }
+
+        /* 4. RESPONSIVE DESIGN */
+        @media screen and (max-width: 900px) {
+            .search-manager-panel {
+                flex: 0 0 100%;
+                max-width: 100%;
+                border-right: none;
+            }
+            .profile-preview-panel {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                max-width: 100%;
+                height: 100vh;
+                z-index: 120;
+            }
+            .profile-preview-panel.active {
+                display: flex;
+            }
+            .close-preview-btn {
+                display: flex;
+            }
+            
+            .left-sidebar {
+                position: fixed; top: 0; left: 0; height: 100%;
+                width: 180px; padding: 25px 10px; gap: 10px;
+                transform: translateX(-100%);
+                box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+                align-items: stretch;
+            }
+            .left-sidebar.open { transform: translateX(0); }
+            .side-item { width: 100%; height: 44px; flex-direction: row; justify-content: flex-start; padding: 0 15px; font-size: 12px; border-radius: 12px; }
+            .toggle-btn-mobile { display: block; }
+            
+            .top-navbar { padding: 10px 12px; }
+            .brand-text { display: none; }
+            .logo-sub { display: none; }
+            .inventory-bar { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Video Background (Beranda Style) -->
+    <video class="video-bg" autoplay loop muted playsinline>
+        <source src="../beranda/latarglobal.webm" type="video/webm">
+        <source src="latarglobal.webm" type="video/webm">
+    </video>
+
+    <!-- Ambient corner glows -->
+    <div class="corner-glows">
+        <div class="glow glow-tl"></div>
+        <div class="glow glow-tr"></div>
+        <div class="glow glow-bl"></div>
+        <div class="glow glow-br"></div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- ── LEFT SIDEBAR ── -->
+            <aside class="left-sidebar" id="leftSidebar">
+        <a href="../beranda/" class="side-item"><span class="side-icon">💬</span>Beranda</a>
+        <a href="../profil/" class="side-item"><span class="side-icon">👤</span>Profil</a>
+        <a href="../gacha-skin/" class="side-item"><span class="side-icon">🎁</span>Gacha</a>
+        <a href="../live-jkt48/" class="side-item"><span class="side-icon">🎤</span>Live JKT</a>
+        <a href="../alcstify/" class="side-item"><span class="side-icon">🎵</span>Alcstify</a>
+        <a href="../mini-games/" class="side-item"><span class="side-icon">🎮</span>Mini Games</a>
+        <a href="../grup/" class="side-item"><span class="side-icon">👥</span>Grup</a>
+        <a href="../temen-mabar/" class="side-item"><span class="side-icon">⚔️</span>Mabar</a>
+        <a href="../medsos-saver/" class="side-item"><span class="side-icon">📥</span>Saver</a>
+        <a href="../koleksi-kartu/" class="side-item"><span class="side-icon">🃏</span>Kartu</a>
+        <a href="../bio-member/" class="side-item"><span class="side-icon">📖</span>Bio</a>
+        <a href="../link-shortcut/" class="side-item"><span class="side-icon">🔗</span>Shortcut</a>
+        <a href="../update-member/" class="side-item"><span class="side-icon">📱</span>Update Sosmed</a>
+        <a href="../tentang/" class="side-item"><span class="side-icon">ℹ️</span>Tentang</a>
+    </aside>
+
+    <!-- ── MAIN WRAPPER ── -->
+    <main class="main-content">
+        <!-- Top navbar -->
+        <header class="top-navbar">
+            <div class="top-left">
+                <button class="toggle-btn-mobile" onclick="toggleSidebar()">☰</button>
+                <div class="brand-logo">
+                    <img src="../logo.png.png" class="logo-main" alt="Logo" onerror="this.onerror=null; this.src='../logo.png';">
+                    <span class="brand-text">Kitty Tenacity</span>
+                </div>
+            </div>
+            <div class="top-right">
+                <div class="inventory-bar" id="inventoryBar" style="display:none;">
+                    <div class="inv-item"><img src="../beranda/KRISTAL.PNG" alt="K"> <span id="valKristal">0</span></div>
+                    <div class="inv-item"><img src="../beranda/TBCOIN.PNG" alt="C"> <span id="valTbCoin">0</span></div>
+                    <div class="inv-item"><img src="../beranda/ONCETOKEN.PNG" alt="T"> <span id="valOnceToken">0</span></div>
+                    <div class="inv-item"><img src="../beranda/KRISTAL_OMEGA.PNG" alt="O"> <span id="valKristalOmega">0</span></div>
+                </div>
+                <a href="../cari-pengguna/" class="nav-back-btn">🔍 Cari User</a>
+            </div>
+        </header>
+
+        <!-- Search Split View -->
+        <div class="search-split-stage">
+            
+            <!-- COLUMN 1: RELATION MANAGER LIST -->
+            <div class="search-manager-panel">
+                <!-- MLBB Tabs -->
+                <div class="mlbb-tabs">
+                    <button class="mlbb-tab-btn active" id="tabFriendsBtn" onclick="switchManagerTab('friends')">Teman Saya</button>
+                    <button class="mlbb-tab-btn" id="tabRequestsBtn" onclick="switchManagerTab('requests')">
+                        Permintaan <span class="mlbb-badge" id="requestsCountBadge" style="display: none;">0</span>
+                    </button>
+                </div>
+
+                <!-- TEMAN SAYA TAB DOCK -->
+                <div id="dockFriends" class="manager-tab-content">
+                    <div class="list-viewport" id="friendsListContainer">
+                        <div class="preview-placeholder" style="height: auto; padding: 50px 10px;">
+                            <span class="placeholder-icon">🤝</span>
+                            <span>Memuat daftar teman...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PERMINTAAN TEMAN TAB DOCK -->
+                <div id="dockRequests" class="manager-tab-content" style="display: none;">
+                    <div class="list-viewport" id="requestsListContainer">
+                        <!-- Filled via JS -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- COLUMN 2: READ-ONLY PROFILE PREVIEW -->
+            <div class="profile-preview-panel" id="profilePreviewPanel">
+                <!-- Close btn for mobile overlay -->
+                <button class="close-preview-btn" onclick="closePreviewMobile()">✕</button>
+
+                <!-- Initial placeholder -->
+                <div class="preview-placeholder" id="previewPlaceholder">
+                    <span class="placeholder-icon">👤</span>
+                    <span style="font-size:13px; font-weight:800; max-width: 250px; text-align:center;">Pilih teman atau pengirim permintaan untuk melihat profil lengkap</span>
+                </div>
+
+                <!-- Preview Content Stage -->
+                <div class="preview-content-stage" id="previewContentStage">
+                    
+                    <!-- User Meta Header -->
+                    <div class="wota-user-header">
+                        <div class="wota-avatar-box">
+                            <img class="wota-avatar-img" id="prevUserAvatar" src="https://i.ibb.co.com/Y4JdtfGH/download.png">
+                        </div>
+                        <div class="wota-user-meta">
+                            <h3 class="wota-display-name" id="prevUserDisplayName">User Wota</h3>
+                            <span class="wota-oshi-badge" id="prevUserOshi">Oshi: None</span>
+                            <div class="wota-stats-strip">
+                                <div class="wota-stat-box">👁️ Kunjungan<span class="val" id="prevVisits">0</span></div>
+                                <div class="wota-stat-box" id="prevLikeBox" style="cursor: pointer;" onclick="sendLikeToUser()">👍 Suka<span class="val" id="prevLikes">0</span></div>
+                                <div class="wota-stat-box">🔥 Populer<span class="val" id="prevPopularity">0</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3 Wota Medals: Tim | Role | Gen -->
+                    <div class="wota-medals-row">
+                        <div class="wota-medal-card">
+                            <div class="wota-emblem-badge" id="prevTeamEmblem">⚪</div>
+                            <span class="wota-medal-category">Tim Favorit</span>
+                            <span class="wota-medal-title" id="prevTeamTitle">None</span>
+                            <span class="wota-medal-sub" id="prevTeamDesc">None</span>
+                        </div>
+                        <div class="wota-medal-card">
+                            <div class="wota-emblem-badge" id="prevRoleEmblem">👑</div>
+                            <span class="wota-medal-category">Role Wota</span>
+                            <span class="wota-medal-title" id="prevRoleTitle">None</span>
+                            <span class="wota-medal-sub" id="prevRoleDesc">Belum Memilih</span>
+                        </div>
+                        <div class="wota-medal-card">
+                            <div class="wota-emblem-badge" id="prevGenEmblem">⭐</div>
+                            <span class="wota-medal-category">Generasi</span>
+                            <span class="wota-medal-title" id="prevGenTitle">None</span>
+                            <span class="wota-medal-sub" id="prevGenDesc">Belum Memilih</span>
+                        </div>
+                    </div>
+
+                    <!-- Rank strip info -->
+                    <div class="wota-rank-row">
+                        <div class="wota-rank-box">
+                            <img src="../beranda/ONCETOKEN.PNG" class="wota-rank-img">
+                            <span class="wota-rank-lbl">Rank Game</span>
+                            <span class="wota-rank-val" id="prevRankName">Bronze</span>
+                        </div>
+                        <div class="wota-rank-box">
+                            <img src="../beranda/KRISTAL_OMEGA.PNG" class="wota-rank-img">
+                            <span class="wota-rank-lbl">Kolektor</span>
+                            <span class="wota-rank-val" id="prevCollectorTitle">Newbie</span>
+                        </div>
+                        <div class="wota-rank-box">
+                            <img src="../beranda/TBCOIN.PNG" class="wota-rank-img">
+                            <span class="wota-rank-lbl">Poin</span>
+                            <span class="wota-rank-val" id="prevCollectorPoints">0 Poin</span>
+                        </div>
+                    </div>
+
+                    <!-- Preview details tabs navigation -->
+                    <div class="preview-tabs">
+                        <button class="preview-tab-btn active" onclick="switchPreviewDetailTab(event, 'prevTabInfo')">Profil</button>
+                        <button class="preview-tab-btn" onclick="switchPreviewDetailTab(event, 'prevTabStats')">Statistik</button>
+                        <button class="preview-tab-btn" onclick="switchPreviewDetailTab(event, 'prevTabHistory')">Riwayat</button>
+                        <button class="preview-tab-btn" onclick="switchPreviewDetailTab(event, 'prevTabAffinity')">Hubungan</button>
+                        <button class="preview-tab-btn" onclick="switchPreviewDetailTab(event, 'prevTabKoleksi')">Koleksi</button>
+                    </div>
+
+                    <!-- PREVIEW TAB PANE: PROFIL & STANDEE -->
+                    <div class="preview-tab-pane active" id="prevTabInfo">
+                        <div class="preview-bio-card" id="prevUserBioCard" style="margin-bottom: 12px;">
+                            "I'm so lonely, listen to my heart"
+                        </div>
+                        <div class="preview-standee-stage">
+                            <div class="preview-standee-left">
+                                <span style="font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.7); text-transform: uppercase;">Pajangan Kartu</span>
+                                <div class="showcase-grid-cards" id="prevShowcaseCards">
+                                    <!-- 4 showcase cards -->
+                                </div>
+                            </div>
+                            <div class="preview-standee-right">
+                                <img id="prevStandeeImage" class="preview-standee-media" src="" style="display: none;">
+                                <video id="prevStandeeVideo" class="preview-standee-media" autoplay loop muted playsinline style="display: none;"></video>
+                                <div class="preview-standee-jiko" id="prevStandeeJiko" style="display: none;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PREVIEW TAB PANE: STATS -->
+                    <div class="preview-tab-pane" id="prevTabStats">
+                        <div class="preview-stats-panel">
+                            <div class="rings-summary-row">
+                                <div class="stat-circle-ring" id="ringMatches">0<small>Matches</small></div>
+                                <div class="stat-circle-ring" id="ringWinrate">0%<small>Win Rate</small></div>
+                                <div class="stat-circle-ring" id="ringMvp">0<small>MVP</small></div>
+                            </div>
+                            <div class="breakdown-matrix">
+                                <div class="matrix-pill">👑 Legendary: <b id="pStatLegendary">0</b></div>
+                                <div class="matrix-pill">⚡ Savage: <b id="pStatSavage">0</b></div>
+                                <div class="matrix-pill">🔥 Maniac: <b id="pStatManiac">0</b></div>
+                                <div class="matrix-pill">🎯 Triple: <b id="pStatTriple">0</b></div>
+                                <div class="matrix-pill">⚔️ Double: <b id="pStatDouble">0</b></div>
+                                <div class="matrix-pill">🛡️ MVP Kalah: <b id="pStatMvpLose">0</b></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PREVIEW TAB PANE: HISTORY -->
+                    <div class="preview-tab-pane" id="prevTabHistory">
+                        <div class="preview-history-viewport" id="prevHistoryViewport">
+                            <!-- Match lists -->
+                        </div>
+                    </div>
+
+                    <!-- PREVIEW TAB PANE: AFFINITY -->
+                    <div class="preview-tab-pane" id="prevTabAffinity">
+                        <div class="preview-affinity-stage" id="previewAffinityStage">
+                            <!-- Nodes rendering -->
+                        </div>
+                    </div>
+
+                    <!-- PREVIEW TAB PANE: KOLEKSI -->
+                    <div class="preview-tab-pane" id="prevTabKoleksi">
+                        <div class="preview-koleksi-grid" id="prevKoleksiViewport">
+                            <!-- Cards grids -->
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // BACKEND BASE ENDPOINT RESOLVER
+        const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+        const PRIMARY_URL = (window.location.origin && window.location.origin.includes("hf.space")) 
+            ? window.location.origin 
+            : BACKEND_URL;
+
+        const DEFAULT_TEMPLATE_PP = "https://i.ibb.co.com/Y4JdtfGH/download.png";
+
+        // DESCRIPTIONS META DATA
+        const TEAM_META = {
+            "Tim J": { icon: "🔴", desc: "Team of Passion" },
+            "Tim KIII": { icon: "🟡", desc: "Team of Sun Glory" },
+            "Tim T": { icon: "🔵", desc: "Team of Cyan Wings" },
+            "Tim Passion": { icon: "🔥", desc: "Blazing Spirit" },
+            "Tim Dream": { icon: "🌌", desc: "Cosmic Dreamers" },
+            "Tim Love": { icon: "💖", desc: "Pure Love & Care" }
+        };
+
+        const GEN_META = {
+            "Gen 1": "Pioneer Era", "Gen 2": "Golden Era", "Gen 3": "Rising Star", "Gen 4": "Brave Heart",
+            "Gen 5": "New Horizon", "Gen 6": "Shining Wave", "Gen 7": "Cosmic Power", "Gen 8": "Glorious",
+            "Gen 9": "Future Sparks", "Gen 10": "New Revolution", "Gen 11": "Youth Energy", "Gen 12": "Next Miracle",
+            "Gen 13": "Fresh Spirit", "Gen 14": "Dreamers Era"
+        };
+
+        // Gacha/inventories mapping metadata
+        const VIDEO_OMEGA_POOL = {
+            "DKTY": "https://shinezzzz-gokgokgogkgokgok.hf.space/skin/standee_christy.mp4",
+            "CSHN": "https://shinezzzz-gokgokgogkgokgok.hf.space/skin/standee_shani.mp4",
+            "CGRC": "https://shinezzzz-gokgokgogkgokgok.hf.space/skin/standee_gracia.mp4",
+            "CFNI": "https://shinezzzz-gokgokgogkgokgok.hf.space/skin/standee_feni.mp4",
+            "CELI": "https://shinezzzz-gokgokgogkgokgok.hf.space/skin/standee_eli.mp4",
+            "FCHR": "https://shinezzzz-gokgokgogkgokgok.hf.space/skin/standee_christy.mp4",
+            "FSHN": "https://shinezzzz-gokgokgogkgokgok.hf.space/skin/standee_shani.mp4",
+            "FGRC": "https://shinezzzz-gokgokgogkgokgok.hf.space/skin/standee_gracia.mp4",
+            "FFNI": "https://shinezzzz-gokgokgogkgokgok.hf.space/skin/standee_feni.mp4"
+        };
+
+        const LINKMEDIA = {
+            "ABIGAIL_RACHEL_LEGEND": "https://i.ibb.co/v4PVP5TJ/uc-export-download-id-1-YX-NXZdyd-ODKd6-BPa-LVmklbzq-Pv0-S5w-H.jpg",
+            "ABIGAIL_RACHEL_MYTH": "https://i.ibb.co/VW3bPb7n/uc-export-download-id-1-SYg-JY1glg-Azom22-WKNNrm-AM1-Xda-PVb-j.jpg",
+            "ABIGAIL_RACHEL_RARE": "https://i.ibb.co/CSkwHs8/uc-export-download-id-1-ST1-Ah-KD3d-Xc-DAj-Ccphj-SCDy3cwgn50s-Y.jpg",
+            "ABIGAIL_RACHEL_UNCOMMON": "https://i.ibb.co/gGqb8zb/uc-export-download-id-1-Va9h-Tsw8-XGu-Ki9-Fq4560-Q-x8c-RVx-Np1-K.jpg",
+            "ADELINE_WIJAYA_LEGEND": "https://i.ibb.co/JRMrssJ1/uc-export-download-id-1kta-KWH0o-ZVd-Yj-M-t-WOf8-MK-Bv-VLd-Wxo-X.jpg",
+            "ADELINE_WIJAYA_MYTH": "https://i.ibb.co/RT2f18bB/uc-export-download-id-1d-YLb-Le-v-Gb9d-Wx-Tdy-Hf-Pi3-AAis-Co-cmf.jpg",
+            "ADELINE_WIJAYA_RARE": "https://i.ibb.co/GfTZ6thw/uc-export-download-id-1p-txen74b-Ingjnol-GWDRm-K4-Tosfs-Mh-Gm.jpg",
+            "ADELINE_WIJAYA_UNCOMMON": "https://i.ibb.co/wFsQv9rM/uc-export-download-id-1q-Mp4-Yig-R-03-Pzn0x-Qyhb-js6wn42-E0t.jpg",
+            "ADZANA_ASHEL_LEGEND": "https://i.ibb.co/TD3YqPJm/uc-export-download-id-13-AO2e-Rb9-Z9qiwe57g9n-Wg-Pm-Bqp-Xff3v-G.jpg",
+            "ADZANA_ASHEL_MYTH": "https://i.ibb.co/wZRmSWPC/uc-export-download-id-1-CHx8ec-EAj-QFv5n-Gn73-Hs-KCzu-S8xz-Onb.jpg",
+            "ADZANA_ASHEL_RARE": "https://i.ibb.co/3YLvLR3b/uc-export-download-id-1e-Xuk-Ub-S54-VXs-Qh0e-Vb2hc-Auf-S-Jz-Us-Zl.jpg",
+            "ADZANA_ASHEL_UNCOMMON": "https://i.ibb.co/60hnQ1bF/uc-export-download-id-1q-PTp1-AJg-Xx-Sz4-Cy6-K6q-Cl-O3u-Gqx-Vn6-C.jpg"
+        };
+
+        let targetSelectedUserId = null;
+        let loadedTargetUserProfileData = null;
+
+        // RESOLVE SESSION
+        function getUserId() {
+            let urlParams = new URLSearchParams(window.location.search);
+            let uid = urlParams.get('session');
+            if (uid) {
+                localStorage.setItem("session_key", uid);
+                return uid;
+            }
+            uid = localStorage.getItem("session_key");
+            if (uid) return uid;
+            let match = document.cookie.match(new RegExp('(^| )session_cookie=([^;]*)'));
+            if (match) return match[2];
+            return "demo_user";
+        }
+
+        const mySessionKey = getUserId();
+
+        // 1. PAGE INITS
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchMySelfStatus();
+            loadFriendsAndRequests();
+        });
+
+        // Toggle Sidebar Mobile
+        function toggleSidebar() {
+            const sb = document.getElementById('leftSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sb.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        // Fetch My own Status
+        function fetchMySelfStatus() {
+            if (mySessionKey === "demo_user") return;
+            fetch(`${PRIMARY_URL}/statuschat`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ sessionCookie: mySessionKey })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === "success" && res.data) {
+                    const d = res.data;
+                    document.getElementById('inventoryBar').style.display = "flex";
+                    document.getElementById('valKristal').innerText = d.kristal || 0;
+                    document.getElementById('valTbCoin').innerText = d.tbCoin || 0;
+                    document.getElementById('valOnceToken').innerText = d.onceToken || 0;
+                    document.getElementById('valKristalOmega').innerText = d.kristalOmega || 0;
+                }
+            })
+            .catch(err => console.error("Self status warning:", err));
+        }
+
+        // 2. TABS MANAGEMENT
+        function switchManagerTab(tabId) {
+            document.getElementById('tabRequestsBtn').classList.remove('active');
+            document.getElementById('tabFriendsBtn').classList.remove('active');
+            
+            document.getElementById('dockRequests').style.display = 'none';
+            document.getElementById('dockFriends').style.display = 'none';
+
+            if (tabId === 'requests') {
+                document.getElementById('tabRequestsBtn').classList.add('active');
+                document.getElementById('dockRequests').style.display = 'block';
+            } else if (tabId === 'friends') {
+                document.getElementById('tabFriendsBtn').classList.add('active');
+                document.getElementById('dockFriends').style.display = 'block';
+            }
+        }
+
+        // 3. FRIEND INTERACTIONS BACKEND CALLS
+        function actionAcceptFriend(targetId, btn) {
+            if (mySessionKey === "demo_user") return;
+            btn.innerText = "⏳...";
+            btn.disabled = true;
+            fetch(`${PRIMARY_URL}/api/friends/accept`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    session_key: mySessionKey,
+                    target_user_id: targetId
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === "success") {
+                    loadFriendsAndRequests();
+                    document.getElementById('previewPlaceholder').style.display = 'flex';
+                    document.getElementById('previewContentStage').style.display = 'none';
+                } else {
+                    btn.innerText = "Setujui";
+                    btn.disabled = false;
+                    alert(res.detail || res.message);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                btn.innerText = "Setujui";
+                btn.disabled = false;
+            });
+        }
+
+        function actionDeclineFriend(targetId, btn) {
+            if (mySessionKey === "demo_user") return;
+            btn.innerText = "⏳...";
+            btn.disabled = true;
+            fetch(`${PRIMARY_URL}/api/friends/decline`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    session_key: mySessionKey,
+                    target_user_id: targetId
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === "success") {
+                    loadFriendsAndRequests();
+                    document.getElementById('previewPlaceholder').style.display = 'flex';
+                    document.getElementById('previewContentStage').style.display = 'none';
+                } else {
+                    btn.innerText = "Tolak";
+                    btn.disabled = false;
+                    alert(res.detail || res.message);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                btn.innerText = "Tolak";
+                btn.disabled = false;
+            });
+        }
+
+        function actionUnfriend(targetId, btn) {
+            if (!confirm("Apakah Anda yakin ingin menghapus pertemanan dengan user ini?")) return;
+            btn.innerText = "⏳...";
+            btn.disabled = true;
+            fetch(`${PRIMARY_URL}/api/friends/decline`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    session_key: mySessionKey,
+                    target_user_id: targetId
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === "success") {
+                    loadFriendsAndRequests();
+                    document.getElementById('previewPlaceholder').style.display = 'flex';
+                    document.getElementById('previewContentStage').style.display = 'none';
+                } else {
+                    btn.innerText = "Hapus";
+                    btn.disabled = false;
+                    alert(res.detail || res.message);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                btn.innerText = "Hapus";
+                btn.disabled = false;
+            });
+        }
+
+        // 4. LOAD LISTS (FRIENDS & REQUESTS)
+        function loadFriendsAndRequests() {
+            if (mySessionKey === "demo_user") {
+                const friendsContainer = document.getElementById('friendsListContainer');
+                friendsContainer.innerHTML = `<div class="preview-placeholder"><span class="placeholder-icon">🤝</span><span>Akun demo tidak memiliki daftar teman.</span></div>`;
+                return;
+            }
+            fetch(`${PRIMARY_URL}/api/friends/list`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ session_key: mySessionKey })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === "success") {
+                    renderRequestsList(res.received_requests);
+                    renderFriendsList(res.friends);
+                }
+            })
+            .catch(err => console.error("Error loading lists:", err));
+        }
+
+        function renderRequestsList(requests) {
+            const reqCountBadge = document.getElementById('requestsCountBadge');
+            const requestsContainer = document.getElementById('requestsListContainer');
+            requestsContainer.innerHTML = '';
+            
+            if (requests.length > 0) {
+                reqCountBadge.innerText = requests.length;
+                reqCountBadge.style.display = 'inline-block';
+            } else {
+                reqCountBadge.style.display = 'none';
+            }
+
+            if (requests.length === 0) {
+                requestsContainer.innerHTML = `<div class="preview-placeholder"><span class="placeholder-icon">📬</span><span>Tidak ada permintaan pertemanan masuk</span></div>`;
+                return;
+            }
+
+            requests.forEach(user => {
+                const card = document.createElement('div');
+                card.className = 'user-list-card';
+                card.innerHTML = `
+                    <div class="user-card-left">
+                        <img class="user-card-avatar" src="${user.photoProfile || DEFAULT_TEMPLATE_PP}">
+                        <div class="user-card-info">
+                            <span class="user-card-name">${user.nama}</span>
+                            <span class="user-card-username">@${user.username}</span>
+                        </div>
+                    </div>
+                    <div class="user-card-right">
+                        <button class="btn-card-action btn-accept" onclick="actionAcceptFriend('${user.userId}', this)">Setujui</button>
+                        <button class="btn-card-action btn-decline" onclick="actionDeclineFriend('${user.userId}', this)">Tolak</button>
+                        <button class="btn-card-action btn-check-profile" onclick="checkUserProfile('${user.userId}')">Cek</button>
+                    </div>
+                `;
+                requestsContainer.appendChild(card);
+            });
+        }
+
+        function renderFriendsList(friends) {
+            const friendsContainer = document.getElementById('friendsListContainer');
+            friendsContainer.innerHTML = '';
+
+            if (friends.length === 0) {
+                friendsContainer.innerHTML = `<div class="preview-placeholder"><span class="placeholder-icon">🤝</span><span>Daftar teman kosong. Cari teman baru di Cari User!</span></div>`;
+                return;
+            }
+
+            friends.forEach(user => {
+                const card = document.createElement('div');
+                card.className = 'user-list-card';
+                card.innerHTML = `
+                    <div class="user-card-left">
+                        <img class="user-card-avatar" src="${user.photoProfile || DEFAULT_TEMPLATE_PP}">
+                        <div class="user-card-info">
+                            <span class="user-card-name">${user.nama}</span>
+                            <span class="user-card-username">@${user.username}</span>
+                            <span class="user-card-rank-badge">${user.rank_name}</span>
+                        </div>
+                    </div>
+                    <div class="user-card-right">
+                        <button class="btn-card-action btn-check-profile" onclick="checkUserProfile('${user.userId}')">Cek Profil</button>
+                        <button class="btn-card-action btn-decline" style="padding: 8px 10px;" onclick="actionUnfriend('${user.userId}', this)">Hapus</button>
+                    </div>
+                `;
+                friendsContainer.appendChild(card);
+            });
+        }
+
+        // 5. PROFILE PREVIEW LOGIC
+        function checkUserProfile(userId) {
+            targetSelectedUserId = userId;
+            
+            // Show preview panel on mobile
+            const previewPanel = document.getElementById('profilePreviewPanel');
+            previewPanel.classList.add('active');
+
+            // Set Loading UI
+            document.getElementById('previewPlaceholder').style.display = 'flex';
+            document.getElementById('previewPlaceholder').innerHTML = `<span class="placeholder-icon">⏳</span><span>Menarik profil teman...</span>`;
+            document.getElementById('previewContentStage').style.display = 'none';
+
+            // Call status API
+            fetch(`${PRIMARY_URL}/api/user/status`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    session_cookie: mySessionKey,
+                    target_user: userId
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === "success" && res.data) {
+                    loadedTargetUserProfileData = res.data;
+                    renderUserProfilePreview(res.data);
+                } else {
+                    document.getElementById('previewPlaceholder').innerHTML = `<span>Gagal memuat profil: ${res.message || 'Error'}</span>`;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('previewPlaceholder').innerHTML = `<span>Koneksi terputus. Gagal memuat.</span>`;
+            });
+        }
+
+        function closePreviewMobile() {
+            document.getElementById('profilePreviewPanel').classList.remove('active');
+        }
+
+        // RENDER DETAILS TO PREVIEW STAGE
+        function renderUserProfilePreview(data) {
+            document.getElementById('previewPlaceholder').style.display = 'none';
+            document.getElementById('previewContentStage').style.display = 'block';
+
+            // Reset Subtabs
+            const tabButtons = document.querySelectorAll('.preview-tab-btn');
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabButtons[0].classList.add('active'); // Profil tab
+            
+            const tabPanes = document.querySelectorAll('.preview-tab-pane');
+            tabPanes.forEach(pane => pane.classList.remove('active'));
+            document.getElementById('prevTabInfo').classList.add('active');
+
+            // Info Header
+            document.getElementById('prevUserAvatar').src = data.photoProfile || DEFAULT_TEMPLATE_PP;
+            document.getElementById('prevUserDisplayName').innerText = data.nama || "User Wota";
+            document.getElementById('prevUserOshi').innerText = `Oshi: ${data.oshi || 'None'}`;
+            document.getElementById('prevVisits').innerText = data.visits || 0;
+            document.getElementById('prevLikes').innerText = data.likes || 0;
+            document.getElementById('prevPopularity').innerText = data.popularity || 0;
+
+            // Emblems Medals Tim | Role | Gen
+            let tIcon = "⚪", tTitle = "None", tDesc = "None";
+            if (data.team && TEAM_META[data.team]) {
+                tIcon = TEAM_META[data.team].icon;
+                tTitle = data.team;
+                tDesc = TEAM_META[data.team].desc;
+            }
+            document.getElementById('prevTeamEmblem').innerText = tIcon;
+            document.getElementById('prevTeamTitle').innerText = tTitle;
+            document.getElementById('prevTeamDesc').innerText = tDesc;
+
+            document.getElementById('prevRoleTitle').innerText = data.wota_role || "None";
+            document.getElementById('prevRoleDesc').innerText = (data.wota_role && data.wota_role !== "None") ? "Role Terdaftar" : "Belum Memilih";
+
+            let gDesc = "Belum Memilih";
+            if (data.generation && GEN_META[data.generation]) {
+                gDesc = GEN_META[data.generation];
+            }
+            document.getElementById('prevGenTitle').innerText = data.generation || "None";
+            document.getElementById('prevGenDesc').innerText = gDesc;
+
+            // Ranks strip
+            document.getElementById('prevRankName').innerText = data.rank_name || "Bronze";
+            document.getElementById('prevCollectorTitle').innerText = data.collector_title || "Newbie";
+            document.getElementById('prevCollectorPoints').innerText = `${data.collector_points || 0} Poin`;
+
+            // Profil pane
+            document.getElementById('prevUserBioCard').innerHTML = `"${data.custom_bio && data.custom_bio !== 'None' ? data.custom_bio : 'Wota ini belum menulis biodata.'}"`;
+            
+            // Showcase cards
+            const showcaseGrid = document.getElementById('prevShowcaseCards');
+            showcaseGrid.innerHTML = '';
+            for (let i = 0; i < 4; i++) {
+                const cardSlot = document.createElement('div');
+                cardSlot.className = 'preview-showcase-card';
+                if (data.showcase_cards && data.showcase_cards[i]) {
+                    const cardCode = data.showcase_cards[i].replace("BORDER_", "").replace("CHAT_", "").replace(".png", "").replace(".jpg", "").trim();
+                    let imgUrl = LINKMEDIA[cardCode] || `../skin/CHAT_${cardCode}.png`;
+                    cardSlot.innerHTML = `<img src="${imgUrl}" onerror="this.src='../kitty.png.png'">`;
+                }
+                showcaseGrid.appendChild(cardSlot);
+            }
+
+            // Standee Media Element
+            const standeeImg = document.getElementById('prevStandeeImage');
+            const standeeVid = document.getElementById('prevStandeeVideo');
+            const standeeJiko = document.getElementById('prevStandeeJiko');
+            
+            standeeImg.style.display = 'none';
+            standeeVid.style.display = 'none';
+            standeeJiko.style.display = 'none';
+
+            let curStandee = data.standee_skin || "None";
+            if (curStandee && curStandee !== "None") {
+                const cleanSt = curStandee.replace("BORDER_", "").replace("CHAT_", "").replace(".png", "").replace(".jpg", "").trim();
+                let isVideo = cleanSt in VIDEO_OMEGA_POOL;
+                let jikoLine = OMEGA_DATA[cleanSt] ? OMEGA_DATA[cleanSt].jiko : JIKO_DATA[cleanSt] || null;
+
+                if (isVideo) {
+                    standeeVid.src = VIDEO_OMEGA_POOL[cleanSt];
+                    standeeVid.style.display = 'block';
+                } else {
+                    standeeImg.src = LINKMEDIA[cleanSt] || `../skin/CHAT_${cleanSt}.png`;
+                    standeeImg.style.display = 'block';
+                }
+
+                if (jikoLine) {
+                    standeeJiko.innerText = `"${jikoLine}"`;
+                    standeeJiko.style.display = 'block';
+                }
+            } else {
+                standeeImg.src = "../kitty.png.png";
+                standeeImg.style.display = 'block';
+            }
+
+            // Stats Pane
+            const stats = data.stats || {};
+            document.getElementById('ringMatches').innerHTML = `${stats.matches || 0}<small>Matches</small>`;
+            document.getElementById('ringWinrate').innerHTML = `${stats.win_rate || '0%'}<small>Win Rate</small>`;
+            document.getElementById('ringMvp').innerHTML = `${stats.mvp || 0}<small>MVP</small>`;
+            
+            let wrVal = parseFloat(stats.win_rate || "0");
+            if (isNaN(wrVal)) wrVal = 0;
+            document.getElementById('ringWinrate').style.background = `radial-gradient(closest-side, #0b0e14 78%, transparent 80% 100%), conic-gradient(#00e5ff ${wrVal}%, rgba(255,255,255,0.1) 0)`;
+
+            document.getElementById('pStatLegendary').innerText = stats.legendary || 0;
+            document.getElementById('pStatSavage').innerText = stats.savage || 0;
+            document.getElementById('pStatManiac').innerText = stats.maniac || 0;
+            document.getElementById('pStatTriple').innerText = stats.triple_kill || 0;
+            document.getElementById('pStatDouble').innerText = stats.double_kill || 0;
+            document.getElementById('pStatMvpLose').innerText = stats.mvp_lose || 0;
+
+            // History Pane
+            const histList = document.getElementById('prevHistoryViewport');
+            histList.innerHTML = '';
+            const history = data.history || [];
+            if (history.length === 0) {
+                histList.innerHTML = `<div style="text-align:center; padding:30px; font-size:11px; color:rgba(255,255,255,0.7)">Belum ada riwayat pertandingan wota.</div>`;
+            } else {
+                history.forEach(match => {
+                    const cleanCode = match.hero ? match.hero.replace("BORDER_", "").replace("CHAT_", "").replace(".png", "").replace(".jpg", "").trim() : "KITTY";
+                    let iconUrl = LINKMEDIA[cleanCode] || `../skin/CHAT_${cleanCode}.png`;
+                    
+                    const mCard = document.createElement('div');
+                    mCard.className = `match-card-flat ${match.result && match.result.toLowerCase() === 'win' ? 'win' : 'lose'}`;
+                    mCard.innerHTML = `
+                        <div class="hero-icon-name">
+                            <img class="hero-icon" src="${iconUrl}" onerror="this.src='../kitty.png.png'">
+                            <div style="display:flex; flex-direction:column;">
+                                <span style="font-size:12px; font-weight:800; color:#fff;">${match.hero || 'Skin'}</span>
+                                <span style="font-size:9px; color:rgba(255,255,255,0.7);">${match.time || ''}</span>
+                            </div>
+                        </div>
+                        <span class="match-kda">${match.kda || '0/0/0'}</span>
+                        <span class="match-result">${match.result || 'Kalah'}</span>
+                    `;
+                    histList.appendChild(mCard);
+                });
+            }
+
+            // Affinity Pane
+            renderAffinityNodes(data.affinity || [], data.photoProfile || DEFAULT_TEMPLATE_PP);
+
+            // Koleksi Pane
+            fetchTargetSkinsDetail(data.userId);
+        }
+
+        function switchPreviewDetailTab(e, paneId) {
+            const tabs = e.target.parentElement.querySelectorAll('.preview-tab-btn');
+            tabs.forEach(t => t.classList.remove('active'));
+            e.target.classList.add('active');
+
+            const panes = document.querySelectorAll('.preview-tab-pane');
+            panes.forEach(p => p.classList.remove('active'));
+            document.getElementById(paneId).classList.add('active');
+        }
+
+        function renderAffinityNodes(affinityList, centerAvatar) {
+            const stage = document.getElementById('previewAffinityStage');
+            stage.innerHTML = `
+                <div class="concentric-ring ring-1"></div>
+                <div class="concentric-ring ring-2"></div>
+                <div class="concentric-ring ring-3"></div>
+                <div class="center-user-node">
+                    <img src="${centerAvatar}">
+                </div>
+            `;
+            if (!affinityList || affinityList.length === 0) {
+                const emptyMsg = document.createElement('div');
+                emptyMsg.style.cssText = "position:absolute; bottom:15px; font-size:10px; color:rgba(255,255,255,0.7)";
+                emptyMsg.innerText = "Belum memiliki hubungan affinity dengan user lain.";
+                stage.appendChild(emptyMsg);
+                return;
+            }
+
+            const angles = [0, 90, 180, 270];
+            const icons = ["🌹", "🤝", "🦄", "💖"];
+            affinityList.slice(0, 4).forEach((node, idx) => {
+                const angle = angles[idx];
+                const rad = (angle * Math.PI) / 180;
+                const radius = 100; 
+                const x = Math.cos(rad) * radius;
+                const y = Math.sin(rad) * radius;
+                
+                const nodeEl = document.createElement('div');
+                nodeEl.className = 'orbit-node-item';
+                nodeEl.style.transform = `translate(-50%, -50%)`;
+                nodeEl.style.left = `calc(50% + ${x}px)`;
+                nodeEl.style.top = `calc(50% + ${y}px)`;
+                
+                nodeEl.innerHTML = `
+                    <span class="node-heart-icon">${icons[idx]}</span>
+                    <div class="node-avatar-circle">
+                        <img src="${node.photoProfile || DEFAULT_TEMPLATE_PP}">
+                    </div>
+                    <span style="font-size:8px; line-height:1.1; color:#fff;">${node.nama || node.username || 'User'}</span>
+                `;
+                stage.appendChild(nodeEl);
+            });
+        }
+
+        function fetchTargetSkinsDetail(userId) {
+            const collectViewport = document.getElementById('prevKoleksiViewport');
+            collectViewport.innerHTML = `<div style="text-align:center; padding:30px; font-size:11px; color:rgba(255,255,255,0.7)">Menarik daftar skin...</div>`;
+
+            fetch(`${PRIMARY_URL}/statusskin`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    session_cookie: mySessionKey,
+                    target_user: userId
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === "success" && res.skins_detail) {
+                    renderTargetSkinsGrid(res.skins_detail);
+                } else {
+                    collectViewport.innerHTML = `<div style="text-align:center; padding:30px; font-size:11px; color:#ff1744">Gagal memuat skin.</div>`;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                collectViewport.innerHTML = `<div style="text-align:center; padding:30px; font-size:11px; color:#ff1744">Gagal memuat skin.</div>`;
+            });
+        }
+
+        function renderTargetSkinsGrid(skinsDetail) {
+            const collectViewport = document.getElementById('prevKoleksiViewport');
+            collectViewport.innerHTML = '';
+            
+            if (skinsDetail.length === 0) {
+                collectViewport.innerHTML = `<div style="text-align:center; padding:30px; font-size:11px; color:rgba(255,255,255,0.6)">Pemain ini belum memiliki koleksi skin.</div>`;
+                return;
+            }
+
+            skinsDetail.forEach(skin => {
+                const box = document.createElement('div');
+                box.className = 'preview-skin-item';
+                let tagClass = skin.rarity.toLowerCase().replace(" ", "_");
+                box.innerHTML = `
+                    <img src="${skin.media_url}" onerror="this.src='../kitty.png.png'">
+                    <span class="preview-skin-tag ${tagClass}">${skin.rarity}</span>
+                `;
+                collectViewport.appendChild(box);
+            });
+        }
+
+        function sendLikeToUser() {
+            if (!targetSelectedUserId || mySessionKey === "demo_user") return;
+            const likeBtn = document.getElementById('prevLikeBox');
+            likeBtn.style.pointerEvents = 'none';
+
+            fetch(`${PRIMARY_URL}/api/user/like`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    session_cookie: mySessionKey,
+                    target_user: targetSelectedUserId
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === "success") {
+                    document.getElementById('prevLikes').innerText = res.likes;
+                    let visits = parseInt(document.getElementById('prevVisits').innerText) || 0;
+                    document.getElementById('prevPopularity').innerText = (res.likes * 3) + visits;
+                    alert("Berhasil menyukai profil!");
+                } else {
+                    alert(res.message);
+                }
+                likeBtn.style.pointerEvents = 'auto';
+            })
+            .catch(err => {
+                console.error(err);
+                likeBtn.style.pointerEvents = 'auto';
+            });
+        }
+
+        // STATIC OMEGA DICTIONARY TO TRANSLATE CODES TO NAMES FOR JIKO
+        const OMEGA_DATA = {
+            "DKTY": { name: "Dedek Kitty (Spesial)", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!" },
+            "CSHN": { name: "Ci Shani (Spesial)", jiko: "Semanis cokelat, selembut sutra. Halo semuanya, aku Shani" },
+            "CGRC": { name: "Ci Gre (Spesial)", jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!" },
+            "CFNI": { name: "Ci Feni (Spesial)", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!" },
+            "CELI": { name: "Ci Eli (Spesial)", jiko: "Bagai lembayung senja, dengan energi kegembiraanku, Aku akan menghangatkan suasana. Halo, aku Eli!" },
+            "FCHR": { name: "Full Color: Christy", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!" },
+            "FSHN": { name: "Full Color: Shani", jiko: "Semanis cokelat, selembut sutra. Halo semuanya, aku Shani" },
+            "FGRC": { name: "Full Color: Gracia", jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!" },
+            "FCHK": { name: "Full Color: Chika", jiko: "Meskipun kadang-kadang menyebalkan, tapi aku selalu dirindukan. Panggil aku Chika!" },
+            "FFNI": { name: "Full Color: Feni", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!" },
+            "FJIN": { name: "Full Color: Jinan", jiko: "Seperti bintang kejora yang bersinar terang, halo aku Jinan!" },
+            "FFIO": { name: "Full Color: Fiony", jiko: "Seperti simfoni yang menenangkan hati. Halo, aku Fiony!" },
+            "FMAR": { name: "Full Color: Marsha", jiko: "Like pizza yang selalu dinanti-nantikan semua orang, selalu nantikan aku, ya? Halo, aku Marsha!" },
+            "FAAZ": { name: "Full Color: Zee", jiko: "Si gadis tomboy yang semangatnya meletup-letup. Halo semuanya, aku Zee!" }
+        };
+    </script>
+</body>
+</html>
