@@ -309,7 +309,8 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
 <div class="cinema-modal" id="cinemaModal" onclick="closeCinemaOnBackdrop(event)">
   <div class="cinema-box">
     <button class="cinema-close" onclick="closeCinema()">&#10005;</button>
-    <iframe id="cinemaFrame" allow="autoplay; fullscreen" allowfullscreen></iframe>
+    <video id="cinemaVideo" controls autoplay playsinline style="width:100%;height:100%;object-fit:contain;display:none;"></video>
+    <iframe id="cinemaFrame" allow="autoplay; fullscreen" allowfullscreen style="width:100%;height:100%;border:none;"></iframe>
   </div>
 </div>
 
@@ -668,14 +669,38 @@ function openCinema() {
   if (!t) return;
   if (!audio.paused) audio.pause();
 
-  const frame = document.getElementById('cinemaFrame');
-  frame.src = t.preview_url;
+  const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : 'https://shinezzzz-gokgokgok.hf.space';
+  const videoEl = document.getElementById('cinemaVideo');
+  const frameEl = document.getElementById('cinemaFrame');
+
+  if (t.drive_id) {
+    videoEl.src = `${apiBase}/api/drive/stream/${t.drive_id}`;
+    videoEl.style.display = 'block';
+    frameEl.style.display = 'none';
+    frameEl.src = 'about:blank';
+    videoEl.play().catch(() => {
+      videoEl.style.display = 'none';
+      frameEl.style.display = 'block';
+      frameEl.src = t.preview_url || `https://drive.google.com/file/d/${t.drive_id}/preview`;
+    });
+  } else {
+    frameEl.src = t.preview_url;
+    frameEl.style.display = 'block';
+    videoEl.style.display = 'none';
+  }
   document.getElementById('cinemaModal').classList.add('open');
 }
 
 function closeCinema() {
-  const frame = document.getElementById('cinemaFrame');
-  frame.src = 'about:blank';
+  const videoEl = document.getElementById('cinemaVideo');
+  const frameEl = document.getElementById('cinemaFrame');
+  if (videoEl) {
+    videoEl.pause();
+    videoEl.src = '';
+  }
+  if (frameEl) {
+    frameEl.src = 'about:blank';
+  }
   document.getElementById('cinemaModal').classList.remove('open');
 }
 

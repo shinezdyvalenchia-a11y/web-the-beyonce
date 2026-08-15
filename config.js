@@ -26,7 +26,7 @@ const ALCSTA_CONFIG = {
     QUIZ_API_URL: "https://ashazeneca-botanalistiktl.hf.space",
     
     // URL Dedicated Backend Alcstify Stream Engine (HuggingFace Space Baru)
-    ALCSTIFY_STREAM_API_URL: "https://ashazeneca-botanalistiktl.hf.space",
+    ALCSTIFY_STREAM_API_URL: "https://shinezzzz-gokgokgok.hf.space",
     
     // Konfigurasi Default Assets
     DEFAULT_AVATAR: "https://i.ibb.co.com/Y4JdtfGH/download.png",
