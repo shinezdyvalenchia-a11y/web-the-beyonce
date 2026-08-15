@@ -5543,6 +5543,12 @@ function openMv() {
     iframe.src = `https://www.youtube.com/results?search_query=${encodeURIComponent('JKT48 ' + t.title + ' Official MV')}`;
   }
   mvPanel.classList.add('on');
+} else if (t.yt_id) {
+    iframe.src = `https://www.youtube.com/embed/${t.yt_id}?autoplay=1&rel=0`;
+  } else {
+    iframe.src = `https://www.youtube.com/results?search_query=${encodeURIComponent('JKT48 ' + t.title + ' Official MV')}`;
+  }
+  mvPanel.classList.add('on');
 }?autoplay=1`;
   document.getElementById('mvPanel').classList.add('open');
 }
@@ -5570,3 +5576,4 @@ window.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
