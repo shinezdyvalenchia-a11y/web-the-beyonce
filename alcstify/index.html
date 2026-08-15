@@ -3,28 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Alcstify 48 &mdash; JKT48 Studio Music &amp; Glowing Lyrics</title>
+<title>Alcstify 48 &mdash; JKT48 Pop Music &amp; Glowing Lyrics</title>
 <link rel="icon" href="../icon.png">
 <script src="../config.js"></script>
+<!-- YouTube IFrame Player API -->
+<script src="https://www.youtube.com/iframe_api"></script>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
 
 :root {
-  --theme-color: #1db954;
-  --theme-glow: rgba(29, 185, 84, 0.65);
-  --bg-dark: #05070e;
+  --cyan: #00d2ff;
+  --mint: #00ff88;
+  --white: #ffffff;
+  --bg-dark: #060a14;
+  --glow-cyan: rgba(0, 210, 255, 0.6);
+  --glow-mint: rgba(0, 255, 136, 0.5);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
 html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; background: var(--bg-dark); color: #fff; display: flex; position: relative; }
 
-/* ====== DYNAMIC BLURRED BACKDROP (SPOTIFY/APPLE CANVAS STYLE) ====== */
+/* ====== DYNAMIC BLURRED BACKDROP (SPOTIFY CANVAS STYLE) ====== */
 #dynamicBackdrop {
   position: fixed;
   inset: -40px;
   background-size: cover;
   background-position: center;
-  filter: blur(65px) brightness(0.22) saturate(2.2);
+  filter: blur(65px) brightness(0.24) saturate(2);
   z-index: -3;
   transition: background-image 0.9s cubic-bezier(0.25, 0.8, 0.25, 1);
   transform: scale(1.12);
@@ -33,113 +39,115 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
 .ambient-overlay {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at 50% 15%, transparent 0%, rgba(5,7,14,0.85) 85%);
+  background: radial-gradient(circle at 10% 20%, rgba(0, 210, 255, 0.15), transparent 45%),
+              radial-gradient(circle at 90% 80%, rgba(0, 255, 136, 0.15), transparent 45%),
+              linear-gradient(180deg, rgba(6,10,20,0.7) 0%, rgba(6,10,20,0.92) 100%);
   z-index: -2;
   pointer-events: none;
 }
 
 /* ====== SIDEBAR ====== */
-.sb { width: 82px; background: rgba(8,12,24,0.85); border-right: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; align-items: center; padding: 12px 4px; gap: 7px; z-index: 100; overflow-y: auto; flex-shrink: 0; backdrop-filter: blur(24px); transition: transform .28s ease; }
+.sb { width: 82px; background: rgba(8,14,28,0.85); border-right: 1px solid rgba(0, 210, 255, 0.15); display: flex; flex-direction: column; align-items: center; padding: 12px 4px; gap: 7px; z-index: 100; overflow-y: auto; flex-shrink: 0; backdrop-filter: blur(24px); transition: transform .28s ease; }
 .sb::-webkit-scrollbar { display: none; }
 .na { display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: #fff; font-weight: 700; font-size: 9px; background: rgba(255,255,255,0.05); width: 66px; height: 54px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); text-align: center; gap: 3px; flex-shrink: 0; transition: all .18s; }
-.na:hover { background: rgba(255,255,255,0.16); transform: scale(1.04); }
-.na.on { background: linear-gradient(135deg,#fff,#e2e8f0); color: #0055ff; box-shadow: 0 4px 16px rgba(0,85,255,0.3); }
+.na:hover { background: rgba(0,210,255,0.18); transform: scale(1.04); border-color: var(--cyan); }
+.na.on { background: linear-gradient(135deg, var(--cyan), var(--mint)); color: #000; font-weight: 900; box-shadow: 0 4px 16px var(--glow-cyan); }
 .ni { font-size: 16px; }
 .sov { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 90; opacity: 0; transition: opacity .25s; }
 .sov.v { display: block; opacity: 1; }
 
 /* ====== MAIN CONTENT ====== */
 .mn { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; z-index: 10; min-width: 0; }
-.tb { display: flex; justify-content: space-between; align-items: center; padding: 10px 18px; border-bottom: 1px solid rgba(255,255,255,0.07); background: rgba(8,12,24,0.75); backdrop-filter: blur(20px); flex-shrink: 0; gap: 10px; }
+.tb { display: flex; justify-content: space-between; align-items: center; padding: 10px 18px; border-bottom: 1px solid rgba(0,210,255,0.15); background: rgba(8,14,28,0.78); backdrop-filter: blur(20px); flex-shrink: 0; gap: 10px; }
 .mb { display: none; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 16px; padding: 6px 11px; border-radius: 10px; cursor: pointer; flex-shrink: 0; }
-.br { display: flex; align-items: center; gap: 9px; background: rgba(15,23,42,0.85); padding: 5px 14px; border-radius: 30px; border: 1px solid var(--theme-color); box-shadow: 0 0 14px var(--theme-glow); transition: border-color .4s, box-shadow .4s; }
+.br { display: flex; align-items: center; gap: 9px; background: rgba(10,20,38,0.85); padding: 5px 15px; border-radius: 30px; border: 1px solid var(--cyan); box-shadow: 0 0 14px var(--glow-cyan); }
 .br img { height: 26px; border-radius: 50%; flex-shrink: 0; }
-.bt { font-weight: 900; font-size: 12.5px; color: var(--theme-color); font-family: 'Rajdhani', sans-serif; letter-spacing: .5px; }
-.bc { font-size: 11px; color: #fff; font-weight: 800; opacity: 0.85; }
+.bt { font-weight: 900; font-size: 13px; color: var(--cyan); font-family: 'Rajdhani', sans-serif; letter-spacing: .5px; }
+.bc { font-size: 11px; color: var(--mint); font-weight: 800; text-shadow: 0 0 10px var(--glow-mint); }
 
 /* ====== SCROLL AREA ====== */
 .sa { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 12px 18px 48px; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 .sa::-webkit-scrollbar { width: 5px; }
-.sa::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 5px; }
+.sa::-webkit-scrollbar-thumb { background: rgba(0,210,255,0.25); border-radius: 5px; }
 
 /* ====== SEARCH & FILTER ====== */
-.search-wrap { position: sticky; top: 0; z-index: 40; background: rgba(5,7,14,0.85); padding: 10px 0 14px; backdrop-filter: blur(24px); }
+.search-wrap { position: sticky; top: 0; z-index: 40; background: rgba(6,10,20,0.88); padding: 10px 0 14px; backdrop-filter: blur(24px); }
 .search-inner { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.sinput { flex: 1; min-width: 200px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14); border-radius: 14px; padding: 10px 16px; color: #fff; font-size: 13px; outline: none; transition: all .2s; }
-.sinput:focus { border-color: var(--theme-color); background: rgba(255,255,255,0.1); box-shadow: 0 0 15px var(--theme-glow); }
+.sinput { flex: 1; min-width: 200px; background: rgba(255,255,255,0.06); border: 1px solid rgba(0,210,255,0.2); border-radius: 14px; padding: 10px 16px; color: #fff; font-size: 13px; outline: none; transition: all .2s; }
+.sinput:focus { border-color: var(--cyan); background: rgba(0,210,255,0.08); box-shadow: 0 0 16px var(--glow-cyan); }
 .sinput::placeholder { color: rgba(255,255,255,0.4); }
 .fpill { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #fff; font-size: 11px; font-weight: 800; padding: 8px 14px; border-radius: 20px; cursor: pointer; transition: all .2s; white-space: nowrap; }
-.fpill:hover { background: rgba(255,255,255,0.18); }
-.fpill.on { background: var(--theme-color); color: #000; border-color: var(--theme-color); box-shadow: 0 0 14px var(--theme-glow); font-weight: 900; }
+.fpill:hover { background: rgba(0,210,255,0.15); border-color: var(--cyan); }
+.fpill.on { background: linear-gradient(135deg, var(--cyan), var(--mint)); color: #000; border-color: transparent; box-shadow: 0 0 14px var(--glow-cyan); font-weight: 900; }
 
 /* ====== ALBUM SECTION ====== */
 .alb-sec { margin-bottom: 28px; }
 .alb-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
 .alb-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.alb-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 12px currentColor; }
-.alb-name { font-size: 15px; font-weight: 900; font-family: 'Rajdhani', sans-serif; letter-spacing: .3px; }
+.alb-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); }
+.alb-name { font-size: 15px; font-weight: 900; font-family: 'Rajdhani', sans-serif; letter-spacing: .3px; color: #fff; }
 .alb-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-.alb-meta { font-size: 10.5px; color: rgba(255,255,255,0.5); font-weight: 700; }
-.alb-arr { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); color: #fff; width: 28px; height: 28px; border-radius: 50%; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .18s; }
-.alb-arr:hover { background: var(--theme-color); color: #000; }
+.alb-meta { font-size: 10.5px; color: rgba(255,255,255,0.55); font-weight: 700; }
+.alb-arr { background: rgba(255,255,255,0.08); border: 1px solid rgba(0,210,255,0.2); color: #fff; width: 28px; height: 28px; border-radius: 50%; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .18s; }
+.alb-arr:hover { background: var(--cyan); color: #000; }
 
 /* ====== CAROUSEL CARD ====== */
 .car-wrap { overflow: hidden; }
 .car-track { display: flex; gap: 12px; transition: transform .4s cubic-bezier(.25,.8,.25,1); will-change: transform; }
-.scard { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; overflow: hidden; cursor: pointer; transition: all .25s cubic-bezier(.25,.8,.25,1); flex-shrink: 0; width: 164px; position: relative; backdrop-filter: blur(10px); }
-.scard:hover { transform: translateY(-4px) scale(1.02); border-color: var(--theme-color); box-shadow: 0 10px 28px rgba(0,0,0,0.6), 0 0 16px var(--theme-glow); }
-.scard.playing { border-color: var(--theme-color); box-shadow: 0 0 20px var(--theme-glow); background: rgba(255,255,255,0.1); }
+.scard { background: rgba(255,255,255,0.05); border: 1px solid rgba(0,210,255,0.12); border-radius: 16px; overflow: hidden; cursor: pointer; transition: all .25s cubic-bezier(.25,.8,.25,1); flex-shrink: 0; width: 164px; position: relative; backdrop-filter: blur(10px); }
+.scard:hover { transform: translateY(-4px) scale(1.02); border-color: var(--cyan); box-shadow: 0 10px 28px rgba(0,0,0,0.6), 0 0 16px var(--glow-cyan); }
+.scard.playing { border-color: var(--mint); box-shadow: 0 0 20px var(--glow-mint); background: rgba(0,255,136,0.08); }
 .scard.playing .play-ind { display: flex; }
-.play-ind { display: none; position: absolute; top: 8px; right: 8px; background: var(--theme-color); color: #000; font-size: 10px; width: 24px; height: 24px; border-radius: 50%; align-items: center; justify-content: center; font-weight: 900; box-shadow: 0 0 12px var(--theme-color); }
-.scard-thumb-box { position: relative; width: 100%; aspect-ratio: 1/1; background: #0b101d; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.play-ind { display: none; position: absolute; top: 8px; right: 8px; background: var(--mint); color: #000; font-size: 10px; width: 24px; height: 24px; border-radius: 50%; align-items: center; justify-content: center; font-weight: 900; box-shadow: 0 0 12px var(--mint); z-index: 5; }
+.scard-thumb-box { position: relative; width: 100%; aspect-ratio: 1/1; background: #0b1424; overflow: hidden; display: flex; align-items: center; justify-content: center; }
 .scard-thumb { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s ease; }
 .scard:hover .scard-thumb { transform: scale(1.07); }
-.scard-album-badge { position: absolute; bottom: 6px; left: 6px; font-size: 8px; font-weight: 900; background: rgba(0,0,0,0.85); padding: 3px 7px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(6px); }
+.scard-album-badge { position: absolute; bottom: 6px; left: 6px; font-size: 8px; font-weight: 900; background: rgba(0,0,0,0.85); padding: 3px 7px; border-radius: 5px; border: 1px solid var(--cyan); color: var(--cyan); backdrop-filter: blur(6px); }
 .scard-info { padding: 10px; }
 .scard-ttl { font-size: 12px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .scard-sub { font-size: 9.5px; color: rgba(255,255,255,0.5); font-weight: 700; margin-top: 3px; }
 
 /* ====== PLAYER BAR ====== */
-.pbar { flex-shrink: 0; background: rgba(8,12,24,0.92); border-top: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(30px); }
+.pbar { flex-shrink: 0; background: rgba(8,14,28,0.94); border-top: 1px solid rgba(0,210,255,0.2); backdrop-filter: blur(30px); }
 .seek-wrap { width: 100%; height: 6px; background: rgba(255,255,255,0.1); cursor: pointer; position: relative; }
-.seek-fill { height: 100%; width: 0%; background: linear-gradient(90deg,var(--theme-color),#00ffcc); transition: width .1s linear; position: relative; box-shadow: 0 0 10px var(--theme-glow); }
-.seek-handle { position: absolute; right: -6px; top: -4px; width: 14px; height: 14px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px var(--theme-color); display: none; }
+.seek-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cyan), var(--mint)); transition: width .1s linear; position: relative; box-shadow: 0 0 12px var(--glow-cyan); }
+.seek-handle { position: absolute; right: -6px; top: -4px; width: 14px; height: 14px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px var(--cyan); display: none; }
 .seek-wrap:hover .seek-handle { display: block; }
 .pinner { display: flex; align-items: center; gap: 14px; padding: 10px 18px; min-width: 0; }
-.now-thumb { width: 54px; height: 54px; border-radius: 12px; object-fit: cover; border: 2px solid var(--theme-color); box-shadow: 0 0 14px var(--theme-glow); cursor: pointer; transition: transform .25s; flex-shrink: 0; background: #111; }
+.now-thumb { width: 54px; height: 54px; border-radius: 12px; object-fit: cover; border: 2px solid var(--cyan); box-shadow: 0 0 14px var(--glow-cyan); cursor: pointer; transition: transform .25s; flex-shrink: 0; background: #111; }
 .now-thumb:hover { transform: scale(1.08); }
 .now-info { flex: 1; min-width: 0; }
 .now-ttl { font-size: 14px; font-weight: 900; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'Rajdhani', sans-serif; letter-spacing: .3px; }
-.now-sub { font-size: 10.5px; color: var(--theme-color); font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.now-sub { font-size: 10.5px; color: var(--cyan); font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
 .trow { display: flex; gap: 4px; font-size: 9.5px; color: rgba(255,255,255,0.5); font-weight: 700; margin-top: 3px; }
 .lkb { background: none; border: none; font-size: 22px; cursor: pointer; color: rgba(255,255,255,0.3); transition: all .2s; padding: 4px; flex-shrink: 0; }
 .lkb:hover { transform: scale(1.25); }
 .lkb.on { color: #ff0055; text-shadow: 0 0 14px rgba(255,0,85,0.7); }
 .ctrl { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
-.cb { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .18s; flex-shrink: 0; }
-.cb:hover { background: rgba(255,255,255,0.22); transform: scale(1.08); }
-.cpb { width: 48px; height: 48px; background: var(--theme-color); color: #000; font-size: 19px; border: none; box-shadow: 0 0 20px var(--theme-glow); font-weight: 900; }
-.cpb:hover { box-shadow: 0 0 30px var(--theme-color); transform: scale(1.1); }
-.mpill { display: flex; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; overflow: hidden; flex-shrink: 0; }
-.mpb { padding: 7px 12px; font-size: 10px; font-weight: 800; border: none; background: transparent; color: rgba(255,255,255,0.55); cursor: pointer; transition: all .2s; white-space: nowrap; }
-.mpb.on { background: var(--theme-color); color: #000; font-weight: 900; }
+.cb { background: rgba(255,255,255,0.08); border: 1px solid rgba(0,210,255,0.2); color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .18s; flex-shrink: 0; }
+.cb:hover { background: rgba(0,210,255,0.25); transform: scale(1.08); }
+.cpb { width: 48px; height: 48px; background: linear-gradient(135deg, var(--cyan), var(--mint)); color: #000; font-size: 19px; border: none; box-shadow: 0 0 20px var(--glow-cyan); font-weight: 900; }
+.cpb:hover { box-shadow: 0 0 30px var(--mint); transform: scale(1.1); }
+.mpill { display: flex; background: rgba(255,255,255,0.06); border: 1px solid rgba(0,210,255,0.2); border-radius: 20px; overflow: hidden; flex-shrink: 0; }
+.mpb { padding: 7px 12px; font-size: 10px; font-weight: 800; border: none; background: transparent; color: rgba(255,255,255,0.6); cursor: pointer; transition: all .2s; white-space: nowrap; }
+.mpb.on { background: var(--cyan); color: #000; font-weight: 900; }
 
-/* ====== GLOWING KARAOKE LYRICS PANEL (SPOTIFY / APPLE MUSIC STYLE) ====== */
+/* ====== GLOWING KARAOKE LYRICS PANEL (CYAN + MINT + WHITE) ====== */
 .lyr-panel { position: fixed; inset: 0; z-index: 200; display: flex; flex-direction: column; transform: translateY(100%); transition: transform .4s cubic-bezier(.25,.8,.25,1); overflow: hidden; }
 .lyr-panel.open { transform: translateY(0); }
-.lyr-backdrop { position: absolute; inset: -40px; background-size: cover; background-position: center; filter: blur(70px) brightness(0.22) saturate(2); z-index: -2; }
-.lyr-tint { position: absolute; inset: 0; background: rgba(4,7,16,0.72); z-index: -1; backdrop-filter: blur(30px); }
-.lyr-top { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; }
+.lyr-backdrop { position: absolute; inset: -40px; background-size: cover; background-position: center; filter: blur(70px) brightness(0.24) saturate(2); z-index: -2; }
+.lyr-tint { position: absolute; inset: 0; background: rgba(4,8,18,0.76); z-index: -1; backdrop-filter: blur(30px); }
+.lyr-top { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid rgba(0,210,255,0.15); flex-shrink: 0; }
 .lyr-info { display: flex; align-items: center; gap: 14px; min-width: 0; }
-.lyr-cover { width: 52px; height: 52px; border-radius: 12px; object-fit: cover; flex-shrink: 0; border: 2px solid var(--theme-color); box-shadow: 0 0 16px var(--theme-glow); }
-.lyr-title { font-size: 16px; font-weight: 900; font-family: 'Rajdhani', sans-serif; letter-spacing: .4px; }
-.lyr-sub2 { font-size: 11px; color: var(--theme-color); font-weight: 800; margin-top: 2px; }
-.lyr-close { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.lyr-close:hover { background: #ff0055; }
-.lyr-badge { font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 800; padding: 6px 22px 4px; flex-shrink: 0; text-align: right; letter-spacing: .5px; }
+.lyr-cover { width: 52px; height: 52px; border-radius: 12px; object-fit: cover; flex-shrink: 0; border: 2px solid var(--cyan); box-shadow: 0 0 16px var(--glow-cyan); }
+.lyr-title { font-size: 16px; font-weight: 900; font-family: 'Rajdhani', sans-serif; letter-spacing: .4px; color: #fff; }
+.lyr-sub2 { font-size: 11px; color: var(--cyan); font-weight: 800; margin-top: 2px; }
+.lyr-close { background: rgba(255,255,255,0.1); border: 1px solid rgba(0,210,255,0.3); color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.lyr-close:hover { background: #ff0055; border-color: #ff0055; }
+.lyr-badge { font-size: 10px; color: var(--mint); font-weight: 800; padding: 6px 22px 4px; flex-shrink: 0; text-align: right; letter-spacing: .5px; text-shadow: 0 0 8px var(--glow-mint); }
 .lyr-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 28px 24px 140px; text-align: center; scroll-behavior: smooth; }
 .lyr-scroll::-webkit-scrollbar { width: 4px; }
-.lyr-scroll::-webkit-scrollbar-thumb { background: var(--theme-color); border-radius: 4px; }
+.lyr-scroll::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 4px; }
 
 /* ====== KARAOKE GLOWING LINES & WORDS ====== */
 .ll { margin-bottom: 24px; line-height: 1.7; cursor: pointer; transition: all .28s ease; opacity: 0.28; filter: blur(0.5px); transform: scale(0.96); }
@@ -147,26 +155,30 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
 .ll.active-line { opacity: 1; filter: blur(0px); transform: scale(1.05); }
 .lw { display: inline; font-size: 17px; font-weight: 700; color: rgba(255,255,255,0.4); transition: all .18s ease; margin-right: 5px; }
 .ll.active-line .lw { color: rgba(255,255,255,0.75); font-size: 21px; font-weight: 800; }
-.lw.sung { color: var(--theme-color); font-weight: 800; text-shadow: 0 0 12px var(--theme-glow); }
+.lw.sung { color: var(--mint); font-weight: 800; text-shadow: 0 0 12px var(--glow-mint); }
 .lw.active-word {
   color: #fff;
   font-weight: 900;
   font-size: 23px;
-  text-shadow: 0 0 10px #fff, 0 0 20px var(--theme-color), 0 0 40px var(--theme-color);
+  text-shadow: 0 0 10px #fff, 0 0 20px var(--cyan), 0 0 35px var(--mint);
   animation: neonPulse .3s ease;
 }
 @keyframes neonPulse {
   0% { transform: scale(0.95); text-shadow: 0 0 4px #fff; }
-  50% { transform: scale(1.08); text-shadow: 0 0 18px #fff, 0 0 35px var(--theme-color); }
-  100% { transform: scale(1); text-shadow: 0 0 10px #fff, 0 0 20px var(--theme-color), 0 0 40px var(--theme-color); }
+  50% { transform: scale(1.08); text-shadow: 0 0 18px #fff, 0 0 30px var(--cyan); }
+  100% { transform: scale(1); text-shadow: 0 0 10px #fff, 0 0 20px var(--cyan), 0 0 35px var(--mint); }
 }
 
-/* ====== MV PANEL ====== */
-.mv-panel { position: fixed; inset: 0; z-index: 210; background: #000; display: flex; flex-direction: column; transform: translateY(100%); transition: transform .4s cubic-bezier(.25,.8,.25,1); }
-.mv-panel.open { transform: translateY(0); }
-.mv-close { position: absolute; top: 18px; right: 18px; z-index: 10; background: rgba(0,0,0,0.75); border: 1px solid rgba(255,255,255,0.3); color: #fff; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-.mv-close:hover { background: #ff0055; }
+/* ====== YOUTUBE MV CINEMA POPUP MODAL ====== */
+.mv-panel { position: fixed; inset: 0; z-index: 220; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity .35s ease; }
+.mv-panel.open { opacity: 1; pointer-events: auto; }
+.mv-box { position: relative; width: 100%; max-width: 900px; aspect-ratio: 16/9; background: #000; border-radius: 18px; overflow: hidden; border: 2px solid var(--cyan); box-shadow: 0 0 40px var(--glow-cyan); }
+.mv-close { position: absolute; top: -14px; right: -14px; z-index: 10; background: rgba(10,20,38,0.9); border: 2px solid var(--cyan); color: #fff; width: 38px; height: 38px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px var(--glow-cyan); }
+.mv-close:hover { background: #ff0055; border-color: #ff0055; }
 #mvIframe { width: 100%; height: 100%; border: none; }
+
+/* HIDDEN BACKGROUND YOUTUBE ENGINE */
+#ytHiddenContainer { position: fixed; top: -9999px; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 
 @media(max-width:760px) {
   .sb { position: fixed; top: 0; left: 0; height: 100vh; transform: translateX(-100%); box-shadow: 4px 0 24px rgba(0,0,0,0.6); }
@@ -180,12 +192,13 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
 </style>
 </head>
 <body>
-<!-- NATIVE HTML5 AUDIO PLAYER (ZERO IFRAME LAG & DIRECT SOUND) -->
-<audio id="nativeAudioPlayer" preload="auto"></audio>
 
 <!-- DYNAMIC BLURRED BACKDROP -->
 <div id="dynamicBackdrop"></div>
 <div class="ambient-overlay"></div>
+
+<!-- HIDDEN YOUTUBE PLAYER FOR DIRECT ZERO-LAG AUDIO STREAMING -->
+<div id="ytHiddenContainer"><div id="ytAudioPlayer"></div></div>
 
 <div class="sov" id="sov" onclick="closeSb()"></div>
 
@@ -212,7 +225,7 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
       <button class="mb" onclick="openSb()">&#9776;</button>
       <div class="br">
         <img src="../icon.png" alt="logo" onerror="this.src='../logo.png'">
-        <span class="bt">Alcstify 48 &mdash; Studio Audio &amp; Glowing Lyrics Engine</span>
+        <span class="bt">Alcstify 48 &mdash; Studio Pop &amp; Glowing Lyrics Engine</span>
       </div>
     </div>
     <span class="bc" id="badge">&#9679; Loading...</span>
@@ -237,7 +250,7 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
       <div class="seek-fill" id="seekFill"><div class="seek-handle"></div></div>
     </div>
     <div class="pinner">
-      <img class="now-thumb" id="nowThumb" src="https://upload.wikimedia.org/wikipedia/id/8/87/JKT48_-_RIVER.jpg"
+      <img class="now-thumb" id="nowThumb" src="https://img.youtube.com/vi/F4E46vj-h14/hqdefault.jpg"
            onerror="this.src='../icon.png'" alt="cover" onclick="openLyr()">
       <div class="now-info">
         <div class="now-ttl" id="nowTtl">RIVER</div>
@@ -252,7 +265,7 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
       </div>
       <div class="mpill">
         <button class="mpb on" onclick="openLyr()">&#127897; Lirik</button>
-        <button class="mpb" onclick="openMv()">&#127916; MV</button>
+        <button class="mpb" onclick="openMv()">&#127916; MV Pop</button>
       </div>
     </div>
   </div>
@@ -264,7 +277,7 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
   <div class="lyr-tint"></div>
   <div class="lyr-top">
     <div class="lyr-info">
-      <img class="lyr-cover" id="lyrCover" src="https://upload.wikimedia.org/wikipedia/id/8/87/JKT48_-_RIVER.jpg" alt="">
+      <img class="lyr-cover" id="lyrCover" src="https://img.youtube.com/vi/F4E46vj-h14/hqdefault.jpg" alt="">
       <div class="lyr-ti">
         <div class="lyr-title" id="lyrTitle">RIVER</div>
         <div class="lyr-sub2" id="lyrSub">JKT48</div>
@@ -280,10 +293,12 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
   </div>
 </div>
 
-<!-- MV PANEL -->
-<div class="mv-panel" id="mvPanel">
-  <button class="mv-close" onclick="closeMv()">&#10005;</button>
-  <iframe id="mvIframe" allow="autoplay; fullscreen; encrypted-media"></iframe>
+<!-- YOUTUBE MV POP-UP MODAL -->
+<div class="mv-panel" id="mvPanel" onclick="closeMvOnBackdrop(event)">
+  <div class="mv-box">
+    <button class="mv-close" onclick="closeMv()">&#10005;</button>
+    <iframe id="mvIframe" allow="autoplay; fullscreen; encrypted-media" allowfullscreen></iframe>
+  </div>
 </div>
 
 <script>
@@ -293,26 +308,71 @@ let ALB_MAP = new Map();
 let curIdx = 0;
 let liked = new Set(JSON.parse(localStorage.getItem('alc48v3_liked') || '[]'));
 let filt = 'all', q = '';
-const audio = document.getElementById('nativeAudioPlayer');
+let ytPlayer = null;
+let isYtReady = false;
+let playProgressTimer = null;
+let isPlaying = false;
 
-// ===== NATIVE AUDIO EVENTS =====
-audio.addEventListener('play', () => {
-  document.getElementById('playBtn').innerHTML = '&#9646;&#9646;';
-});
-audio.addEventListener('pause', () => {
-  document.getElementById('playBtn').innerHTML = '&#9654;';
-});
-audio.addEventListener('ended', () => {
-  nextT();
-});
-audio.addEventListener('timeupdate', () => {
-  const cur = audio.currentTime || 0;
-  const dur = audio.duration || 1;
-  document.getElementById('seekFill').style.width = ((cur / dur) * 100).toFixed(2) + '%';
-  document.getElementById('tCur').textContent = fmt(cur);
-  document.getElementById('tDur').textContent = fmt(dur);
-  syncWords(cur);
-});
+// ===== YOUTUBE IFRAME API INITIALIZATION =====
+function onYouTubeIframeAPIReady() {
+  ytPlayer = new YT.Player('ytAudioPlayer', {
+    height: '1',
+    width: '1',
+    playerVars: {
+      autoplay: 0,
+      controls: 0,
+      disablekb: 1,
+      fs: 0,
+      modestbranding: 1,
+      rel: 0
+    },
+    events: {
+      onReady: onPlayerReady,
+      onStateChange: onPlayerStateChange
+    }
+  });
+}
+
+function onPlayerReady(event) {
+  isYtReady = true;
+  if (TRACKS.length > 0) {
+    loadTrackToPlayer(curIdx, false);
+  }
+}
+
+function onPlayerStateChange(event) {
+  if (event.data === YT.PlayerState.PLAYING) {
+    isPlaying = true;
+    document.getElementById('playBtn').innerHTML = '&#9646;&#9646;';
+    startProgressTimer();
+  } else if (event.data === YT.PlayerState.PAUSED) {
+    isPlaying = false;
+    document.getElementById('playBtn').innerHTML = '&#9654;';
+    stopProgressTimer();
+  } else if (event.data === YT.PlayerState.ENDED) {
+    isPlaying = false;
+    stopProgressTimer();
+    nextT();
+  }
+}
+
+function startProgressTimer() {
+  stopProgressTimer();
+  playProgressTimer = setInterval(() => {
+    if (ytPlayer && ytPlayer.getCurrentTime && ytPlayer.getDuration) {
+      const cur = ytPlayer.getCurrentTime() || 0;
+      const dur = ytPlayer.getDuration() || 1;
+      document.getElementById('seekFill').style.width = ((cur / dur) * 100).toFixed(2) + '%';
+      document.getElementById('tCur').textContent = fmt(cur);
+      document.getElementById('tDur').textContent = fmt(dur);
+      syncWords(cur);
+    }
+  }, 250);
+}
+
+function stopProgressTimer() {
+  if (playProgressTimer) clearInterval(playProgressTimer);
+}
 
 // ===== LYRIC TIMINGS & GLOWING EFFECT =====
 let wordTimings = [];
@@ -489,30 +549,25 @@ function loadLyrics(t) {
 }
 
 function seekTo(t) {
-  if (audio) {
-    audio.currentTime = t;
+  if (ytPlayer && ytPlayer.seekTo) {
+    ytPlayer.seekTo(t, true);
   }
 }
 
 // ===== PLAY TRACK & DYNAMIC ADAPTATION =====
-function playTrack(idx) {
+function loadTrackToPlayer(idx, autoPlay = true) {
   if (!TRACKS || !TRACKS.length) return;
   if (idx < 0) idx = TRACKS.length - 1;
   if (idx >= TRACKS.length) idx = 0;
   curIdx = idx;
   const t = TRACKS[curIdx];
 
-  // 1. Dynamic Adaptive Theme Palette
-  const color = t.color || '#1db954';
-  document.documentElement.style.setProperty('--theme-color', color);
-  document.documentElement.style.setProperty('--theme-glow', color + '88');
-
-  // 2. Dynamic Blurred Canvas Backdrop (Apple/Spotify Style)
-  const coverUrl = t.album_art || t.cover || 'https://upload.wikimedia.org/wikipedia/id/8/87/JKT48_-_RIVER.jpg';
+  // 1. Set Blurred Canvas Backdrop (From Drive / HQ Thumb)
+  const coverUrl = t.cover || t.album_art || `https://img.youtube.com/vi/${t.yt_id}/hqdefault.jpg`;
   document.getElementById('dynamicBackdrop').style.backgroundImage = `url('${coverUrl}')`;
   document.getElementById('lyrBackdrop').style.backgroundImage = `url('${coverUrl}')`;
 
-  // 3. Update Player Controls & Thumbnails
+  // 2. Update UI Thumbnails & Texts
   document.getElementById('nowThumb').src = coverUrl;
   document.getElementById('nowTtl').textContent = t.title;
   document.getElementById('nowSub').textContent = `JKT48 \u2022 ${t.album} \u2022 ${t.year}`;
@@ -529,31 +584,40 @@ function playTrack(idx) {
   updateLikeBtn();
   loadLyrics(t);
 
-  // 4. Stream Audio
-  if (t.stream_url) {
-    audio.src = t.stream_url;
-  } else {
-    const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : 'https://ashazeneca-botanalistiktl.hf.space';
-    audio.src = `${apiBase}/api/music/audio_stream?q=${encodeURIComponent(t.title)}&redirect=true`;
+  // 3. Play via YouTube IFrame API
+  if (isYtReady && ytPlayer && ytPlayer.loadVideoById) {
+    if (autoPlay) {
+      ytPlayer.loadVideoById(t.yt_id || 'F4E46vj-h14');
+      ytPlayer.playVideo();
+    } else {
+      ytPlayer.cueVideoById(t.yt_id || 'F4E46vj-h14');
+    }
   }
-  audio.play().catch(err => {
-    console.log("Audio autoplay note:", err);
-  });
+}
+
+function playTrack(idx) {
+  loadTrackToPlayer(idx, true);
 }
 
 function togglePlay() {
-  if (audio.paused) audio.play();
-  else audio.pause();
+  if (!isYtReady || !ytPlayer) return;
+  if (isPlaying) {
+    ytPlayer.pauseVideo();
+  } else {
+    ytPlayer.playVideo();
+  }
 }
 
 function nextT() { playTrack(curIdx + 1); }
 function prevT() { playTrack(curIdx - 1); }
 
 function onSeek(e) {
+  if (!ytPlayer || !ytPlayer.getDuration) return;
   const rect = document.getElementById('seekWrap').getBoundingClientRect();
   const pos = (e.clientX - rect.left) / rect.width;
-  if (audio.duration) {
-    audio.currentTime = pos * audio.duration;
+  const dur = ytPlayer.getDuration() || 0;
+  if (dur > 0) {
+    ytPlayer.seekTo(pos * dur, true);
   }
 }
 
@@ -621,7 +685,7 @@ function renderSections() {
     sec.innerHTML = `
       <div class="alb-hdr">
         <div class="alb-left">
-          <span class="alb-dot" style="background:${alb.color};color:${alb.color};"></span>
+          <span class="alb-dot"></span>
           <span class="alb-name">${alb.name}</span>
         </div>
         <div class="alb-right">
@@ -636,8 +700,8 @@ function renderSections() {
             <div class="scard ${s._i === curIdx ? 'playing' : ''}" id="scard_${s._i}" onclick="playTrack(${s._i})">
               <div class="play-ind">&#9654;</div>
               <div class="scard-thumb-box">
-                <img class="scard-thumb" src="${s.cover || alb.art}" onerror="this.src='../icon.png'" alt="${s.title}" loading="lazy">
-                <span class="scard-album-badge" style="color:${alb.color};border-color:${alb.color}55;">${s.year}</span>
+                <img class="scard-thumb" src="${s.cover || `https://img.youtube.com/vi/${s.yt_id}/hqdefault.jpg`}" onerror="this.src='https://img.youtube.com/vi/${s.yt_id}/hqdefault.jpg'" alt="${s.title}" loading="lazy">
+                <span class="scard-album-badge">${s.year}</span>
               </div>
               <div class="scard-info">
                 <div class="scard-ttl">${s.title}</div>
@@ -686,13 +750,12 @@ function openMv() {
   const mvPanel = document.getElementById('mvPanel');
   const iframe = document.getElementById('mvIframe');
   
-  if (t.preview_url) {
-    iframe.src = t.preview_url;
-  } else if (t.yt_id) {
-    iframe.src = `https://www.youtube.com/embed/${t.yt_id}?autoplay=1&rel=0`;
-  } else {
-    iframe.src = `https://www.youtube.com/results?search_query=${encodeURIComponent('JKT48 ' + t.title + ' Official MV')}`;
+  if (isPlaying && ytPlayer && ytPlayer.pauseVideo) {
+    ytPlayer.pauseVideo();
   }
+
+  const ytId = t.yt_id || 'F4E46vj-h14';
+  iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1`;
   mvPanel.classList.add('open');
 }
 
@@ -700,6 +763,12 @@ function closeMv() {
   const iframe = document.getElementById('mvIframe');
   iframe.src = 'about:blank';
   document.getElementById('mvPanel').classList.remove('open');
+}
+
+function closeMvOnBackdrop(e) {
+  if (e.target.id === 'mvPanel') {
+    closeMv();
+  }
 }
 
 function openSb() {
@@ -719,7 +788,7 @@ async function initAlcstify() {
       TRACKS = await res.json();
     }
   } catch(e) {
-    console.warn("Local fetch note, using fallback:", e);
+    console.warn("Local fetch note:", e);
   }
 
   if (TRACKS && TRACKS.length > 0) {
@@ -727,15 +796,15 @@ async function initAlcstify() {
     TRACKS.forEach((t, i) => {
       t._i = i;
       if (!ALB_MAP.has(t.album)) {
-        ALB_MAP.set(t.album, { name: t.album, type: t.type, year: t.year, color: t.color || '#1db954', art: t.album_art || t.cover, songs: [] });
+        ALB_MAP.set(t.album, { name: t.album, type: t.type, year: t.year, color: '#00d2ff', art: t.cover, songs: [] });
       }
       ALB_MAP.get(t.album).songs.push(t);
     });
 
-    document.getElementById('badge').textContent = '\u25cf ' + TRACKS.length + ' Lagu JKT48 Siap Putar';
+    document.getElementById('badge').textContent = '\u25cf ' + TRACKS.length + ' Lagu JKT48 Pop Siap Putar';
     renderSections();
     updateLikeBtn();
-    playTrack(0);
+    loadTrackToPlayer(0, false);
   }
 }
 
