@@ -1,260 +1,719 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="robots" content="index, follow">
-    <meta name="description" content="Alcsta48 - Pusat Mini Games Hiburan Wota JKT48">
-    <title>galery alcsta48 - mini games wota</title>
-    <link rel="icon" type="image/png" href="../icon.png">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Nunito:wght@400;600;700;800;900&family=Rajdhani:wght@600;700;800&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>JKT48 1vs1 Multiplayer Mini-Games Arena &mdash; Alcsta48</title>
+<link rel="icon" type="image/png" href="../icon.png">
+<script src="../config.js"></script>
+<!-- PeerJS for 0ms Serverless P2P WebRTC Realtime Multiplayer -->
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Nunito', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Rajdhani:wght@600;700;800;900&display=swap');
 
-        body {
-            background-color: #030712;
-            color: #fff;
-            height: 100vh;
-            height: 100dvh;
-            display: flex;
-            overflow: hidden;
-            position: relative;
-        }
+:root {
+  --primary: #00f2fe;
+  --accent: #ff007f;
+  --gold: #ffd700;
+  --green: #22c55e;
+  --bg-dark: #050811;
+  --card-bg: rgba(15, 23, 42, 0.75);
+  --border: rgba(255, 255, 255, 0.12);
+}
 
-        .video-bg {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover; z-index: -2;
-            filter: brightness(0.4);
-            transform: translateZ(0);
-            contain: strict;
-        }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+html, body { width: 100%; height: 100%; height: 100dvh; background: var(--bg-dark); color: #fff; overflow: hidden; display: flex; position: relative; }
 
-        .corner-glows {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; pointer-events: none; overflow: hidden; contain: strict;
-        }
-        .glow { position: absolute; width: 50vw; height: 50vw; max-width: 450px; max-height: 450px; border-radius: 50%; opacity: 0.2; pointer-events: none; }
-        .glow-tl { top: -10%; left: -10%; background: radial-gradient(circle, #ff007f 0%, transparent 70%); }
-        .glow-tr { top: -10%; right: -10%; background: radial-gradient(circle, #ffd700 0%, transparent 70%); }
-        .glow-bl { bottom: -10%; left: -10%; background: radial-gradient(circle, #00d4ff 0%, transparent 70%); }
-        .glow-br { bottom: -10%; right: -10%; background: radial-gradient(circle, #ff7700 0%, transparent 70%); opacity: 0.15; }
+/* AMBIENT BACKGROUND GLOW */
+.bg-glow { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; }
+.orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.22; }
+.orb-1 { width: 50vw; height: 50vw; top: -15%; left: -10%; background: radial-gradient(circle, #00f2fe, transparent 70%); }
+.orb-2 { width: 55vw; height: 55vw; bottom: -20%; right: -10%; background: radial-gradient(circle, #ff007f, transparent 70%); }
+.orb-3 { width: 35vw; height: 35vw; top: 40%; left: 40%; background: radial-gradient(circle, #ffd700, transparent 70%); opacity: 0.12; }
 
-        /* RESTRUCTURED SIDEBAR */
-        .left-sidebar {
-            width: 90px;
-            background: rgba(11, 17, 33, 0.85);
-            border-right: 1px solid rgba(255, 255, 255, 0.15);
-            display: flex; flex-direction: column; align-items: center;
-            padding: 20px 5px; gap: 12px; z-index: 100;
-            overflow-y: auto; flex-shrink: 0;
-            transform: translateZ(0); will-change: transform;
-            -webkit-overflow-scrolling: touch;
-            transition: transform 0.25s ease-out;
-        }
-        .left-sidebar::-webkit-scrollbar { display: none; }
+/* SIDEBAR */
+.sb { width: 84px; background: rgba(10, 15, 29, 0.9); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 16px 6px; gap: 8px; z-index: 100; overflow-y: auto; flex-shrink: 0; backdrop-filter: blur(30px); }
+.sb::-webkit-scrollbar { display: none; }
+.na { display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: #94a3b8; font-weight: 700; font-size: 9.5px; background: rgba(255,255,255,0.03); width: 68px; height: 54px; border-radius: 12px; border: 1px solid transparent; text-align: center; gap: 4px; flex-shrink: 0; transition: all .2s; }
+.na:hover { background: rgba(255,255,255,0.08); color: #fff; transform: translateY(-2px); }
+.na.on { background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.2); box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
+.ni { font-size: 17px; }
 
-        .side-item {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-decoration: none; color: #fff; font-weight: 700; font-size: 10px;
-            background: rgba(255, 255, 255, 0.1); width: 70px; height: 60px; border-radius: 16px;
-            transition: transform 0.15s ease, background 0.15s ease; border: 1px solid rgba(255, 255, 255, 0.18); text-align: center;
-            gap: 4px; flex-shrink: 0; contain: content;
-        }
-        .side-item:hover { background: rgba(255, 255, 255, 0.25); transform: scale(1.03); }
-        .side-item.active { background: rgba(255, 255, 255, 0.9); color: #1a5cff; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .side-icon { font-size: 20px; }
+/* MAIN CONTAINER */
+.mn { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; z-index: 10; }
+.tb { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; border-bottom: 1px solid var(--border); background: rgba(10, 15, 29, 0.8); backdrop-filter: blur(20px); flex-shrink: 0; }
+.brand-wrap { display: flex; align-items: center; gap: 12px; }
+.brand-wrap img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--primary); }
+.brand-title { font-size: 16px; font-weight: 900; letter-spacing: -0.2px; background: linear-gradient(90deg, #fff, #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.live-pill { display: flex; align-items: center; gap: 6px; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 8px #22c55e; animation: blink 1.5s infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        .sidebar-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.6);
-            z-index: 90; opacity: 0; transition: opacity 0.25s ease;
-        }
-        .sidebar-overlay.active { display: block; opacity: 1; }
+/* STAGE CONTENT */
+.stage { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 24px; display: flex; flex-direction: column; align-items: center; }
+.stage::-webkit-scrollbar { width: 6px; }
+.stage::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 6px; }
 
-        .main-content {
-            flex-grow: 1; display: flex; flex-direction: column;
-            position: relative; height: 100%; overflow: hidden; z-index: 10;
-        }
+/* LOBBY / ROOM CREATION CARD */
+.lobby-card { width: 100%; max-width: 960px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; padding: 32px 24px; backdrop-filter: blur(40px); box-shadow: 0 20px 60px rgba(0,0,0,0.6); margin-bottom: 24px; }
+.lobby-hero { text-align: center; margin-bottom: 28px; }
+.lobby-badge { display: inline-block; background: rgba(0, 242, 254, 0.12); color: #00f2fe; border: 1px solid rgba(0, 242, 254, 0.3); font-size: 11.5px; font-weight: 800; padding: 5px 14px; border-radius: 20px; text-transform: uppercase; margin-bottom: 10px; }
+.lobby-title { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; font-family: 'Rajdhani', sans-serif; text-transform: uppercase; color: #fff; }
+.lobby-desc { font-size: 13.5px; color: #94a3b8; margin-top: 6px; max-width: 600px; margin-left: auto; margin-right: auto; }
 
-        .top-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 14px 24px; z-index: 20; width: 100%;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(11, 17, 33, 0.6);
-        }
+/* ROOM ACTION BUTTONS */
+.room-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 24px; }
+.action-box { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 18px; padding: 20px; display: flex; flex-direction: column; gap: 14px; transition: all .25s; }
+.action-box:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.06); transform: translateY(-3px); }
+.box-icon { font-size: 28px; }
+.box-title { font-size: 16px; font-weight: 800; color: #fff; }
+.box-desc { font-size: 12px; color: #94a3b8; line-height: 1.4; }
 
-        .left-group { display: flex; align-items: center; gap: 12px; }
-        .sidebar-toggle-btn {
-            display: none; background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            color: #fff; font-size: 18px; padding: 6px 12px;
-            border-radius: 12px; cursor: pointer; flex-shrink: 0;
-        }
+.btn-main { width: 100%; background: linear-gradient(135deg, #00f2fe, #4facfe); color: #000; border: none; border-radius: 12px; padding: 12px 0; font-weight: 800; font-size: 13px; cursor: pointer; transition: all .2s; text-transform: uppercase; letter-spacing: 0.5px; }
+.btn-main:hover { transform: scale(1.02); box-shadow: 0 6px 20px rgba(0, 242, 254, 0.4); }
+.btn-pink { background: linear-gradient(135deg, #ff007f, #ff758c); color: #fff; }
+.btn-pink:hover { box-shadow: 0 6px 20px rgba(255, 0, 127, 0.4); }
+.btn-gold { background: linear-gradient(135deg, #ffd700, #ffae00); color: #000; }
+.btn-gold:hover { box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4); }
 
-        .brand-logo {
-            display: flex; align-items: center; gap: 10px;
-            background: rgba(15, 23, 42, 0.8);
-            padding: 6px 16px; border-radius: 35px;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-        }
-        .logo-main { height: 32px; width: auto; border-radius: 50%; }
-        .brand-text { font-weight: 800; font-size: 14px; color: #fff; }
+.room-input { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; color: #fff; font-size: 14px; font-weight: 700; text-align: center; text-transform: uppercase; outline: none; }
+.room-input:focus { border-color: #00f2fe; box-shadow: 0 0 12px rgba(0, 242, 254, 0.3); }
 
-        .stage-container {
-            flex-grow: 1; overflow-y: auto; padding: 18px 24px 40px 24px;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior: contain;
-            will-change: scroll-position;
-        }
-        .stage-container::-webkit-scrollbar { width: 6px; }
-        .stage-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.25); border-radius: 4px; }
+/* GAME SELECTION CARDS */
+.games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; width: 100%; max-width: 960px; margin-top: 10px; }
+.game-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; backdrop-filter: blur(30px); display: flex; flex-direction: column; gap: 14px; transition: all .25s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; position: relative; overflow: hidden; }
+.game-card:hover { border-color: #00f2fe; transform: translateY(-5px); box-shadow: 0 16px 36px rgba(0, 242, 254, 0.15); }
+.game-badge { position: absolute; top: 16px; right: 16px; font-size: 10.5px; font-weight: 800; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; background: rgba(255,255,255,0.1); border: 1px solid var(--border); }
+.game-icon-large { font-size: 42px; margin-bottom: 4px; }
+.game-name { font-size: 18px; font-weight: 900; color: #fff; font-family: 'Rajdhani', sans-serif; letter-spacing: 0.3px; }
+.game-summary { font-size: 12.5px; color: #94a3b8; line-height: 1.5; }
+.game-features { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.feat-tag { font-size: 10px; background: rgba(255,255,255,0.06); padding: 3px 8px; border-radius: 6px; color: #cbd5e1; font-weight: 600; }
 
-        .glass-card {
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 24px; padding: 24px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-            max-width: 1000px; margin: 0 auto; width: 100%;
-        }
+/* ====== IN-GAME ARENA MODAL / VIEW ====== */
+.arena-view { position: fixed; inset: 0; z-index: 300; background: rgba(5, 8, 17, 0.96); backdrop-filter: blur(40px); display: none; flex-direction: column; overflow: hidden; }
+.arena-view.active { display: flex; }
 
-        .games-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 18px;
-        }
-        .game-card {
-            background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.18);
-            border-radius: 20px; overflow: hidden; display: flex; flex-direction: column;
-            transition: all 0.25s; text-decoration: none; color: #fff;
-        }
-        .game-card:hover {
-            transform: translateY(-4px); border-color: #ffd700; box-shadow: 0 10px 30px rgba(255,215,0,0.25);
-        }
-        .game-banner { height: 160px; background: #000; position: relative; overflow: hidden; }
-        .game-banner-img { width: 100%; height: 100%; object-fit: cover; }
-        .game-info { padding: 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-        .game-title { font-size: 16px; font-weight: 900; color: #ffd700; font-family: 'Cinzel', serif; }
-        .game-desc { font-size: 12px; color: rgba(255,255,255,0.75); line-height: 1.45; }
-        .btn-play-game {
-            margin-top: auto; background: linear-gradient(135deg, #1a5cff, #00d4ff);
-            border: none; color: #fff; padding: 10px 0; border-radius: 12px; font-weight: 800; font-size: 12px;
-            text-align: center; cursor: pointer; text-decoration: none; display: block;
-        }
-        .btn-play-game:hover { opacity: 0.9; }
+.arena-topbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid var(--border); background: rgba(10, 15, 29, 0.9); flex-shrink: 0; }
+.room-code-tag { font-size: 14px; font-weight: 900; background: rgba(0, 242, 254, 0.15); border: 1px solid rgba(0, 242, 254, 0.3); color: #00f2fe; padding: 6px 14px; border-radius: 12px; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; }
+.btn-leave { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 6px 14px; border-radius: 10px; font-weight: 800; font-size: 12px; cursor: pointer; }
+.btn-leave:hover { background: #ef4444; color: #fff; }
 
-        @media screen and (max-width: 868px) {
-            .left-sidebar {
-                position: fixed; top: 0; left: 0; height: 100%;
-                width: 180px; padding: 25px 10px; gap: 10px;
-                transform: translateX(-100%);
-            }
-            .left-sidebar.open { transform: translateX(0); }
-            .side-item { width: 100%; height: 44px; flex-direction: row; justify-content: flex-start; padding: 0 15px; font-size: 12px; border-radius: 12px; }
-            .sidebar-toggle-btn { display: block; }
-            .top-bar { padding: 10px 14px; }
-            .stage-container { padding: 12px 14px 20px 14px; }
-            .games-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+.arena-body { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+/* HEALTH BARS / VERSUS HEADER */
+.vs-header { width: 100%; max-width: 800px; display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+.player-slot { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 42%; }
+.player-avatar { width: 68px; height: 68px; border-radius: 50%; object-fit: cover; border: 3px solid #00f2fe; box-shadow: 0 0 20px rgba(0, 242, 254, 0.4); }
+.p2-avatar { border-color: #ff007f; box-shadow: 0 0 20px rgba(255, 0, 127, 0.4); }
+.player-name { font-size: 14px; font-weight: 800; color: #fff; }
+.hp-bar-bg { width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+.hp-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #22c55e, #00f2fe); border-radius: 10px; transition: width .3s ease; }
+.hp-fill-p2 { background: linear-gradient(90deg, #ff007f, #ff758c); }
+
+.vs-badge { font-size: 24px; font-weight: 900; font-family: 'Rajdhani', sans-serif; color: #ffd700; text-shadow: 0 0 16px rgba(255, 215, 0, 0.6); }
+
+/* GAME 1: JANKEN SHOWDOWN */
+.janken-board { width: 100%; max-width: 700px; text-align: center; }
+.round-announcer { font-size: 20px; font-weight: 900; font-family: 'Rajdhani', sans-serif; color: #ffd700; margin-bottom: 16px; text-transform: uppercase; }
+.timer-circle { width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 2px solid #00f2fe; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: #00f2fe; margin: 0 auto 20px; }
+.janken-cards { display: flex; justify-content: center; gap: 16px; margin-top: 20px; flex-wrap: wrap; }
+.j-btn { width: 130px; height: 140px; background: rgba(255,255,255,0.05); border: 2px solid var(--border); border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; font-size: 40px; cursor: pointer; transition: all .2s; }
+.j-btn:hover { border-color: #00f2fe; transform: translateY(-6px) scale(1.05); background: rgba(0, 242, 254, 0.12); box-shadow: 0 10px 25px rgba(0, 242, 254, 0.3); }
+.j-btn.selected { border-color: #ffd700; background: rgba(255, 215, 0, 0.2); transform: scale(1.08); box-shadow: 0 0 25px rgba(255, 215, 0, 0.5); }
+.j-label { font-size: 13px; font-weight: 800; color: #fff; }
+
+.janken-arena-showdown { display: flex; justify-content: center; align-items: center; gap: 40px; margin: 30px 0; }
+.reveal-box { font-size: 64px; width: 120px; height: 120px; border-radius: 20px; background: rgba(255,255,255,0.08); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; }
+
+/* GAME 2: QUIZ FIGHTING ARENA */
+.quiz-board { width: 100%; max-width: 760px; text-align: center; }
+.quiz-qbox { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 18px; padding: 20px; margin-bottom: 20px; }
+.quiz-prompt { font-size: 17px; font-weight: 800; color: #fff; line-height: 1.5; }
+.quiz-options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; }
+.q-opt { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 14px 16px; border-radius: 12px; font-weight: 700; font-size: 13.5px; cursor: pointer; transition: all .18s; text-align: left; }
+.q-opt:hover { background: rgba(0, 242, 254, 0.15); border-color: #00f2fe; transform: translateY(-2px); }
+.q-opt.correct { background: #22c55e !important; color: #000 !important; font-weight: 900; }
+.q-opt.wrong { background: #ef4444 !important; color: #fff !important; }
+
+/* GAME 3: PUZZLE RACE */
+.puzzle-board { width: 100%; max-width: 700px; text-align: center; }
+.puzzle-grid { display: grid; grid-template-columns: repeat(3, 90px); grid-template-rows: repeat(3, 90px); gap: 6px; justify-content: center; margin: 20px auto; }
+.puz-tile { width: 90px; height: 90px; border-radius: 10px; background: #1a2234; border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: #fff; cursor: pointer; transition: all .15s; user-select: none; }
+.puz-tile:hover { border-color: #00f2fe; transform: scale(1.04); }
+.puz-empty { background: transparent; border: 1px dashed rgba(255,255,255,0.1); cursor: default; }
+
+/* RESULT OVERLAY */
+.result-banner { font-size: 32px; font-weight: 900; font-family: 'Rajdhani', sans-serif; text-transform: uppercase; margin-bottom: 12px; }
+.win-color { color: #22c55e; text-shadow: 0 0 20px rgba(34, 197, 94, 0.6); }
+.lose-color { color: #ef4444; text-shadow: 0 0 20px rgba(239, 68, 68, 0.6); }
+.draw-color { color: #ffd700; text-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
+
+@media(max-width: 768px) {
+  .sb { display: none; }
+  .quiz-options { grid-template-columns: 1fr; }
+  .vs-header { gap: 10px; }
+  .j-btn { width: 100px; height: 110px; font-size: 32px; }
+  .puzzle-grid { grid-template-columns: repeat(3, 75px); grid-template-rows: repeat(3, 75px); }
+  .puz-tile { width: 75px; height: 75px; font-size: 20px; }
+}
+</style>
 </head>
 <body>
 
-    <video class="video-bg" autoplay loop muted playsinline>
-        <source src="../beranda/latarglobal.webm" type="video/webm">
-    </video>
+<div class="bg-glow">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
 
-    <div class="corner-glows">
-        <div class="glow glow-tl"></div><div class="glow glow-tr"></div>
-        <div class="glow glow-bl"></div><div class="glow glow-br"></div>
+<!-- SIDEBAR -->
+<nav class="sb">
+  <a href="../beranda/" class="na"><span class="ni">&#128172;</span>Beranda</a>
+  <a href="../profil/" class="na"><span class="ni">&#128100;</span>Profil</a>
+  <a href="../gacha-skin/" class="na"><span class="ni">&#127873;</span>Gacha</a>
+  <a href="../live-jkt48/" class="na"><span class="ni">&#127908;</span>Live JKT</a>
+  <a href="../alcstify/" class="na"><span class="ni">&#127925;</span>Alcstify</a>
+  <a href="#" class="na on"><span class="ni">&#127918;</span>Games</a>
+  <a href="../grup/" class="na"><span class="ni">&#128101;</span>Grup</a>
+  <a href="../temen-mabar/" class="na"><span class="ni">&#9876;</span>Mabar</a>
+  <a href="../medsos-saver/" class="na"><span class="ni">&#128229;</span>Saver</a>
+  <a href="../koleksi-kartu/" class="na"><span class="ni">&#127823;</span>Kartu</a>
+  <a href="../bio-member/" class="na"><span class="ni">&#128214;</span>Bio</a>
+  <a href="../link-shortcut/" class="na"><span class="ni">&#128279;</span>Shortcut</a>
+  <a href="../update-member/" class="na"><span class="ni">&#128241;</span>Update</a>
+  <a href="../tentang/" class="na"><span class="ni">&#8505;</span>Tentang</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="mn">
+  <header class="tb">
+    <div class="brand-wrap">
+      <img src="../icon.png" alt="icon">
+      <span class="brand-title">JKT48 Mini-Games 1vs1 Arena</span>
+    </div>
+    <div class="live-pill">
+      <div class="live-dot"></div>
+      <span>P2P Real-Time Online</span>
+    </div>
+  </header>
+
+  <div class="stage">
+    <!-- LOBBY CARD -->
+    <div class="lobby-card">
+      <div class="lobby-hero">
+        <span class="lobby-badge">&#9876; Multiplayer Matchmaking System</span>
+        <h1 class="lobby-title">Tanding 1 vs 1 Online Real-Time</h1>
+        <p class="lobby-desc">Pilih game favoritmu, buat room rahasia untuk menantang sesama Wota JKT48, atau asah kemampuan melawan Bot AI!</p>
+      </div>
+
+      <div class="room-actions">
+        <!-- CREATE ROOM -->
+        <div class="action-box">
+          <div class="box-icon">&#128081;</div>
+          <div class="box-title">Buat Room Tanding Baru</div>
+          <div class="box-desc">Dapatkan 6 digit Room ID unik untuk dibagikan ke lawan mainmu langsung.</div>
+          <button class="btn-main" onclick="createRoom()">&#9654; Buat Room Tanding</button>
+        </div>
+
+        <!-- JOIN ROOM -->
+        <div class="action-box">
+          <div class="box-icon">&#128640;</div>
+          <div class="box-title">Gabung Room Lawan</div>
+          <div class="box-desc">Masukkan kode 6 digit yang diberikan oleh temanmu.</div>
+          <input type="text" id="joinRoomInput" class="room-input" placeholder="KODE ROOM (MISAL: JKT488)" maxlength="8">
+          <button class="btn-main btn-pink" onclick="joinRoom()">&#9876; Masuk Arena Lawan</button>
+        </div>
+
+        <!-- PRACTICE BOT -->
+        <div class="action-box">
+          <div class="box-icon">&#129302;</div>
+          <div class="box-title">Mode Latihan Solo (Vs AI)</div>
+          <div class="box-desc">Langsung bermain cepat melawan AI Bot tanpa perlu menunggu lawan!</div>
+          <button class="btn-main btn-gold" onclick="startPracticeMode()">&#9889; Mainkan Vs Bot AI</button>
+        </div>
+      </div>
     </div>
 
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-
-    <!-- RESTRUCTURED SIDEBAR -->
-        <aside class="left-sidebar" id="leftSidebar">
-        <a href="../beranda/" class="side-item"><span class="side-icon">💬</span>Beranda</a>
-        <a href="../profil/" class="side-item"><span class="side-icon">👤</span>Profil</a>
-        <a href="../gacha-skin/" class="side-item"><span class="side-icon">🎁</span>Gacha</a>
-        <a href="../live-jkt48/" class="side-item"><span class="side-icon">🎤</span>Live JKT</a>
-        <a href="../alcstify/" class="side-item"><span class="side-icon">🎵</span>Alcstify</a>
-        <a href="#" class="side-item active"><span class="side-icon">🎮</span>Mini Games</a>
-        <a href="../grup/" class="side-item"><span class="side-icon">👥</span>Grup</a>
-        <a href="../temen-mabar/" class="side-item"><span class="side-icon">⚔️</span>Mabar</a>
-        <a href="../medsos-saver/" class="side-item"><span class="side-icon">📥</span>Saver</a>
-        <a href="../koleksi-kartu/" class="side-item"><span class="side-icon">🃏</span>Kartu</a>
-        <a href="../bio-member/" class="side-item"><span class="side-icon">📖</span>Bio</a>
-        <a href="../link-shortcut/" class="side-item"><span class="side-icon">🔗</span>Shortcut</a>
-        <a href="../update-member/" class="side-item"><span class="side-icon">📱</span>Update Sosmed</a>
-        <a href="../tentang/" class="side-item"><span class="side-icon">ℹ️</span>Tentang</a>
-    </aside>
-
-    <main class="main-content">
-        <header class="top-bar">
-            <div class="left-group">
-                <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
-                <div class="brand-logo">
-                    <img src="../logo.png.png" alt="Logo" class="logo-main" onerror="this.onerror=null; this.src='../logo.png';">
-                    <span class="brand-text">Mini Games Wota Hub - JKT48</span>
-                </div>
-            </div>
-        </header>
-
-        <div class="stage-container">
-            <div class="glass-card">
-                <div style="margin-bottom: 8px;">
-                    <h2 style="color: #ffd700; font-size: 20px; font-weight: 900; font-family: 'Cinzel', serif;">🎮 Mini Games Wota Hub</h2>
-                    <p style="color: rgba(255,255,255,0.75); font-size: 13px; margin-top: 4px;">Pilih permainan seru berbasis kartu dan karakter oshi JKT48!</p>
-                </div>
-
-                <div class="games-grid">
-                    <div class="game-card">
-                        <div class="game-banner">
-                            <img src="../skin/FREYA_JAYAWARDANA_MYTH.jpg" class="game-banner-img" alt="Card Collection">
-                        </div>
-                        <div class="game-info">
-                            <div class="game-title">🃏 Koleksi Kartu Member</div>
-                            <div class="game-desc">Koleksi 88 kartu skin member dari tier Uncommon hingga Mythical eksklusif.</div>
-                            <a href="../koleksi-kartu/" class="btn-play-game">Buka Koleksi Kartu</a>
-                        </div>
-                    </div>
-
-                    <div class="game-card">
-                        <div class="game-banner">
-                            <img src="../skin/ANGELINA_CHRISTY_MYTH.jpg" class="game-banner-img" alt="Gacha Simulator">
-                        </div>
-                        <div class="game-info">
-                            <div class="game-title">🎁 Gacha Skin Member</div>
-                            <div class="game-desc">Uji keberuntungan gacha kamu untuk mendapatkan skin tier Mythic!</div>
-                            <a href="../gacha-skin/" class="btn-play-game">Mulai Gacha Sekarang</a>
-                        </div>
-                    </div>
-
-                    <div class="game-card">
-                        <div class="game-banner">
-                            <img src="../skin/MARSHA_LENATHEA_MYTH.jpg" class="game-banner-img" alt="Live Mirroring">
-                        </div>
-                        <div class="game-info">
-                            <div class="game-title">🎤 Live Stream & Replay Hub</div>
-                            <div class="game-desc">Nonton live stream dan 1.700+ rekaman siaran member JKT48.</div>
-                            <a href="../live-jkt48/" class="btn-play-game">Masuk Live Stream</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- GAMES SELECTION GRID -->
+    <div class="games-grid">
+      <!-- GAME 1 -->
+      <div class="game-card" onclick="selectGameMode('janken')">
+        <span class="game-badge" style="color:#ffd700;border-color:#ffd700">Terpopuler</span>
+        <div class="game-icon-large">&#9994;</div>
+        <div class="game-name">Janken Showdown JKT48</div>
+        <div class="game-summary">Adu suit tradisi Janken Competition JKT48. Pilih Batu, Gunting, atau Kertas secara rahasia dalam 10 detik dan buktikan oshimen terkuat!</div>
+        <div class="game-features">
+          <span class="feat-tag">&#9201; 10s Timer</span>
+          <span class="feat-tag">&#127942; Best of 3</span>
+          <span class="feat-tag">&#128100; Avatar Oshi</span>
         </div>
-    </main>
+      </div>
 
-    <script>
-        function toggleSidebar() {
-            document.getElementById("leftSidebar").classList.toggle("open");
-            document.getElementById("sidebarOverlay").classList.toggle("active");
-        }
-    </script>
+      <!-- GAME 2 -->
+      <div class="game-card" onclick="selectGameMode('quiz')">
+        <span class="game-badge" style="color:#00f2fe;border-color:#00f2fe">Speed Fighting</span>
+        <div class="game-icon-large">&#9201;</div>
+        <div class="game-name">JKT48 Quiz Fighting Arena</div>
+        <div class="game-summary">Tebak lirik, member, teater, dan MV tercepat! Game bergaya fighting dengan Health Bar (HP). Jawaban cepat & tepat menguras darah lawan!</div>
+        <div class="game-features">
+          <span class="feat-tag">&#128154; Health Bars</span>
+          <span class="feat-tag">&#128293; Speed Bonus</span>
+          <span class="feat-tag">&#127925; 100+ Soal</span>
+        </div>
+      </div>
+
+      <!-- GAME 3 -->
+      <div class="game-card" onclick="selectGameMode('puzzle')">
+        <span class="game-badge" style="color:#ff007f;border-color:#ff007f">Puzzle Race</span>
+        <div class="game-icon-large">&#129513;</div>
+        <div class="game-name">JKT48 Puzzle Tile Race</div>
+        <div class="game-summary">Susun potongan puzzle poster Senbatsu & Teater secara real-time. Siapa yang berhasil menyusun ubin lebih dulu akan memenangkan match!</div>
+        <div class="game-features">
+          <span class="feat-tag">&#128064; Live Tracker</span>
+          <span class="feat-tag">&#128081; 3x3 Grid</span>
+          <span class="feat-tag">&#9889; High Speed</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ARENA FULLSCREEN VIEW (ACTIVE GAME) -->
+<div class="arena-view" id="arenaView">
+  <div class="arena-topbar">
+    <div class="room-code-tag" id="arenaRoomBadge">ROOM: JKT-001</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span id="arenaGameTitle" style="font-weight:800;font-size:14px;color:#fff;">Janken Showdown</span>
+      <button class="btn-leave" onclick="leaveArena()">&#10005; Keluar Match</button>
+    </div>
+  </div>
+
+  <div class="arena-body">
+    <!-- HEALTH BARS & VERSUS BAR -->
+    <div class="vs-header">
+      <div class="player-slot">
+        <img class="player-avatar" id="p1Avatar" src="../skin/FREYA_JAYAWARDANA_MYTH.jpg" onerror="this.src='../icon.png'">
+        <span class="player-name" id="p1Name">Kamu (P1)</span>
+        <div class="hp-bar-bg"><div class="hp-fill" id="p1Hp"></div></div>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="player-slot">
+        <img class="player-avatar p2-avatar" id="p2Avatar" src="../skin/ANGELINA_CHRISTY_MYTH.jpg" onerror="this.src='../icon.png'">
+        <span class="player-name" id="p2Name">Lawan (P2)</span>
+        <div class="hp-bar-bg"><div class="hp-fill hp-fill-p2" id="p2Hp"></div></div>
+      </div>
+    </div>
+
+    <!-- GAME CONTAINER 1: JANKEN -->
+    <div class="janken-board" id="jankenGameBox" style="display:none;">
+      <div class="round-announcer" id="jankenRoundTxt">Ronde 1: Siap-siap Memilih!</div>
+      <div class="timer-circle" id="jankenTimer">10</div>
+
+      <div class="janken-arena-showdown" id="jankenRevealArea" style="display:none;">
+        <div class="reveal-box" id="p1Reveal">&#10067;</div>
+        <div style="font-size:24px;font-weight:900;color:#ffd700;">VS</div>
+        <div class="reveal-box" id="p2Reveal">&#10067;</div>
+      </div>
+
+      <div class="janken-cards" id="jankenBtnArea">
+        <button class="j-btn" onclick="makeJankenChoice('batu')"><span>&#9994;</span><span class="j-label">Batu</span></button>
+        <button class="j-btn" onclick="makeJankenChoice('gunting')"><span>&#9996;</span><span class="j-label">Gunting</span></button>
+        <button class="j-btn" onclick="makeJankenChoice('kertas')"><span>&#9995;</span><span class="j-label">Kertas</span></button>
+      </div>
+    </div>
+
+    <!-- GAME CONTAINER 2: QUIZ -->
+    <div class="quiz-board" id="quizGameBox" style="display:none;">
+      <div class="round-announcer" id="quizRoundTxt">Pertanyaan 1/5</div>
+      <div class="timer-circle" id="quizTimer">12</div>
+      <div class="quiz-qbox">
+        <div class="quiz-prompt" id="quizQuestionText">Loading soal...</div>
+      </div>
+      <div class="quiz-options" id="quizOptionsArea"></div>
+    </div>
+
+    <!-- GAME CONTAINER 3: PUZZLE -->
+    <div class="puzzle-board" id="puzzleGameBox" style="display:none;">
+      <div class="round-announcer">Susun Angka 1 s/d 8 Secara Berurutan!</div>
+      <div class="timer-circle" id="puzzleTimer">0:00</div>
+      <div class="puzzle-grid" id="puzzleGridArea"></div>
+    </div>
+
+    <!-- RESULT BANNER -->
+    <div id="matchResultBox" style="display:none;text-align:center;margin-top:20px;">
+      <div class="result-banner" id="matchResultTitle">KAMU MENANG!</div>
+      <button class="btn-main btn-gold" style="width:200px;margin-top:14px;" onclick="resetMatch()">&#128260; Main Lagi</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== STATE & DATA =====
+let selectedGame = 'janken';
+let isVsBot = true;
+let myRoomId = '';
+let peer = null, conn = null;
+let p1Health = 100, p2Health = 100;
+let jankenTimerInterval = null, quizTimerInterval = null, puzzleTimerInterval = null;
+let p1Choice = null, p2Choice = null;
+let currentQuestionIndex = 0;
+let puzzleBoard = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+let puzzleSec = 0;
+
+// ===== QUESTION DATABASE =====
+const QUIZ_QUESTIONS = [
+  {
+    q: "Siapakah Member JKT48 yang menjadi Center single ke-21 'Rapsodi'?",
+    opts: ["Shani Indira Natio", "Feni Fitriyanti", "Freya Jayawardana", "Adhisty Zara"],
+    a: 0
+  },
+  {
+    q: "Lirik lagu 'Di dalam benakku selalu berputar...' berasal dari lagu?",
+    opts: ["RIVER", "Heavy Rotation", "Flying High", "Gingham Check"],
+    a: 1
+  },
+  {
+    q: "Setlist teater manakah yang memuat lagu legendaris 'Temodemo no Namida'?",
+    opts: ["Pajama Drive", "Renai Kinshi Jourei", "Boku no Taiyou", "Theater no Megami"],
+    a: 0
+  },
+  {
+    q: "Pada tahun berapakah JKT48 resmi dibentuk di Jakarta?",
+    opts: ["2010", "2011", "2012", "2013"],
+    a: 1
+  },
+  {
+    q: "Lagu apa yang menjadi single original pertama JKT48 (bukan adaptasi AKB48)?",
+    opts: ["Rapsodi", "Magic Hour", "Flying High", "Darashinai Aishikata"],
+    a: 0
+  }
+];
+
+function selectGameMode(game) {
+  selectedGame = game;
+  startPracticeMode();
+}
+
+function createRoom() {
+  myRoomId = 'JKT-' + Math.floor(1000 + Math.random() * 9000);
+  isVsBot = false;
+  initPeer(myRoomId, true);
+  launchArena();
+}
+
+function joinRoom() {
+  const code = document.getElementById('joinRoomInput').value.trim().toUpperCase();
+  if (!code) { alert('Masukkan kode Room ID terlebih dahulu!'); return; }
+  myRoomId = code;
+  isVsBot = false;
+  initPeer(myRoomId, false);
+  launchArena();
+}
+
+function startPracticeMode() {
+  myRoomId = 'BOT-ARENA';
+  isVsBot = true;
+  launchArena();
+}
+
+function initPeer(roomId, isHost) {
+  try {
+    peer = new Peer(isHost ? roomId : undefined);
+    peer.on('open', id => {
+      document.getElementById('arenaRoomBadge').textContent = 'ROOM: ' + roomId;
+      if (!isHost) {
+        conn = peer.connect(roomId);
+        setupConnection(conn);
+      }
+    });
+    peer.on('connection', incoming => {
+      conn = incoming;
+      setupConnection(conn);
+    });
+  } catch(e) {
+    console.warn("P2P Notice:", e);
+  }
+}
+
+function setupConnection(c) {
+  c.on('data', data => {
+    handleIncomingNetworkData(data);
+  });
+}
+
+function broadcastAction(payload) {
+  if (conn && conn.open) {
+    conn.send(payload);
+  }
+}
+
+function handleIncomingNetworkData(d) {
+  if (d.type === 'janken_choice') {
+    p2Choice = d.choice;
+    checkJankenResult();
+  } else if (d.type === 'quiz_answer') {
+    if (d.correct) {
+      p1Health = Math.max(0, p1Health - 25);
+      updateHpBars();
+    }
+  }
+}
+
+// ===== LAUNCH ARENA =====
+function launchArena() {
+  document.getElementById('arenaView').classList.add('active');
+  document.getElementById('arenaRoomBadge').textContent = 'ROOM: ' + myRoomId;
+  document.getElementById('p2Name').textContent = isVsBot ? 'JKT48 AI Bot 🤖' : 'Pemain 2';
+  document.getElementById('matchResultBox').style.display = 'none';
+
+  p1Health = 100;
+  p2Health = 100;
+  updateHpBars();
+
+  document.getElementById('jankenGameBox').style.display = 'none';
+  document.getElementById('quizGameBox').style.display = 'none';
+  document.getElementById('puzzleGameBox').style.display = 'none';
+
+  if (selectedGame === 'janken') {
+    document.getElementById('arenaGameTitle').textContent = 'Janken Showdown 1vs1';
+    document.getElementById('jankenGameBox').style.display = 'block';
+    startJankenRound();
+  } else if (selectedGame === 'quiz') {
+    document.getElementById('arenaGameTitle').textContent = 'Quiz Fighting Arena 1vs1';
+    document.getElementById('quizGameBox').style.display = 'block';
+    currentQuestionIndex = 0;
+    loadQuizQuestion();
+  } else {
+    document.getElementById('arenaGameTitle').textContent = 'Puzzle Tile Race 1vs1';
+    document.getElementById('puzzleGameBox').style.display = 'block';
+    startPuzzleRace();
+  }
+}
+
+function updateHpBars() {
+  document.getElementById('p1Hp').style.width = p1Health + '%';
+  document.getElementById('p2Hp').style.width = p2Health + '%';
+
+  if (p1Health <= 0 || p2Health <= 0) {
+    endMatch();
+  }
+}
+
+function leaveArena() {
+  clearInterval(jankenTimerInterval);
+  clearInterval(quizTimerInterval);
+  clearInterval(puzzleTimerInterval);
+  if (conn) conn.close();
+  if (peer) peer.destroy();
+  document.getElementById('arenaView').classList.remove('active');
+}
+
+// ===== GAME 1: JANKEN ENGINE =====
+function startJankenRound() {
+  p1Choice = null;
+  p2Choice = null;
+  document.getElementById('jankenRevealArea').style.display = 'none';
+  document.getElementById('jankenBtnArea').style.display = 'flex';
+  document.querySelectorAll('.j-btn').forEach(b => b.classList.remove('selected'));
+
+  let timer = 10;
+  document.getElementById('jankenTimer').textContent = timer;
+  clearInterval(jankenTimerInterval);
+
+  jankenTimerInterval = setInterval(() => {
+    timer--;
+    document.getElementById('jankenTimer').textContent = timer;
+    if (timer <= 0) {
+      clearInterval(jankenTimerInterval);
+      if (!p1Choice) p1Choice = ['batu','gunting','kertas'][Math.floor(Math.random()*3)];
+      if (isVsBot) p2Choice = ['batu','gunting','kertas'][Math.floor(Math.random()*3)];
+      checkJankenResult();
+    }
+  }, 1000);
+}
+
+function makeJankenChoice(choice) {
+  p1Choice = choice;
+  document.querySelectorAll('.j-btn').forEach(b => b.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+
+  if (isVsBot) {
+    p2Choice = ['batu','gunting','kertas'][Math.floor(Math.random()*3)];
+  } else {
+    broadcastAction({ type: 'janken_choice', choice });
+  }
+
+  if (p1Choice && p2Choice) {
+    clearInterval(jankenTimerInterval);
+    checkJankenResult();
+  }
+}
+
+function checkJankenResult() {
+  if (!p1Choice || !p2Choice) return;
+
+  const iconMap = { batu: '✊', gunting: '✌️', kertas: '🖐️' };
+  document.getElementById('jankenBtnArea').style.display = 'none';
+  document.getElementById('jankenRevealArea').style.display = 'flex';
+  document.getElementById('p1Reveal').textContent = iconMap[p1Choice];
+  document.getElementById('p2Reveal').textContent = iconMap[p2Choice];
+
+  if (p1Choice === p2Choice) {
+    document.getElementById('jankenRoundTxt').textContent = 'DRAW / SERI! KEDUA OSHI SAMA KUAT!';
+  } else if (
+    (p1Choice === 'batu' && p2Choice === 'gunting') ||
+    (p1Choice === 'gunting' && p2Choice === 'kertas') ||
+    (p1Choice === 'kertas' && p2Choice === 'batu')
+  ) {
+    p2Health = Math.max(0, p2Health - 35);
+    document.getElementById('jankenRoundTxt').textContent = 'KAMU MENANG RONDE INI!';
+  } else {
+    p1Health = Math.max(0, p1Health - 35);
+    document.getElementById('jankenRoundTxt').textContent = 'LAWAN MENANG RONDE INI!';
+  }
+
+  updateHpBars();
+  if (p1Health > 0 && p2Health > 0) {
+    setTimeout(startJankenRound, 3000);
+  }
+}
+
+// ===== GAME 2: QUIZ FIGHTING ENGINE =====
+function loadQuizQuestion() {
+  if (currentQuestionIndex >= QUIZ_QUESTIONS.length) {
+    endMatch();
+    return;
+  }
+  const qObj = QUIZ_QUESTIONS[currentQuestionIndex];
+  document.getElementById('quizRoundTxt').textContent = `Pertanyaan ${currentQuestionIndex + 1} / ${QUIZ_QUESTIONS.length}`;
+  document.getElementById('quizQuestionText').textContent = qObj.q;
+
+  const area = document.getElementById('quizOptionsArea');
+  area.innerHTML = '';
+  qObj.opts.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'q-opt';
+    btn.textContent = `${String.fromCharCode(65+idx)}. ${opt}`;
+    btn.onclick = () => answerQuiz(idx);
+    area.appendChild(btn);
+  });
+
+  let timer = 12;
+  document.getElementById('quizTimer').textContent = timer;
+  clearInterval(quizTimerInterval);
+  quizTimerInterval = setInterval(() => {
+    timer--;
+    document.getElementById('quizTimer').textContent = timer;
+    if (timer <= 0) {
+      clearInterval(quizTimerInterval);
+      nextQuestion();
+    }
+  }, 1000);
+}
+
+function answerQuiz(idx) {
+  clearInterval(quizTimerInterval);
+  const qObj = QUIZ_QUESTIONS[currentQuestionIndex];
+  const btns = document.querySelectorAll('.q-opt');
+
+  if (idx === qObj.a) {
+    btns[idx].classList.add('correct');
+    p2Health = Math.max(0, p2Health - 30);
+    broadcastAction({ type: 'quiz_answer', correct: true });
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[qObj.a].classList.add('correct');
+    p1Health = Math.max(0, p1Health - 20);
+  }
+
+  updateHpBars();
+  setTimeout(nextQuestion, 2000);
+}
+
+function nextQuestion() {
+  currentQuestionIndex++;
+  loadQuizQuestion();
+}
+
+// ===== GAME 3: PUZZLE TILE RACE =====
+function startPuzzleRace() {
+  puzzleBoard = [1, 2, 3, 4, 5, 6, 7, 0, 8];
+  renderPuzzle();
+  puzzleSec = 0;
+  clearInterval(puzzleTimerInterval);
+  puzzleTimerInterval = setInterval(() => {
+    puzzleSec++;
+    const m = Math.floor(puzzleSec / 60);
+    const s = puzzleSec % 60;
+    document.getElementById('puzzleTimer').textContent = `${m}:${String(s).padStart(2, '0')}`;
+  }, 1000);
+}
+
+function renderPuzzle() {
+  const grid = document.getElementById('puzzleGridArea');
+  grid.innerHTML = '';
+  puzzleBoard.forEach((val, idx) => {
+    const tile = document.createElement('div');
+    if (val === 0) {
+      tile.className = 'puz-tile puz-empty';
+    } else {
+      tile.className = 'puz-tile';
+      tile.textContent = val;
+      tile.onclick = () => movePuzzleTile(idx);
+    }
+    grid.appendChild(tile);
+  });
+}
+
+function movePuzzleTile(idx) {
+  const emptyIdx = puzzleBoard.indexOf(0);
+  const r1 = Math.floor(idx / 3), c1 = idx % 3;
+  const r2 = Math.floor(emptyIdx / 3), c2 = emptyIdx % 3;
+
+  if (Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1) {
+    puzzleBoard[emptyIdx] = puzzleBoard[idx];
+    puzzleBoard[idx] = 0;
+    renderPuzzle();
+    checkPuzzleWin();
+  }
+}
+
+function checkPuzzleWin() {
+  const win = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+  if (puzzleBoard.every((v, i) => v === win[i])) {
+    clearInterval(puzzleTimerInterval);
+    p2Health = 0;
+    updateHpBars();
+  }
+}
+
+// ===== END MATCH =====
+function endMatch() {
+  clearInterval(jankenTimerInterval);
+  clearInterval(quizTimerInterval);
+  clearInterval(puzzleTimerInterval);
+
+  const resBox = document.getElementById('matchResultBox');
+  const resTitle = document.getElementById('matchResultTitle');
+  resBox.style.display = 'block';
+
+  if (p1Health > p2Health) {
+    resTitle.textContent = '🏆 VICTORY! KAMU MENANG TELAK!';
+    resTitle.className = 'result-banner win-color';
+  } else if (p2Health > p1Health) {
+    resTitle.textContent = '💀 DEFEAT! KAMU KALAH!';
+    resTitle.className = 'result-banner lose-color';
+  } else {
+    resTitle.textContent = '🤝 DRAW / SERI SAMA KUAT!';
+    resTitle.className = 'result-banner draw-color';
+  }
+}
+
+function resetMatch() {
+  launchArena();
+}
+</script>
 </body>
 </html>
