@@ -16,7 +16,6 @@
       --gold-glow: rgba(251, 191, 36, 0.4);
       --bg-dark: #070913;
       --card-glass: rgba(15, 23, 42, 0.7);
-      --card-glass-hover: rgba(30, 41, 59, 0.85);
       --border-glass: rgba(255, 255, 255, 0.15);
       --text: #f8fafc;
       --text-muted: #94a3b8;
@@ -568,7 +567,7 @@
       <div id="viewSkinEquip">
         <div class="gallery-header-box">
           <div class="gallery-title">Galery Alcsta48 - UNO Omega Card</div>
-          <div class="gallery-sub">Koleksi seluruh varian skin kartu member JKT48. <strong>Setiap 1 member hanya dapat mengaktifkan 1 skin</strong>. Skin yang dimiliki tampil berwarna penuh, sedangkan skin yang belum dimiliki tampil abu-abu.</div>
+          <div class="gallery-sub">Koleksi seluruh varian skin kartu member JKT48 tersimpan otomatis ke PostgreSQL. <strong>Setiap 1 member hanya dapat mengaktifkan 1 skin</strong>. Skin yang dimiliki tampil berwarna penuh, sedangkan skin yang belum dimiliki tampil abu-abu.</div>
         </div>
 
         <div class="skin-filter-bar">
@@ -1111,6 +1110,24 @@
       document.getElementById('viewSkinEquip').style.display = tab === 'skin' ? 'block' : 'none';
       if (tab === 'skin') {
         loadUserSkinInventory();
+        fetchEquippedSkinsFromPG();
+      }
+    }
+
+    // ===== FETCH EQUIPPED SKINS DIRECTLY FROM POSTGRESQL =====
+    async function fetchEquippedSkinsFromPG() {
+      try {
+        const res = await fetch(`${API_BASE}/api/uno/skin/${currentSession}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.equipped_skins) {
+            equippedSkinMap = data.equipped_skins;
+            localStorage.setItem('uno_equipped_skins', JSON.stringify(equippedSkinMap));
+            renderMemberSkins();
+          }
+        }
+      } catch (e) {
+        console.warn("Equipped skins PG sync fallback:", e);
       }
     }
 
@@ -1227,18 +1244,63 @@
     }
 
     // 1 Member HANYA bisa mengaktifkan 1 Skin pada saat bersamaan!
-    function equipMemberSkin(memberKey, skinCode) {
+    async function equipMemberSkin(memberKey, skinCode) {
       equippedSkinMap[memberKey] = skinCode;
       localStorage.setItem('uno_equipped_skins', JSON.stringify(equippedSkinMap));
       renderMemberSkins();
-      showToast(`âœ¨ Skin ${skinCode} aktif untuk ${memberKey}! (Skin lain otomatis nonaktif)`);
+      showToast(`âœ¨ Skin ${skinCode} aktif untuk ${memberKey}! (Disimpan ke PostgreSQL)`);
+
+      // 1. POST to Backend Neon PostgreSQL
+      try {
+        await fetch(`${API_BASE}/api/uno/skin/equip`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            session_id: currentSession,
+            member_key: memberKey,
+            skin_code: skinCode
+          })
+        });
+      } catch (e) {
+        console.warn("Equip skin PG sync warning:", e);
+      }
+
+      // 2. Sync to active WebSocket room if in game
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          action: 'sync_skins',
+          equipped_skins: equippedSkinMap
+        }));
+      }
     }
 
-    function unequipMemberSkin(memberKey) {
+    async function unequipMemberSkin(memberKey) {
       delete equippedSkinMap[memberKey];
       localStorage.setItem('uno_equipped_skins', JSON.stringify(equippedSkinMap));
       renderMemberSkins();
       showToast(`Kartu ${memberKey} kembali ke default Trainee.`);
+
+      // POST unequip to Backend Neon PostgreSQL
+      try {
+        await fetch(`${API_BASE}/api/uno/skin/equip`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            session_id: currentSession,
+            member_key: memberKey,
+            skin_code: ""
+          })
+        });
+      } catch (e) {
+        console.warn("Unequip skin PG sync warning:", e);
+      }
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          action: 'sync_skins',
+          equipped_skins: equippedSkinMap
+        }));
+      }
     }
 
     function filterMemberCategory(cat, el) {
@@ -1346,6 +1408,11 @@
 
       ws.onopen = () => {
         console.log("Connected to UNO room:", roomId);
+        // Send equipped skins to room
+        ws.send(JSON.stringify({
+          action: 'sync_skins',
+          equipped_skins: equippedSkinMap
+        }));
       };
 
       ws.onmessage = (event) => {
@@ -1420,7 +1487,10 @@
 
     function toggleReady() {
       if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ action: 'ready' }));
+        ws.send(JSON.stringify({
+          action: 'ready',
+          equipped_skins: equippedSkinMap
+        }));
       }
     }
 
@@ -1717,6 +1787,7 @@
     // Init App
     window.addEventListener('DOMContentLoaded', () => {
       loadUserSkinInventory();
+      fetchEquippedSkinsFromPG();
       fetchLobbyRooms();
       setInterval(fetchLobbyRooms, 8000);
       setInterval(loadUserSkinInventory, 15000);
