@@ -7,7 +7,10 @@
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <script src="config.js"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <script src="config.js?v=2.0"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * {
@@ -589,11 +592,9 @@
     </div>
 
     <script>
-        const BACKEND_URL = (typeof ALCSTA_CONFIG !== 'undefined' && ALCSTA_CONFIG.CORE_BACKEND_URL) 
-            ? ALCSTA_CONFIG.CORE_BACKEND_URL 
-            : "https://shinezzzz-gokgokgogkgokgok.hf.space";
-        const PRIMARY_URL = BACKEND_URL;
-        const FALLBACK_URL = BACKEND_URL;
+        const BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+        const PRIMARY_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+        const FALLBACK_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
         let pendingRegData = null;
         let otpCountdownInterval = null;
 
@@ -779,7 +780,9 @@
         // 4. GOOGLE OAUTH2 CREDENTIAL RESPONSE HANDLER
         async function handleGoogleCredentialResponse(response) {
             try {
-                const res = await fetch(`${BACKEND_URL}/api/auth/google`, {
+                const targetUrl = "https://shinezzzz-gokgokgogkgokgok.hf.space/api/auth/google";
+                console.log("Sending Google OAuth credential to:", targetUrl);
+                const res = await fetch(targetUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ credential: response.credential })
@@ -792,10 +795,11 @@
                         window.location.href = "beranda/";
                     });
                 } else {
-                    alert("Login Google Gagal: " + (data.detail || "Token Google tidak valid."));
+                    alert("Login Google Gagal: " + (data.detail || data.message || "Token Google tidak valid."));
                 }
             } catch (err) {
-                alert("Gagal terhubung ke server autentikasi Google.");
+                console.error("Google Auth Request Error:", err);
+                alert("Gagal terhubung ke server backend Google Auth: " + err.message);
             }
         }
 
