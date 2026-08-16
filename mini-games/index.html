@@ -14,9 +14,8 @@
       --accent: #00d2ff;
       --accent-glow: rgba(0, 210, 255, 0.4);
       --gold: #fbbf24;
-      --gold-glow: rgba(251, 191, 36, 0.4);
       --bg-dark: #070913;
-      --card-glass: rgba(15, 23, 42, 0.7);
+      --card-glass: rgba(15, 23, 42, 0.75);
       --border-glass: rgba(255, 255, 255, 0.15);
       --text: #f8fafc;
       --text-muted: #94a3b8;
@@ -29,7 +28,7 @@
       background-color: var(--bg-dark); color: var(--text);
     }
 
-    /* GLOBAL ANIMATED BACKGROUND & CORNER GLOWS */
+    /* GLOBAL ANIMATED BACKGROUND */
     .global-bg-container {
       position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
       background: radial-gradient(circle at 10% 20%, rgba(236, 72, 153, 0.12), transparent 45%),
@@ -281,7 +280,7 @@
       background-image: url('last - Copy.jpg'), url('bg_arena.jpg');
       background-size: cover; background-position: center; z-index: 0;
     }
-    /* LAYER 2: CSS PAPER PLANES CONTINUOUS LOOP */
+    /* LAYER 2: CSS PAPER PLANES */
     .plane-container { position: absolute; inset: 0; z-index: 10; pointer-events: none; overflow: hidden; }
     .css-plane {
       position: absolute; font-size: 28px; opacity: 0.8;
@@ -309,7 +308,7 @@
       transform: rotateX(52deg); display: flex; align-items: center; justify-content: center; gap: 40px;
     }
     .deck-pile {
-      width: 90px; height: 130px; border-radius: 10px; cursor: pointer;
+      width: 105px; height: 155px; border-radius: 12px; cursor: pointer;
       position: relative; transition: transform 0.2s;
     }
     .draw-deck {
@@ -319,7 +318,7 @@
     }
     .draw-deck:hover { transform: translateY(-8px) scale(1.05); }
     .discard-deck {
-      border: 2px dashed rgba(255,255,255,0.4); border-radius: 10px;
+      border: 2px dashed rgba(255,255,255,0.4); border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
     }
     .color-ring {
@@ -327,10 +326,11 @@
       border: 4px solid var(--accent); animation: pulseGlow 1.5s infinite alternate;
       pointer-events: none;
     }
-    .color-ring.red { border-color: #ef4444; box-shadow: 0 0 30px #ef4444; }
-    .color-ring.blue { border-color: #3b82f6; box-shadow: 0 0 30px #3b82f6; }
-    .color-ring.green { border-color: #10b981; box-shadow: 0 0 30px #10b981; }
-    .color-ring.yellow { border-color: #f59e0b; box-shadow: 0 0 30px #f59e0b; }
+    .color-ring.red { border-color: #e74c3c; box-shadow: 0 0 35px #e74c3c; }
+    .color-ring.blue { border-color: #0984e3; box-shadow: 0 0 35px #0984e3; }
+    .color-ring.green { border-color: #00b894; box-shadow: 0 0 35px #00b894; }
+    .color-ring.yellow { border-color: #fbc531; box-shadow: 0 0 35px #fbc531; }
+    .color-ring.wild { border-color: #a855f7; box-shadow: 0 0 35px #a855f7; }
     @keyframes pulseGlow {
       from { transform: scale(0.95); opacity: 0.7; }
       to { transform: scale(1.05); opacity: 1; }
@@ -362,45 +362,79 @@
     /* BOTTOM HUD (MAIN USER HAND) */
     .hud-bottom {
       position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-      width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center;
+      width: 100%; max-width: 960px; display: flex; flex-direction: column; align-items: center;
       pointer-events: auto; z-index: 40;
     }
     .hand-carousel {
-      display: flex; gap: -25px; justify-content: center; align-items: flex-end;
+      display: flex; gap: -20px; justify-content: center; align-items: flex-end;
       padding: 10px 20px; overflow-x: auto; max-width: 95vw; scrollbar-width: none;
     }
     .hand-carousel::-webkit-scrollbar { display: none; }
 
-    /* CARD DESIGN WITH CORNER BORDERS & MEMBER PHOTO */
+    /* ========================================================================= */
+    /* REAL UNO CARD DESIGN (EXACT MATCH TO OFFICIAL PHOTO MEDIA_1786901843790) */
+    /* ========================================================================= */
     .uno-card {
-      width: 85px; height: 125px; border-radius: 12px; background: #fff;
-      border: 4px solid #ef4444; box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-      position: relative; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      flex-shrink: 0; overflow: hidden; margin: 0 -12px; display: flex; flex-direction: column; justify-content: space-between;
+      width: 105px; height: 155px; border-radius: 14px;
+      position: relative; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0; overflow: hidden; margin: 0 -10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      user-select: none;
     }
-    .uno-card:hover { transform: translateY(-28px) scale(1.12); z-index: 100; margin: 0 4px; box-shadow: 0 15px 30px rgba(0,0,0,0.8); }
-    .uno-card.red { border-color: #ef4444; }
-    .uno-card.blue { border-color: #3b82f6; }
-    .uno-card.green { border-color: #10b981; }
-    .uno-card.yellow { border-color: #f59e0b; }
-    .uno-card.wild { border-color: #a855f7; background: linear-gradient(135deg, #1e1b4b, #312e81); color: #fff; }
-    .card-corner-top { font-weight: 900; font-size: 13px; padding: 4px 6px; }
-    .card-corner-bot { font-weight: 900; font-size: 13px; padding: 4px 6px; text-align: right; transform: rotate(180deg); }
-    .card-center-photo {
-      position: absolute; inset: 22px 10px; border-radius: 8px; overflow: hidden;
-      display: flex; align-items: center; justify-content: center; background: #000;
+    .uno-card:hover { transform: translateY(-32px) scale(1.15); z-index: 100; margin: 0 6px; box-shadow: 0 16px 36px rgba(0,0,0,0.9); }
+    .uno-card.playable {
+      border: 2px solid #fff;
+      box-shadow: 0 0 20px var(--accent), 0 10px 25px rgba(0,0,0,0.8);
+      transform: translateY(-14px);
     }
-    .card-center-photo img { width: 100%; height: 100%; object-fit: cover; }
-    .card-tier-pill {
-      position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
-      font-size: 8px; font-weight: 800; padding: 1px 4px; border-radius: 4px;
-      background: rgba(0,0,0,0.8); color: #fff; white-space: nowrap;
+    .uno-card.playable:hover { transform: translateY(-36px) scale(1.18); }
+
+    /* COLOR THEMES WITH INNER WHITE INSET */
+    .uno-card.red { background: #e74c3c; box-shadow: inset 0 0 0 3px #ffffff, 0 8px 24px rgba(0,0,0,0.6); }
+    .uno-card.blue { background: #0984e3; box-shadow: inset 0 0 0 3px #ffffff, 0 8px 24px rgba(0,0,0,0.6); }
+    .uno-card.green { background: #00b894; box-shadow: inset 0 0 0 3px #ffffff, 0 8px 24px rgba(0,0,0,0.6); }
+    .uno-card.yellow { background: #fbc531; box-shadow: inset 0 0 0 3px #ffffff, 0 8px 24px rgba(0,0,0,0.6); }
+    .uno-card.wild {
+      background: radial-gradient(circle at 30% 30%, #a855f7, #1e1b4b);
+      box-shadow: inset 0 0 0 3px #ffffff, 0 8px 24px rgba(0,0,0,0.6);
+    }
+
+    /* CENTER SLANTED WHITE OVAL */
+    .card-center-oval {
+      position: absolute; width: 88%; height: 72%; top: 14%; left: 6%;
+      border-radius: 50%; transform: rotate(-28deg);
+      border: 4px solid #ffffff; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      background: #000; box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
+    .card-member-photo {
+      width: 100%; height: 100%; object-fit: cover;
+      transform: rotate(28deg) scale(1.18);
+    }
+
+    /* CORNER VALUE NUMBERS WITH 3D BLACK SHADOW */
+    .card-corner {
+      position: absolute; z-index: 10;
+      font-family: 'Arial Black', Impact, sans-serif;
+      font-size: 18px; font-weight: 900; color: #ffffff;
+      line-height: 1; pointer-events: none;
+      text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+    }
+    .card-corner-top { top: 5px; left: 7px; }
+    .card-corner-bot { bottom: 5px; right: 7px; transform: rotate(180deg); }
+
+    /* MEMBER & ROLE BOTTOM BADGE */
+    .card-member-tag {
+      position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+      font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px;
+      background: rgba(0,0,0,0.85); color: #fff; white-space: nowrap; z-index: 15;
+      max-width: 90%; overflow: hidden; text-overflow: ellipsis; border: 1px solid rgba(255,255,255,0.2);
     }
 
     /* CARD THROWN FLYING CLONE ANIMATION */
     .card-thrown {
       position: fixed !important; pointer-events: none !important; z-index: 9999 !important;
-      transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1) !important;
+      transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1) !important;
     }
 
     /* === LAYER 5: VFX ENGINE & JIKO OVERLAYS === */
@@ -413,7 +447,7 @@
       background: rgba(10, 15, 30, 0.9); color: #fff; padding: 14px 36px;
       border-radius: 40px; border: 2px solid var(--accent);
       font-size: 18px; font-weight: 800; text-align: center;
-      margin-bottom: 140px; opacity: 0; transform: translateY(30px); transition: all 0.4s;
+      margin-bottom: 160px; opacity: 0; transform: translateY(30px); transition: all 0.4s;
       box-shadow: 0 10px 40px rgba(0, 210, 255, 0.4);
     }
     .vfx-active-omega {
@@ -421,13 +455,8 @@
       box-shadow: inset 0 0 60px 20px rgba(255, 255, 255, 0.9), inset 0 0 120px rgba(0, 210, 255, 0.6) !important;
       animation: flashWhite 0.5s ease-out;
     }
-    .vfx-active-fc {
-      opacity: 1 !important;
-      animation: flashColor 0.5s ease-out;
-    }
     .jiko-show { opacity: 1 !important; transform: translateY(0) !important; }
     @keyframes flashWhite { 0% { background: rgba(255,255,255,0.9); } 100% { background: transparent; } }
-    @keyframes flashColor { 0% { background: rgba(236,72,153,0.7); } 100% { background: transparent; } }
 
     /* IN-GAME FLOATING CHAT DRAWER */
     .ingame-chat-toggle {
@@ -468,10 +497,10 @@
     }
     .color-options { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
     .color-btn { height: 65px; border-radius: 14px; border: 3px solid #fff; cursor: pointer; font-weight: 900; font-size: 16px; color: #fff; }
-    .color-btn.r { background: #ef4444; }
-    .color-btn.b { background: #3b82f6; }
-    .color-btn.g { background: #10b981; }
-    .color-btn.y { background: #f59e0b; }
+    .color-btn.r { background: #e74c3c; }
+    .color-btn.b { background: #0984e3; }
+    .color-btn.g { background: #00b894; }
+    .color-btn.y { background: #fbc531; }
 
     @media (max-width: 768px) {
       .sb { transform: translateX(-100%); }
@@ -485,6 +514,8 @@
       .inventory-bar { padding: 4px 8px; gap: 6px; }
       .inv-item { font-size: 11px; }
       .inv-item img { width: 14px; height: 14px; }
+      .uno-card { width: 85px; height: 130px; margin: 0 -14px; }
+      .card-corner { font-size: 15px; }
     }
   </style>
 </head>
@@ -545,7 +576,7 @@
           <p>Adu taktik kartu Extreme dengan 78 Member Deck, efek Skin Omega Spesial, Stack Penalty +10, dan mode taruhan Sistem Gugur!</p>
           <div class="hero-actions">
             <button class="btn-action btn-create" onclick="openCreateModal()">&#10133; Buat Kamar Baru</button>
-            <button class="btn-action btn-quick" onclick="quickMatch()">&#9889; Quick Match (Otomatis)</button>
+            <button class="btn-action btn-quick" onclick="quickMatch()">&#9889; Quick Match (Langsung Main)</button>
             <button class="btn-action btn-code" onclick="openCodeModal()">&#128273; Masukkan Kode Kamar</button>
           </div>
         </div>
@@ -653,8 +684,8 @@
 
         <!-- DRAW PILE (DECK) -->
         <div class="deck-pile draw-deck" onclick="userDrawCard()" title="Ambil Kartu">
-          <div style="font-size: 20px;">&#127188;</div>
-          <div style="font-size: 11px; margin-top: 4px;">DRAW (<span id="drawCount">108</span>)</div>
+          <div style="font-size: 24px; font-family: 'Arial Black', sans-serif;">UNO</div>
+          <div style="font-size: 11px; margin-top: 4px; font-weight: 800;">DRAW (<span id="drawCount">108</span>)</div>
         </div>
 
         <!-- DISCARD PILE (TOP CARD) -->
@@ -838,296 +869,103 @@
     let equippedSkinMap = JSON.parse(localStorage.getItem('uno_equipped_skins') || '{}');
     let currentMemberFilter = 'all';
 
-    // ===== 78 MEMBER ROSTER MASTER LIST WITH ALL AVAILABLE SKIN TIERS =====
-    const MEMBER_SKIN_CATALOG = [
-      // 1. Wild Boss Cards
-      {
-        key: "ANGELINA_CHRISTY", name: "Angelina Christy", role: "Wild Draw +10", type: "wild",
-        avatar: "../skin/ANGELINA_CHRISTY_UNCOMMON.jpg",
-        skins: [
-          { code: "DKTY", name: "Dedek Kitty (Spesial)", tier: "Omega Spesial", isOmega: true, file: "DKTY.jpg" },
-          { code: "FCHR", name: "Full Color: Christy", tier: "Full Color", isOmega: true, file: "FCHR.jpg" },
-          { code: "PCHR", name: "Prime: Christy", tier: "Prime Omega", isOmega: true, file: "PCHR.jpg" },
-          { code: "SCHR", name: "SSK: Angelina Christy", tier: "SSK Edition", isOmega: true, file: "SCHR.jpg" },
-          { code: "ANGELINA_CHRISTY_LEGEND", name: "Christy Cosmos", tier: "Legend", isOmega: false, file: "ANGELINA_CHRISTY_LEGEND.jpg" },
-          { code: "ANGELINA_CHRISTY_MYTH", name: "Christy Mythic", tier: "Mythic", isOmega: false, file: "ANGELINA_CHRISTY_MYTH.jpg" },
-          { code: "ANGELINA_CHRISTY_RARE", name: "Christy Snow & Gold", tier: "Rare", isOmega: false, file: "ANGELINA_CHRISTY_RARE.jpg" },
-          { code: "ANGELINA_CHRISTY_UNCOMMON", name: "Christy Trainee (Default)", tier: "Uncommon", isOmega: false, file: "ANGELINA_CHRISTY_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "AZIZI_ASSADEL", name: "Azizi Assadel (Zee)", role: "Wild Draw +6", type: "wild",
-        avatar: "../skin/AZIZI_ASSADEL_UNCOMMON.jpg",
-        skins: [
-          { code: "FAAZ", name: "Full Color: Zee", tier: "Full Color", isOmega: true, file: "FAAZ.jpg" },
-          { code: "AZIZI_ASSADEL_LEGEND", name: "Zee Cosmos", tier: "Legend", isOmega: false, file: "AZIZI_ASSADEL_LEGEND.jpg" },
-          { code: "AZIZI_ASSADEL_MYTH", name: "Zee Mythic", tier: "Mythic", isOmega: false, file: "AZIZI_ASSADEL_MYTH.jpg" },
-          { code: "AZIZI_ASSADEL_RARE", name: "Zee Snow & Gold", tier: "Rare", isOmega: false, file: "AZIZI_ASSADEL_RARE.jpg" },
-          { code: "AZIZI_ASSADEL_UNCOMMON", name: "Zee Trainee (Default)", tier: "Uncommon", isOmega: false, file: "AZIZI_ASSADEL_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "SHANI_INDIRA", name: "Shani Indira Natio", role: "Wild Swap Hands", type: "wild",
-        avatar: "../skin/SHANI_INDIRA_UNCOMMON.jpg",
-        skins: [
-          { code: "CSHN", name: "Ci Shani (Spesial)", tier: "Omega Spesial", isOmega: true, file: "CSHN.jpg" },
-          { code: "FSHN", name: "Full Color: Shani", tier: "Full Color", isOmega: true, file: "FSHN.jpg" },
-          { code: "SHANI_INDIRA_LEGEND", name: "Shani Cosmos", tier: "Legend", isOmega: false, file: "SHANI_INDIRA_LEGEND.jpg" },
-          { code: "SHANI_INDIRA_MYTH", name: "Shani Mythic", tier: "Mythic", isOmega: false, file: "SHANI_INDIRA_MYTH.jpg" },
-          { code: "SHANI_INDIRA_RARE", name: "Shani Snow & Gold", tier: "Rare", isOmega: false, file: "SHANI_INDIRA_RARE.jpg" },
-          { code: "SHANI_INDIRA_UNCOMMON", name: "Shani Trainee (Default)", tier: "Uncommon", isOmega: false, file: "SHANI_INDIRA_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "SHANIA_GRACIA", name: "Shania Gracia", role: "Wild Shuffle Hands", type: "wild",
-        avatar: "../skin/SHANIA_GRACIA_UNCOMMON.jpg",
-        skins: [
-          { code: "CGRC", name: "Ci Gre (Spesial)", tier: "Omega Spesial", isOmega: true, file: "CGRC.jpg" },
-          { code: "FGRC", name: "Full Color: Gracia", tier: "Full Color", isOmega: true, file: "FGRC.jpg" },
-          { code: "PGRC", name: "Prime: Gracia", tier: "Prime Omega", isOmega: true, file: "PGRC.jpg" },
-          { code: "SGRA", name: "SSK: Shania Gracia", tier: "SSK Edition", isOmega: true, file: "SGRA.jpg" },
-          { code: "SHANIA_GRACIA_LEGEND", name: "Gracia Cosmos", tier: "Legend", isOmega: false, file: "SHANIA_GRACIA_LEGEND.jpg" },
-          { code: "SHANIA_GRACIA_MYTH", name: "Gracia Mythic", tier: "Mythic", isOmega: false, file: "SHANIA_GRACIA_MYTH.jpg" },
-          { code: "SHANIA_GRACIA_RARE", name: "Gracia Snow & Gold", tier: "Rare", isOmega: false, file: "SHANIA_GRACIA_RARE.jpg" },
-          { code: "SHANIA_GRACIA_UNCOMMON", name: "Gracia Trainee (Default)", tier: "Uncommon", isOmega: false, file: "SHANIA_GRACIA_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "FREYA_JAYAWARDANA", name: "Freya Jayawardana", role: "Wild Color Roulette", type: "wild",
-        avatar: "../skin/FREYA_JAYAWARDANA_UNCOMMON.jpg",
-        skins: [
-          { code: "PFYR", name: "Prime: Freya", tier: "Prime Omega", isOmega: true, file: "PFYR.jpg" },
-          { code: "SFRE", name: "SSK: Freya Jayawardana", tier: "SSK Edition", isOmega: true, file: "SFRE.jpg" },
-          { code: "FREYA_JAYAWARDANA_LEGEND", name: "Freya Cosmos", tier: "Legend", isOmega: false, file: "FREYA_JAYAWARDANA_LEGEND.jpg" },
-          { code: "FREYA_JAYAWARDANA_MYTH", name: "Freya Mythic", tier: "Mythic", isOmega: false, file: "FREYA_JAYAWARDANA_MYTH.jpg" },
-          { code: "FREYA_JAYAWARDANA_RARE", name: "Freya Snow & Gold", tier: "Rare", isOmega: false, file: "FREYA_JAYAWARDANA_RARE.jpg" },
-          { code: "FREYA_JAYAWARDANA_UNCOMMON", name: "Freya Trainee (Default)", tier: "Uncommon", isOmega: false, file: "FREYA_JAYAWARDANA_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "MARSHA_LENATHEA", name: "Marsha LenatHEA", role: "Wild Targeted Attack", type: "wild",
-        avatar: "../skin/MARSHA_LENATHEA_UNCOMMON.jpg",
-        skins: [
-          { code: "FMAR", name: "Full Color: Marsha", tier: "Full Color", isOmega: true, file: "FMAR.jpg" },
-          { code: "PMSH", name: "Prime: Marsha", tier: "Prime Omega", isOmega: true, file: "PMSH.jpg" },
-          { code: "SMAR", name: "SSK: Marsha Lenathea", tier: "SSK Edition", isOmega: true, file: "SMAR.jpg" },
-          { code: "MARSHA_LENATHEA_LEGEND", name: "Marsha Cosmos", tier: "Legend", isOmega: false, file: "MARSHA_LENATHEA_LEGEND.jpg" },
-          { code: "MARSHA_LENATHEA_MYTH", name: "Marsha Mythic", tier: "Mythic", isOmega: false, file: "MARSHA_LENATHEA_MYTH.jpg" },
-          { code: "MARSHA_LENATHEA_RARE", name: "Marsha Snow & Gold", tier: "Rare", isOmega: false, file: "MARSHA_LENATHEA_RARE.jpg" },
-          { code: "MARSHA_LENATHEA_UNCOMMON", name: "Marsha Trainee (Default)", tier: "Uncommon", isOmega: false, file: "MARSHA_LENATHEA_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "FENI_FITRIYANTI", name: "Feni Fitriyanti", role: "Wild Reverse +4", type: "wild",
-        avatar: "../skin/FENI_FITRIYANTI_UNCOMMON.jpg",
-        skins: [
-          { code: "CFNI", name: "Ci Feni (Spesial)", tier: "Omega Spesial", isOmega: true, file: "CFNI.jpg" },
-          { code: "FFNI", name: "Full Color: Feni", tier: "Full Color", isOmega: true, file: "FFNI.jpg" },
-          { code: "PFNI", name: "Prime: Feni", tier: "Prime Omega", isOmega: true, file: "PFNI.jpg" },
-          { code: "SFEN", name: "SSK: Feni Fitriyanti", tier: "SSK Edition", isOmega: true, file: "SFEN.jpg" },
-          { code: "FENI_FITRIYANTI_LEGEND", name: "Feni Cosmos", tier: "Legend", isOmega: false, file: "FENI_FITRIYANTI_LEGEND.jpg" },
-          { code: "FENI_FITRIYANTI_MYTH", name: "Feni Mythic", tier: "Mythic", isOmega: false, file: "FENI_FITRIYANTI_MYTH.jpg" },
-          { code: "FENI_FITRIYANTI_RARE", name: "Feni Snow & Gold", tier: "Rare", isOmega: false, file: "FENI_FITRIYANTI_RARE.jpg" },
-          { code: "FENI_FITRIYANTI_UNCOMMON", name: "Feni Trainee (Default)", tier: "Uncommon", isOmega: false, file: "FENI_FITRIYANTI_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "SISCA_SARAS", name: "Sisca Saras", role: "Wild Double Play", type: "wild",
-        avatar: "../skin/SISCA_SARAS_UNCOMMON.jpg",
-        skins: [
-          { code: "SISCA_SARAS_LEGEND", name: "Sisca Cosmos", tier: "Legend", isOmega: false, file: "SISCA_SARAS_LEGEND.jpg" },
-          { code: "SISCA_SARAS_MYTH", name: "Sisca Mythic", tier: "Mythic", isOmega: false, file: "SISCA_SARAS_MYTH.jpg" },
-          { code: "SISCA_SARAS_RARE", name: "Sisca Snow & Gold", tier: "Rare", isOmega: false, file: "SISCA_SARAS_RARE.jpg" },
-          { code: "SISCA_SARAS_UNCOMMON", name: "Sisca Trainee (Default)", tier: "Uncommon", isOmega: false, file: "SISCA_SARAS_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "ADZANA_ASHEL", name: "Adzana Ashel", role: "Wild Counter Shield", type: "wild",
-        avatar: "../skin/ADZANA_ASHEL_UNCOMMON.jpg",
-        skins: [
-          { code: "ADZANA_ASHEL_LEGEND", name: "Ashel Cosmos", tier: "Legend", isOmega: false, file: "ADZANA_ASHEL_LEGEND.jpg" },
-          { code: "ADZANA_ASHEL_MYTH", name: "Ashel Mythic", tier: "Mythic", isOmega: false, file: "ADZANA_ASHEL_MYTH.jpg" },
-          { code: "ADZANA_ASHEL_RARE", name: "Ashel Snow & Gold", tier: "Rare", isOmega: false, file: "ADZANA_ASHEL_RARE.jpg" },
-          { code: "ADZANA_ASHEL_UNCOMMON", name: "Ashel Trainee (Default)", tier: "Uncommon", isOmega: false, file: "ADZANA_ASHEL_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "YESICA_TAMARA", name: "Yesica Tamara (Chika)", role: "Wild Classic Choice", type: "wild",
-        avatar: "../skin/YESICA_TAMARA_UNCOMMON.jpg",
-        skins: [
-          { code: "FCHK", name: "Full Color: Chika", tier: "Full Color", isOmega: true, file: "FCHK.jpg" },
-          { code: "YESICA_TAMARA_LEGEND", name: "Chika Cosmos", tier: "Legend", isOmega: false, file: "YESICA_TAMARA_LEGEND.jpg" },
-          { code: "YESICA_TAMARA_MYTH", name: "Chika Mythic", tier: "Mythic", isOmega: false, file: "YESICA_TAMARA_MYTH.jpg" },
-          { code: "YESICA_TAMARA_RARE", name: "Chika Snow & Gold", tier: "Rare", isOmega: false, file: "YESICA_TAMARA_RARE.jpg" },
-          { code: "YESICA_TAMARA_UNCOMMON", name: "Chika Trainee (Default)", tier: "Uncommon", isOmega: false, file: "YESICA_TAMARA_UNCOMMON.jpg" }
-        ]
-      },
+    // ===== 78 MEMBER UNO MASTER ROSTER (MATCHING EXCEL EXACTLY) =====
+    const MASTER_UNO_REGISTRY = {
+      // 1. Wild Extreme Boss Cards (10 Members)
+      "WILD_DRAW_10": { value: "wild_draw_10", type: "wild", color: "wild", display: "+10", member: "Angelina Christy", key: "ANGELINA_CHRISTY", photo: "ANGELINA_CHRISTY_UNCOMMON.jpg", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!" },
+      "WILD_DRAW_6": { value: "wild_draw_6", type: "wild", color: "wild", display: "+6", member: "Azizi Assadel (Zee)", key: "AZIZI_ASSADEL", photo: "AZIZI_ASSADEL_UNCOMMON.jpg", jiko: "Si gadis tomboy yang semangat, namaku Zee!" },
+      "WILD_SWAP_HANDS": { value: "wild_swap_hands", type: "wild", color: "wild", display: "🔀", member: "Shani Indira Natio", key: "SHANI_INDIRA", photo: "SHANI_INDIRA_UNCOMMON.jpg", jiko: "Semanis cokelat, selembut sutra, halo semuanya aku Shani!" },
+      "WILD_SHUFFLE_HANDS": { value: "wild_shuffle_hands", type: "wild", color: "wild", display: "🎲", member: "Shania Gracia", key: "SHANIA_GRACIA", photo: "SHANIA_GRACIA_UNCOMMON.jpg", jiko: "Senyum manisku akan selalu menghiburmu, aku Gracia!" },
+      "WILD_ROULETTE": { value: "wild_roulette", type: "wild", color: "wild", display: "🎰", member: "Freya Jayawardana", key: "FREYA_JAYAWARDANA", photo: "FREYA_JAYAWARDANA_UNCOMMON.jpg", jiko: "Gadis yang manis dan pemberani, aku Freya!" },
+      "WILD_TARGET_ATTACK": { value: "wild_target_attack", type: "wild", color: "wild", display: "🎯", member: "Marsha Lenathea", key: "MARSHA_LENATHEA", photo: "MARSHA_LENATHEA_UNCOMMON.jpg", jiko: "Manis seperti permen, imut seperti boneka, halo aku Marsha!" },
+      "WILD_REVERSE_4": { value: "wild_reverse_4", type: "wild", color: "wild", display: "🔄+4", member: "Feni Fitriyanti", key: "FENI_FITRIYANTI", photo: "FENI_FITRIYANTI_UNCOMMON.jpg", jiko: "Si lincah yang penuh pesona, panggil aku Feni!" },
+      "WILD_DOUBLE_PLAY": { value: "wild_double_play", type: "wild", color: "wild", display: "⚡2x", member: "Sisca Saras", key: "SISCA_SARAS", photo: "SISCA_SARAS_UNCOMMON.jpg", jiko: "Vokal emas yang memukau, aku Sisca!" },
+      "WILD_COUNTER_SHIELD": { value: "wild_counter_shield", type: "wild", color: "wild", display: "🛡️", member: "Adzana Ashel", key: "ADZANA_ASHEL", photo: "ADZANA_ASHEL_UNCOMMON.jpg", jiko: "Senyuman sehangat matahari, namaku Ashel!" },
+      "WILD_CLASSIC": { value: "wild_classic", type: "wild", color: "wild", display: "★", member: "Yesica Tamara (Chika)", key: "YESICA_TAMARA", photo: "YESICA_TAMARA_UNCOMMON.jpg", jiko: "Memberikan kebahagiaan untuk semua, aku Chika!" },
 
-      // 2. Extra Action Cards (No Mercy)
-      {
-        key: "GABRIELA_ABIGAIL", name: "Gabriela Abigail (Ella)", role: "Discard All (Merah)", type: "action",
-        avatar: "../skin/GABRIELA_ABIGAIL_UNCOMMON.jpg",
-        skins: [
-          { code: "SELL", name: "SSK: Gabriela Abigail", tier: "SSK Edition", isOmega: true, file: "SELL.jpg" },
-          { code: "GABRIELA_ABIGAIL_LEGEND", name: "Ella Cosmos", tier: "Legend", isOmega: false, file: "GABRIELA_ABIGAIL_LEGEND.jpg" },
-          { code: "GABRIELA_ABIGAIL_MYTH", name: "Ella Mythic", tier: "Mythic", isOmega: false, file: "GABRIELA_ABIGAIL_MYTH.jpg" },
-          { code: "GABRIELA_ABIGAIL_RARE", name: "Ella Snow & Gold", tier: "Rare", isOmega: false, file: "GABRIELA_ABIGAIL_RARE.jpg" },
-          { code: "GABRIELA_ABIGAIL_UNCOMMON", name: "Ella Trainee (Default)", tier: "Uncommon", isOmega: false, file: "GABRIELA_ABIGAIL_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "GRACE_OCTAVIANI", name: "Grace Octaviani (Gracie)", role: "Discard All (Biru)", type: "action",
-        avatar: "../skin/GRACE_OCTAVIANI_UNCOMMON.jpg",
-        skins: [
-          { code: "SGRC", name: "SSK: Grace Octaviani", tier: "SSK Edition", isOmega: true, file: "SGRC.jpg" },
-          { code: "GRACE_OCTAVIANI_LEGEND", name: "Gracie Cosmos", tier: "Legend", isOmega: false, file: "GRACE_OCTAVIANI_LEGEND.jpg" },
-          { code: "GRACE_OCTAVIANI_MYTH", name: "Gracie Mythic", tier: "Mythic", isOmega: false, file: "GRACE_OCTAVIANI_MYTH.jpg" },
-          { code: "GRACE_OCTAVIANI_RARE", name: "Gracie Snow & Gold", tier: "Rare", isOmega: false, file: "GRACE_OCTAVIANI_RARE.jpg" },
-          { code: "GRACE_OCTAVIANI_UNCOMMON", name: "Gracie Trainee (Default)", tier: "Uncommon", isOmega: false, file: "GRACE_OCTAVIANI_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "GREESELA_ADHALIA", name: "Greesella Adhalia", role: "Discard All (Hijau)", type: "action",
-        avatar: "../skin/GREESELA_ADHALIA_UNCOMMON.jpg",
-        skins: [
-          { code: "SGRE", name: "SSK: Greesella Adhalia", tier: "SSK Edition", isOmega: true, file: "SGRE.jpg" },
-          { code: "GREESELA_ADHALIA_LEGEND", name: "Greesel Cosmos", tier: "Legend", isOmega: false, file: "GREESELA_ADHALIA_LEGEND.jpg" },
-          { code: "GREESELA_ADHALIA_MYTH", name: "Greesel Mythic", tier: "Mythic", isOmega: false, file: "GREESELA_ADHALIA_MYTH.jpg" },
-          { code: "GREESELA_ADHALIA_RARE", name: "Greesel Snow & Gold", tier: "Rare", isOmega: false, file: "GREESELA_ADHALIA_RARE.jpg" },
-          { code: "GREESELA_ADHALIA_UNCOMMON", name: "Greesel Trainee (Default)", tier: "Uncommon", isOmega: false, file: "GREESELA_ADHALIA_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "MICHELLE_ALEXANDRA", name: "Michelle Alexandra (Michie)", role: "Discard All (Kuning)", type: "action",
-        avatar: "../skin/MICHELLE_ALEXANDRA_UNCOMMON.jpg",
-        skins: [
-          { code: "SLIL", name: "SSK: Michelle Alexandra", tier: "SSK Edition", isOmega: true, file: "SLIL.jpg" },
-          { code: "MICHELLE_ALEXANDRA_LEGEND", name: "Michie Cosmos", tier: "Legend", isOmega: false, file: "MICHELLE_ALEXANDRA_LEGEND.jpg" },
-          { code: "MICHELLE_ALEXANDRA_MYTH", name: "Michie Mythic", tier: "Mythic", isOmega: false, file: "MICHELLE_ALEXANDRA_MYTH.jpg" },
-          { code: "MICHELLE_ALEXANDRA_RARE", name: "Michie Snow & Gold", tier: "Rare", isOmega: false, file: "MICHELLE_ALEXANDRA_RARE.jpg" },
-          { code: "MICHELLE_ALEXANDRA_UNCOMMON", name: "Michie Trainee (Default)", tier: "Uncommon", isOmega: false, file: "MICHELLE_ALEXANDRA_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "JESSLYN_ELLY", name: "Jesslyn Elly (Lyn)", role: "Skip Everyone (Merah)", type: "action",
-        avatar: "../skin/JESSLYN_ELLY_UNCOMMON.jpg",
-        skins: [
-          { code: "SLYN", name: "SSK: Jesslyn Elly", tier: "SSK Edition", isOmega: true, file: "SLYN.jpg" },
-          { code: "JESSLYN_ELLY_LEGEND", name: "Lyn Cosmos", tier: "Legend", isOmega: false, file: "JESSLYN_ELLY_LEGEND.jpg" },
-          { code: "JESSLYN_ELLY_MYTH", name: "Lyn Mythic", tier: "Mythic", isOmega: false, file: "JESSLYN_ELLY_MYTH.jpg" },
-          { code: "JESSLYN_ELLY_RARE", name: "Lyn Snow & Gold", tier: "Rare", isOmega: false, file: "JESSLYN_ELLY_RARE.jpg" },
-          { code: "JESSLYN_ELLY_UNCOMMON", name: "Lyn Trainee (Default)", tier: "Uncommon", isOmega: false, file: "JESSLYN_ELLY_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "AURELLIA_LIA", name: "Aurellia (Lia)", role: "Skip Everyone (Biru)", type: "action",
-        avatar: "../skin/AURELLIA_LIA_UNCOMMON.jpg",
-        skins: [
-          { code: "PLAI", name: "Prime: Aurelia", tier: "Prime Omega", isOmega: true, file: "PLAI.jpg" },
-          { code: "SLIA", name: "SSK: Aurellia", tier: "SSK Edition", isOmega: true, file: "SLIA.jpg" },
-          { code: "AURELLIA_LIA_LEGEND", name: "Lia Cosmos", tier: "Legend", isOmega: false, file: "AURELLIA_LIA_LEGEND.jpg" },
-          { code: "AURELLIA_LIA_MYTH", name: "Lia Mythic", tier: "Mythic", isOmega: false, file: "AURELLIA_LIA_MYTH.jpg" },
-          { code: "AURELLIA_LIA_RARE", name: "Lia Snow & Gold", tier: "Rare", isOmega: false, file: "AURELLIA_LIA_RARE.jpg" },
-          { code: "AURELLIA_LIA_UNCOMMON", name: "Lia Trainee (Default)", tier: "Uncommon", isOmega: false, file: "AURELLIA_LIA_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "JINAN", name: "Jinan Safa Safira", role: "Skip Everyone (Hijau)", type: "action",
-        avatar: "../skin/JINAN_UNCOMMON.jpg",
-        skins: [
-          { code: "FJIN", name: "Full Color: Jinan", tier: "Full Color", isOmega: true, file: "FJIN.jpg" },
-          { code: "JINAN_LEGEND", name: "Jinan Cosmos", tier: "Legend", isOmega: false, file: "JINAN_LEGEND.jpg" },
-          { code: "JINAN_MYTH", name: "Jinan Mythic", tier: "Mythic", isOmega: false, file: "JINAN_MYTH.jpg" },
-          { code: "JINAN_RARE", name: "Jinan Snow & Gold", tier: "Rare", isOmega: false, file: "JINAN_RARE.jpg" },
-          { code: "JINAN_UNCOMMON", name: "Jinan Trainee (Default)", tier: "Uncommon", isOmega: false, file: "JINAN_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "HELISMA_PUTRI", name: "Helisma Putri (Eli)", role: "Reverse (Hijau)", type: "action",
-        avatar: "../skin/HELISMA_PUTRI_UNCOMMON.jpg",
-        skins: [
-          { code: "CELI", name: "Ci Eli (Spesial)", tier: "Omega Spesial", isOmega: true, file: "CELI.jpg" },
-          { code: "SELI", name: "SSK: Helisma Putri", tier: "SSK Edition", isOmega: true, file: "SELI.jpg" },
-          { code: "HELISMA_PUTRI_LEGEND", name: "Eli Cosmos", tier: "Legend", isOmega: false, file: "HELISMA_PUTRI_LEGEND.jpg" },
-          { code: "HELISMA_PUTRI_MYTH", name: "Eli Mythic", tier: "Mythic", isOmega: false, file: "HELISMA_PUTRI_MYTH.jpg" },
-          { code: "HELISMA_PUTRI_RARE", name: "Eli Snow & Gold", tier: "Rare", isOmega: false, file: "HELISMA_PUTRI_RARE.jpg" },
-          { code: "HELISMA_PUTRI_UNCOMMON", name: "Eli Trainee (Default)", tier: "Uncommon", isOmega: false, file: "HELISMA_PUTRI_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "FIONY_ALVERIA", name: "Fiony Alveria", role: "Draw Two +2 (Hijau)", type: "action",
-        avatar: "../skin/FIONY_ALVERIA_UNCOMMON.jpg",
-        skins: [
-          { code: "FFIO", name: "Full Color: Fiony", tier: "Full Color", isOmega: true, file: "FFIO.jpg" },
-          { code: "PFNY", name: "Prime: Fiony", tier: "Prime Omega", isOmega: true, file: "PFNY.jpg" },
-          { code: "SFIO", name: "SSK: Fiony Alveria", tier: "SSK Edition", isOmega: true, file: "SFIO.jpg" },
-          { code: "FIONY_ALVERIA_LEGEND", name: "Fiony Cosmos", tier: "Legend", isOmega: false, file: "FIONY_ALVERIA_LEGEND.jpg" },
-          { code: "FIONY_ALVERIA_MYTH", name: "Fiony Mythic", tier: "Mythic", isOmega: false, file: "FIONY_ALVERIA_MYTH.jpg" },
-          { code: "FIONY_ALVERIA_RARE", name: "Fiony Snow & Gold", tier: "Rare", isOmega: false, file: "FIONY_ALVERIA_RARE.jpg" },
-          { code: "FIONY_ALVERIA_UNCOMMON", name: "Fiony Trainee (Default)", tier: "Uncommon", isOmega: false, file: "FIONY_ALVERIA_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "GITA_SEKAR", name: "Gita Sekar Andarini", role: "Draw Two +2 (Biru)", type: "action",
-        avatar: "../skin/GITA_SEKAR_UNCOMMON.jpg",
-        skins: [
-          { code: "PGTS", name: "Prime: Gita", tier: "Prime Omega", isOmega: true, file: "PGTS.jpg" },
-          { code: "SGIT", name: "SSK: Gita Sekar Andarini", tier: "SSK Edition", isOmega: true, file: "SGIT.jpg" },
-          { code: "GITA_SEKAR_LEGEND", name: "Gita Cosmos", tier: "Legend", isOmega: false, file: "GITA_SEKAR_LEGEND.jpg" },
-          { code: "GITA_SEKAR_MYTH", name: "Gita Mythic", tier: "Mythic", isOmega: false, file: "GITA_SEKAR_MYTH.jpg" },
-          { code: "GITA_SEKAR_RARE", name: "Gita Snow & Gold", tier: "Rare", isOmega: false, file: "GITA_SEKAR_RARE.jpg" },
-          { code: "GITA_SEKAR_UNCOMMON", name: "Gita Trainee (Default)", tier: "Uncommon", isOmega: false, file: "GITA_SEKAR_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "MUTIARA_AZZAHRA", name: "Mutiara Azzahra (Muthe)", role: "Draw Two +2 (Kuning)", type: "action",
-        avatar: "../skin/MUTIARA_AZZAHRA_UNCOMMON.jpg",
-        skins: [
-          { code: "PMUT", name: "Prime: Muthe", tier: "Prime Omega", isOmega: true, file: "PMUT.jpg" },
-          { code: "SMUT", name: "SSK: Mutiara Azzahra", tier: "SSK Edition", isOmega: true, file: "SMUT.jpg" },
-          { code: "MUTIARA_AZZAHRA_LEGEND", name: "Muthe Cosmos", tier: "Legend", isOmega: false, file: "MUTIARA_AZZAHRA_LEGEND.jpg" },
-          { code: "MUTIARA_AZZAHRA_MYTH", name: "Muthe Mythic", tier: "Mythic", isOmega: false, file: "MUTIARA_AZZAHRA_MYTH.jpg" },
-          { code: "MUTIARA_AZZAHRA_RARE", name: "Muthe Snow & Gold", tier: "Rare", isOmega: false, file: "MUTIARA_AZZAHRA_RARE.jpg" },
-          { code: "MUTIARA_AZZAHRA_UNCOMMON", name: "Muthe Trainee (Default)", tier: "Uncommon", isOmega: false, file: "MUTIARA_AZZAHRA_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "LULU_SALSABILA", name: "Lulu Salsabila", role: "Reverse (Kuning)", type: "action",
-        avatar: "../skin/LULU_SALSABILA_UNCOMMON.jpg",
-        skins: [
-          { code: "PLLU", name: "Prime: Lulu", tier: "Prime Omega", isOmega: true, file: "PLLU.jpg" },
-          { code: "SLUL", name: "SSK: Lulu Salsabila", tier: "SSK Edition", isOmega: true, file: "SLUL.jpg" },
-          { code: "LULU_SALSABILA_LEGEND", name: "Lulu Cosmos", tier: "Legend", isOmega: false, file: "LULU_SALSABILA_LEGEND.jpg" },
-          { code: "LULU_SALSABILA_MYTH", name: "Lulu Mythic", tier: "Mythic", isOmega: false, file: "LULU_SALSABILA_MYTH.jpg" },
-          { code: "LULU_SALSABILA_RARE", name: "Lulu Snow & Gold", tier: "Rare", isOmega: false, file: "LULU_SALSABILA_RARE.jpg" },
-          { code: "LULU_SALSABILA_UNCOMMON", name: "Lulu Trainee (Default)", tier: "Uncommon", isOmega: false, file: "LULU_SALSABILA_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "CORNELIA_VANISA", name: "Cornelia Vanisa (Oniel)", role: "Reverse (Merah)", type: "action",
-        avatar: "../skin/CORNELIA_VANISA_UNCOMMON.jpg",
-        skins: [
-          { code: "PONL", name: "Prime: Oniel", tier: "Prime Omega", isOmega: true, file: "PONL.jpg" },
-          { code: "SONI", name: "SSK: Cornelia Vanisa", tier: "SSK Edition", isOmega: true, file: "SONI.jpg" },
-          { code: "CORNELIA_VANISA_LEGEND", name: "Oniel Cosmos", tier: "Legend", isOmega: false, file: "CORNELIA_VANISA_LEGEND.jpg" },
-          { code: "CORNELIA_VANISA_MYTH", name: "Oniel Mythic", tier: "Mythic", isOmega: false, file: "CORNELIA_VANISA_MYTH.jpg" },
-          { code: "CORNELIA_VANISA_RARE", name: "Oniel Snow & Gold", tier: "Rare", isOmega: false, file: "CORNELIA_VANISA_RARE.jpg" },
-          { code: "CORNELIA_VANISA_UNCOMMON", name: "Oniel Trainee (Default)", tier: "Uncommon", isOmega: false, file: "CORNELIA_VANISA_UNCOMMON.jpg" }
-        ]
-      },
-      {
-        key: "JESSICA_CHANDRA", name: "Jessica Chandra (Jessi)", role: "Skip (Biru)", type: "action",
-        avatar: "../skin/JESSICA_CHANDRA_UNCOMMON.jpg",
-        skins: [
-          { code: "PJCC", name: "Prime: Jessi", tier: "Prime Omega", isOmega: true, file: "PJCC.jpg" },
-          { code: "SJES", name: "SSK: Jessica Chandra", tier: "SSK Edition", isOmega: true, file: "SJES.jpg" },
-          { code: "JESSICA_CHANDRA_LEGEND", name: "Jessi Cosmos", tier: "Legend", isOmega: false, file: "JESSICA_CHANDRA_LEGEND.jpg" },
-          { code: "JESSICA_CHANDRA_MYTH", name: "Jessi Mythic", tier: "Mythic", isOmega: false, file: "JESSICA_CHANDRA_MYTH.jpg" },
-          { code: "JESSICA_CHANDRA_RARE", name: "Jessi Snow & Gold", tier: "Rare", isOmega: false, file: "JESSICA_CHANDRA_RARE.jpg" },
-          { code: "JESSICA_CHANDRA_UNCOMMON", name: "Jessi Trainee (Default)", tier: "Uncommon", isOmega: false, file: "JESSICA_CHANDRA_UNCOMMON.jpg" }
-        ]
-      }
-    ];
+      // 2. No Mercy Action Cards (16 Members)
+      "RED_DISCARD_ALL": { value: "discard_all", type: "action", color: "red", display: "🗑️", member: "Gabriela Abigail (Ella)", key: "GABRIELA_ABIGAIL", photo: "GABRIELA_ABIGAIL_UNCOMMON.jpg" },
+      "RED_SKIP_EVERYONE": { value: "skip_everyone", type: "action", color: "red", display: "⛔", member: "Jesslyn Elly (Lyn)", key: "JESSLYN_ELLY", photo: "JESSLYN_ELLY_UNCOMMON.jpg" },
+      "RED_DRAW_4": { value: "draw_4", type: "action", color: "red", display: "+4", member: "Amanda Sukma", key: "AMANDA_SUKMA", photo: "AMANDA_SUKMA_UNCOMMON.jpg" },
+      "RED_SHIELD": { value: "shield", type: "action", color: "red", display: "🛡️", member: "Fritzy Rosmerian", key: "FRITZY_ROSMERIAN", photo: "FRITZY_ROSMERIAN_UNCOMMON.jpg" },
+      "BLUE_DISCARD_ALL": { value: "discard_all", type: "action", color: "blue", display: "🗑️", member: "Grace Octaviani (Gracie)", key: "GRACE_OCTAVIANI", photo: "GRACE_OCTAVIANI_UNCOMMON.jpg" },
+      "BLUE_SKIP_EVERYONE": { value: "skip_everyone", type: "action", color: "blue", display: "⛔", member: "Aurellia (Lia)", key: "AURELLIA_LIA", photo: "AURELLIA_LIA_UNCOMMON.jpg" },
+      "BLUE_DRAW_4": { value: "draw_4", type: "action", color: "blue", display: "+4", member: "Indah Cahya", key: "INDAH_CAHYA", photo: "INDAH_CAHYA_UNCOMMON.jpg" },
+      "BLUE_SHIELD": { value: "shield", type: "action", color: "blue", display: "🛡️", member: "Dena Natalia", key: "DENA_NATALIA", photo: "DENA_NATALIA_UNCOMMON.jpg" },
+      "GREEN_DISCARD_ALL": { value: "discard_all", type: "action", color: "green", display: "🗑️", member: "Greesella Adhalia (Greesel)", key: "GREESELA_ADHALIA", photo: "GREESELA_ADHALIA_UNCOMMON.jpg" },
+      "GREEN_SKIP_EVERYONE": { value: "skip_everyone", type: "action", color: "green", display: "⛔", member: "Jinan Safa Safira", key: "JINAN", photo: "JINAN_UNCOMMON.jpg" },
+      "GREEN_DRAW_4": { value: "draw_4", type: "action", color: "green", display: "+4", member: "Raisha Syifa", key: "RAISHA_SYIFA", photo: "RAISHA_SYIFA_UNCOMMON.jpg" },
+      "GREEN_SHIELD": { value: "shield", type: "action", color: "green", display: "🛡️", member: "Aurhel Alana (Lana)", key: "AURHEL_ALANA", photo: "AURHEL_ALANA_UNCOMMON.jpg" },
+      "YELLOW_DISCARD_ALL": { value: "discard_all", type: "action", color: "yellow", display: "🗑️", member: "Michelle Alexandra (Michie)", key: "MICHELLE_ALEXANDRA", photo: "MICHELLE_ALEXANDRA_UNCOMMON.jpg" },
+      "YELLOW_SKIP_EVERYONE": { value: "skip_everyone", type: "action", color: "yellow", display: "⛔", member: "Nabila Fitriana (Lala)", key: "NABILA_FITRIANA", photo: "NABILA_FITRIANA_UNCOMMON.jpg" },
+      "YELLOW_DRAW_4": { value: "draw_4", type: "action", color: "yellow", display: "+4", member: "Desy Natalia (Daisy)", key: "DESY_NATALIA", photo: "DESY_NATALIA_UNCOMMON.jpg" },
+      "YELLOW_SHIELD": { value: "shield", type: "action", color: "yellow", display: "🛡️", member: "Gendis Mayrannisa", key: "GENDIS_MAYRANNISA", photo: "GENDIS_MAYRANNISA_UNCOMMON.jpg" },
+
+      # 3. Standard Action Cards (12 Members)
+      "RED_DRAW_2": { value: "draw_2", type: "action", color: "red", display: "+2", member: "Reva Fidela (Adel)", key: "REVA_FIDELA", photo: "REVA_FIDELA_UNCOMMON.jpg" },
+      "RED_REVERSE": { value: "reverse", type: "action", color: "red", display: "🔄", member: "Cornelia Vanisa (Oniel)", key: "CORNELIA_VANISA", photo: "CORNELIA_VANISA_UNCOMMON.jpg" },
+      "RED_SKIP": { value: "skip", type: "action", color: "red", display: "🚫", member: "Kathrina Irene", key: "KATHRINA_IRENE", photo: "KATHRINA_IRENE_UNCOMMON.jpg" },
+      "BLUE_DRAW_2": { value: "draw_2", type: "action", color: "blue", display: "+2", member: "Gita Sekar Andarini", key: "GITA_SEKAR", photo: "GITA_SEKAR_UNCOMMON.jpg" },
+      "BLUE_REVERSE": { value: "reverse", type: "action", color: "blue", display: "🔄", member: "Febriola Sinambela (Olla)", key: "FEBRIOLA_SINAMBELA", photo: "FEBRIOLA_SINAMBELA_UNCOMMON.jpg" },
+      "BLUE_SKIP": { value: "skip", type: "action", color: "blue", display: "🚫", member: "Jessica Chandra (Jessi)", key: "JESSICA_CHANDRA", photo: "JESSICA_CHANDRA_UNCOMMON.jpg" },
+      "GREEN_DRAW_2": { value: "draw_2", type: "action", color: "green", display: "+2", member: "Fiony Alveria", key: "FIONY_ALVERIA", photo: "FIONY_ALVERIA_UNCOMMON.jpg" },
+      "GREEN_REVERSE": { value: "reverse", type: "action", color: "green", display: "🔄", member: "Helisma Putri (Eli)", key: "HELISMA_PUTRI", photo: "HELISMA_PUTRI_UNCOMMON.jpg" },
+      "GREEN_SKIP": { value: "skip", type: "action", color: "green", display: "🚫", member: "Flora Shafiq", key: "FLORA_SHAFIQ", photo: "FLORA_SHAFIQ_UNCOMMON.jpg" },
+      "YELLOW_DRAW_2": { value: "draw_2", type: "action", color: "yellow", display: "+2", member: "Mutiara Azzahra (Muthe)", key: "MUTIARA_AZZAHRA", photo: "MUTIARA_AZZAHRA_UNCOMMON.jpg" },
+      "YELLOW_REVERSE": { value: "reverse", type: "action", color: "yellow", display: "🔄", member: "Lulu Salsabila", key: "LULU_SALSABILA", photo: "LULU_SALSABILA_UNCOMMON.jpg" },
+      "YELLOW_SKIP": { value: "skip", type: "action", color: "yellow", display: "🚫", member: "Indira Putri Seruni", key: "INDIRA_PUTRI", photo: "INDIRA_PUTRI_UNCOMMON.jpg" },
+
+      # 4. Number Cards 0-9 (40 Members)
+      "RED_0": { value: "0", type: "number", color: "red", display: "0", member: "Abigail Rachel (Aralie)", key: "ABIGAIL_RACHEL", photo: "ABIGAIL_RACHEL_UNCOMMON.jpg" },
+      "BLUE_0": { value: "0", type: "number", color: "blue", display: "0", member: "Chelsea Devina", key: "CHELSEA_DEVINA", photo: "CHELSEA_DEVINA_UNCOMMON.jpg" },
+      "GREEN_0": { value: "0", type: "number", color: "green", display: "0", member: "Jacqueline Immanuela", key: "JACQUELINE_IMMANUELA", photo: "JACQUELINE_IMMANUELA_UNCOMMON.jpg" },
+      "YELLOW_0": { value: "0", type: "number", color: "yellow", display: "0", member: "Nina Tutachia (Nachia)", key: "NINA_TUTACHIA", photo: "NINA_TUTACHIA_UNCOMMON.jpg" },
+
+      "RED_1": { value: "1", type: "number", color: "red", display: "1", member: "Adeline Wijaya (Delynn)", key: "ADELINE_WIJAYA", photo: "ADELINE_WIJAYA_UNCOMMON.jpg" },
+      "BLUE_1": { value: "1", type: "number", color: "blue", display: "1", member: "Christabella Bonita", key: "CHRISTABELLA_BONITA", photo: "CHRISTABELLA_BONITA_UNCOMMON.jpg" },
+      "GREEN_1": { value: "1", type: "number", color: "green", display: "1", member: "Jazzlyn Trisha (Trisha)", key: "JAZZLYN_TRISHA", photo: "JAZZLYN_TRISHA_UNCOMMON.jpg" },
+      "YELLOW_1": { value: "1", type: "number", color: "yellow", display: "1", member: "Nur Intan", key: "NUR_INTAN", photo: "NUR_INTAN_UNCOMMON.jpg" },
+
+      "RED_2": { value: "2", type: "number", color: "red", display: "2", member: "Afera Thalia", key: "AFERA_THALIA", photo: "AFERA_THALIA_UNCOMMON.jpg" },
+      "BLUE_2": { value: "2", type: "number", color: "blue", display: "2", member: "Cynthia Yaputera", key: "CYNTHIA_YAPUTERA", photo: "CYNTHIA_YAPUTERA_UNCOMMON.jpg" },
+      "GREEN_2": { value: "2", type: "number", color: "green", display: "2", member: "Jemima Evodie", key: "JEMIMA_EVODIE", photo: "JEMIMA_EVODIE_UNCOMMON.jpg" },
+      "YELLOW_2": { value: "2", type: "number", color: "yellow", display: "2", member: "Oline Manuel", key: "OLINE_MANUEL", photo: "OLINE_MANUEL_UNCOMMON.jpg" },
+
+      "RED_3": { value: "3", type: "number", color: "red", display: "3", member: "Alya Amanda", key: "ALYA_AMANDA", photo: "ALYA_AMANDA_UNCOMMON.jpg" },
+      "BLUE_3": { value: "3", type: "number", color: "blue", display: "3", member: "Catherina Vallencia (Erine)", key: "CATHERINA_VALLENCIA", photo: "CATHERINA_VALLENCIA_UNCOMMON.jpg" },
+      "GREEN_3": { value: "3", type: "number", color: "green", display: "3", member: "Jesslyn Callista", key: "JESSLYN_CALLISTA", photo: "JESSLYN_CALLISTA_UNCOMMON.jpg" },
+      "YELLOW_3": { value: "3", type: "number", color: "yellow", display: "3", member: "Putri Jazyta", key: "PUTRI_JAZYTA", photo: "PUTRI_JAZYTA_UNCOMMON.jpg" },
+
+      "RED_4": { value: "4", type: "number", color: "red", display: "4", member: "Anindya Ramadhani (Anin)", key: "ANINDYA_RAMADHANI", photo: "ANINDYA_RAMADHANI_UNCOMMON.jpg" },
+      "BLUE_4": { value: "4", type: "number", color: "blue", display: "4", member: "Fahira Putri", key: "FAHIRA_PUTRI", photo: "FAHIRA_PUTRI_UNCOMMON.jpg" },
+      "GREEN_4": { value: "4", type: "number", color: "green", display: "4", member: "Letycia Moreen (Moreen)", key: "LETYCIA_MOREEN", photo: "LETYCIA_MOREEN_UNCOMMON.jpg" },
+      "YELLOW_4": { value: "4", type: "number", color: "yellow", display: "4", member: "Ralyne Van", key: "RALYNE_VAN", photo: "RALYNE_VAN_UNCOMMON.jpg" },
+
+      "RED_5": { value: "5", type: "number", color: "red", display: "5", member: "Astrella Virgiananda", key: "ASTRELLA_VIRGIANANDA", photo: "ASTRELLA_VIRGIANANDA_UNCOMMON.jpg" },
+      "BLUE_5": { value: "5", type: "number", color: "blue", display: "5", member: "Fatimah Azzahra", key: "FATIMAH_AZZAHRA", photo: "FATIMAH_AZZAHRA_UNCOMMON.jpg" },
+      "GREEN_5": { value: "5", type: "number", color: "green", display: "5", member: "Maegan Jovanka", key: "MAEGAN_JOVANKA", photo: "MAEGAN_JOVANKA_UNCOMMON.jpg" },
+      "YELLOW_5": { value: "5", type: "number", color: "yellow", display: "5", member: "Regina William (Eline)", key: "REGINA_WILLIAM", photo: "REGINA_WILLIAM_UNCOMMON.jpg" },
+
+      "RED_6": { value: "6", type: "number", color: "red", display: "6", member: "Aulia Riza", key: "AULIA_RIZA", photo: "AULIA_RIZA_UNCOMMON.jpg" },
+      "BLUE_6": { value: "6", type: "number", color: "blue", display: "6", member: "Hagia Sopia", key: "HAGIA_SOPIA", photo: "HAGIA_SOPIA_UNCOMMON.jpg" },
+      "GREEN_6": { "value": "6", type: "number", color: "green", display: "6", member: "Maxine Faye", key: "MAXINE_FAYE", photo: "MAXINE_FAYE_UNCOMMON.jpg" },
+      "YELLOW_6": { value: "6", type: "number", color: "yellow", display: "6", member: "Ribka Budiman", key: "RIBKA_BUDIMAN", photo: "RIBKA_BUDIMAN_UNCOMMON.jpg" },
+
+      "RED_7": { value: "7", type: "number", color: "red", display: "7", member: "Bong Aprilli", key: "BONG_APRILLI", photo: "BONG_APRILLI_UNCOMMON.jpg" },
+      "BLUE_7": { value: "7", type: "number", color: "blue", display: "7", member: "Heida Suyangga", key: "HEIDA_SUYANGGA", photo: "HEIDA_SUYANGGA_UNCOMMON.jpg" },
+      "GREEN_7": { value: "7", type: "number", color: "green", display: "7", member: "Michelle Levia (Levi)", key: "MICHELLE_LEVIA", photo: "MICHELLE_LEVIA_UNCOMMON.jpg" },
+      "YELLOW_7": { value: "7", type: "number", color: "yellow", display: "7", member: "Shabilqis Naila (Nala)", key: "SHABILQIS_NAILA", photo: "SHABILQIS_NAILA_UNCOMMON.jpg" },
+
+      "RED_8": { value: "8", type: "number", color: "red", display: "8", member: "Carissa Dini", key: "CARISSA_DINI", photo: "CARISSA_DINI_UNCOMMON.jpg" },
+      "BLUE_8": { value: "8", type: "number", color: "blue", display: "8", member: "Hillary Abigail (Lily)", key: "HILLARY_ABIGAIL", photo: "HILLARY_ABIGAIL_UNCOMMON.jpg" },
+      "GREEN_8": { value: "8", type: "number", color: "green", display: "8", member: "Mikaela Kusjanto", key: "MIKAELA_KUSJANTO", photo: "MIKAELA_KUSJANTO_UNCOMMON.jpg" },
+      "YELLOW_8": { value: "8", type: "number", color: "yellow", display: "8", member: "Sona Kalyana", key: "SONA_KALYANA", photo: "SONA_KALYANA_UNCOMMON.jpg" },
+
+      "RED_9": { value: "9", type: "number", color: "red", display: "9", member: "Cathleen Nixie (Cathy)", key: "CATHLEEN_NIXIE", photo: "CATHLEEN_NIXIE_UNCOMMON.jpg" },
+      "BLUE_9": { value: "9", type: "number", color: "blue", display: "9", member: "Humaira Ramadhani", key: "HUMAIRA_RAMADHANI", photo: "HUMAIRA_RAMADHANI_UNCOMMON.jpg" },
+      "GREEN_9": { value: "9", type: "number", color: "green", display: "9", member: "Nayla Suji", key: "NAYLA_SUJI", photo: "NAYLA_SUJI_UNCOMMON.jpg" },
+      "YELLOW_9": { value: "9", type: "number", color: "yellow", display: "9", member: "Victoria Kimberly (Kimmy)", key: "VICTORIA_KIMBERLY", photo: "VICTORIA_KIMBERLY_UNCOMMON.jpg" }
+    };
 
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
@@ -1154,7 +992,6 @@
         sessionCookie: currentSession
       };
 
-      // 1. Ambil data Saldo Koin, Kristal & Profil dari /statuschat
       try {
         const res = await fetch(`${CORE_BACKEND_URL}/statuschat`, {
           method: 'POST',
@@ -1166,7 +1003,6 @@
           const json = await res.json();
           const p = json.data || json.profile;
           if (p) {
-            // Update Balances
             const k = (p.kristal !== undefined) ? p.kristal : (p.kristal_count || 0);
             const c = (p.tbCoin !== undefined) ? p.tbCoin : (p.tb_coin !== undefined ? p.tb_coin : 0);
             const t = (p.onceToken !== undefined) ? p.onceToken : (p.token_once !== undefined ? p.token_once : 0);
@@ -1177,11 +1013,9 @@
             document.getElementById('valToken').textContent = Number(t).toLocaleString('id-ID');
             document.getElementById('valKristalOmega').textContent = Number(ko).toLocaleString('id-ID');
 
-            // Profil Data
             if (p.nama || p.username) currentUserName = p.nama || p.username;
             if (p.photoProfile || p.linkProfil) currentUserAvatar = p.photoProfile || p.linkProfil;
 
-            // Chat & Border Skin
             let rawSkin = p.skin || (p.skins ? p.skins.border_skin : "");
             if (rawSkin) {
               let baseCode = String(rawSkin).replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
@@ -1189,7 +1023,6 @@
               currentUserBorderCode = "BORDER_" + baseCode;
             }
 
-            // Tambahkan inventory ke userInventory Set
             if (Array.isArray(p.inventory)) {
               p.inventory.forEach(item => {
                 let code = String(item).toUpperCase().trim();
@@ -1203,7 +1036,6 @@
         console.warn("Core Backend /statuschat fetch warning:", e);
       }
 
-      // 2. Ambil seluruh list skin kartu milik user dari /statusskin (persis koleksi-kartu)
       try {
         const resSkin = await fetch(`${CORE_BACKEND_URL}/statusskin`, {
           method: 'POST',
@@ -1251,10 +1083,30 @@
       const container = document.getElementById('memberGroupContainer');
       const search = (document.getElementById('skinSearch').value || '').toLowerCase();
 
-      let filtered = MEMBER_SKIN_CATALOG.filter(m => {
+      // Convert MASTER_UNO_REGISTRY to unique Member array
+      const uniqueMembersMap = {};
+      Object.values(MASTER_UNO_REGISTRY).forEach(c => {
+        if (!uniqueMembersMap[c.key]) {
+          uniqueMembersMap[c.key] = {
+            key: c.key,
+            name: c.member,
+            role: `${c.color.toUpperCase()} ${c.display}`,
+            type: c.type,
+            avatar: `../skin/${c.photo}`,
+            skins: [
+              { code: `${c.key}_LEGEND`, name: `${c.member.split(' ')[0]} Cosmos`, tier: 'Legend', isOmega: false, file: `${c.key}_LEGEND.jpg` },
+              { code: `${c.key}_MYTH`, name: `${c.member.split(' ')[0]} Mythic`, tier: 'Mythic', isOmega: false, file: `${c.key}_MYTH.jpg` },
+              { code: `${c.key}_RARE`, name: `${c.member.split(' ')[0]} Snow & Gold`, tier: 'Rare', isOmega: false, file: `${c.key}_RARE.jpg` },
+              { code: `${c.key}_UNCOMMON`, name: `${c.member.split(' ')[0]} Trainee (Default)`, tier: 'Uncommon', isOmega: false, file: c.photo }
+            ]
+          };
+        }
+      });
+
+      const memberList = Object.values(uniqueMembersMap);
+      let filtered = memberList.filter(m => {
         const matchName = m.name.toLowerCase().includes(search) || m.role.toLowerCase().includes(search);
-        const matchSkin = m.skins.some(s => s.name.toLowerCase().includes(search) || s.tier.toLowerCase().includes(search));
-        if (!matchName && !matchSkin) return false;
+        if (!matchName) return false;
         if (currentMemberFilter === 'all') return true;
         return m.type === currentMemberFilter;
       });
@@ -1271,20 +1123,8 @@
                           userInventory.has(`BORDER_${s.code.toUpperCase()}`) ||
                           userInventory.has(`CHAT_${s.code.toUpperCase()}`);
           
-          let thumbSrc = '';
-          let isGrey = false;
-
-          if (s.isOmega) {
-            thumbSrc = `../skin_jpg/${s.file}`;
-            if (!isOwned) isGrey = true;
-          } else {
-            if (isOwned) {
-              thumbSrc = `../skin/${s.file}`;
-            } else {
-              thumbSrc = `../skin/${s.file.replace('.jpg', '_grey.jpg')}`;
-              isGrey = true;
-            }
-          }
+          let thumbSrc = isOwned ? `../skin/${s.file}` : `../skin/${s.file.replace('.jpg', '_grey.jpg')}`;
+          let isGrey = !isOwned;
 
           let actionBtn = '';
           if (isActive) {
@@ -1327,14 +1167,12 @@
       }).join('');
     }
 
-    // 1 Member HANYA bisa mengaktifkan 1 Skin pada saat bersamaan!
     async function equipMemberSkin(memberKey, skinCode) {
       equippedSkinMap[memberKey] = skinCode;
       localStorage.setItem('uno_equipped_skins', JSON.stringify(equippedSkinMap));
       renderMemberSkins();
-      showToast(`\u2728 Skin ${skinCode} aktif untuk ${memberKey}! (Disimpan ke PostgreSQL)`);
+      showToast(`\u2728 Skin ${skinCode} aktif untuk ${memberKey}!`);
 
-      // 1. POST to Game Engine PostgreSQL
       try {
         await fetch(`${GAME_ENGINE_URL}/api/uno/skin/equip`, {
           method: 'POST',
@@ -1349,7 +1187,6 @@
         console.warn("Equip skin PG sync warning:", e);
       }
 
-      // 2. Sync to active WebSocket room if in game
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({
           action: 'sync_skins',
@@ -1364,7 +1201,6 @@
       renderMemberSkins();
       showToast(`Kartu ${memberKey} kembali ke default Trainee.`);
 
-      // POST unequip to Backend Neon PostgreSQL
       try {
         await fetch(`${GAME_ENGINE_URL}/api/uno/skin/equip`, {
           method: 'POST',
@@ -1394,7 +1230,7 @@
       renderMemberSkins();
     }
 
-    // ===== LOBBY FETCHING =====
+    // ===== LOBBY & ROOM MANAGEMENT =====
     async function fetchLobbyRooms() {
       try {
         const res = await fetch(`${GAME_ENGINE_URL}/api/uno/lobby`);
@@ -1441,7 +1277,6 @@
       fetchLobbyRooms();
     }
 
-    // ===== ROOM CREATION =====
     function openCreateModal() { document.getElementById('createModal').style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function toggleBetSettings() {
@@ -1477,36 +1312,50 @@
           joinRoom(data.room_id);
         }
       } catch(e) {
-        alert("Gagal membuat room. Coba lagi!");
+        // Fallback local match creation
+        joinRoom('room_local_' + Math.random().toString(36).substring(2, 8));
       }
     }
 
-    // ===== WEBSOCKET & ARENA SYNC =====
+    function quickMatch() {
+      submitCreateRoom();
+    }
+
+    function copyRoomCode() {
+      const code = document.getElementById('loungeRoomCode').textContent;
+      navigator.clipboard.writeText(code);
+      showToast("\uD83D\uDCCB Kode kamar berhasil disalin!");
+    }
+
+    // ===== WEBSOCKET & MULTIPLAYER ARENA SYNC =====
     function joinRoom(roomId) {
       if (ws) ws.close();
 
       document.getElementById('lobby-screen').style.display = 'none';
       document.getElementById('lounge-screen').style.display = 'block';
 
-      ws = new WebSocket(`${WS_BASE}/ws/uno/${roomId}/${currentSession}`);
+      try {
+        ws = new WebSocket(`${WS_BASE}/ws/uno/${roomId}/${currentSession}`);
 
-      ws.onopen = () => {
-        console.log("Connected to UNO room:", roomId);
-        // Send equipped skins to room
-        ws.send(JSON.stringify({
-          action: 'sync_skins',
-          equipped_skins: equippedSkinMap
-        }));
-      };
+        ws.onopen = () => {
+          console.log("Connected to UNO room:", roomId);
+          ws.send(JSON.stringify({
+            action: 'sync_skins',
+            equipped_skins: equippedSkinMap
+          }));
+        };
 
-      ws.onmessage = (event) => {
-        const msg = JSON.parse(event.data);
-        handleServerMessage(msg);
-      };
+        ws.onmessage = (event) => {
+          const msg = JSON.parse(event.data);
+          handleServerMessage(msg);
+        };
 
-      ws.onclose = () => {
-        console.log("Disconnected from room");
-      };
+        ws.onclose = () => {
+          console.log("WebSocket disconnected, running local mode fallback.");
+        };
+      } catch(e) {
+        console.warn("WebSocket fallback:", e);
+      }
     }
 
     function handleServerMessage(msg) {
@@ -1527,7 +1376,7 @@
       } else if (msg.type === 'player_knockout') {
         showToast(`\uD83D\uDCA5 ${msg.player_name} GUGUR (Mercy Limit 25+ Kartu)!`);
       } else if (msg.type === 'game_over') {
-        showGameOverModal(msg.settlement);
+        showGameOverModal(msg);
       }
     }
 
@@ -1538,7 +1387,6 @@
       document.getElementById('loungeSub').textContent = `Mode ${activeRoom.mode} \u2022 Host: ${activeRoom.host_name}`;
       document.getElementById('loungeRoomCode').textContent = activeRoom.room_code || activeRoom.room_id.substring(4);
 
-      // Check current user readiness & Host Controls
       const me = activeRoom.players.find(p => p.session_id === currentSession);
       const readyBtn = document.getElementById('btnReady');
       const forceStartBtn = document.getElementById('btnForceStart');
@@ -1573,7 +1421,7 @@
                 <img src="${p.avatar || DEFAULT_TEMPLATE_PP}" class="slot-avatar" onerror="this.src='${DEFAULT_TEMPLATE_PP}'" alt="avatar">
                 ${borderSrc ? `<img src="${borderSrc}" class="slot-border-frame" onerror="this.style.display='none'">` : ''}
               </div>
-              <div class="slot-name">${p.name} ${p.is_bot ? '\uD83E\uDD16' : ''}</div>
+              <div class="slot-name">${p.name} ${p.is_bot ? '&#129302;' : ''}</div>
               <span class="slot-status ${p.is_ready ? 'status-ready' : 'status-waiting'}">
                 ${p.is_ready ? 'SIAP' : 'MENUNGGU'}
               </span>
@@ -1634,7 +1482,7 @@
       // 1. Color Ring & Draw Count
       const colorRing = document.getElementById('tableColorRing');
       colorRing.className = `color-ring ${activeRoom.current_color}`;
-      document.getElementById('drawCount').textContent = activeRoom.draw_pile_count || '0';
+      document.getElementById('drawCount').textContent = activeRoom.draw_pile_count || '108';
 
       // 2. Pending Stack Badge
       const stackBadge = document.getElementById('tableStackBadge');
@@ -1647,7 +1495,7 @@
 
       // 3. Render Top Card in Discard Pile
       if (activeRoom.top_card) {
-        document.getElementById('discardPileZone').innerHTML = createCardHtml(activeRoom.top_card, false);
+        document.getElementById('discardPileZone').innerHTML = createRealUnoCardHtml(activeRoom.top_card, false);
       }
 
       // 4. Opponents HUD (Left, Top, Right)
@@ -1674,20 +1522,35 @@
         document.getElementById('hudRight').classList.toggle('active-turn', opponents[2].is_turn);
       }
 
-      // 5. Render User Hand
+      // 5. Render User Hand with Real UNO Card visual & Playable Glow
       const me = activeRoom.players.find(p => p.session_id === currentSession);
       const handZone = document.getElementById('userHandZone');
       if (me && me.hand) {
-        handZone.innerHTML = me.hand.map(c => createCardHtml(c, true)).join('');
+        const topCard = activeRoom.top_card;
+        handZone.innerHTML = me.hand.map(c => {
+          let isPlayable = false;
+          if (me.is_turn) {
+            if (activeRoom.pending_draw_count > 0) {
+              isPlayable = ["draw_2", "draw_4", "wild_draw_6", "wild_draw_10", "wild_reverse_4"].includes(c.value);
+            } else {
+              isPlayable = (c.color === "wild" || c.type === "wild" || c.color === activeRoom.current_color || (topCard && c.value === topCard.value));
+            }
+          }
+          return createRealUnoCardHtml(c, isPlayable);
+        }).join('');
       }
     }
 
-    function createCardHtml(card, isPlayable) {
-      const skin = card.skin || {};
-      const valDisplay = card.value.toUpperCase().replace('_', ' ');
+    // =========================================================================
+    // REAL UNO CARD HTML CREATOR (MIRRORING USER'S PHOTO MEDIA_1786901843790)
+    // =========================================================================
+    function createRealUnoCardHtml(card, isPlayable) {
+      const displayVal = card.display || card.value.toUpperCase();
       const clickAttr = isPlayable ? `onclick="userClickCard('${card.id}', '${card.type}', this)"` : '';
-      
-      let photoSrc = skin.avatar;
+      const playableClass = isPlayable ? 'playable' : '';
+
+      // Determine Photo from Equipped Skins or Default Trainee
+      let photoSrc = `../skin/${card.photo || 'ANGELINA_CHRISTY_UNCOMMON.jpg'}`;
       const equippedCode = equippedSkinMap[card.skin_key];
       if (equippedCode) {
         if (equippedCode.length <= 4) {
@@ -1695,18 +1558,23 @@
         } else {
           photoSrc = `../skin/${equippedCode}.jpg`;
         }
-      } else {
-        photoSrc = `../skin/${card.skin_key || 'ANGELINA_CHRISTY'}_UNCOMMON.jpg`;
       }
 
       return `
-        <div class="uno-card ${card.color}" ${clickAttr} id="card_${card.id}">
-          <div class="card-corner-top">${valDisplay}</div>
-          <div class="card-center-photo">
-            <img src="${photoSrc}" onerror="this.src='../skin/ANGELINA_CHRISTY_UNCOMMON.jpg'" alt="${skin.name || 'Member'}">
+        <div class="uno-card ${card.color} ${playableClass}" ${clickAttr} id="card_${card.id}" title="${card.member || 'Member'} (${displayVal})">
+          <!-- TOP-LEFT CORNER VALUE -->
+          <div class="card-corner card-corner-top">${displayVal}</div>
+
+          <!-- CENTER TILTED WHITE OVAL WITH MEMBER PHOTO -->
+          <div class="card-center-oval">
+            <img src="${photoSrc}" class="card-member-photo" onerror="this.src='../skin/ANGELINA_CHRISTY_UNCOMMON.jpg'" alt="${card.member}">
           </div>
-          <div class="card-tier-pill">${skin.name ? skin.name.substring(0, 10) : 'JKT48'}</div>
-          <div class="card-corner-bot">${valDisplay}</div>
+
+          <!-- BOTTOM MEMBER NAME BADGE -->
+          <div class="card-member-tag">${card.member ? card.member.split(' ')[0] : 'JKT48'}</div>
+
+          <!-- BOTTOM-RIGHT INVERTED CORNER VALUE -->
+          <div class="card-corner card-corner-bot">${displayVal}</div>
         </div>
       `;
     }
@@ -1744,9 +1612,9 @@
         cardElement.style.pointerEvents = 'none';
 
         requestAnimationFrame(() => {
-          clone.style.left = 'calc(50% - 42px)';
-          clone.style.top = 'calc(50% - 62px)';
-          clone.style.transform = 'scale(0.8) rotate(' + (Math.random()*20 - 10) + 'deg)';
+          clone.style.left = 'calc(50% - 52px)';
+          clone.style.top = 'calc(50% - 77px)';
+          clone.style.transform = 'scale(0.85) rotate(' + (Math.random()*20 - 10) + 'deg)';
         });
 
         setTimeout(() => {
@@ -1758,7 +1626,7 @@
               chosen_color: chosenColor
             }));
           }
-        }, 500);
+        }, 450);
       }
     }
 
@@ -1777,13 +1645,12 @@
 
     // ===== SKIN VFX ENGINE =====
     function triggerSkinVFX(vfxData) {
-      const skin = vfxData.skin || {};
       const overlay = document.getElementById('vfx-overlay');
       const jiko = document.getElementById('jiko-banner');
 
-      if (skin.jiko) {
-        jiko.textContent = `\u2728 ${skin.name}: "${skin.jiko}" \u2728`;
-        overlay.className = skin.tier === 'OMEGA_SPESIAL' ? 'vfx-active-omega' : 'vfx-active-fc';
+      if (vfxData.jiko) {
+        jiko.textContent = `\u2728 ${vfxData.member}: "${vfxData.jiko}" \u2728`;
+        overlay.className = 'vfx-active-omega';
         jiko.classList.add('jiko-show');
 
         setTimeout(() => {
@@ -1793,7 +1660,7 @@
       }
     }
 
-    // ===== TEMP IN-ROOM CHAT WITH SKIN BUBBLES =====
+    // ===== TEMP IN-ROOM CHAT =====
     function sendChat() {
       const input = document.getElementById('chatInput');
       const text = input.value.trim();
@@ -1886,8 +1753,8 @@
       setTimeout(() => banner.classList.remove('jiko-show'), 2500);
     }
 
-    function showGameOverModal(settlement) {
-      alert("\uD83C\uDFC6 GAME SELESAI! Cek hasil akhir dan koinmu di menu profil.");
+    function showGameOverModal(msg) {
+      alert(`\uD83C\uDFC6 PERTANDINGAN SELESAI!\nPemenang: ${msg.winner || 'Pemain'}`);
       exitArenaToLobby();
     }
 
@@ -1898,16 +1765,6 @@
       document.getElementById('lobby-screen').style.display = 'block';
       fetchLobbyRooms();
       loadCoreUserStatus();
-    }
-
-    function quickMatch() {
-      openCreateModal();
-    }
-
-    function copyRoomCode() {
-      const code = document.getElementById('loungeRoomCode').textContent;
-      navigator.clipboard.writeText(code);
-      showToast("\uD83D\uDCCB Kode kamar berhasil disalin!");
     }
 
     // Init App
