@@ -540,29 +540,49 @@ Mengalir bagai melodi yang indah
 Rapsodi cinta kita!`
 };
 
-function generateLyrics(t) {
-  let raw = MASTER_LYRICS[t.title] || `[00:04.00] ${t.title} - JKT48
-[00:14.00] Melangkah maju meraih impian kita
-[00:26.00] Jangan menyerah walau badai menghadang
-[00:40.00] Terus bernyanyi bersama penuh semangat
-[00:56.00] Masa depan cerah menanti di depan mata
-[01:12.00] Bersama JKT48 kita bersinar abadi!`;
+// ===== LRCLIB API + WORD INTERPOLATION KARAOKE ENGINE =====
+const LYRICS_CACHE = new Map();
 
-  if (!raw.includes('[')) {
-    const lines = raw.trim().split('\n').filter(l => l.trim().length > 0);
-    let time = 4.0;
-    let res = '';
-    lines.forEach(l => {
-      const m = Math.floor(time / 60);
-      const s = Math.floor(time % 60);
-      res += `[${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.00] ${l.trim()}\n`;
-      time += 6.0;
-    });
-    raw = res;
+async function fetchLyricsFromLRCLIB(title, artist = "JKT48") {
+  // Clean song title (remove prefixes, romanizations or discography numbers)
+  const cleanTitle = title.replace(/^\d+[\s_-]*/, '').replace(/[-_]/g, ' ').trim();
+  const cacheKey = cleanTitle.toLowerCase();
+  if (LYRICS_CACHE.has(cacheKey)) return LYRICS_CACHE.get(cacheKey);
+
+  try {
+    // 1. Try exact get
+    const url = `https://lrclib.net/api/get?track_name=${encodeURIComponent(cleanTitle)}&artist_name=${encodeURIComponent(artist)}`;
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.syncedLyrics) {
+        LYRICS_CACHE.set(cacheKey, data.syncedLyrics);
+        return data.syncedLyrics;
+      }
+    }
+
+    // 2. Try search fallback
+    const searchUrl = `https://lrclib.net/api/search?q=${encodeURIComponent(cleanTitle + ' JKT48')}`;
+    const sRes = await fetch(searchUrl);
+    if (sRes.ok) {
+      const sData = await sRes.json();
+      if (Array.isArray(sData) && sData.length > 0) {
+        const found = sData.find(x => x.syncedLyrics) || sData[0];
+        if (found && found.syncedLyrics) {
+          LYRICS_CACHE.set(cacheKey, found.syncedLyrics);
+          return found.syncedLyrics;
+        }
+      }
+    }
+  } catch(e) {
+    console.log("LRCLIB note:", e);
   }
+  return null;
+}
 
+function parseLrcToLines(lrcText) {
   const parsed = [];
-  raw.trim().split('\n').forEach(line => {
+  lrcText.trim().split('\n').forEach(line => {
     const m = line.match(/\[(\d{2}):(\d{2}(?:\.\d+)?)\](.*)/);
     if (m) {
       const min = parseInt(m[1], 10);
@@ -574,20 +594,52 @@ function generateLyrics(t) {
   return parsed;
 }
 
-function loadLyrics(t) {
+async function loadLyrics(t) {
   const scroll = document.getElementById('lyricsScroll');
-  scroll.innerHTML = '';
+  scroll.innerHTML = '<div style="color:rgba(255,255,255,0.4);margin-top:80px;">Menyelaraskan lirik dari database online...</div>';
   wordTimings = [];
   lastSyncWordIndex = -1;
 
-  const lines = generateLyrics(t);
+  let rawLrc = await fetchLyricsFromLRCLIB(t.title);
+  if (!rawLrc) {
+    rawLrc = MASTER_LYRICS[t.title];
+  }
+
+  if (!rawLrc) {
+    rawLrc = `[00:04.00] ${t.title} - JKT48
+[00:14.00] Melangkah maju meraih impian kita
+[00:26.00] Jangan menyerah walau badai menghadang
+[00:40.00] Terus bernyanyi bersama penuh semangat
+[00:56.00] Masa depan cerah menanti di depan mata
+[01:12.00] Bersama JKT48 kita bersinar abadi!`;
+  }
+
+  if (!rawLrc.includes('[')) {
+    const lines = rawLrc.trim().split('\n').filter(l => l.trim().length > 0);
+    let time = 4.0;
+    let res = '';
+    lines.forEach(l => {
+      const m = Math.floor(time / 60);
+      const s = Math.floor(time % 60);
+      res += `[${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.00] ${l.trim()}\n`;
+      time += 6.0;
+    });
+    rawLrc = res;
+  }
+
+  const lines = parseLrcToLines(rawLrc);
+  scroll.innerHTML = '';
+
   lines.forEach((lObj, lineIdx) => {
     const div = document.createElement('div');
     div.className = 'lyric-line';
     div.onclick = () => { if (audio) audio.currentTime = lObj.t; };
 
     const words = lObj.text.split(' ');
-    const durationPerWord = 5.0 / Math.max(words.length, 1);
+    // Hitung durasi sampai baris berikutnya untuk timing kata yang presisi
+    const nextLineTime = (lines[lineIdx + 1] ? lines[lineIdx + 1].t : lObj.t + 5.0);
+    const lineDuration = Math.max(nextLineTime - lObj.t, 2.0);
+    const durationPerWord = lineDuration / Math.max(words.length, 1);
 
     words.forEach((w, wIdx) => {
       const span = document.createElement('span');
