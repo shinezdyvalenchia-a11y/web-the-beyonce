@@ -646,6 +646,11 @@
                 tabTelegram.classList.remove("active");
                 googleArea.classList.remove("hidden");
                 telegramArea.classList.add("hidden");
+
+                if (typeof ALCSTA_CONFIG !== 'undefined' && ALCSTA_CONFIG.GOOGLE_CLIENT_ID && ALCSTA_CONFIG.GOOGLE_CLIENT_ID !== "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com") {
+                    const gTag = document.getElementById("g_id_onload");
+                    if (gTag) gTag.setAttribute("data-client_id", ALCSTA_CONFIG.GOOGLE_CLIENT_ID);
+                }
             }
         }
 

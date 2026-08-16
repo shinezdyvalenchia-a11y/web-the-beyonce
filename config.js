@@ -20,6 +20,9 @@ const ALCSTA_CONFIG = {
     STATION_API_URL: "https://ashazeneca-botanalistiktl.hf.space",
     QUIZ_API_URL: "https://shinezzzz-gokgokgogkgokgok.hf.space",
     
+    // Google OAuth Client ID (Dapatkan dari Google Cloud Console -> Credentials)
+    GOOGLE_CLIENT_ID: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+
     // Konfigurasi Default Assets
     DEFAULT_AVATAR: "https://i.ibb.co.com/Y4JdtfGH/download.png",
     SKIN_FOLDER: "../skin/",
