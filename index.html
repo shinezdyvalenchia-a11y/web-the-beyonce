@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <script src="config.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * {
@@ -589,11 +589,11 @@
     </div>
 
     <script>
-        const PRIMARY_URL = (window.location.origin && window.location.origin.startsWith("http") && !window.location.origin.includes("file:")) 
-            ? window.location.origin 
+        const BACKEND_URL = (typeof ALCSTA_CONFIG !== 'undefined' && ALCSTA_CONFIG.CORE_BACKEND_URL) 
+            ? ALCSTA_CONFIG.CORE_BACKEND_URL 
             : "https://shinezzzz-gokgokgogkgokgok.hf.space";
-        const FALLBACK_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
-        const BACKEND_URL = PRIMARY_URL;
+        const PRIMARY_URL = BACKEND_URL;
+        const FALLBACK_URL = BACKEND_URL;
         let pendingRegData = null;
         let otpCountdownInterval = null;
 
