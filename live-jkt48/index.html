@@ -437,14 +437,6 @@
         <a href="#" class="side-item active"><span class="side-icon">🎤</span>Live JKT</a>
         <a href="../alcstify/" class="side-item"><span class="side-icon">🎵</span>Alcstify</a>
         <a href="../mini-games/" class="side-item"><span class="side-icon">🎮</span>Mini Games</a>
-        <a href="../grup/" class="side-item"><span class="side-icon">👥</span>Grup</a>
-        <a href="../temen-mabar/" class="side-item"><span class="side-icon">⚔️</span>Mabar</a>
-        <a href="../medsos-saver/" class="side-item"><span class="side-icon">📥</span>Saver</a>
-        <a href="../koleksi-kartu/" class="side-item"><span class="side-icon">🃏</span>Kartu</a>
-        <a href="../bio-member/" class="side-item"><span class="side-icon">📖</span>Bio</a>
-        <a href="../link-shortcut/" class="side-item"><span class="side-icon">🔗</span>Shortcut</a>
-        <a href="../update-member/" class="side-item"><span class="side-icon">📱</span>Update Sosmed</a>
-        <a href="../tentang/" class="side-item"><span class="side-icon">ℹ️</span>Tentang</a>
     </aside>
 
     <main class="main-content">
@@ -808,7 +800,7 @@
 
                 // 1. Query backend search
                 try {
-                    const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : "https://ashazeneca-botanalistiktl.hf.space";
+                    const apiBase = typeof getApiUrl === 'function' ? getApiUrl('live') : "https://ashazeneca-botanalistiktl.hf.space";
                     const res = await fetch(`${apiBase}/api/yt/search?q=${encodeURIComponent(query)}`);
                     if (res.ok) {
                         const data = await res.json();
@@ -1889,7 +1881,7 @@
             if (isFetchingLiveRooms) return;
             isFetchingLiveRooms = true;
             try {
-                const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : "https://ashazeneca-botanalistiktl.hf.space";
+                const apiBase = "https://ashazeneca-botanalistiktl.hf.space";
                 const res = await fetch(`${apiBase}/api/live/onlives`);
                 if (res.ok) {
                     const data = await res.json();
@@ -2153,7 +2145,7 @@
 
             // Send to Backend
             try {
-                const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : "https://ashazeneca-botanalistiktl.hf.space";
+                const apiBase = "https://ashazeneca-botanalistiktl.hf.space";
                 await fetch(`${apiBase}/api/chat/send`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -2264,7 +2256,7 @@
             if (!activeMirrorMember || !activeMirrorMember.roomKey || isFetchingChats || document.hidden) return;
             isFetchingChats = true;
             try {
-                const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : "https://ashazeneca-botanalistiktl.hf.space";
+                const apiBase = "https://ashazeneca-botanalistiktl.hf.space";
                 const res = await fetch(`${apiBase}/api/chat/get?room=${encodeURIComponent(activeMirrorMember.roomKey)}`);
                 if (res.ok) {
                     const data = await res.json();
@@ -2391,7 +2383,7 @@
                 
                 vidPlayer.play().catch(err => {
                     console.log("Direct play caught, trying backend stream fallback:", err);
-                    const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : "https://ashazeneca-botanalistiktl.hf.space";
+                    const apiBase = "https://ashazeneca-botanalistiktl.hf.space";
                     vidPlayer.src = `${apiBase}/api/yt/proxy_stream?path=${encodeURIComponent(sourcePath)}`;
                     vidPlayer.play().catch(e => console.warn("Fallback player note:", e));
                 });

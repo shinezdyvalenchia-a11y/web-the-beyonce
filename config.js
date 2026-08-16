@@ -10,8 +10,9 @@ const ALCSTA_CONFIG = {
     // 2. URL Live Stream Tracker & Room Engine (Showroom & IDN Live)
     STREAM_TRACKER_URL: "https://ashazeneca-botanalistiktl.hf.space",
     
-    // 3. URL Dedicated Music & Video Streamer Proxy (Alcstify Google Drive Master)
+    // 3. URL Dedicated Music & Video Streamer Proxy + Mini-Game Multiplayer Arena
     ALCSTIFY_STREAM_API_URL: "https://shinezzzz-gokgokgok.hf.space",
+    GAMES_API_URL: "https://shinezzzz-gokgokgok.hf.space",
 
     // URL Services Terkait
     NOTIFIER_API_URL: "https://shinezzzz-gokgokgogkgokgok.hf.space",
@@ -33,10 +34,10 @@ const ALCSTA_CONFIG = {
 
 // Helper Resolver URL Pintar
 function getApiUrl(type) {
-    if (type === 'alcstify_stream' || type === 'music' || type === 'drive') {
+    if (type === 'alcstify_stream' || type === 'music' || type === 'drive' || type === 'game' || type === 'games' || type === 'arena') {
         return ALCSTA_CONFIG.ALCSTIFY_STREAM_API_URL;
     }
-    if (type === 'live' || type === 'stream_tracker' || type === 'station') {
+    if (type === 'live' || type === 'stream' || type === 'video' || type === 'stream_tracker' || type === 'station') {
         return ALCSTA_CONFIG.STREAM_TRACKER_URL;
     }
     return ALCSTA_CONFIG.CORE_BACKEND_URL;

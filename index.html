@@ -549,12 +549,12 @@
             <!-- OTP INPUT SECTION -->
             <div id="otpSection" class="auth-container hidden">
                 <div class="otp-notice-box">
-                    <div>Pesan otomatis <b>/verif</b> sedang dibuka di Bot <b>@pxxcazellbot</b>.</div>
-                    <a href="https://t.me/pxxcazellbot?text=%2Fverif" target="_blank" class="tele-open-btn">
-                        💬 Buka Bot @pxxcazellbot
+                    <div>Pesan otomatis <b>/verif</b> sedang dibuka di <b>@CaramelBiruu</b>.</div>
+                    <a href="https://t.me/CaramelBiruu?text=%2Fverif" target="_blank" class="tele-open-btn">
+                        💬 Buka @CaramelBiruu
                     </a>
                     <div class="countdown-timer" id="otpTimer">03:00</div>
-                    <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">Kirim <b>/verif</b> ke bot dan salin 6 digit OTP di bawah ini:</div>
+                    <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">Kirim <b>/verif</b> ke @CaramelBiruu dan salin 6 digit OTP di bawah ini:</div>
                 </div>
                 <form id="otpForm" style="display: flex; flex-direction: column; gap: 10px;">
                     <input type="text" id="otpCode" class="input-pill" placeholder="MASUKKAN 6 DIGIT OTP" required maxlength="6" autocomplete="off">
@@ -717,8 +717,8 @@
                     toggleMode('otp');
                     startOtpTimer(180);
 
-                    // Buka otomatis ke bot telegram dengan template /verif
-                    const teleUrl = `https://t.me/pxxcazellbot?text=%2Fverif`;
+                    // Buka otomatis ke Telegram @CaramelBiruu dengan template /verif
+                    const teleUrl = `https://t.me/CaramelBiruu?text=%2Fverif`;
                     window.open(teleUrl, "_blank");
                 } else {
                     alert("Gagal Inisialisasi: " + (data.detail || data.message || "ID sudah terdaftar!"));
