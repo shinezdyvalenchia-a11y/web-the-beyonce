@@ -244,7 +244,13 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
 /* ====== FULLSCREEN LYRICS VIEW ====== */
 .lyrics-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(5, 8, 17, 0.94); backdrop-filter: blur(45px); display: flex; flex-direction: column; transform: translateY(100%); transition: transform .4s cubic-bezier(0.25, 0.8, 0.25, 1); }
 .lyrics-overlay.open { transform: translateY(0); }
-.lyrics-top { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.lyrics-top { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0; gap: 12px; flex-wrap: wrap; }
+.lyrics-calibration-bar { display: flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.08); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border); }
+.btn-calib { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 14px; cursor: pointer; transition: all .2s; }
+.btn-calib:hover { background: var(--primary); color: #000; transform: scale(1.05); }
+.btn-calib.reset { padding: 5px 9px; font-size: 13px; color: var(--text-dim); }
+.btn-calib.reset:hover { color: #ef4444; background: rgba(239, 68, 68, 0.2); }
+.calib-indicator { font-size: 12px; font-weight: 800; color: var(--primary); min-width: 85px; text-align: center; font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px; }
 .lyrics-close { background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .lyrics-close:hover { background: #ef4444; }
 
@@ -406,6 +412,15 @@ html, body { width: 100%; height: 100%; height: 100dvh; overflow: hidden; backgr
         <div id="lyricsArtist" style="font-size:12.5px;color:var(--primary);font-weight:700;">JKT48</div>
       </div>
     </div>
+
+    <!-- KALIBRASI OFFSET SYNC PROLOG MV -->
+    <div class="lyrics-calibration-bar">
+      <button class="btn-calib" onclick="adjustOffset(-0.5)" title="Mundurkan lirik 0.5s">&#9198; -0.5s</button>
+      <div class="calib-indicator" id="offsetLabel" title="Offset waktu lirik">Offset: 0.0s</div>
+      <button class="btn-calib" onclick="adjustOffset(+0.5)" title="Majukan lirik 0.5s">+0.5s &#9197;</button>
+      <button class="btn-calib reset" onclick="resetOffset()" title="Reset ke default">&#8634;</button>
+    </div>
+
     <button class="lyrics-close" onclick="closeLyrics()">&#10005;</button>
   </div>
   <div class="lyrics-scroll" id="lyricsScroll">
@@ -594,11 +609,88 @@ function parseLrcToLines(lrcText) {
   return parsed;
 }
 
+// ===== DYNAMIC OFFSET CALIBRATION & WORD-BY-WORD ENGINE =====
+let LYRIC_OFFSETS = JSON.parse(localStorage.getItem('alc48_lyric_offsets') || '{}');
+let currentSongRawLines = [];
+
+function getSongOffset(track) {
+  if (!track) return 0;
+  const key = track.title.toLowerCase();
+  if (key in LYRIC_OFFSETS) return parseFloat(LYRIC_OFFSETS[key]) || 0;
+  return parseFloat(track.lyrics_offset || 0) || 0;
+}
+
+function adjustOffset(delta) {
+  const t = TRACKS[currentTrackIndex];
+  if (!t) return;
+  const key = t.title.toLowerCase();
+  const current = getSongOffset(t);
+  const newOffset = parseFloat((current + delta).toFixed(2));
+  LYRIC_OFFSETS[key] = newOffset;
+  localStorage.setItem('alc48_lyric_offsets', JSON.stringify(LYRIC_OFFSETS));
+  updateOffsetUI(newOffset);
+  rebuildWordTimingsWithOffset(newOffset);
+}
+
+function resetOffset() {
+  const t = TRACKS[currentTrackIndex];
+  if (!t) return;
+  const key = t.title.toLowerCase();
+  delete LYRIC_OFFSETS[key];
+  localStorage.setItem('alc48_lyric_offsets', JSON.stringify(LYRIC_OFFSETS));
+  const def = parseFloat(t.lyrics_offset || 0) || 0;
+  updateOffsetUI(def);
+  rebuildWordTimingsWithOffset(def);
+}
+
+function updateOffsetUI(offset) {
+  const label = document.getElementById('offsetLabel');
+  if (label) {
+    const sign = offset > 0 ? '+' : '';
+    label.textContent = `Offset: ${sign}${offset.toFixed(1)}s`;
+    label.style.color = offset !== 0 ? 'var(--cyan)' : 'var(--primary)';
+  }
+}
+
+function rebuildWordTimingsWithOffset(offset) {
+  if (!currentSongRawLines || !currentSongRawLines.length) return;
+  wordTimings = [];
+  lastSyncWordIndex = -1;
+  const scroll = document.getElementById('lyricsScroll');
+  const domLines = scroll.querySelectorAll('.lyric-line');
+
+  currentSongRawLines.forEach((lObj, lineIdx) => {
+    const adjustedLineTime = Math.max(0, lObj.t + offset);
+    const nextLineObj = currentSongRawLines[lineIdx + 1];
+    const adjustedNextTime = nextLineObj ? Math.max(0, nextLineObj.t + offset) : adjustedLineTime + 5.0;
+    const lineDuration = Math.max(adjustedNextTime - adjustedLineTime, 2.0);
+    const words = lObj.text.split(' ');
+    const durationPerWord = lineDuration / Math.max(words.length, 1);
+
+    words.forEach((w, wIdx) => {
+      wordTimings.push({
+        t: adjustedLineTime + (wIdx * durationPerWord),
+        lineIdx,
+        wordIdx: wIdx
+      });
+    });
+
+    if (domLines[lineIdx]) {
+      domLines[lineIdx].onclick = () => {
+        if (audio) audio.currentTime = adjustedLineTime;
+      };
+    }
+  });
+}
+
 async function loadLyrics(t) {
   const scroll = document.getElementById('lyricsScroll');
   scroll.innerHTML = '<div style="color:rgba(255,255,255,0.4);margin-top:80px;">Menyelaraskan lirik dari database online...</div>';
   wordTimings = [];
   lastSyncWordIndex = -1;
+
+  const currentOffset = getSongOffset(t);
+  updateOffsetUI(currentOffset);
 
   let rawLrc = await fetchLyricsFromLRCLIB(t.title);
   if (!rawLrc) {
@@ -627,35 +719,25 @@ async function loadLyrics(t) {
     rawLrc = res;
   }
 
-  const lines = parseLrcToLines(rawLrc);
+  currentSongRawLines = parseLrcToLines(rawLrc);
   scroll.innerHTML = '';
 
-  lines.forEach((lObj, lineIdx) => {
+  currentSongRawLines.forEach((lObj, lineIdx) => {
     const div = document.createElement('div');
     div.className = 'lyric-line';
-    div.onclick = () => { if (audio) audio.currentTime = lObj.t; };
 
     const words = lObj.text.split(' ');
-    // Hitung durasi sampai baris berikutnya untuk timing kata yang presisi
-    const nextLineTime = (lines[lineIdx + 1] ? lines[lineIdx + 1].t : lObj.t + 5.0);
-    const lineDuration = Math.max(nextLineTime - lObj.t, 2.0);
-    const durationPerWord = lineDuration / Math.max(words.length, 1);
-
-    words.forEach((w, wIdx) => {
+    words.forEach(w => {
       const span = document.createElement('span');
       span.className = 'lyric-word';
       span.textContent = w + ' ';
       div.appendChild(span);
-
-      wordTimings.push({
-        t: lObj.t + (wIdx * durationPerWord),
-        lineIdx,
-        wordIdx: wIdx
-      });
     });
 
     scroll.appendChild(div);
   });
+
+  rebuildWordTimingsWithOffset(currentOffset);
 }
 
 // ===== PLAY TRACK ENGINE =====
