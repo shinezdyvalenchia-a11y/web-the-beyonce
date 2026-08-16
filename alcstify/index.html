@@ -540,17 +540,31 @@ Mengalir bagai melodi yang indah
 Rapsodi cinta kita!`
 };
 
-// ===== LRCLIB API + WORD INTERPOLATION KARAOKE ENGINE =====
+// ===== CACHED BACKEND LYRICS & CLIENT FALLBACK ENGINE =====
 const LYRICS_CACHE = new Map();
 
 async function fetchLyricsFromLRCLIB(title, artist = "JKT48") {
-  // Clean song title (remove prefixes, romanizations or discography numbers)
   const cleanTitle = title.replace(/^\d+[\s_-]*/, '').replace(/[-_]/g, ' ').trim();
   const cacheKey = cleanTitle.toLowerCase();
   if (LYRICS_CACHE.has(cacheKey)) return LYRICS_CACHE.get(cacheKey);
 
+  // 1. Tembak Backend Dedicated Stream Engine (Cache permanen & bebas limit)
   try {
-    // 1. Try exact get
+    const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : 'https://shinezzzz-gokgokgok.hf.space';
+    const bRes = await fetch(`${apiBase}/api/lyrics?title=${encodeURIComponent(cleanTitle)}&artist=${encodeURIComponent(artist)}`);
+    if (bRes.ok) {
+      const bData = await bRes.json();
+      if (bData && bData.syncedLyrics) {
+        LYRICS_CACHE.set(cacheKey, bData.syncedLyrics);
+        return bData.syncedLyrics;
+      }
+    }
+  } catch(err) {
+    console.log("Backend lyrics proxy notice:", err);
+  }
+
+  // 2. Fallback langsung ke LRCLIB publik jika backend sedang offline
+  try {
     const url = `https://lrclib.net/api/get?track_name=${encodeURIComponent(cleanTitle)}&artist_name=${encodeURIComponent(artist)}`;
     const res = await fetch(url);
     if (res.ok) {
@@ -560,22 +574,8 @@ async function fetchLyricsFromLRCLIB(title, artist = "JKT48") {
         return data.syncedLyrics;
       }
     }
-
-    // 2. Try search fallback
-    const searchUrl = `https://lrclib.net/api/search?q=${encodeURIComponent(cleanTitle + ' JKT48')}`;
-    const sRes = await fetch(searchUrl);
-    if (sRes.ok) {
-      const sData = await sRes.json();
-      if (Array.isArray(sData) && sData.length > 0) {
-        const found = sData.find(x => x.syncedLyrics) || sData[0];
-        if (found && found.syncedLyrics) {
-          LYRICS_CACHE.set(cacheKey, found.syncedLyrics);
-          return found.syncedLyrics;
-        }
-      }
-    }
   } catch(e) {
-    console.log("LRCLIB note:", e);
+    console.log("LRCLIB direct note:", e);
   }
   return null;
 }
