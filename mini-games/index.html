@@ -186,7 +186,12 @@
       padding: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;
       min-height: 180px; position: relative;
     }
-    .slot-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); margin-bottom: 8px; }
+    .avatar-wrapper { position: relative; width: 64px; height: 64px; margin-bottom: 8px; }
+    .slot-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+    .slot-border-frame {
+      position: absolute; inset: -8px; width: calc(100% + 16px); height: calc(100% + 16px);
+      pointer-events: none; object-fit: contain; z-index: 2;
+    }
     .slot-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
     .slot-status { font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 8px; }
     .status-ready { background: rgba(16, 185, 129, 0.2); color: #10b981; }
@@ -194,16 +199,24 @@
     .slot-empty { border: 2px dashed rgba(255,255,255,0.1); }
     .btn-add-bot { background: rgba(255,255,255,0.06); border: 1px solid var(--border-glass); color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-top: 8px; }
 
-    /* TEMP IN-ROOM CHAT */
+    /* TEMP IN-ROOM CHAT WITH SKIN BUBBLES */
     .lounge-chat {
       background: var(--card-bg); border: 1px solid var(--border-glass); border-radius: 16px;
-      display: flex; flex-direction: column; height: 420px; overflow: hidden;
+      display: flex; flex-direction: column; height: 440px; overflow: hidden;
     }
     .chat-header { padding: 14px 18px; border-bottom: 1px solid var(--border-glass); font-weight: 800; font-size: 14px; }
-    .chat-messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-    .chat-msg { font-size: 13px; line-height: 1.4; background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 10px; }
-    .chat-msg strong { color: var(--accent); }
-    .chat-msg span { font-size: 10px; color: var(--text-muted); margin-left: 6px; }
+    .chat-messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    
+    .chat-bubble-wrap { display: flex; gap: 8px; align-items: flex-start; }
+    .chat-avatar-mini { position: relative; width: 32px; height: 32px; flex-shrink: 0; }
+    .chat-avatar-mini img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+    .chat-avatar-border { position: absolute; inset: -4px; width: 40px; height: 40px; pointer-events: none; z-index: 2; }
+    .chat-content-box {
+      font-size: 13px; line-height: 1.4; background: rgba(255,255,255,0.06); padding: 8px 12px; border-radius: 12px;
+      max-width: 85%; color: #fff; position: relative;
+    }
+    .chat-content-box strong { color: var(--accent); font-size: 12px; display: block; margin-bottom: 2px; }
+    .chat-content-box span { font-size: 10px; color: var(--text-muted); float: right; margin-left: 8px; margin-top: 4px; }
     .chat-input-bar { display: flex; padding: 10px; border-top: 1px solid var(--border-glass); gap: 8px; }
     .chat-input { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 10px; padding: 8px 12px; color: #fff; font-size: 13px; outline: none; }
     .btn-chat-send { background: var(--accent); border: none; color: #000; font-weight: 800; padding: 8px 14px; border-radius: 10px; cursor: pointer; }
@@ -291,7 +304,9 @@
     .hud-top { top: 20px; left: 50%; transform: translateX(-50%); }
     .hud-left { top: 45%; left: 30px; transform: translateY(-50%); }
     .hud-right { top: 45%; right: 30px; transform: translateY(-50%); }
-    .hud-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+    .hud-avatar-box { position: relative; width: 44px; height: 44px; }
+    .hud-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+    .hud-border { position: absolute; inset: -6px; width: 56px; height: 56px; pointer-events: none; z-index: 2; }
     .hud-info { font-size: 13px; }
     .hud-cards-badge { background: var(--primary); padding: 2px 8px; border-radius: 10px; font-weight: 800; font-size: 11px; }
 
@@ -373,7 +388,7 @@
       cursor: pointer; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px);
     }
     .ingame-chat-drawer {
-      position: fixed; bottom: 70px; right: 20px; width: 300px; height: 320px;
+      position: fixed; bottom: 70px; right: 20px; width: 320px; height: 360px;
       background: rgba(10, 15, 30, 0.95); border: 1px solid var(--border-glass);
       border-radius: 16px; z-index: 3500; display: none; flex-direction: column; overflow: hidden;
       backdrop-filter: blur(16px); box-shadow: 0 10px 30px rgba(0,0,0,0.8);
@@ -541,7 +556,13 @@
         <div class="lounge-chat">
           <div class="chat-header">ðŸ’¬ Obrolan Kamar (Sementara)</div>
           <div class="chat-messages" id="chatMsgs">
-            <div class="chat-msg"><strong>Sistem:</strong> Selamat datang di arena UNO No Mercy!</div>
+            <div class="chat-bubble-wrap">
+              <div class="chat-avatar-mini"><img src="../icon.png" alt="sys"></div>
+              <div class="chat-content-box">
+                <strong>Sistem</strong>
+                Selamat datang di arena UNO No Mercy!
+              </div>
+            </div>
           </div>
           <div class="chat-input-bar">
             <input type="text" class="chat-input" id="chatInput" placeholder="Tulis pesan..." onkeypress="if(event.key==='Enter') sendChat()">
@@ -588,7 +609,10 @@
     <div class="hud-layer">
       <!-- Top Opponent -->
       <div class="hud-player hud-top" id="hudTop">
-        <img src="../icon.png" class="hud-avatar" id="avatarTop" alt="avatar">
+        <div class="hud-avatar-box">
+          <img src="../icon.png" class="hud-avatar" id="avatarTop" alt="avatar">
+          <img src="" class="hud-border" id="borderTop" style="display:none;">
+        </div>
         <div class="hud-info">
           <div id="nameTop" style="font-weight: 800;">Lawan 2</div>
           <span class="hud-cards-badge" id="cardsTop">7 Kartu</span>
@@ -597,7 +621,10 @@
 
       <!-- Left Opponent -->
       <div class="hud-player hud-left" id="hudLeft">
-        <img src="../icon.png" class="hud-avatar" id="avatarLeft" alt="avatar">
+        <div class="hud-avatar-box">
+          <img src="../icon.png" class="hud-avatar" id="avatarLeft" alt="avatar">
+          <img src="" class="hud-border" id="borderLeft" style="display:none;">
+        </div>
         <div class="hud-info">
           <div id="nameLeft" style="font-weight: 800;">Lawan 1</div>
           <span class="hud-cards-badge" id="cardsLeft">7 Kartu</span>
@@ -606,7 +633,10 @@
 
       <!-- Right Opponent -->
       <div class="hud-player hud-right" id="hudRight">
-        <img src="../icon.png" class="hud-avatar" id="avatarRight" alt="avatar">
+        <div class="hud-avatar-box">
+          <img src="../icon.png" class="hud-avatar" id="avatarRight" alt="avatar">
+          <img src="" class="hud-border" id="borderRight" style="display:none;">
+        </div>
         <div class="hud-info">
           <div id="nameRight" style="font-weight: 800;">Lawan 3</div>
           <span class="hud-cards-badge" id="cardsRight">7 Kartu</span>
@@ -633,7 +663,13 @@
         <span style="cursor: pointer;" onclick="toggleIngameChat()">âœ•</span>
       </div>
       <div class="chat-messages" id="ingameChatMsgs">
-        <div class="chat-msg"><strong>Sistem:</strong> Pertandingan dimulai! Selamat bermain!</div>
+        <div class="chat-bubble-wrap">
+          <div class="chat-avatar-mini"><img src="../icon.png" alt="sys"></div>
+          <div class="chat-content-box">
+            <strong>Sistem</strong>
+            Pertandingan dimulai! Selamat bermain!
+          </div>
+        </div>
       </div>
       <div class="chat-input-bar">
         <input type="text" class="chat-input" id="ingameChatInput" placeholder="Tulis pesan..." onkeypress="if(event.key==='Enter') sendIngameChat()">
@@ -703,6 +739,9 @@
     let currentSession = localStorage.getItem('user_session') || localStorage.getItem('beyonce_session') || 'sess_' + Math.random().toString(36).substring(2, 10);
     localStorage.setItem('beyonce_session', currentSession);
     let currentUserName = localStorage.getItem('beyonce_username') || 'Wota_' + currentSession.substring(5, 9);
+    let currentUserAvatar = "../kitty.png.png";
+    let currentUserSkinCode = "";
+    let currentUserBorderCode = "";
 
     let activeRoom = null;
     let ws = null;
@@ -914,6 +953,14 @@
             if (p.tb_coin !== undefined) document.getElementById('valGold').textContent = Number(p.tb_coin).toLocaleString('id-ID');
             if (p.token_once !== undefined) document.getElementById('valToken').textContent = Number(p.token_once).toLocaleString('id-ID');
             if (p.kristal !== undefined) document.getElementById('valCrystal').textContent = Number(p.kristal).toLocaleString('id-ID');
+            if (p.username) currentUserName = p.nama || p.username;
+            if (p.link_profil) currentUserAvatar = p.link_profil;
+            if (p.skin) {
+              let rawSkin = String(p.skin);
+              let baseCode = rawSkin.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
+              currentUserSkinCode = "CHAT_" + baseCode;
+              currentUserBorderCode = "BORDER_" + baseCode;
+            }
           }
         }
       } catch (e) {
@@ -1081,7 +1128,8 @@
             currency: currency,
             wager_amount: amount,
             host_session: currentSession,
-            host_name: currentUserName
+            host_name: currentUserName,
+            host_avatar: currentUserAvatar
           })
         });
         const data = await res.json();
@@ -1151,9 +1199,13 @@
       for (let i = 0; i < activeRoom.max_players; i++) {
         const p = activeRoom.players[i];
         if (p) {
+          const borderSrc = currentUserBorderCode ? `../skin/${currentUserBorderCode}.png` : '';
           html += `
             <div class="slot-card">
-              <img src="${p.avatar}" class="slot-avatar" alt="avatar">
+              <div class="avatar-wrapper">
+                <img src="${p.avatar || '../kitty.png.png'}" class="slot-avatar" onerror="this.src='../kitty.png.png'" alt="avatar">
+                ${borderSrc ? `<img src="${borderSrc}" class="slot-border-frame" onerror="this.style.display='none'">` : ''}
+              </div>
               <div class="slot-name">${p.name} ${p.is_bot ? 'ðŸ¤–' : ''}</div>
               <span class="slot-status ${p.is_ready ? 'status-ready' : 'status-waiting'}">
                 ${p.is_ready ? 'SIAP' : 'MENUNGGU'}
@@ -1215,21 +1267,21 @@
         document.getElementById('hudLeft').style.display = 'flex';
         document.getElementById('nameLeft').textContent = opponents[0].name;
         document.getElementById('cardsLeft').textContent = `${opponents[0].card_count} Kartu`;
-        document.getElementById('avatarLeft').src = opponents[0].avatar;
+        document.getElementById('avatarLeft').src = opponents[0].avatar || '../kitty.png.png';
         document.getElementById('hudLeft').classList.toggle('active-turn', opponents[0].is_turn);
       }
       if (opponents[1]) {
         document.getElementById('hudTop').style.display = 'flex';
         document.getElementById('nameTop').textContent = opponents[1].name;
         document.getElementById('cardsTop').textContent = `${opponents[1].card_count} Kartu`;
-        document.getElementById('avatarTop').src = opponents[1].avatar;
+        document.getElementById('avatarTop').src = opponents[1].avatar || '../kitty.png.png';
         document.getElementById('hudTop').classList.toggle('active-turn', opponents[1].is_turn);
       }
       if (opponents[2]) {
         document.getElementById('hudRight').style.display = 'flex';
         document.getElementById('nameRight').textContent = opponents[2].name;
         document.getElementById('cardsRight').textContent = `${opponents[2].card_count} Kartu`;
-        document.getElementById('avatarRight').src = opponents[2].avatar;
+        document.getElementById('avatarRight').src = opponents[2].avatar || '../kitty.png.png';
         document.getElementById('hudRight').classList.toggle('active-turn', opponents[2].is_turn);
       }
 
@@ -1246,7 +1298,6 @@
       const valDisplay = card.value.toUpperCase().replace('_', ' ');
       const clickAttr = isPlayable ? `onclick="userClickCard('${card.id}', '${card.type}', this)"` : '';
       
-      // Determine card photo source based on equipped skin or default trainee
       let photoSrc = skin.avatar;
       if (!photoSrc || photoSrc.includes('i.ibb.co')) {
         const equippedCode = equippedSkinMap[card.skin_key];
@@ -1351,12 +1402,18 @@
       }
     }
 
-    // ===== TEMP IN-ROOM CHAT =====
+    // ===== TEMP IN-ROOM CHAT WITH SKIN BUBBLES =====
     function sendChat() {
       const input = document.getElementById('chatInput');
       const text = input.value.trim();
       if (text && ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ action: 'chat', text: text }));
+        ws.send(JSON.stringify({
+          action: 'chat',
+          text: text,
+          skin: currentUserSkinCode,
+          border: currentUserBorderCode,
+          avatar: currentUserAvatar
+        }));
         input.value = '';
       }
     }
@@ -1365,26 +1422,63 @@
       const input = document.getElementById('ingameChatInput');
       const text = input.value.trim();
       if (text && ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ action: 'chat', text: text }));
+        ws.send(JSON.stringify({
+          action: 'chat',
+          text: text,
+          skin: currentUserSkinCode,
+          border: currentUserBorderCode,
+          avatar: currentUserAvatar
+        }));
         input.value = '';
       }
     }
 
     function appendChatMessage(chat) {
+      let bgStyle = "";
+      let rawSkin = chat.skin || currentUserSkinCode || "";
+      if (rawSkin) {
+        let baseCode = rawSkin.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
+        let chatSkinUrl = `../skin/CHAT_${baseCode}.png`;
+        bgStyle = `
+          border-style: solid !important;
+          border-width: 25px 30px 25px 40px !important;
+          border-image-source: url('${chatSkinUrl}') !important;
+          border-image-slice: 70 90 60 130 fill !important;
+          border-image-repeat: stretch !important;
+          background: transparent !important;
+          color: #fff !important;
+        `;
+      }
+
+      let borderHtml = "";
+      let rawBorder = chat.border || currentUserBorderCode || "";
+      if (rawBorder) {
+        let baseCode = rawBorder.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
+        borderHtml = `<img src="../skin/BORDER_${baseCode}.png" class="chat-avatar-border" onerror="this.style.display='none'">`;
+      }
+
+      const bubbleHtml = `
+        <div class="chat-bubble-wrap">
+          <div class="chat-avatar-mini">
+            <img src="${chat.avatar || '../kitty.png.png'}" onerror="this.src='../kitty.png.png'">
+            ${borderHtml}
+          </div>
+          <div class="chat-content-box" style="${bgStyle}">
+            <strong>${chat.name}</strong>
+            ${chat.text}
+            <span>${chat.time || ''}</span>
+          </div>
+        </div>
+      `;
+
       const msgs = document.getElementById('chatMsgs');
       if (msgs) {
-        const div = document.createElement('div');
-        div.className = 'chat-msg';
-        div.innerHTML = `<strong>${chat.name}:</strong> ${chat.text} <span>${chat.time}</span>`;
-        msgs.appendChild(div);
+        msgs.insertAdjacentHTML('beforeend', bubbleHtml);
         msgs.scrollTop = msgs.scrollHeight;
       }
       const inMsgs = document.getElementById('ingameChatMsgs');
       if (inMsgs) {
-        const div2 = document.createElement('div');
-        div2.className = 'chat-msg';
-        div2.innerHTML = `<strong>${chat.name}:</strong> ${chat.text} <span>${chat.time}</span>`;
-        inMsgs.appendChild(div2);
+        inMsgs.insertAdjacentHTML('beforeend', bubbleHtml);
         inMsgs.scrollTop = inMsgs.scrollHeight;
       }
     }
@@ -1412,6 +1506,7 @@
       document.getElementById('lounge-screen').style.display = 'none';
       document.getElementById('lobby-screen').style.display = 'block';
       fetchLobbyRooms();
+      loadUserSkinInventory();
     }
 
     function quickMatch() {
@@ -1426,9 +1521,10 @@
 
     // Init App
     window.addEventListener('DOMContentLoaded', () => {
-      fetchLobbyRooms();
       loadUserSkinInventory();
+      fetchLobbyRooms();
       setInterval(fetchLobbyRooms, 8000);
+      setInterval(loadUserSkinInventory, 15000); // Polling status saldo & inventory
     });
   </script>
 </body>
