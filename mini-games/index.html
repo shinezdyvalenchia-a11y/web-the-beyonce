@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JKT48 Multiplayer UNO No Mercy Arena | The Beyonce 48</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Galery Alcsta48 - UNO Omega Card | The Beyonce 48</title>
   <link rel="icon" href="../icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800;900&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
@@ -15,8 +15,9 @@
       --gold: #fbbf24;
       --gold-glow: rgba(251, 191, 36, 0.4);
       --bg-dark: #070913;
-      --card-bg: rgba(15, 23, 42, 0.85);
-      --border-glass: rgba(255, 255, 255, 0.12);
+      --card-glass: rgba(15, 23, 42, 0.7);
+      --card-glass-hover: rgba(30, 41, 59, 0.85);
+      --border-glass: rgba(255, 255, 255, 0.15);
       --text: #f8fafc;
       --text-muted: #94a3b8;
     }
@@ -28,10 +29,23 @@
       background-color: var(--bg-dark); color: var(--text);
     }
 
-    /* === SIDEBAR (DESKTOP / MOBILE) === */
+    /* GLOBAL ANIMATED BACKGROUND & CORNER GLOWS */
+    .global-bg-container {
+      position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+      background: radial-gradient(circle at 10% 20%, rgba(236, 72, 153, 0.12), transparent 45%),
+                  radial-gradient(circle at 90% 80%, rgba(0, 210, 255, 0.12), transparent 45%),
+                  radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.95), #030712);
+    }
+    .corner-glow { position: absolute; width: 450px; height: 450px; border-radius: 50%; opacity: 0.18; pointer-events: none; }
+    .glow-tl { top: -100px; left: -100px; background: radial-gradient(circle, #ec4899, transparent 70%); }
+    .glow-tr { top: -100px; right: -100px; background: radial-gradient(circle, #00d2ff, transparent 70%); }
+    .glow-bl { bottom: -100px; left: -100px; background: radial-gradient(circle, #fbbf24, transparent 70%); }
+    .glow-br { bottom: -100px; right: -100px; background: radial-gradient(circle, #a855f7, transparent 70%); }
+
+    /* SIDEBAR */
     .sb {
       position: fixed; top: 0; left: 0; bottom: 0; width: 220px;
-      background: rgba(10, 15, 30, 0.95); backdrop-filter: blur(20px);
+      background: rgba(10, 15, 30, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       border-right: 1px solid var(--border-glass); z-index: 1000;
       display: flex; flex-direction: column; padding: 20px 12px;
       transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -48,30 +62,32 @@
     .na.on { background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(0, 210, 255, 0.2)); color: #fff; border: 1px solid var(--border-glass); }
     .ni { font-size: 18px; }
 
-    /* === TOP BAR === */
+    /* TOP BAR & BERANDA COIN INVENTORY */
     .topbar {
       position: fixed; top: 0; left: 220px; right: 0; height: 65px;
-      background: rgba(10, 15, 30, 0.7); backdrop-filter: blur(16px);
+      background: rgba(10, 15, 30, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border-glass); z-index: 500;
       display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
     }
     .topbar-left { display: flex; align-items: center; gap: 14px; }
     .menu-btn { display: none; background: transparent; border: none; color: #fff; font-size: 22px; cursor: pointer; }
     .page-title { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; }
-    .topbar-wallet { display: flex; align-items: center; gap: 12px; }
-    .wallet-chip {
-      display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06);
-      padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border-glass);
-      font-size: 13px; font-weight: 700;
+    
+    .inventory-bar {
+      display: flex; gap: 12px; align-items: center;
+      background: rgba(0, 0, 0, 0.45); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border-glass);
     }
+    .inv-item { display: flex; align-items: center; gap: 6px; color: #fff; font-size: 13px; font-weight: 800; }
+    .inv-item img { width: 18px; height: 18px; object-fit: contain; }
 
-    /* === MAIN VIEW WRAPPER === */
+    /* MAIN VIEW WRAPPER */
     .app-viewport {
       position: fixed; top: 65px; left: 220px; right: 0; bottom: 0;
       overflow-y: auto; overflow-x: hidden;
     }
 
-    /* === SUB TABS (ARENA vs EQUIP SKIN) === */
+    /* SUB TABS HEADER */
     .main-subtabs {
       display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px;
     }
@@ -83,20 +99,16 @@
     .subtab-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
     .subtab-btn.active { background: linear-gradient(135deg, var(--primary), #a855f7); color: #fff; box-shadow: 0 4px 15px var(--primary-glow); }
 
-    /* === LOBBY SCREEN (MLBB / ESPORTS STYLE) === */
-    #lobby-screen {
-      padding: 24px 32px; min-height: 100%;
-      background: radial-gradient(circle at top right, rgba(0, 210, 255, 0.1), transparent 50%),
-                  radial-gradient(circle at bottom left, rgba(236, 72, 153, 0.1), transparent 50%);
-    }
+    /* LOBBY SCREEN */
+    #lobby-screen { padding: 24px 32px; min-height: 100%; }
     .hero-banner {
       background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(15, 23, 42, 0.9)), url('bg_arena.jpg');
       background-size: cover; background-position: center; border-radius: 20px;
       padding: 32px; border: 1px solid var(--border-glass); margin-bottom: 28px;
       position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
-    .hero-banner h1 { font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 900; margin-bottom: 8px; }
-    .hero-banner p { color: var(--text-muted); font-size: 14px; max-width: 550px; margin-bottom: 20px; }
+    .hero-banner h1 { font-family: 'Outfit', sans-serif; font-size: 30px; font-weight: 900; margin-bottom: 8px; }
+    .hero-banner p { color: var(--text-muted); font-size: 14px; max-width: 580px; margin-bottom: 20px; }
     .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
     .btn-action {
       padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 14px;
@@ -120,7 +132,8 @@
     .filter-tab.active { background: #fff; color: #000; border-color: #fff; }
     .rooms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
     .room-card {
-      background: var(--card-bg); border: 1px solid var(--border-glass); border-radius: 16px;
+      background: var(--card-glass); border: 1px solid var(--border-glass); border-radius: 16px;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       padding: 18px; transition: all 0.2s; display: flex; flex-direction: column; justify-content: space-between;
     }
     .room-card:hover { transform: translateY(-3px); border-color: rgba(0, 210, 255, 0.4); box-shadow: 0 8px 25px rgba(0, 210, 255, 0.15); }
@@ -137,29 +150,40 @@
     }
     .btn-join:hover { background: var(--primary); border-color: var(--primary); }
 
-    /* === SUB-TAB: EQUIP SKIN UNO (MEMBER GROUPED CATEGORY VIEW) === */
-    #skin-equip-screen { display: none; padding: 24px 32px; }
+    /* === GALERY ALCSTA48 - UNO OMEGA CARD (TRANSPARENT GLASSMORPHISM) === */
+    #viewSkinEquip { display: none; padding: 10px 4px 40px 4px; }
+    .gallery-header-box {
+      background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-glass); border-radius: 20px; padding: 24px 28px; margin-bottom: 24px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+    .gallery-title { font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 900; background: linear-gradient(135deg, #00d2ff, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; }
+    .gallery-sub { color: var(--text-muted); font-size: 13px; }
+
     .skin-filter-bar { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; align-items: center; }
     .skin-search-input {
       background: rgba(0,0,0,0.5); border: 1px solid var(--border-glass); padding: 12px 20px; border-radius: 14px;
-      color: #fff; font-size: 14px; width: 320px; outline: none; transition: border-color 0.2s;
+      color: #fff; font-size: 14px; width: 320px; outline: none; transition: border-color 0.2s; backdrop-filter: blur(8px);
     }
     .skin-search-input:focus { border-color: var(--accent); }
-    
+
     /* MEMBER SECTION CARD */
-    .member-group-container { display: flex; flex-direction: column; gap: 24px; }
+    .member-group-container { display: flex; flex-direction: column; gap: 20px; }
     .member-section-card {
-      background: var(--card-bg); border: 1px solid var(--border-glass); border-radius: 20px;
-      padding: 20px; display: flex; flex-direction: column; gap: 16px;
+      background: rgba(15, 23, 42, 0.55); border: 1px solid var(--border-glass); border-radius: 20px;
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      padding: 18px 22px; display: flex; flex-direction: column; gap: 14px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.25); transition: border-color 0.2s;
     }
+    .member-section-card:hover { border-color: rgba(0, 210, 255, 0.35); }
     .member-section-header {
-      display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass);
+      display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08);
       padding-bottom: 12px;
     }
     .member-info-left { display: flex; align-items: center; gap: 12px; }
-    .member-avatar-badge { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+    .member-avatar-badge { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); background: #000; }
     .member-title-box { display: flex; flex-direction: column; }
-    .member-title-name { font-family: 'Outfit'; font-weight: 800; font-size: 18px; color: #fff; }
+    .member-title-name { font-family: 'Outfit'; font-weight: 800; font-size: 17px; color: #fff; }
     .member-title-role { font-size: 12px; color: var(--text-muted); }
     .member-active-badge {
       padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800;
@@ -168,20 +192,21 @@
 
     /* SKIN VARIANTS HORIZONTAL SCROLLER */
     .skin-variants-scroll {
-      display: flex; gap: 16px; overflow-x: auto; padding: 6px 2px 14px 2px; scrollbar-width: thin;
+      display: flex; gap: 14px; overflow-x: auto; padding: 4px 2px 12px 2px; scrollbar-width: thin;
     }
     .skin-variant-card {
-      width: 170px; flex-shrink: 0; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-glass);
+      width: 165px; flex-shrink: 0; background: rgba(0, 0, 0, 0.45); border: 1px solid var(--border-glass);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       border-radius: 14px; padding: 12px; display: flex; flex-direction: column; align-items: center;
       text-align: center; position: relative; transition: all 0.2s;
     }
     .skin-variant-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 6px 20px var(--accent-glow); }
-    .skin-variant-card.active-skin { border-color: #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+    .skin-variant-card.active-skin { border-color: #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.08); }
     .skin-variant-thumb {
-      width: 100%; height: 130px; border-radius: 10px; object-fit: cover; margin-bottom: 8px;
+      width: 100%; height: 125px; border-radius: 10px; object-fit: cover; margin-bottom: 8px;
       border: 1px solid rgba(255,255,255,0.1); background: #000;
     }
-    .card-grey-filter { filter: grayscale(100%) contrast(1.1) brightness(0.7); opacity: 0.6; }
+    .card-grey-filter { filter: grayscale(100%) contrast(1.1) brightness(0.65); opacity: 0.6; }
     .skin-variant-name { font-weight: 800; font-size: 12px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
     .skin-variant-tier { font-size: 10px; color: var(--gold); font-weight: 700; margin-bottom: 8px; text-transform: uppercase; }
     
@@ -204,7 +229,8 @@
     .lounge-grid { display: grid; grid-template-columns: 1fr 340px; gap: 24px; }
     .slots-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
     .slot-card {
-      background: var(--card-bg); border: 1px solid var(--border-glass); border-radius: 16px;
+      background: var(--card-glass); border: 1px solid var(--border-glass); border-radius: 16px;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       padding: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;
       min-height: 180px; position: relative;
     }
@@ -223,7 +249,8 @@
 
     /* TEMP IN-ROOM CHAT WITH SKIN BUBBLES */
     .lounge-chat {
-      background: var(--card-bg); border: 1px solid var(--border-glass); border-radius: 16px;
+      background: var(--card-glass); border: 1px solid var(--border-glass); border-radius: 16px;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       display: flex; flex-direction: column; height: 440px; overflow: hidden;
     }
     .chat-header { padding: 14px 18px; border-bottom: 1px solid var(--border-glass); font-weight: 800; font-size: 14px; }
@@ -436,8 +463,8 @@
       z-index: 5000; display: none; align-items: center; justify-content: center;
     }
     .modal-content {
-      background: var(--card-bg); border: 1px solid var(--border-glass); border-radius: 20px;
-      padding: 28px; width: 100%; max-width: 420px; text-align: center;
+      background: var(--card-glass); border: 1px solid var(--border-glass); border-radius: 20px;
+      padding: 28px; width: 100%; max-width: 420px; text-align: center; backdrop-filter: blur(16px);
     }
     .color-options { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
     .color-btn { height: 65px; border-radius: 14px; border: 3px solid #fff; cursor: pointer; font-weight: 900; font-size: 16px; color: #fff; }
@@ -455,10 +482,21 @@
       .lounge-grid { grid-template-columns: 1fr; }
       .hud-left { left: 10px; }
       .hud-right { right: 10px; }
+      .inventory-bar { padding: 4px 8px; gap: 6px; }
+      .inv-item { font-size: 11px; }
+      .inv-item img { width: 14px; height: 14px; }
     }
   </style>
 </head>
 <body>
+
+  <!-- GLOBAL ANIMATED BACKGROUND -->
+  <div class="global-bg-container">
+    <div class="corner-glow glow-tl"></div>
+    <div class="corner-glow glow-tr"></div>
+    <div class="corner-glow glow-bl"></div>
+    <div class="corner-glow glow-br"></div>
+  </div>
 
   <!-- SIDEBAR (7 CORE NAVIGATION ITEMS) -->
   <nav class="sb" id="sidebar">
@@ -475,16 +513,17 @@
     <a href="https://thebeyonce48.my.id" target="_blank" rel="noopener noreferrer" class="na"><span class="ni">ðŸ•¹ï¸</span>Main Games</a>
   </nav>
 
-  <!-- TOP BAR -->
+  <!-- TOP BAR WITH BERANDA COIN ICONS -->
   <header class="topbar">
     <div class="topbar-left">
       <button class="menu-btn" onclick="toggleSidebar()">â˜°</button>
-      <div class="page-title">ðŸŽ´ JKT48 Multiplayer UNO No Mercy</div>
+      <div class="page-title">Galery Alcsta48 - UNO Omega Card</div>
     </div>
-    <div class="topbar-wallet">
-      <div class="wallet-chip">ðŸª™ <span id="valGold">1,000</span> Gold</div>
-      <div class="wallet-chip">ðŸŽ« <span id="valToken">50</span> Once</div>
-      <div class="wallet-chip">ðŸ’Ž <span id="valCrystal">10</span> Kristal</div>
+    <div class="inventory-bar" id="inventoryBar">
+      <div class="inv-item" title="Kristal"><img src="../beranda/KRISTAL.PNG" onerror="this.src='../gacha-skin/KRISTAL.PNG'" alt="K"> <span id="valKristal">0</span></div>
+      <div class="inv-item" title="TB Coin (Gold)"><img src="../beranda/TBCOIN.PNG" onerror="this.src='../gacha-skin/TBCOIN.PNG'" alt="C"> <span id="valGold">0</span></div>
+      <div class="inv-item" title="Once Token"><img src="../beranda/ONCETOKEN.PNG" onerror="this.src='../gacha-skin/ONCETOKEN.PNG'" alt="T"> <span id="valToken">0</span></div>
+      <div class="inv-item" title="Kristal Omega"><img src="../beranda/KRISTAL_OMEGA.PNG" onerror="this.src='../gacha-skin/KRISTAL_OMEGA.PNG'" alt="O"> <span id="valKristalOmega">0</span></div>
     </div>
   </header>
 
@@ -496,7 +535,7 @@
       <!-- SUB TABS -->
       <div class="main-subtabs">
         <button class="subtab-btn active" id="tabBtnArena" onclick="switchSubTab('arena')">ðŸŸï¸ Arena Kamar UNO</button>
-        <button class="subtab-btn" id="tabBtnSkin" onclick="switchSubTab('skin')">ðŸŽ´ Koleksi & Pasang Skin UNO</button>
+        <button class="subtab-btn" id="tabBtnSkin" onclick="switchSubTab('skin')">ðŸŽ´ Galery Alcsta48 - UNO Omega Card</button>
       </div>
 
       <!-- ARENA LOBBY VIEW -->
@@ -525,11 +564,11 @@
         </div>
       </div>
 
-      <!-- SUB-TAB: EQUIP SKIN UNO (MEMBER GROUPED CATEGORY VIEW) -->
-      <div id="viewSkinEquip" style="display: none;">
-        <div style="margin-bottom: 20px;">
-          <h2 style="font-family: 'Outfit'; font-size: 22px;">ðŸŽ´ Koleksi Skin Member JKT48</h2>
-          <p style="color: var(--text-muted); font-size: 13px;">Daftar seluruh skin per kategori member. <strong>Setiap 1 member hanya dapat mengaktifkan 1 skin</strong>. Skin yang dimiliki tampil berwarna, sedangkan skin yang belum dimiliki tampil abu-abu.</p>
+      <!-- SUB-TAB: GALERY ALCSTA48 - UNO OMEGA CARD (MEMBER GROUPED CATEGORY VIEW) -->
+      <div id="viewSkinEquip">
+        <div class="gallery-header-box">
+          <div class="gallery-title">Galery Alcsta48 - UNO Omega Card</div>
+          <div class="gallery-sub">Koleksi seluruh varian skin kartu member JKT48. <strong>Setiap 1 member hanya dapat mengaktifkan 1 skin</strong>. Skin yang dimiliki tampil berwarna penuh, sedangkan skin yang belum dimiliki tampil abu-abu.</div>
         </div>
 
         <div class="skin-filter-bar">
@@ -1092,7 +1131,8 @@
             }
             if (p.tb_coin !== undefined) document.getElementById('valGold').textContent = Number(p.tb_coin).toLocaleString('id-ID');
             if (p.token_once !== undefined) document.getElementById('valToken').textContent = Number(p.token_once).toLocaleString('id-ID');
-            if (p.kristal !== undefined) document.getElementById('valCrystal').textContent = Number(p.kristal).toLocaleString('id-ID');
+            if (p.kristal !== undefined) document.getElementById('valKristal').textContent = Number(p.kristal).toLocaleString('id-ID');
+            if (p.kristal_omega !== undefined) document.getElementById('valKristalOmega').textContent = Number(p.kristal_omega).toLocaleString('id-ID');
             if (p.username) currentUserName = p.nama || p.username;
             if (p.link_profil) currentUserAvatar = p.link_profil;
             if (p.skin) {
