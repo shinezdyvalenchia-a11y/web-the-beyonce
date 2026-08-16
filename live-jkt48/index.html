@@ -731,7 +731,7 @@
         async function fetchBackendReplays() {
             let loadedCatalog = [];
 
-            // 1. Load full 1,794+ direct faststart MP4 replay archives
+            // 1. Muat arsip 1.887+ rekaman live lokal secara instan
             try {
                 const resLocal = await fetch('../mapped_replays.json');
                 if (resLocal.ok) {
@@ -744,26 +744,38 @@
                 console.log("Local mapped_replays note:", e);
             }
 
-            // 2. Query backend replays API as fallback
-            if (loadedCatalog.length === 0) {
-                try {
-                    const apiBase = typeof getApiUrl === 'function' ? getApiUrl('stream') : "https://ashazeneca-botanalistiktl.hf.space";
-                    const res = await fetch(`${apiBase}/api/yt/replays`);
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data && Array.isArray(data.items)) {
-                            loadedCatalog = data.items;
-                        }
-                    }
-                } catch(e) {}
+            if (loadedCatalog.length > 0 && ALL_REPLAYS_CATALOG.length === 0) {
+                ALL_REPLAYS_CATALOG = loadedCatalog;
+                CURRENT_DISPLAYED_REPLAYS = ALL_REPLAYS_CATALOG.slice(0, currentReplayLimit);
+                if (ALL_REPLAYS_CATALOG[0]) activeReplayObj = ALL_REPLAYS_CATALOG[0];
+                document.getElementById("replayScraperBadge").innerText = `● ${ALL_REPLAYS_CATALOG.length.toLocaleString('id-ID')} Total Arsip Replay Live`;
+                renderReplays(CURRENT_DISPLAYED_REPLAYS);
             }
 
-            ALL_REPLAYS_CATALOG = loadedCatalog;
-            CURRENT_DISPLAYED_REPLAYS = ALL_REPLAYS_CATALOG.slice(0, currentReplayLimit);
-            if (ALL_REPLAYS_CATALOG[0]) activeReplayObj = ALL_REPLAYS_CATALOG[0];
-
-            document.getElementById("replayScraperBadge").innerText = `● ${ALL_REPLAYS_CATALOG.length.toLocaleString('id-ID')} Total Arsip Replay Live`;
-            renderReplays(CURRENT_DISPLAYED_REPLAYS);
+            // 2. Tembak engine stream backend setiap 10 menit untuk scraping preset.id real-time
+            try {
+                const apiBase = typeof getApiUrl === 'function' ? getApiUrl('live') : "https://ashazeneca-botanalistiktl.hf.space";
+                // Trigger auto-scraper di preset.id
+                await fetch(`${apiBase}/api/replays/scrape_preset`).catch(() => {});
+                
+                // Ambil daftar terbaru dari backend
+                const res = await fetch(`${apiBase}/api/yt/replays?limit=2000`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && Array.isArray(data.items) && data.items.length > 0) {
+                        const existingIds = new Set(ALL_REPLAYS_CATALOG.map(x => x.id));
+                        const newItems = data.items.filter(x => !existingIds.has(x.id));
+                        if (newItems.length > 0) {
+                            ALL_REPLAYS_CATALOG = [...newItems, ...ALL_REPLAYS_CATALOG];
+                            CURRENT_DISPLAYED_REPLAYS = ALL_REPLAYS_CATALOG.slice(0, currentReplayLimit);
+                            renderReplays(CURRENT_DISPLAYED_REPLAYS);
+                            document.getElementById("replayScraperBadge").innerText = `● ${ALL_REPLAYS_CATALOG.length.toLocaleString('id-ID')} Total Arsip Replay Live (+${newItems.length} Baru)`;
+                        }
+                    }
+                }
+            } catch(e) {
+                console.log("Replay auto-sync note:", e);
+            }
         }
 
         function loadMoreReplays() {
@@ -2472,8 +2484,8 @@
 
             startAdaptivePolling();
 
-            // 3. Otomatis mandiri muat & update arsip replay video setiap 1 jam (3.600.000 ms)
-            setInterval(fetchBackendReplays, 3600000);
+            // 3. Otomatis mandiri tembak backend & update arsip replay video setiap 10 menit (600.000 ms)
+            setInterval(fetchBackendReplays, 600000);
             
             // 4. Auto-Scroll Observer: Otomatis muat 60 video lagi saat scroll mendekati bawah
             const mainContent = document.querySelector('.main-content');
