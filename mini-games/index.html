@@ -71,6 +71,18 @@
       overflow-y: auto; overflow-x: hidden;
     }
 
+    /* === SUB TABS (ARENA vs EQUIP SKIN) === */
+    .main-subtabs {
+      display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 1px solid var(--border-glass); padding-bottom: 12px;
+    }
+    .subtab-btn {
+      background: transparent; border: none; color: var(--text-muted); font-size: 15px; font-weight: 800;
+      padding: 8px 18px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px;
+      transition: all 0.2s;
+    }
+    .subtab-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+    .subtab-btn.active { background: linear-gradient(135deg, var(--primary), #a855f7); color: #fff; box-shadow: 0 4px 15px var(--primary-glow); }
+
     /* === LOBBY SCREEN (MLBB / ESPORTS STYLE) === */
     #lobby-screen {
       padding: 24px 32px; min-height: 100%;
@@ -84,7 +96,7 @@
       position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
     .hero-banner h1 { font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 900; margin-bottom: 8px; }
-    .hero-banner p { color: var(--text-muted); font-size: 14px; max-width: 500px; margin-bottom: 20px; }
+    .hero-banner p { color: var(--text-muted); font-size: 14px; max-width: 550px; margin-bottom: 20px; }
     .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
     .btn-action {
       padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 14px;
@@ -124,6 +136,36 @@
       border: 1px solid var(--border-glass); color: #fff; font-weight: 700; cursor: pointer; transition: all 0.2s;
     }
     .btn-join:hover { background: var(--primary); border-color: var(--primary); }
+
+    /* === SUB-TAB: EQUIP SKIN UNO (78 MEMBER CARDS) === */
+    #skin-equip-screen { display: none; padding: 24px 32px; }
+    .skin-filter-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+    .skin-search-input {
+      background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); padding: 10px 16px; border-radius: 12px;
+      color: #fff; font-size: 14px; width: 280px; outline: none;
+    }
+    .skin-cards-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px;
+    }
+    .equip-card-item {
+      background: var(--card-bg); border: 1px solid var(--border-glass); border-radius: 16px;
+      padding: 14px; display: flex; flex-direction: column; align-items: center; text-align: center;
+      position: relative; transition: all 0.2s;
+    }
+    .equip-card-item:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 8px 20px var(--accent-glow); }
+    .equip-card-thumb {
+      width: 100%; height: 160px; border-radius: 12px; object-fit: cover; margin-bottom: 10px;
+      border: 2px solid rgba(255,255,255,0.1); background: #000;
+    }
+    .equip-card-name { font-weight: 800; font-size: 14px; margin-bottom: 2px; }
+    .equip-card-role { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; }
+    .btn-equip-action {
+      width: 100%; padding: 8px 12px; border-radius: 10px; font-weight: 800; font-size: 12px;
+      border: none; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-equipped { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
+    .btn-equip-avail { background: linear-gradient(135deg, var(--accent), #3b82f6); color: #fff; }
+    .btn-equip-locked { background: rgba(255,255,255,0.06); color: var(--text-muted); cursor: not-allowed; }
 
     /* === WAITING LOUNGE SCREEN === */
     #lounge-screen { display: none; padding: 24px 32px; min-height: 100%; }
@@ -170,8 +212,8 @@
     /* LAYER 1: STATIC BACKGROUND */
     .arena-bg {
       position: absolute; inset: 0; width: 100%; height: 100%;
-      background-image: url('bg_arena.jpg'); background-size: cover; background-position: center;
-      z-index: 0;
+      background-image: url('last - Copy.jpg'), url('bg_arena.jpg');
+      background-size: cover; background-position: center; z-index: 0;
     }
     /* LAYER 2: CSS PAPER PLANES CONTINUOUS LOOP */
     .plane-container { position: absolute; inset: 0; z-index: 10; pointer-events: none; overflow: hidden; }
@@ -319,6 +361,20 @@
     @keyframes flashWhite { 0% { background: rgba(255,255,255,0.9); } 100% { background: transparent; } }
     @keyframes flashColor { 0% { background: rgba(236,72,153,0.7); } 100% { background: transparent; } }
 
+    /* IN-GAME FLOATING CHAT DRAWER */
+    .ingame-chat-toggle {
+      position: fixed; bottom: 20px; right: 20px; z-index: 3500;
+      background: rgba(10, 15, 30, 0.9); border: 1px solid var(--border-glass);
+      color: #fff; padding: 10px 18px; border-radius: 30px; font-size: 13px; font-weight: 800;
+      cursor: pointer; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px);
+    }
+    .ingame-chat-drawer {
+      position: fixed; bottom: 70px; right: 20px; width: 300px; height: 320px;
+      background: rgba(10, 15, 30, 0.95); border: 1px solid var(--border-glass);
+      border-radius: 16px; z-index: 3500; display: none; flex-direction: column; overflow: hidden;
+      backdrop-filter: blur(16px); box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+
     /* HUD ACTION BUTTONS */
     .hud-controls { display: flex; gap: 12px; margin-bottom: 10px; }
     .btn-uno {
@@ -396,27 +452,60 @@
     
     <!-- 1. LOBBY SCREEN (ESPORTS STYLE) -->
     <div id="lobby-screen">
-      <div class="hero-banner">
-        <h1>UNO NO MERCY: JKT48 ACTION DECK</h1>
-        <p>Adu taktik kartu Extreme dengan efek Skin Omega Spesial, Stack Penalty +10, dan mode taruhan Sistem Gugur!</p>
-        <div class="hero-actions">
-          <button class="btn-action btn-create" onclick="openCreateModal()">âž• Buat Kamar Baru</button>
-          <button class="btn-action btn-quick" onclick="quickMatch()">âš¡ Quick Match (Otomatis)</button>
-          <button class="btn-action btn-code" onclick="openCodeModal()">ðŸ”‘ Masukkan Kode Kamar</button>
+      <!-- SUB TABS -->
+      <div class="main-subtabs">
+        <button class="subtab-btn active" id="tabBtnArena" onclick="switchSubTab('arena')">ðŸŸï¸ Arena Kamar UNO</button>
+        <button class="subtab-btn" id="tabBtnSkin" onclick="switchSubTab('skin')">ðŸŽ´ Koleksi & Pasang Skin UNO</button>
+      </div>
+
+      <!-- ARENA LOBBY VIEW -->
+      <div id="viewArenaLobby">
+        <div class="hero-banner">
+          <h1>UNO NO MERCY: JKT48 ACTION DECK</h1>
+          <p>Adu taktik kartu Extreme dengan 78 Member Deck, efek Skin Omega Spesial, Stack Penalty +10, dan mode taruhan Sistem Gugur!</p>
+          <div class="hero-actions">
+            <button class="btn-action btn-create" onclick="openCreateModal()">âž• Buat Kamar Baru</button>
+            <button class="btn-action btn-quick" onclick="quickMatch()">âš¡ Quick Match (Otomatis)</button>
+            <button class="btn-action btn-code" onclick="openCodeModal()">ðŸ”‘ Masukkan Kode Kamar</button>
+          </div>
+        </div>
+
+        <div class="lobby-header">
+          <h2 style="font-family: 'Outfit'; font-size: 20px;">Daftar Kamar Live</h2>
+          <div class="filter-tabs">
+            <div class="filter-tab active" onclick="filterLobby('all', this)">Semua Mode</div>
+            <div class="filter-tab" onclick="filterLobby('classic', this)">Classic (Casual)</div>
+            <div class="filter-tab" onclick="filterLobby('bet_battle', this)">Bet Battle (Taruhan)</div>
+          </div>
+        </div>
+
+        <div class="rooms-grid" id="roomsContainer">
+          <!-- Room Cards injected dynamically -->
         </div>
       </div>
 
-      <div class="lobby-header">
-        <h2 style="font-family: 'Outfit'; font-size: 20px;">Daftar Kamar Live</h2>
-        <div class="filter-tabs">
-          <div class="filter-tab active" onclick="filterLobby('all', this)">Semua Mode</div>
-          <div class="filter-tab" onclick="filterLobby('classic', this)">Classic (Casual)</div>
-          <div class="filter-tab" onclick="filterLobby('bet_battle', this)">Bet Battle (Taruhan)</div>
+      <!-- SUB-TAB: EQUIP SKIN UNO (78 MEMBER CARDS) -->
+      <div id="viewSkinEquip" style="display: none;">
+        <div style="margin-bottom: 20px;">
+          <h2 style="font-family: 'Outfit'; font-size: 22px;">ðŸŽ´ Koleksi & Pasang Skin Kartu UNO</h2>
+          <p style="color: var(--text-muted); font-size: 13px;">Pasang skin yang kamu miliki dari database untuk memicu animasi ledakan dan salam Jikoshoukai saat bermain!</p>
         </div>
-      </div>
 
-      <div class="rooms-grid" id="roomsContainer">
-        <!-- Room Cards will be injected dynamically -->
+        <div class="skin-filter-bar">
+          <input type="text" class="skin-search-input" id="skinSearch" placeholder="Cari nama member..." oninput="renderSkinCollection()">
+          <div class="filter-tabs">
+            <div class="filter-tab active" onclick="filterSkinRarity('all', this)">Semua Rarity</div>
+            <div class="filter-tab" onclick="filterSkinRarity('omega', this)">Omega Spesial</div>
+            <div class="filter-tab" onclick="filterSkinRarity('myth', this)">Mythic</div>
+            <div class="filter-tab" onclick="filterSkinRarity('legend', this)">Legend</div>
+            <div class="filter-tab" onclick="filterSkinRarity('rare', this)">Rare</div>
+            <div class="filter-tab" onclick="filterSkinRarity('uncommon', this)">Basic Trainee</div>
+          </div>
+        </div>
+
+        <div class="skin-cards-grid" id="skinGridContainer">
+          <!-- Skin items rendered dynamically -->
+        </div>
       </div>
     </div>
 
@@ -531,6 +620,22 @@
       </div>
     </div>
 
+    <!-- IN-GAME FLOATING CHAT DRAWER -->
+    <button class="ingame-chat-toggle" onclick="toggleIngameChat()">ðŸ’¬ Chat Kamar</button>
+    <div class="ingame-chat-drawer" id="ingameChatDrawer">
+      <div class="chat-header" style="display: flex; justify-content: space-between;">
+        <span>ðŸ’¬ Obrolan Kamar</span>
+        <span style="cursor: pointer;" onclick="toggleIngameChat()">âœ•</span>
+      </div>
+      <div class="chat-messages" id="ingameChatMsgs">
+        <div class="chat-msg"><strong>Sistem:</strong> Pertandingan dimulai! Selamat bermain!</div>
+      </div>
+      <div class="chat-input-bar">
+        <input type="text" class="chat-input" id="ingameChatInput" placeholder="Tulis pesan..." onkeypress="if(event.key==='Enter') sendIngameChat()">
+        <button class="btn-chat-send" onclick="sendIngameChat()">Kirim</button>
+      </div>
+    </div>
+
     <!-- LAYER 5: VFX ENGINE OVERLAYS -->
     <div id="vfx-overlay">
       <div id="jiko-banner">âœ¨ Peduli dan berbaik hati, siapakah dia? Christy! âœ¨</div>
@@ -585,20 +690,197 @@
   </div>
 
   <script>
-    // ===== GLOBAL STATE & API CONFIG =====
+    // ===== CONFIG & STATE =====
     const API_BASE = "https://shinezzzz-gokgokgok.hf.space";
     const WS_BASE = "wss://shinezzzz-gokgokgok.hf.space";
-    
-    let currentSession = localStorage.getItem('beyonce_session') || 'sess_' + Math.random().toString(36).substring(2, 10);
+    const CORE_BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+
+    let currentSession = localStorage.getItem('user_session') || localStorage.getItem('beyonce_session') || 'sess_' + Math.random().toString(36).substring(2, 10);
     localStorage.setItem('beyonce_session', currentSession);
     let currentUserName = localStorage.getItem('beyonce_username') || 'Wota_' + currentSession.substring(5, 9);
 
     let activeRoom = null;
     let ws = null;
     let pendingWildCardId = null;
+    let userInventory = new Set();
+    let equippedSkinMap = JSON.parse(localStorage.getItem('uno_equipped_skins') || '{}');
+    let currentSkinRarityFilter = 'all';
+
+    // ===== 78 MEMBER ROSTER MASTER LIST (MATCHING EXCEL) =====
+    const UNO_78_MEMBERS = [
+      // 1. Wild Boss Cards
+      { key: "ANGELINA_CHRISTY", name: "Angelina Christy", role: "Wild Draw +10", type: "wild", code: "DKTY", file: "ANGELINA_CHRISTY_UNCOMMON.jpg" },
+      { key: "AZIZI_ASSADEL", name: "Azizi Assadel (Zee)", role: "Wild Draw +6", type: "wild", code: "FAAZ", file: "AZIZI_ASSADEL_UNCOMMON.jpg" },
+      { key: "SHANI_INDIRA", name: "Shani Indira Natio", role: "Wild Swap Hands", type: "wild", code: "CSHN", file: "SHANI_INDIRA_UNCOMMON.jpg" },
+      { key: "SHANIA_GRACIA", name: "Shania Gracia", role: "Wild Shuffle Hands", type: "wild", code: "CGRC", file: "SHANIA_GRACIA_UNCOMMON.jpg" },
+      { key: "FREYA_JAYAWARDANA", name: "Freya Jayawardana", role: "Wild Color Roulette", type: "wild", code: "PFYR", file: "FREYA_JAYAWARDANA_UNCOMMON.jpg" },
+      { key: "MARSHA_LENATHEA", name: "Marsha Lenathea", role: "Wild Targeted Attack", type: "wild", code: "FMAR", file: "MARSHA_LENATHEA_UNCOMMON.jpg" },
+      { key: "FENI_FITRIYANTI", name: "Feni Fitriyanti", role: "Wild Reverse +4", type: "wild", code: "CFNI", file: "FENI_FITRIYANTI_UNCOMMON.jpg" },
+      { key: "SISCA_SARAS", name: "Sisca Saras", role: "Wild Double Play", type: "wild", code: "SISCA_SARAS_UNCOMMON", file: "SISCA_SARAS_UNCOMMON.jpg" },
+      { key: "ADZANA_ASHEL", name: "Adzana Ashel", role: "Wild Counter Shield", type: "wild", code: "ADZANA_ASHEL_UNCOMMON", file: "ADZANA_ASHEL_UNCOMMON.jpg" },
+      { key: "YESICA_TAMARA", name: "Yesica Tamara (Chika)", role: "Wild Classic Choice", type: "wild", code: "FCHK", file: "YESICA_TAMARA_UNCOMMON.jpg" },
+
+      // 2. Extra Action Cards (No Mercy)
+      { key: "GABRIELA_ABIGAIL", name: "Gabriela Abigail (Ella)", role: "Discard All (Merah)", type: "action", code: "GABRIELA_ABIGAIL_UNCOMMON", file: "GABRIELA_ABIGAIL_UNCOMMON.jpg" },
+      { key: "GRACE_OCTAVIANI", name: "Grace Octaviani (Gracie)", role: "Discard All (Biru)", type: "action", code: "FGRC", file: "GRACE_OCTAVIANI_UNCOMMON.jpg" },
+      { key: "GREESELA_ADHALIA", name: "Greesella Adhalia", role: "Discard All (Hijau)", type: "action", code: "SGRE", file: "GREESELA_ADHALIA_UNCOMMON.jpg" },
+      { key: "MICHELLE_ALEXANDRA", name: "Michelle Alexandra (Michie)", role: "Discard All (Kuning)", type: "action", code: "SLIL", file: "MICHELLE_ALEXANDRA_UNCOMMON.jpg" },
+      { key: "JESSLYN_ELLY", name: "Jesslyn Elly (Lyn)", role: "Skip Everyone (Merah)", type: "action", code: "SLYN", file: "JESSLYN_ELLY_UNCOMMON.jpg" },
+      { key: "AURELLIA_LIA", name: "Aurellia (Lia)", role: "Skip Everyone (Biru)", type: "action", code: "PLAI", file: "AURELLIA_LIA_UNCOMMON.jpg" },
+      { key: "JINAN", name: "Jinan Safa Safira", role: "Skip Everyone (Hijau)", type: "action", code: "FJIN", file: "JINAN_UNCOMMON.jpg" },
+      { key: "NABILA_FITRIANA", name: "Nabila Fitriana (Lala)", role: "Skip Everyone (Kuning)", type: "action", code: "NABILA_FITRIANA_UNCOMMON", file: "NABILA_FITRIANA_UNCOMMON.jpg" },
+      { key: "AMANDA_SUKMA", name: "Amanda Sukma", role: "Color Draw +4 (Merah)", type: "action", code: "SAMA", file: "AMANDA_SUKMA_UNCOMMON.jpg" },
+      { key: "INDAH_CAHYA", name: "Indah Cahya", role: "Color Draw +4 (Biru)", type: "action", code: "SIDH", file: "INDAH_CAHYA_UNCOMMON.jpg" },
+      { key: "RAISHA_SYIFA", name: "Raisha Syifa", role: "Color Draw +4 (Hijau)", type: "action", code: "SRAI", file: "RAISHA_SYIFA_UNCOMMON.jpg" },
+      { key: "DESY_NATALIA", name: "Desy Natalia (Daisy)", role: "Color Draw +4 (Kuning)", type: "action", code: "SDAI", file: "DESY_NATALIA_UNCOMMON.jpg" },
+      { key: "FRITZY_ROSMERIAN", name: "Fritzy Rosmerian", role: "Shield (Merah)", type: "action", code: "SFRI", file: "FRITZY_ROSMERIAN_UNCOMMON.jpg" },
+      { key: "DENA_NATALIA", name: "Dena Natalia", role: "Shield (Biru)", type: "action", code: "DENA_NATALIA_UNCOMMON", file: "DENA_NATALIA_UNCOMMON.jpg" },
+      { key: "AURHEL_ALANA", name: "Aurhel Alana (Lana)", role: "Shield (Hijau)", type: "action", code: "SLAN", file: "AURHEL_ALANA_UNCOMMON.jpg" },
+      { key: "GENDIS_MAYRANNISA", name: "Gendis Mayrannisa", role: "Shield (Kuning)", type: "action", code: "SGEN", file: "GENDIS_MAYRANNISA_UNCOMMON.jpg" },
+
+      // 3. Standard Action Cards
+      { key: "REVA_FIDELA", name: "Reva Fidela (Adel)", role: "Draw Two +2 (Merah)", type: "action", code: "REVA_FIDELA_UNCOMMON", file: "REVA_FIDELA_UNCOMMON.jpg" },
+      { key: "GITA_SEKAR", name: "Gita Sekar Andarini", role: "Draw Two +2 (Biru)", type: "action", code: "PGTS", file: "GITA_SEKAR_UNCOMMON.jpg" },
+      { key: "FIONY_ALVERIA", name: "Fiony Alveria", role: "Draw Two +2 (Hijau)", type: "action", code: "FFIO", file: "FIONY_ALVERIA_UNCOMMON.jpg" },
+      { key: "MUTIARA_AZZAHRA", name: "Mutiara Azzahra (Muthe)", role: "Draw Two +2 (Kuning)", type: "action", code: "PMUT", file: "MUTIARA_AZZAHRA_UNCOMMON.jpg" },
+      { key: "CORNELIA_VANISA", name: "Cornelia Vanisa (Oniel)", role: "Reverse (Merah)", type: "action", code: "PONL", file: "CORNELIA_VANISA_UNCOMMON.jpg" },
+      { key: "FEBRIOLA_SINAMBELLA", name: "Febriola Sinambela (Olla)", role: "Reverse (Biru)", type: "action", code: "SOLL", file: "FEBRIOLA_SINAMBELLA_UNCOMMON.jpg" },
+      { key: "HELISMA_PUTRI", name: "Helisma Putri (Eli)", role: "Reverse (Hijau)", type: "action", code: "CELI", file: "HELISMA_PUTRI_UNCOMMON.jpg" },
+      { key: "LULU_SALSABILA", name: "Lulu Salsabila", role: "Reverse (Kuning)", type: "action", code: "PLLU", file: "LULU_SALSABILA_UNCOMMON.jpg" },
+      { key: "KATHRINA_IRENE", name: "Kathrina Irene", role: "Skip (Merah)", type: "action", code: "SKAT", file: "KATHRINA_IRENE_UNCOMMON.jpg" },
+      { key: "JESSICA_CHANDRA", name: "Jessica Chandra (Jessi)", role: "Skip (Biru)", type: "action", code: "PJCC", file: "JESSICA_CHANDRA_UNCOMMON.jpg" },
+      { key: "FLORA_SHAFIQ", name: "Flora Shafiq", role: "Skip (Hijau)", type: "action", code: "SFLO", file: "FLORA_SHAFIQ_UNCOMMON.jpg" },
+      { key: "INDIRA_PUTRI", name: "Indira Putri Seruni", role: "Skip (Kuning)", type: "action", code: "SIND", file: "INDAH_CAHYA_UNCOMMON.jpg" },
+
+      // 4. Number Cards 0-9
+      { key: "ABIGAIL_RACHEL", name: "Abigail Rachel (Aralie)", role: "Kartu Angka 0", type: "number", code: "SARA", file: "ABIGAIL_RACHEL_UNCOMMON.jpg" },
+      { key: "CHELSEA_DEVINA", name: "Chelsea Devina", role: "Kartu Angka 0", type: "number", code: "SCHE", file: "CHELSEA_DEVINA_UNCOMMON.jpg" },
+      { key: "JACQUELINE_IMMANUELA", name: "Jacqueline Immanuela", role: "Kartu Angka 0", type: "number", code: "JACQUELINE_IMMANUELA_UNCOMMON", file: "JACQUELINE_IMMANUELA_UNCOMMON.jpg" },
+      { key: "NINA_TUTACHIA", name: "Nina Tutachia (Nachia)", role: "Kartu Angka 0", type: "number", code: "SNAC", file: "NINA_TUTACHIA_UNCOMMON.jpg" },
+      { key: "ADELINE_WIJAYA", name: "Adeline Wijaya (Delynn)", role: "Kartu Angka 1", type: "number", code: "SDEL", file: "ADELINE_WIJAYA_UNCOMMON.jpg" },
+      { key: "CHRISTABELLA_BONITA", name: "Christabella Bonita", role: "Kartu Angka 1", type: "number", code: "CHRISTABELLA_BONITA_UNCOMMON", file: "CHRISTABELLA_BONITA_UNCOMMON.jpg" },
+      { key: "JAZZLYN_TRISHA", name: "Jazzlyn Trisha (Trisha)", role: "Kartu Angka 1", type: "number", code: "STRI", file: "JAZZLYN_TRISHA_UNCOMMON.jpg" },
+      { key: "NUR_INTAN", name: "Nur Intan", role: "Kartu Angka 1", type: "number", code: "NUR_INTAN_UNCOMMON", file: "NUR_INTAN_UNCOMMON.jpg" },
+      { key: "AFERA_THALIA", name: "Afera Thalia", role: "Kartu Angka 2", type: "number", code: "AFERA_THALIA_UNCOMMON", file: "AFERA_THALIA_UNCOMMON.jpg" },
+      { key: "CYNTHIA_YAPUTERA", name: "Cynthia Yaputera", role: "Kartu Angka 2", type: "number", code: "SCYN", file: "CYNTHIA_YAPUTERA_UNCOMMON.jpg" },
+      { key: "JEMIMA_EVODIE", name: "Jemima Evodie", role: "Kartu Angka 2", type: "number", code: "JEMIMA_EVODIE_UNCOMMON", file: "JEMIMA_EVODIE_UNCOMMON.jpg" },
+      { key: "OLINE_MANUEL", name: "Oline Manuel", role: "Kartu Angka 2", type: "number", code: "SOLI", file: "OLINE_MANUEL_UNCOMMON.jpg" },
+      { key: "ALYA_AMANDA", name: "Alya Amanda", role: "Kartu Angka 3", type: "number", code: "SALY", file: "ALYA_AMANDA_UNCOMMON.jpg" },
+      { key: "CATHERINA_VALLENCIA", name: "Catherina Vallencia (Erine)", role: "Kartu Angka 3", type: "number", code: "SERI", file: "CATHERINA_VALLENCIA_UNCOMMON.jpg" },
+      { key: "JESSLYN_CALLISTA", name: "Jesslyn Callista", role: "Kartu Angka 3", type: "number", code: "JESSLYN_CALLISTA_UNCOMMON", file: "JESSLYN_CALLISTA_UNCOMMON.jpg" },
+      { key: "PUTRI_JAZYTA", name: "Putri Jazyta", role: "Kartu Angka 3", type: "number", code: "PUTRI_JAZYTA_UNCOMMON", file: "PUTRI_JAZYTA_UNCOMMON.jpg" },
+      { key: "ANINDYA_RAMADHANI", name: "Anindya Ramadhani (Anin)", role: "Kartu Angka 4", type: "number", code: "SANI", file: "ANINDYA_RAMADHANI_UNCOMMON.jpg" },
+      { key: "FAHIRA_PUTRI", name: "Fahira Putri", role: "Kartu Angka 4", type: "number", code: "FAHIRA_PUTRI_UNCOMMON", file: "FAHIRA_PUTRI_UNCOMMON.jpg" },
+      { key: "LETYCIA_MOREEN", name: "Letycia Moreen", role: "Kartu Angka 4", type: "number", code: "SMOR", file: "LETYCIA_MOREEN_UNCOMMON.jpg" },
+      { key: "RALYNE_VAN", name: "Ralyne Van", role: "Kartu Angka 4", type: "number", code: "RALYNE_VAN_UNCOMMON", file: "RALYNE_VAN_UNCOMMON.jpg" },
+      { key: "ASTRELLA_VIRGIANANDA", name: "Astrella Virgiananda", role: "Kartu Angka 5", type: "number", code: "ASTRELLA_VIRGIANANDA_UNCOMMON", file: "ASTRELLA_VIRGIANANDA_UNCOMMON.jpg" },
+      { key: "FATIMAH_AZZAHRA", name: "Fatimah Azzahra", role: "Kartu Angka 5", type: "number", code: "FATIMAH_AZZAHRA_UNCOMMON", file: "FATIMAH_AZZAHRA_UNCOMMON.jpg" },
+      { key: "MAEGAN_JOVANKA", name: "Maegan Jovanka", role: "Kartu Angka 5", type: "number", code: "MAEGAN_JOVANKA_UNCOMMON", file: "MAEGAN_JOVANKA_UNCOMMON.jpg" },
+      { key: "REGINA_WILLIAM", name: "Regina William (Eline)", role: "Kartu Angka 5", type: "number", code: "SELN", file: "REGINA_WILLIAM_UNCOMMON.jpg" },
+      { key: "AULIA_RIZA", name: "Aulia Riza", role: "Kartu Angka 6", type: "number", code: "AULIA_RIZA_UNCOMMON", file: "AULIA_RIZA_UNCOMMON.jpg" },
+      { key: "HAGIA_SOPIA", name: "Hagia Sopia", role: "Kartu Angka 6", type: "number", code: "HAGIA_SOPIA_UNCOMMON", file: "HAGIA_SOPIA_UNCOMMON.jpg" },
+      { key: "MAXINE_FAYE", name: "Maxine Faye", role: "Kartu Angka 6", type: "number", code: "MAXINE_FAYE_UNCOMMON", file: "MAXINE_FAYE_UNCOMMON.jpg" },
+      { key: "RIBKA_BUDIMAN", name: "Ribka Budiman", role: "Kartu Angka 6", type: "number", code: "SRIB", file: "RIBKA_BUDIMAN_UNCOMMON.jpg" },
+      { key: "BONG_APRILLI", name: "Bong Aprilli", role: "Kartu Angka 7", type: "number", code: "BONG_APRILLI_UNCOMMON", file: "BONG_APRILLI_UNCOMMON.jpg" },
+      { key: "HEIDA_SUYANGGA", name: "Heida Suyangga", role: "Kartu Angka 7", type: "number", code: "HEIDA_SUYANGGA_UNCOMMON", file: "HEIDA_SUYANGGA_UNCOMMON.jpg" },
+      { key: "MICHELLE_LEVIA", name: "Michelle Levia (Levi)", role: "Kartu Angka 7", type: "number", code: "SLEV", file: "MICHELLE_LEVIA_UNCOMMON.jpg" },
+      { key: "SHABILQIS_NAILA", name: "Shabilqis Naila (Nala)", role: "Kartu Angka 7", type: "number", code: "SNAL", file: "SHABILQIS_NAILA_UNCOMMON.jpg" },
+      { key: "CARISSA_DINI", name: "Carissa Dini", role: "Kartu Angka 8", type: "number", code: "CARISSA_DINI_UNCOMMON", file: "CARISSA_DINI_UNCOMMON.jpg" },
+      { key: "HILLARY_ABIGAIL", name: "Hillary Abigail (Lily)", role: "Kartu Angka 8", type: "number", code: "HILLARY_ABIGAIL_UNCOMMON", file: "HILLARY_ABIGAIL_UNCOMMON.jpg" },
+      { key: "MIKAELA_KUSJANTO", name: "Mikaela Kusjanto", role: "Kartu Angka 8", type: "number", code: "MIKAELA_KUSJANTO_UNCOMMON", file: "MIKAELA_KUSJANTO_UNCOMMON.jpg" },
+      { key: "SONA_KALYANA", name: "Sona Kalyana", role: "Kartu Angka 8", type: "number", code: "SONA_KALYANA_UNCOMMON", file: "SONA_KALYANA_UNCOMMON.jpg" },
+      { key: "CATHLEEN_NIXIE", name: "Cathleen Nixie (Cathy)", role: "Kartu Angka 9", type: "number", code: "SCAT", file: "CATHLEEN_NIXIE_UNCOMMON.jpg" },
+      { key: "HUMAIRA_RAMADHANI", name: "Humaira Ramadhani", role: "Kartu Angka 9", type: "number", code: "HUMAIRA_RAMADHANI_UNCOMMON", file: "HUMAIRA_RAMADHANI_UNCOMMON.jpg" },
+      { key: "NAYLA_SUJI", name: "Nayla Suji", role: "Kartu Angka 9", type: "number", code: "SNAY", file: "NAYLA_SUJI_UNCOMMON.jpg" },
+      { key: "VICTORIA_KIMBERLY", name: "Victoria Kimberly (Kimmy)", role: "Kartu Angka 9", type: "number", code: "SKIM", file: "VICTORIA_KIMBERLY_UNCOMMON.jpg" }
+    ];
 
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    // ===== SUB-TAB SWITCHER =====
+    function switchSubTab(tab) {
+      document.getElementById('tabBtnArena').classList.toggle('active', tab === 'arena');
+      document.getElementById('tabBtnSkin').classList.toggle('active', tab === 'skin');
+      document.getElementById('viewArenaLobby').style.display = tab === 'arena' ? 'block' : 'none';
+      document.getElementById('viewSkinEquip').style.display = tab === 'skin' ? 'block' : 'none';
+      if (tab === 'skin') {
+        loadUserSkinInventory();
+      }
+    }
+
+    // ===== LOAD USER INVENTORY & SKINS FROM POSTGRESQL CORE BACKEND =====
+    async function loadUserSkinInventory() {
+      try {
+        const res = await fetch(`${CORE_BACKEND_URL}/statuschat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_cookie: currentSession, session_key: currentSession })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const p = data.data || data.profile;
+          if (p && Array.isArray(p.inventory)) {
+            userInventory = new Set(p.inventory.map(x => String(x).toUpperCase()));
+          }
+        }
+      } catch (e) {
+        console.warn("Skin inventory sync fallback:", e);
+      }
+      renderSkinCollection();
+    }
+
+    function renderSkinCollection() {
+      const container = document.getElementById('skinGridContainer');
+      const search = (document.getElementById('skinSearch').value || '').toLowerCase();
+      
+      let filtered = UNO_78_MEMBERS.filter(m => m.name.toLowerCase().includes(search) || m.role.toLowerCase().includes(search));
+
+      container.innerHTML = filtered.map(m => {
+        const isEquipped = equippedSkinMap[m.key] !== undefined;
+        const isOwned = userInventory.has(m.code.toUpperCase()) || userInventory.has(m.key.toUpperCase());
+        const thumbUrl = `../skin/${m.file}`;
+
+        let btnHtml = '';
+        if (isEquipped) {
+          btnHtml = `<button class="btn-equip-action btn-equipped" onclick="unequipSkin('${m.key}')">âœ“ TERPASANG</button>`;
+        } else if (isOwned || m.type === 'number' || m.type === 'action') {
+          btnHtml = `<button class="btn-equip-action btn-equip-avail" onclick="equipSkin('${m.key}', '${m.code}')">PASANG SKIN</button>`;
+        } else {
+          btnHtml = `<button class="btn-equip-action btn-equip-locked" disabled>ðŸ”’ BELUM DIMILIKI</button>`;
+        }
+
+        return `
+          <div class="equip-card-item">
+            <img src="${thumbUrl}" class="equip-card-thumb" onerror="this.src='../icon.png'" alt="${m.name}">
+            <div class="equip-card-name">${m.name}</div>
+            <div class="equip-card-role">${m.role}</div>
+            ${btnHtml}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function equipSkin(memberKey, skinCode) {
+      equippedSkinMap[memberKey] = skinCode;
+      localStorage.setItem('uno_equipped_skins', JSON.stringify(equippedSkinMap));
+      renderSkinCollection();
+      showToast(`âœ¨ Berhasil memasang skin untuk ${memberKey}!`);
+    }
+
+    function unequipSkin(memberKey) {
+      delete equippedSkinMap[memberKey];
+      localStorage.setItem('uno_equipped_skins', JSON.stringify(equippedSkinMap));
+      renderSkinCollection();
+      showToast(`Kartu ${memberKey} kembali ke default Trainee.`);
+    }
+
+    function filterSkinRarity(rarity, el) {
+      document.querySelectorAll('#viewSkinEquip .filter-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      currentSkinRarityFilter = rarity;
+      renderSkinCollection();
     }
 
     // ===== LOBBY FETCHING =====
@@ -643,7 +925,7 @@
     }
 
     function filterLobby(mode, el) {
-      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('#viewArenaLobby .filter-tab').forEach(t => t.classList.remove('active'));
       el.classList.add('active');
       fetchLobbyRooms();
     }
@@ -838,11 +1120,13 @@
       const skin = card.skin || {};
       const valDisplay = card.value.toUpperCase().replace('_', ' ');
       const clickAttr = isPlayable ? `onclick="userClickCard('${card.id}', '${card.type}', this)"` : '';
+      const photoSrc = skin.avatar || `../skin/${card.skin_key || 'ANGELINA_CHRISTY'}_UNCOMMON.jpg`;
+
       return `
         <div class="uno-card ${card.color}" ${clickAttr} id="card_${card.id}">
           <div class="card-corner-top">${valDisplay}</div>
           <div class="card-center-photo">
-            <img src="${skin.avatar || '../icon.png'}" alt="${skin.name || 'Member'}">
+            <img src="${photoSrc}" onerror="this.src='../icon.png'" alt="${skin.name || 'Member'}">
           </div>
           <div class="card-tier-pill">${skin.name ? skin.name.substring(0, 10) : 'JKT48'}</div>
           <div class="card-corner-bot">${valDisplay}</div>
@@ -932,6 +1216,7 @@
       }
     }
 
+    // ===== TEMP IN-ROOM CHAT =====
     function sendChat() {
       const input = document.getElementById('chatInput');
       const text = input.value.trim();
@@ -941,13 +1226,39 @@
       }
     }
 
+    function sendIngameChat() {
+      const input = document.getElementById('ingameChatInput');
+      const text = input.value.trim();
+      if (text && ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ action: 'chat', text: text }));
+        input.value = '';
+      }
+    }
+
     function appendChatMessage(chat) {
+      // Append to lounge chat
       const msgs = document.getElementById('chatMsgs');
-      const div = document.createElement('div');
-      div.className = 'chat-msg';
-      div.innerHTML = `<strong>${chat.name}:</strong> ${chat.text} <span>${chat.time}</span>`;
-      msgs.appendChild(div);
-      msgs.scrollTop = msgs.scrollHeight;
+      if (msgs) {
+        const div = document.createElement('div');
+        div.className = 'chat-msg';
+        div.innerHTML = `<strong>${chat.name}:</strong> ${chat.text} <span>${chat.time}</span>`;
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+      // Append to in-game chat
+      const inMsgs = document.getElementById('ingameChatMsgs');
+      if (inMsgs) {
+        const div2 = document.createElement('div');
+        div2.className = 'chat-msg';
+        div2.innerHTML = `<strong>${chat.name}:</strong> ${chat.text} <span>${chat.time}</span>`;
+        inMsgs.appendChild(div2);
+        inMsgs.scrollTop = inMsgs.scrollHeight;
+      }
+    }
+
+    function toggleIngameChat() {
+      const drawer = document.getElementById('ingameChatDrawer');
+      drawer.style.display = drawer.style.display === 'flex' ? 'none' : 'flex';
     }
 
     function showToast(text) {
@@ -971,7 +1282,6 @@
     }
 
     function quickMatch() {
-      // Find open public room or create one
       openCreateModal();
     }
 
@@ -984,6 +1294,7 @@
     // Init App
     window.addEventListener('DOMContentLoaded', () => {
       fetchLobbyRooms();
+      loadUserSkinInventory();
       setInterval(fetchLobbyRooms, 8000);
     });
   </script>
