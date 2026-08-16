@@ -137,7 +137,7 @@
     }
     .btn-join:hover { background: var(--primary); border-color: var(--primary); }
 
-    /* === SUB-TAB: EQUIP SKIN UNO (78 MEMBER CARDS) === */
+    /* === SUB-TAB: EQUIP SKIN UNO (GREY/COLOR DISPLAY) === */
     #skin-equip-screen { display: none; padding: 24px 32px; }
     .skin-filter-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
     .skin-search-input {
@@ -153,9 +153,13 @@
       position: relative; transition: all 0.2s;
     }
     .equip-card-item:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 8px 20px var(--accent-glow); }
+    .equip-card-item.locked { opacity: 0.7; }
     .equip-card-thumb {
       width: 100%; height: 160px; border-radius: 12px; object-fit: cover; margin-bottom: 10px;
       border: 2px solid rgba(255,255,255,0.1); background: #000;
+    }
+    .card-grey-filter {
+      filter: grayscale(100%) contrast(1.1) brightness(0.75);
     }
     .equip-card-name { font-weight: 800; font-size: 14px; margin-bottom: 2px; }
     .equip-card-role { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; }
@@ -163,7 +167,7 @@
       width: 100%; padding: 8px 12px; border-radius: 10px; font-weight: 800; font-size: 12px;
       border: none; cursor: pointer; transition: all 0.2s;
     }
-    .btn-equipped { background: linear-gradient(135deg, #10b981, #059669); color: #fff; }
+    .btn-equipped { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4); }
     .btn-equip-avail { background: linear-gradient(135deg, var(--accent), #3b82f6); color: #fff; }
     .btn-equip-locked { background: rgba(255,255,255,0.06); color: var(--text-muted); cursor: not-allowed; }
 
@@ -488,14 +492,15 @@
       <div id="viewSkinEquip" style="display: none;">
         <div style="margin-bottom: 20px;">
           <h2 style="font-family: 'Outfit'; font-size: 22px;">ðŸŽ´ Koleksi & Pasang Skin Kartu UNO</h2>
-          <p style="color: var(--text-muted); font-size: 13px;">Pasang skin yang kamu miliki dari database untuk memicu animasi ledakan dan salam Jikoshoukai saat bermain!</p>
+          <p style="color: var(--text-muted); font-size: 13px;">Skin yang kamu miliki akan tampil berwarna dan bisa dipasang untuk memicu animasi VFX ledakan & salam Jiko. Skin yang belum dimiliki tampil abu-abu (grey).</p>
         </div>
 
         <div class="skin-filter-bar">
-          <input type="text" class="skin-search-input" id="skinSearch" placeholder="Cari nama member..." oninput="renderSkinCollection()">
+          <input type="text" class="skin-search-input" id="skinSearch" placeholder="Cari nama member atau skin..." oninput="renderSkinCollection()">
           <div class="filter-tabs">
             <div class="filter-tab active" onclick="filterSkinRarity('all', this)">Semua Rarity</div>
-            <div class="filter-tab" onclick="filterSkinRarity('omega', this)">Omega Spesial</div>
+            <div class="filter-tab" onclick="filterSkinRarity('omega', this)">Omega Spesial / Prime</div>
+            <div class="filter-tab" onclick="filterSkinRarity('ssk', this)">SSK Edition</div>
             <div class="filter-tab" onclick="filterSkinRarity('myth', this)">Mythic</div>
             <div class="filter-tab" onclick="filterSkinRarity('legend', this)">Legend</div>
             <div class="filter-tab" onclick="filterSkinRarity('rare', this)">Rare</div>
@@ -706,93 +711,174 @@
     let equippedSkinMap = JSON.parse(localStorage.getItem('uno_equipped_skins') || '{}');
     let currentSkinRarityFilter = 'all';
 
-    // ===== 78 MEMBER ROSTER MASTER LIST (MATCHING EXCEL) =====
+    // ===== OMEGA SKIN CODE CONFIGURATION DICTIONARY =====
+    const OMEGA_SKIN_MAP = {
+      "Dedek Kitty (Spesial)": "DKTY",
+      "Ci Shani (Spesial)": "CSHN",
+      "Ci Gre (Spesial)": "CGRC",
+      "Ci Feni (Spesial)": "CFNI",
+      "Ci Eli (Spesial)": "CELI",
+      "Full Color:Christy": "FCHR",
+      "Full Color:Shani": "FSHN",
+      "Full Color:Gracia": "FGRC",
+      "Full Color:Chika": "FCHK",
+      "Full Color:Feni": "FFNI",
+      "Full Color:Jinan": "FJIN",
+      "Full Color:Fiony": "FFIO",
+      "Full Color:Marsha": "FMAR",
+      "Full Color:Zee": "FAAZ",
+      "Prime: Feni": "PFNI",
+      "Prime: Christy": "PCHR",
+      "Prime: Lulu": "PLLU",
+      "Prime: Gracia": "PGRC",
+      "Prime: Oniel": "PONL",
+      "Prime: Fiony": "PFNY",
+      "Prime: Marsha": "PMSH",
+      "Prime: Freya": "PFYR",
+      "Prime: Gita": "PGTS",
+      "Prime: Aurelia": "PLAI",
+      "Prime: Jessi": "PJCC",
+      "Prime: Muthe": "PMUT",
+      "SSK: Angelina Christy": "SCHR",
+      "SSK: Marsha Lenathea": "SMAR",
+      "SSK: Amanda Sukma": "SAMA",
+      "SSK: Flora Shafiq": "SFLO",
+      "SSK: Indira Seruni": "SIND",
+      "SSK: Mutiara Azzahra": "SMUT",
+      "SSK: Letycia Moreen": "SMOR",
+      "SSK: Jesslyn Elly": "SLYN",
+      "SSK: Greesella Adhalia": "SGRE",
+      "SSK: Jazzlyn Trisha": "STRI",
+      "SSK: Shabilqis Naila": "SNAL",
+      "SSK: Michelle Alexandra": "SLIL",
+      "SSK: Nayla Suji": "SNAY",
+      "SSK: Cynthia Yaputera": "SCYN",
+      "SSK: Oline Manuel": "SOLI",
+      "SSK: Danella Piawahan": "SDAN",
+      "SSK: Freya Jayawardana": "SFRE",
+      "SSK: Abigail Rachel": "SARA",
+      "SSK: Fiony Alveria": "SFIO",
+      "SSK: Jessica Chandra": "SJES",
+      "SSK: Catherina Vallencia": "SERI",
+      "SSK: Raisha Syifa": "SRAI",
+      "SSK: Michelle Levia": "SMIC",
+      "SSK: Regina Wilian": "SELN",
+      "SSK: Cornelia Vanisa": "SONI",
+      "SSK: Gita Sekar Andarini": "SGIT",
+      "SSK: Feni Fitriyanti": "SFEN",
+      "SSK: Victoria Kimberly": "SKIM",
+      "SSK: Aurellia": "SLIA",
+      "SSK: Michelle Levia": "SLEV",
+      "SSK: Cathleen Nixie": "SCAT",
+      "SSK: Delynn Asizi": "SDEL",
+      "SSK: Regina Putri": "SREG",
+      "SSK: Kathrina Irene": "SKAT",
+      "SSK: Anindya Ramadhani": "SANI",
+      "SSK: Aurel Alana": "SLAN",
+      "SSK: Ribka Budiman": "SRIB",
+      "SSK: Indah Cahya": "SIDH",
+      "SSK: Febriola Sinambela": "SOLL",
+      "SSK: Chelsea Davina": "SCHE",
+      "SSK: Grace Octaviani": "SGRC",
+      "SSK: Shania Gracia": "SGRA",
+      "SSK: Fritzy Rosmerian": "SFRI",
+      "SSK: Alya Amanda": "SALY",
+      "SSK: Callista Alifia": "SCAL",
+      "SSK: Lulu Salsabila": "SLUL",
+      "SSK: Desy Natalia": "SDAI",
+      "SSK: Nina Tutachia": "SNAC",
+      "SSK: Gendis Mayrannisa": "SGEN",
+      "SSK: Helisma Putri": "SELI",
+      "SSK: Gabriela Abigail": "SELL"
+    };
+
+    // ===== 78 MEMBER ROSTER MASTER LIST =====
     const UNO_78_MEMBERS = [
       // 1. Wild Boss Cards
-      { key: "ANGELINA_CHRISTY", name: "Angelina Christy", role: "Wild Draw +10", type: "wild", code: "DKTY", file: "ANGELINA_CHRISTY_UNCOMMON.jpg" },
-      { key: "AZIZI_ASSADEL", name: "Azizi Assadel (Zee)", role: "Wild Draw +6", type: "wild", code: "FAAZ", file: "AZIZI_ASSADEL_UNCOMMON.jpg" },
-      { key: "SHANI_INDIRA", name: "Shani Indira Natio", role: "Wild Swap Hands", type: "wild", code: "CSHN", file: "SHANI_INDIRA_UNCOMMON.jpg" },
-      { key: "SHANIA_GRACIA", name: "Shania Gracia", role: "Wild Shuffle Hands", type: "wild", code: "CGRC", file: "SHANIA_GRACIA_UNCOMMON.jpg" },
-      { key: "FREYA_JAYAWARDANA", name: "Freya Jayawardana", role: "Wild Color Roulette", type: "wild", code: "PFYR", file: "FREYA_JAYAWARDANA_UNCOMMON.jpg" },
-      { key: "MARSHA_LENATHEA", name: "Marsha Lenathea", role: "Wild Targeted Attack", type: "wild", code: "FMAR", file: "MARSHA_LENATHEA_UNCOMMON.jpg" },
-      { key: "FENI_FITRIYANTI", name: "Feni Fitriyanti", role: "Wild Reverse +4", type: "wild", code: "CFNI", file: "FENI_FITRIYANTI_UNCOMMON.jpg" },
-      { key: "SISCA_SARAS", name: "Sisca Saras", role: "Wild Double Play", type: "wild", code: "SISCA_SARAS_UNCOMMON", file: "SISCA_SARAS_UNCOMMON.jpg" },
-      { key: "ADZANA_ASHEL", name: "Adzana Ashel", role: "Wild Counter Shield", type: "wild", code: "ADZANA_ASHEL_UNCOMMON", file: "ADZANA_ASHEL_UNCOMMON.jpg" },
-      { key: "YESICA_TAMARA", name: "Yesica Tamara (Chika)", role: "Wild Classic Choice", type: "wild", code: "FCHK", file: "YESICA_TAMARA_UNCOMMON.jpg" },
+      { key: "ANGELINA_CHRISTY", name: "Angelina Christy", role: "Wild Draw +10", type: "wild", code: "DKTY", file: "ANGELINA_CHRISTY_UNCOMMON.jpg", omega: "DKTY", rarity: "omega" },
+      { key: "AZIZI_ASSADEL", name: "Azizi Assadel (Zee)", role: "Wild Draw +6", type: "wild", code: "FAAZ", file: "AZIZI_ASSADEL_UNCOMMON.jpg", omega: "FAAZ", rarity: "omega" },
+      { key: "SHANI_INDIRA", name: "Shani Indira Natio", role: "Wild Swap Hands", type: "wild", code: "CSHN", file: "SHANI_INDIRA_UNCOMMON.jpg", omega: "CSHN", rarity: "omega" },
+      { key: "SHANIA_GRACIA", name: "Shania Gracia", role: "Wild Shuffle Hands", type: "wild", code: "CGRC", file: "SHANIA_GRACIA_UNCOMMON.jpg", omega: "CGRC", rarity: "omega" },
+      { key: "FREYA_JAYAWARDANA", name: "Freya Jayawardana", role: "Wild Color Roulette", type: "wild", code: "PFYR", file: "FREYA_JAYAWARDANA_UNCOMMON.jpg", omega: "PFYR", rarity: "omega" },
+      { key: "MARSHA_LENATHEA", name: "Marsha Lenathea", role: "Wild Targeted Attack", type: "wild", code: "FMAR", file: "MARSHA_LENATHEA_UNCOMMON.jpg", omega: "FMAR", rarity: "omega" },
+      { key: "FENI_FITRIYANTI", name: "Feni Fitriyanti", role: "Wild Reverse +4", type: "wild", code: "CFNI", file: "FENI_FITRIYANTI_UNCOMMON.jpg", omega: "CFNI", rarity: "omega" },
+      { key: "SISCA_SARAS", name: "Sisca Saras", role: "Wild Double Play", type: "wild", code: "SISCA_SARAS_UNCOMMON", file: "SISCA_SARAS_UNCOMMON.jpg", rarity: "rare" },
+      { key: "ADZANA_ASHEL", name: "Adzana Ashel", role: "Wild Counter Shield", type: "wild", code: "ADZANA_ASHEL_UNCOMMON", file: "ADZANA_ASHEL_UNCOMMON.jpg", rarity: "rare" },
+      { key: "YESICA_TAMARA", name: "Yesica Tamara (Chika)", role: "Wild Classic Choice", type: "wild", code: "FCHK", file: "YESICA_TAMARA_UNCOMMON.jpg", omega: "FCHK", rarity: "omega" },
 
       // 2. Extra Action Cards (No Mercy)
-      { key: "GABRIELA_ABIGAIL", name: "Gabriela Abigail (Ella)", role: "Discard All (Merah)", type: "action", code: "GABRIELA_ABIGAIL_UNCOMMON", file: "GABRIELA_ABIGAIL_UNCOMMON.jpg" },
-      { key: "GRACE_OCTAVIANI", name: "Grace Octaviani (Gracie)", role: "Discard All (Biru)", type: "action", code: "FGRC", file: "GRACE_OCTAVIANI_UNCOMMON.jpg" },
-      { key: "GREESELA_ADHALIA", name: "Greesella Adhalia", role: "Discard All (Hijau)", type: "action", code: "SGRE", file: "GREESELA_ADHALIA_UNCOMMON.jpg" },
-      { key: "MICHELLE_ALEXANDRA", name: "Michelle Alexandra (Michie)", role: "Discard All (Kuning)", type: "action", code: "SLIL", file: "MICHELLE_ALEXANDRA_UNCOMMON.jpg" },
-      { key: "JESSLYN_ELLY", name: "Jesslyn Elly (Lyn)", role: "Skip Everyone (Merah)", type: "action", code: "SLYN", file: "JESSLYN_ELLY_UNCOMMON.jpg" },
-      { key: "AURELLIA_LIA", name: "Aurellia (Lia)", role: "Skip Everyone (Biru)", type: "action", code: "PLAI", file: "AURELLIA_LIA_UNCOMMON.jpg" },
-      { key: "JINAN", name: "Jinan Safa Safira", role: "Skip Everyone (Hijau)", type: "action", code: "FJIN", file: "JINAN_UNCOMMON.jpg" },
-      { key: "NABILA_FITRIANA", name: "Nabila Fitriana (Lala)", role: "Skip Everyone (Kuning)", type: "action", code: "NABILA_FITRIANA_UNCOMMON", file: "NABILA_FITRIANA_UNCOMMON.jpg" },
-      { key: "AMANDA_SUKMA", name: "Amanda Sukma", role: "Color Draw +4 (Merah)", type: "action", code: "SAMA", file: "AMANDA_SUKMA_UNCOMMON.jpg" },
-      { key: "INDAH_CAHYA", name: "Indah Cahya", role: "Color Draw +4 (Biru)", type: "action", code: "SIDH", file: "INDAH_CAHYA_UNCOMMON.jpg" },
-      { key: "RAISHA_SYIFA", name: "Raisha Syifa", role: "Color Draw +4 (Hijau)", type: "action", code: "SRAI", file: "RAISHA_SYIFA_UNCOMMON.jpg" },
-      { key: "DESY_NATALIA", name: "Desy Natalia (Daisy)", role: "Color Draw +4 (Kuning)", type: "action", code: "SDAI", file: "DESY_NATALIA_UNCOMMON.jpg" },
-      { key: "FRITZY_ROSMERIAN", name: "Fritzy Rosmerian", role: "Shield (Merah)", type: "action", code: "SFRI", file: "FRITZY_ROSMERIAN_UNCOMMON.jpg" },
-      { key: "DENA_NATALIA", name: "Dena Natalia", role: "Shield (Biru)", type: "action", code: "DENA_NATALIA_UNCOMMON", file: "DENA_NATALIA_UNCOMMON.jpg" },
-      { key: "AURHEL_ALANA", name: "Aurhel Alana (Lana)", role: "Shield (Hijau)", type: "action", code: "SLAN", file: "AURHEL_ALANA_UNCOMMON.jpg" },
-      { key: "GENDIS_MAYRANNISA", name: "Gendis Mayrannisa", role: "Shield (Kuning)", type: "action", code: "SGEN", file: "GENDIS_MAYRANNISA_UNCOMMON.jpg" },
+      { key: "GABRIELA_ABIGAIL", name: "Gabriela Abigail (Ella)", role: "Discard All (Merah)", type: "action", code: "SELL", file: "GABRIELA_ABIGAIL_UNCOMMON.jpg", omega: "SELL", rarity: "ssk" },
+      { key: "GRACE_OCTAVIANI", name: "Grace Octaviani (Gracie)", role: "Discard All (Biru)", type: "action", code: "SGRC", file: "GRACE_OCTAVIANI_UNCOMMON.jpg", omega: "SGRC", rarity: "ssk" },
+      { key: "GREESELA_ADHALIA", name: "Greesella Adhalia", role: "Discard All (Hijau)", type: "action", code: "SGRE", file: "GREESELA_ADHALIA_UNCOMMON.jpg", omega: "SGRE", rarity: "ssk" },
+      { key: "MICHELLE_ALEXANDRA", name: "Michelle Alexandra (Michie)", role: "Discard All (Kuning)", type: "action", code: "SLIL", file: "MICHELLE_ALEXANDRA_UNCOMMON.jpg", omega: "SLIL", rarity: "ssk" },
+      { key: "JESSLYN_ELLY", name: "Jesslyn Elly (Lyn)", role: "Skip Everyone (Merah)", type: "action", code: "SLYN", file: "JESSLYN_ELLY_UNCOMMON.jpg", omega: "SLYN", rarity: "ssk" },
+      { key: "AURELLIA_LIA", name: "Aurellia (Lia)", role: "Skip Everyone (Biru)", type: "action", code: "PLAI", file: "AURELLIA_LIA_UNCOMMON.jpg", omega: "PLAI", rarity: "omega" },
+      { key: "JINAN", name: "Jinan Safa Safira", role: "Skip Everyone (Hijau)", type: "action", code: "FJIN", file: "JINAN_UNCOMMON.jpg", omega: "FJIN", rarity: "omega" },
+      { key: "NABILA_FITRIANA", name: "Nabila Fitriana (Lala)", role: "Skip Everyone (Kuning)", type: "action", code: "NABILA_FITRIANA_UNCOMMON", file: "NABILA_FITRIANA_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "AMANDA_SUKMA", name: "Amanda Sukma", role: "Color Draw +4 (Merah)", type: "action", code: "SAMA", file: "AMANDA_SUKMA_UNCOMMON.jpg", omega: "SAMA", rarity: "ssk" },
+      { key: "INDAH_CAHYA", name: "Indah Cahya", role: "Color Draw +4 (Biru)", type: "action", code: "SIDH", file: "INDAH_CAHYA_UNCOMMON.jpg", omega: "SIDH", rarity: "ssk" },
+      { key: "RAISHA_SYIFA", name: "Raisha Syifa", role: "Color Draw +4 (Hijau)", type: "action", code: "SRAI", file: "RAISHA_SYIFA_UNCOMMON.jpg", omega: "SRAI", rarity: "ssk" },
+      { key: "DESY_NATALIA", name: "Desy Natalia (Daisy)", role: "Color Draw +4 (Kuning)", type: "action", code: "SDAI", file: "DESY_NATALIA_UNCOMMON.jpg", omega: "SDAI", rarity: "ssk" },
+      { key: "FRITZY_ROSMERIAN", name: "Fritzy Rosmerian", role: "Shield (Merah)", type: "action", code: "SFRI", file: "FRITZY_ROSMERIAN_UNCOMMON.jpg", omega: "SFRI", rarity: "ssk" },
+      { key: "DENA_NATALIA", name: "Dena Natalia", role: "Shield (Biru)", type: "action", code: "DENA_NATALIA_UNCOMMON", file: "DENA_NATALIA_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "AURHEL_ALANA", name: "Aurhel Alana (Lana)", role: "Shield (Hijau)", type: "action", code: "SLAN", file: "AURHEL_ALANA_UNCOMMON.jpg", omega: "SLAN", rarity: "ssk" },
+      { key: "GENDIS_MAYRANNISA", name: "Gendis Mayrannisa", role: "Shield (Kuning)", type: "action", code: "SGEN", file: "GENDIS_MAYRANNISA_UNCOMMON.jpg", omega: "SGEN", rarity: "ssk" },
 
       // 3. Standard Action Cards
-      { key: "REVA_FIDELA", name: "Reva Fidela (Adel)", role: "Draw Two +2 (Merah)", type: "action", code: "REVA_FIDELA_UNCOMMON", file: "REVA_FIDELA_UNCOMMON.jpg" },
-      { key: "GITA_SEKAR", name: "Gita Sekar Andarini", role: "Draw Two +2 (Biru)", type: "action", code: "PGTS", file: "GITA_SEKAR_UNCOMMON.jpg" },
-      { key: "FIONY_ALVERIA", name: "Fiony Alveria", role: "Draw Two +2 (Hijau)", type: "action", code: "FFIO", file: "FIONY_ALVERIA_UNCOMMON.jpg" },
-      { key: "MUTIARA_AZZAHRA", name: "Mutiara Azzahra (Muthe)", role: "Draw Two +2 (Kuning)", type: "action", code: "PMUT", file: "MUTIARA_AZZAHRA_UNCOMMON.jpg" },
-      { key: "CORNELIA_VANISA", name: "Cornelia Vanisa (Oniel)", role: "Reverse (Merah)", type: "action", code: "PONL", file: "CORNELIA_VANISA_UNCOMMON.jpg" },
-      { key: "FEBRIOLA_SINAMBELLA", name: "Febriola Sinambela (Olla)", role: "Reverse (Biru)", type: "action", code: "SOLL", file: "FEBRIOLA_SINAMBELLA_UNCOMMON.jpg" },
-      { key: "HELISMA_PUTRI", name: "Helisma Putri (Eli)", role: "Reverse (Hijau)", type: "action", code: "CELI", file: "HELISMA_PUTRI_UNCOMMON.jpg" },
-      { key: "LULU_SALSABILA", name: "Lulu Salsabila", role: "Reverse (Kuning)", type: "action", code: "PLLU", file: "LULU_SALSABILA_UNCOMMON.jpg" },
-      { key: "KATHRINA_IRENE", name: "Kathrina Irene", role: "Skip (Merah)", type: "action", code: "SKAT", file: "KATHRINA_IRENE_UNCOMMON.jpg" },
-      { key: "JESSICA_CHANDRA", name: "Jessica Chandra (Jessi)", role: "Skip (Biru)", type: "action", code: "PJCC", file: "JESSICA_CHANDRA_UNCOMMON.jpg" },
-      { key: "FLORA_SHAFIQ", name: "Flora Shafiq", role: "Skip (Hijau)", type: "action", code: "SFLO", file: "FLORA_SHAFIQ_UNCOMMON.jpg" },
-      { key: "INDIRA_PUTRI", name: "Indira Putri Seruni", role: "Skip (Kuning)", type: "action", code: "SIND", file: "INDAH_CAHYA_UNCOMMON.jpg" },
+      { key: "REVA_FIDELA", name: "Reva Fidela (Adel)", role: "Draw Two +2 (Merah)", type: "action", code: "REVA_FIDELA_UNCOMMON", file: "REVA_FIDELA_UNCOMMON.jpg", rarity: "rare" },
+      { key: "GITA_SEKAR", name: "Gita Sekar Andarini", role: "Draw Two +2 (Biru)", type: "action", code: "PGTS", file: "GITA_SEKAR_UNCOMMON.jpg", omega: "PGTS", rarity: "omega" },
+      { key: "FIONY_ALVERIA", name: "Fiony Alveria", role: "Draw Two +2 (Hijau)", type: "action", code: "FFIO", file: "FIONY_ALVERIA_UNCOMMON.jpg", omega: "FFIO", rarity: "omega" },
+      { key: "MUTIARA_AZZAHRA", name: "Mutiara Azzahra (Muthe)", role: "Draw Two +2 (Kuning)", type: "action", code: "PMUT", file: "MUTIARA_AZZAHRA_UNCOMMON.jpg", omega: "PMUT", rarity: "omega" },
+      { key: "CORNELIA_VANISA", name: "Cornelia Vanisa (Oniel)", role: "Reverse (Merah)", type: "action", code: "PONL", file: "CORNELIA_VANISA_UNCOMMON.jpg", omega: "PONL", rarity: "omega" },
+      { key: "FEBRIOLA_SINAMBELLA", name: "Febriola Sinambela (Olla)", role: "Reverse (Biru)", type: "action", code: "SOLL", file: "FEBRIOLA_SINAMBELLA_UNCOMMON.jpg", omega: "SOLL", rarity: "ssk" },
+      { key: "HELISMA_PUTRI", name: "Helisma Putri (Eli)", role: "Reverse (Hijau)", type: "action", code: "CELI", file: "HELISMA_PUTRI_UNCOMMON.jpg", omega: "CELI", rarity: "omega" },
+      { key: "LULU_SALSABILA", name: "Lulu Salsabila", role: "Reverse (Kuning)", type: "action", code: "PLLU", file: "LULU_SALSABILA_UNCOMMON.jpg", omega: "PLLU", rarity: "omega" },
+      { key: "KATHRINA_IRENE", name: "Kathrina Irene", role: "Skip (Merah)", type: "action", code: "SKAT", file: "KATHRINA_IRENE_UNCOMMON.jpg", omega: "SKAT", rarity: "ssk" },
+      { key: "JESSICA_CHANDRA", name: "Jessica Chandra (Jessi)", role: "Skip (Biru)", type: "action", code: "PJCC", file: "JESSICA_CHANDRA_UNCOMMON.jpg", omega: "PJCC", rarity: "omega" },
+      { key: "FLORA_SHAFIQ", name: "Flora Shafiq", role: "Skip (Hijau)", type: "action", code: "SFLO", file: "FLORA_SHAFIQ_UNCOMMON.jpg", omega: "SFLO", rarity: "ssk" },
+      { key: "INDIRA_PUTRI", name: "Indira Putri Seruni", role: "Skip (Kuning)", type: "action", code: "SIND", file: "INDAH_CAHYA_UNCOMMON.jpg", omega: "SIND", rarity: "ssk" },
 
       // 4. Number Cards 0-9
-      { key: "ABIGAIL_RACHEL", name: "Abigail Rachel (Aralie)", role: "Kartu Angka 0", type: "number", code: "SARA", file: "ABIGAIL_RACHEL_UNCOMMON.jpg" },
-      { key: "CHELSEA_DEVINA", name: "Chelsea Devina", role: "Kartu Angka 0", type: "number", code: "SCHE", file: "CHELSEA_DEVINA_UNCOMMON.jpg" },
-      { key: "JACQUELINE_IMMANUELA", name: "Jacqueline Immanuela", role: "Kartu Angka 0", type: "number", code: "JACQUELINE_IMMANUELA_UNCOMMON", file: "JACQUELINE_IMMANUELA_UNCOMMON.jpg" },
-      { key: "NINA_TUTACHIA", name: "Nina Tutachia (Nachia)", role: "Kartu Angka 0", type: "number", code: "SNAC", file: "NINA_TUTACHIA_UNCOMMON.jpg" },
-      { key: "ADELINE_WIJAYA", name: "Adeline Wijaya (Delynn)", role: "Kartu Angka 1", type: "number", code: "SDEL", file: "ADELINE_WIJAYA_UNCOMMON.jpg" },
-      { key: "CHRISTABELLA_BONITA", name: "Christabella Bonita", role: "Kartu Angka 1", type: "number", code: "CHRISTABELLA_BONITA_UNCOMMON", file: "CHRISTABELLA_BONITA_UNCOMMON.jpg" },
-      { key: "JAZZLYN_TRISHA", name: "Jazzlyn Trisha (Trisha)", role: "Kartu Angka 1", type: "number", code: "STRI", file: "JAZZLYN_TRISHA_UNCOMMON.jpg" },
-      { key: "NUR_INTAN", name: "Nur Intan", role: "Kartu Angka 1", type: "number", code: "NUR_INTAN_UNCOMMON", file: "NUR_INTAN_UNCOMMON.jpg" },
-      { key: "AFERA_THALIA", name: "Afera Thalia", role: "Kartu Angka 2", type: "number", code: "AFERA_THALIA_UNCOMMON", file: "AFERA_THALIA_UNCOMMON.jpg" },
-      { key: "CYNTHIA_YAPUTERA", name: "Cynthia Yaputera", role: "Kartu Angka 2", type: "number", code: "SCYN", file: "CYNTHIA_YAPUTERA_UNCOMMON.jpg" },
-      { key: "JEMIMA_EVODIE", name: "Jemima Evodie", role: "Kartu Angka 2", type: "number", code: "JEMIMA_EVODIE_UNCOMMON", file: "JEMIMA_EVODIE_UNCOMMON.jpg" },
-      { key: "OLINE_MANUEL", name: "Oline Manuel", role: "Kartu Angka 2", type: "number", code: "SOLI", file: "OLINE_MANUEL_UNCOMMON.jpg" },
-      { key: "ALYA_AMANDA", name: "Alya Amanda", role: "Kartu Angka 3", type: "number", code: "SALY", file: "ALYA_AMANDA_UNCOMMON.jpg" },
-      { key: "CATHERINA_VALLENCIA", name: "Catherina Vallencia (Erine)", role: "Kartu Angka 3", type: "number", code: "SERI", file: "CATHERINA_VALLENCIA_UNCOMMON.jpg" },
-      { key: "JESSLYN_CALLISTA", name: "Jesslyn Callista", role: "Kartu Angka 3", type: "number", code: "JESSLYN_CALLISTA_UNCOMMON", file: "JESSLYN_CALLISTA_UNCOMMON.jpg" },
-      { key: "PUTRI_JAZYTA", name: "Putri Jazyta", role: "Kartu Angka 3", type: "number", code: "PUTRI_JAZYTA_UNCOMMON", file: "PUTRI_JAZYTA_UNCOMMON.jpg" },
-      { key: "ANINDYA_RAMADHANI", name: "Anindya Ramadhani (Anin)", role: "Kartu Angka 4", type: "number", code: "SANI", file: "ANINDYA_RAMADHANI_UNCOMMON.jpg" },
-      { key: "FAHIRA_PUTRI", name: "Fahira Putri", role: "Kartu Angka 4", type: "number", code: "FAHIRA_PUTRI_UNCOMMON", file: "FAHIRA_PUTRI_UNCOMMON.jpg" },
-      { key: "LETYCIA_MOREEN", name: "Letycia Moreen", role: "Kartu Angka 4", type: "number", code: "SMOR", file: "LETYCIA_MOREEN_UNCOMMON.jpg" },
-      { key: "RALYNE_VAN", name: "Ralyne Van", role: "Kartu Angka 4", type: "number", code: "RALYNE_VAN_UNCOMMON", file: "RALYNE_VAN_UNCOMMON.jpg" },
-      { key: "ASTRELLA_VIRGIANANDA", name: "Astrella Virgiananda", role: "Kartu Angka 5", type: "number", code: "ASTRELLA_VIRGIANANDA_UNCOMMON", file: "ASTRELLA_VIRGIANANDA_UNCOMMON.jpg" },
-      { key: "FATIMAH_AZZAHRA", name: "Fatimah Azzahra", role: "Kartu Angka 5", type: "number", code: "FATIMAH_AZZAHRA_UNCOMMON", file: "FATIMAH_AZZAHRA_UNCOMMON.jpg" },
-      { key: "MAEGAN_JOVANKA", name: "Maegan Jovanka", role: "Kartu Angka 5", type: "number", code: "MAEGAN_JOVANKA_UNCOMMON", file: "MAEGAN_JOVANKA_UNCOMMON.jpg" },
-      { key: "REGINA_WILLIAM", name: "Regina William (Eline)", role: "Kartu Angka 5", type: "number", code: "SELN", file: "REGINA_WILLIAM_UNCOMMON.jpg" },
-      { key: "AULIA_RIZA", name: "Aulia Riza", role: "Kartu Angka 6", type: "number", code: "AULIA_RIZA_UNCOMMON", file: "AULIA_RIZA_UNCOMMON.jpg" },
-      { key: "HAGIA_SOPIA", name: "Hagia Sopia", role: "Kartu Angka 6", type: "number", code: "HAGIA_SOPIA_UNCOMMON", file: "HAGIA_SOPIA_UNCOMMON.jpg" },
-      { key: "MAXINE_FAYE", name: "Maxine Faye", role: "Kartu Angka 6", type: "number", code: "MAXINE_FAYE_UNCOMMON", file: "MAXINE_FAYE_UNCOMMON.jpg" },
-      { key: "RIBKA_BUDIMAN", name: "Ribka Budiman", role: "Kartu Angka 6", type: "number", code: "SRIB", file: "RIBKA_BUDIMAN_UNCOMMON.jpg" },
-      { key: "BONG_APRILLI", name: "Bong Aprilli", role: "Kartu Angka 7", type: "number", code: "BONG_APRILLI_UNCOMMON", file: "BONG_APRILLI_UNCOMMON.jpg" },
-      { key: "HEIDA_SUYANGGA", name: "Heida Suyangga", role: "Kartu Angka 7", type: "number", code: "HEIDA_SUYANGGA_UNCOMMON", file: "HEIDA_SUYANGGA_UNCOMMON.jpg" },
-      { key: "MICHELLE_LEVIA", name: "Michelle Levia (Levi)", role: "Kartu Angka 7", type: "number", code: "SLEV", file: "MICHELLE_LEVIA_UNCOMMON.jpg" },
-      { key: "SHABILQIS_NAILA", name: "Shabilqis Naila (Nala)", role: "Kartu Angka 7", type: "number", code: "SNAL", file: "SHABILQIS_NAILA_UNCOMMON.jpg" },
-      { key: "CARISSA_DINI", name: "Carissa Dini", role: "Kartu Angka 8", type: "number", code: "CARISSA_DINI_UNCOMMON", file: "CARISSA_DINI_UNCOMMON.jpg" },
-      { key: "HILLARY_ABIGAIL", name: "Hillary Abigail (Lily)", role: "Kartu Angka 8", type: "number", code: "HILLARY_ABIGAIL_UNCOMMON", file: "HILLARY_ABIGAIL_UNCOMMON.jpg" },
-      { key: "MIKAELA_KUSJANTO", name: "Mikaela Kusjanto", role: "Kartu Angka 8", type: "number", code: "MIKAELA_KUSJANTO_UNCOMMON", file: "MIKAELA_KUSJANTO_UNCOMMON.jpg" },
-      { key: "SONA_KALYANA", name: "Sona Kalyana", role: "Kartu Angka 8", type: "number", code: "SONA_KALYANA_UNCOMMON", file: "SONA_KALYANA_UNCOMMON.jpg" },
-      { key: "CATHLEEN_NIXIE", name: "Cathleen Nixie (Cathy)", role: "Kartu Angka 9", type: "number", code: "SCAT", file: "CATHLEEN_NIXIE_UNCOMMON.jpg" },
-      { key: "HUMAIRA_RAMADHANI", name: "Humaira Ramadhani", role: "Kartu Angka 9", type: "number", code: "HUMAIRA_RAMADHANI_UNCOMMON", file: "HUMAIRA_RAMADHANI_UNCOMMON.jpg" },
-      { key: "NAYLA_SUJI", name: "Nayla Suji", role: "Kartu Angka 9", type: "number", code: "SNAY", file: "NAYLA_SUJI_UNCOMMON.jpg" },
-      { key: "VICTORIA_KIMBERLY", name: "Victoria Kimberly (Kimmy)", role: "Kartu Angka 9", type: "number", code: "SKIM", file: "VICTORIA_KIMBERLY_UNCOMMON.jpg" }
+      { key: "ABIGAIL_RACHEL", name: "Abigail Rachel (Aralie)", role: "Kartu Angka 0", type: "number", code: "SARA", file: "ABIGAIL_RACHEL_UNCOMMON.jpg", omega: "SARA", rarity: "ssk" },
+      { key: "CHELSEA_DEVINA", name: "Chelsea Devina", role: "Kartu Angka 0", type: "number", code: "SCHE", file: "CHELSEA_DEVINA_UNCOMMON.jpg", omega: "SCHE", rarity: "ssk" },
+      { key: "JACQUELINE_IMMANUELA", name: "Jacqueline Immanuela", role: "Kartu Angka 0", type: "number", code: "JACQUELINE_IMMANUELA_UNCOMMON", file: "JACQUELINE_IMMANUELA_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "NINA_TUTACHIA", name: "Nina Tutachia (Nachia)", role: "Kartu Angka 0", type: "number", code: "SNAC", file: "NINA_TUTACHIA_UNCOMMON.jpg", omega: "SNAC", rarity: "ssk" },
+      { key: "ADELINE_WIJAYA", name: "Adeline Wijaya (Delynn)", role: "Kartu Angka 1", type: "number", code: "SDEL", file: "ADELINE_WIJAYA_UNCOMMON.jpg", omega: "SDEL", rarity: "ssk" },
+      { key: "CHRISTABELLA_BONITA", name: "Christabella Bonita", role: "Kartu Angka 1", type: "number", code: "CHRISTABELLA_BONITA_UNCOMMON", file: "CHRISTABELLA_BONITA_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "JAZZLYN_TRISHA", name: "Jazzlyn Trisha (Trisha)", role: "Kartu Angka 1", type: "number", code: "STRI", file: "JAZZLYN_TRISHA_UNCOMMON.jpg", omega: "STRI", rarity: "ssk" },
+      { key: "NUR_INTAN", name: "Nur Intan", role: "Kartu Angka 1", type: "number", code: "NUR_INTAN_UNCOMMON", file: "NUR_INTAN_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "AFERA_THALIA", name: "Afera Thalia", role: "Kartu Angka 2", type: "number", code: "AFERA_THALIA_UNCOMMON", file: "AFERA_THALIA_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "CYNTHIA_YAPUTERA", name: "Cynthia Yaputera", role: "Kartu Angka 2", type: "number", code: "SCYN", file: "CYNTHIA_YAPUTERA_UNCOMMON.jpg", omega: "SCYN", rarity: "ssk" },
+      { key: "JEMIMA_EVODIE", name: "Jemima Evodie", role: "Kartu Angka 2", type: "number", code: "JEMIMA_EVODIE_UNCOMMON", file: "JEMIMA_EVODIE_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "OLINE_MANUEL", name: "Oline Manuel", role: "Kartu Angka 2", type: "number", code: "SOLI", file: "OLINE_MANUEL_UNCOMMON.jpg", omega: "SOLI", rarity: "ssk" },
+      { key: "ALYA_AMANDA", name: "Alya Amanda", role: "Kartu Angka 3", type: "number", code: "SALY", file: "ALYA_AMANDA_UNCOMMON.jpg", omega: "SALY", rarity: "ssk" },
+      { key: "CATHERINA_VALLENCIA", name: "Catherina Vallencia (Erine)", role: "Kartu Angka 3", type: "number", code: "SERI", file: "CATHERINA_VALLENCIA_UNCOMMON.jpg", omega: "SERI", rarity: "ssk" },
+      { key: "JESSLYN_CALLISTA", name: "Jesslyn Callista", role: "Kartu Angka 3", type: "number", code: "JESSLYN_CALLISTA_UNCOMMON", file: "JESSLYN_CALLISTA_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "PUTRI_JAZYTA", name: "Putri Jazyta", role: "Kartu Angka 3", type: "number", code: "PUTRI_JAZYTA_UNCOMMON", file: "PUTRI_JAZYTA_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "ANINDYA_RAMADHANI", name: "Anindya Ramadhani (Anin)", role: "Kartu Angka 4", type: "number", code: "SANI", file: "ANINDYA_RAMADHANI_UNCOMMON.jpg", omega: "SANI", rarity: "ssk" },
+      { key: "FAHIRA_PUTRI", name: "Fahira Putri", role: "Kartu Angka 4", type: "number", code: "FAHIRA_PUTRI_UNCOMMON", file: "FAHIRA_PUTRI_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "LETYCIA_MOREEN", name: "Letycia Moreen", role: "Kartu Angka 4", type: "number", code: "SMOR", file: "LETYCIA_MOREEN_UNCOMMON.jpg", omega: "SMOR", rarity: "ssk" },
+      { key: "RALYNE_VAN", name: "Ralyne Van", role: "Kartu Angka 4", type: "number", code: "RALYNE_VAN_UNCOMMON", file: "RALYNE_VAN_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "ASTRELLA_VIRGIANANDA", name: "Astrella Virgiananda", role: "Kartu Angka 5", type: "number", code: "ASTRELLA_VIRGIANANDA_UNCOMMON", file: "ASTRELLA_VIRGIANANDA_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "FATIMAH_AZZAHRA", name: "Fatimah Azzahra", role: "Kartu Angka 5", type: "number", code: "FATIMAH_AZZAHRA_UNCOMMON", file: "FATIMAH_AZZAHRA_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "MAEGAN_JOVANKA", name: "Maegan Jovanka", role: "Kartu Angka 5", type: "number", code: "MAEGAN_JOVANKA_UNCOMMON", file: "MAEGAN_JOVANKA_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "REGINA_WILLIAM", name: "Regina William (Eline)", role: "Kartu Angka 5", type: "number", code: "SELN", file: "REGINA_WILLIAM_UNCOMMON.jpg", omega: "SELN", rarity: "ssk" },
+      { key: "AULIA_RIZA", name: "Aulia Riza", role: "Kartu Angka 6", type: "number", code: "AULIA_RIZA_UNCOMMON", file: "AULIA_RIZA_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "HAGIA_SOPIA", name: "Hagia Sopia", role: "Kartu Angka 6", type: "number", code: "HAGIA_SOPIA_UNCOMMON", file: "HAGIA_SOPIA_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "MAXINE_FAYE", name: "Maxine Faye", role: "Kartu Angka 6", type: "number", code: "MAXINE_FAYE_UNCOMMON", file: "MAXINE_FAYE_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "RIBKA_BUDIMAN", name: "Ribka Budiman", role: "Kartu Angka 6", type: "number", code: "SRIB", file: "RIBKA_BUDIMAN_UNCOMMON.jpg", omega: "SRIB", rarity: "ssk" },
+      { key: "BONG_APRILLI", name: "Bong Aprilli", role: "Kartu Angka 7", type: "number", code: "BONG_APRILLI_UNCOMMON", file: "BONG_APRILLI_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "HEIDA_SUYANGGA", name: "Heida Suyangga", role: "Kartu Angka 7", type: "number", code: "HEIDA_SUYANGGA_UNCOMMON", file: "HEIDA_SUYANGGA_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "MICHELLE_LEVIA", name: "Michelle Levia (Levi)", role: "Kartu Angka 7", type: "number", code: "SLEV", file: "MICHELLE_LEVIA_UNCOMMON.jpg", omega: "SLEV", rarity: "ssk" },
+      { key: "SHABILQIS_NAILA", name: "Shabilqis Naila (Nala)", role: "Kartu Angka 7", type: "number", code: "SNAL", file: "SHABILQIS_NAILA_UNCOMMON.jpg", omega: "SNAL", rarity: "ssk" },
+      { key: "CARISSA_DINI", name: "Carissa Dini", role: "Kartu Angka 8", type: "number", code: "CARISSA_DINI_UNCOMMON", file: "CARISSA_DINI_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "HILLARY_ABIGAIL", name: "Hillary Abigail (Lily)", role: "Kartu Angka 8", type: "number", code: "HILLARY_ABIGAIL_UNCOMMON", file: "HILLARY_ABIGAIL_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "MIKAELA_KUSJANTO", name: "Mikaela Kusjanto", role: "Kartu Angka 8", type: "number", code: "MIKAELA_KUSJANTO_UNCOMMON", file: "MIKAELA_KUSJANTO_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "SONA_KALYANA", name: "Sona Kalyana", role: "Kartu Angka 8", type: "number", code: "SONA_KALYANA_UNCOMMON", file: "SONA_KALYANA_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "CATHLEEN_NIXIE", name: "Cathleen Nixie (Cathy)", role: "Kartu Angka 9", type: "number", code: "SCAT", file: "CATHLEEN_NIXIE_UNCOMMON.jpg", omega: "SCAT", rarity: "ssk" },
+      { key: "HUMAIRA_RAMADHANI", name: "Humaira Ramadhani", role: "Kartu Angka 9", type: "number", code: "HUMAIRA_RAMADHANI_UNCOMMON", file: "HUMAIRA_RAMADHANI_UNCOMMON.jpg", rarity: "uncommon" },
+      { key: "NAYLA_SUJI", name: "Nayla Suji", role: "Kartu Angka 9", type: "number", code: "SNAY", file: "NAYLA_SUJI_UNCOMMON.jpg", omega: "SNAY", rarity: "ssk" },
+      { key: "VICTORIA_KIMBERLY", name: "Victoria Kimberly (Kimmy)", role: "Kartu Angka 9", type: "number", code: "SKIM", file: "VICTORIA_KIMBERLY_UNCOMMON.jpg", omega: "SKIM", rarity: "ssk" }
     ];
 
     function toggleSidebar() {
@@ -821,8 +907,13 @@
         if (res.ok) {
           const data = await res.json();
           const p = data.data || data.profile;
-          if (p && Array.isArray(p.inventory)) {
-            userInventory = new Set(p.inventory.map(x => String(x).toUpperCase()));
+          if (p) {
+            if (Array.isArray(p.inventory)) {
+              userInventory = new Set(p.inventory.map(x => String(x).toUpperCase()));
+            }
+            if (p.tb_coin !== undefined) document.getElementById('valGold').textContent = Number(p.tb_coin).toLocaleString('id-ID');
+            if (p.token_once !== undefined) document.getElementById('valToken').textContent = Number(p.token_once).toLocaleString('id-ID');
+            if (p.kristal !== undefined) document.getElementById('valCrystal').textContent = Number(p.kristal).toLocaleString('id-ID');
           }
         }
       } catch (e) {
@@ -831,31 +922,65 @@
       renderSkinCollection();
     }
 
+    // ===== RENDER SKIN COLLECTION (GREY / COLOR DISPLAYER) =====
     function renderSkinCollection() {
       const container = document.getElementById('skinGridContainer');
       const search = (document.getElementById('skinSearch').value || '').toLowerCase();
       
-      let filtered = UNO_78_MEMBERS.filter(m => m.name.toLowerCase().includes(search) || m.role.toLowerCase().includes(search));
+      let filtered = UNO_78_MEMBERS.filter(m => {
+        const matchSearch = m.name.toLowerCase().includes(search) || m.role.toLowerCase().includes(search);
+        if (!matchSearch) return false;
+        if (currentSkinRarityFilter === 'all') return true;
+        if (currentSkinRarityFilter === 'omega') return m.rarity === 'omega';
+        if (currentSkinRarityFilter === 'ssk') return m.rarity === 'ssk';
+        if (currentSkinRarityFilter === 'myth') return m.rarity === 'myth';
+        if (currentSkinRarityFilter === 'legend') return m.rarity === 'legend';
+        if (currentSkinRarityFilter === 'rare') return m.rarity === 'rare';
+        if (currentSkinRarityFilter === 'uncommon') return m.rarity === 'uncommon';
+        return true;
+      });
 
       container.innerHTML = filtered.map(m => {
         const isEquipped = equippedSkinMap[m.key] !== undefined;
-        const isOwned = userInventory.has(m.code.toUpperCase()) || userInventory.has(m.key.toUpperCase());
-        const thumbUrl = `../skin/${m.file}`;
+        // Check ownership against core inventory
+        const hasOmega = m.omega && userInventory.has(m.omega.toUpperCase());
+        const hasCard = userInventory.has(m.code.toUpperCase()) || userInventory.has(m.key.toUpperCase());
+        const isOwned = hasOmega || hasCard;
+
+        let thumbUrl = '';
+        let isGrey = false;
+
+        if (m.omega) {
+          // Omega Card: Color image is in skin_jpg/[CODE].jpg
+          thumbUrl = `../skin_jpg/${m.omega}.jpg`;
+          if (!isOwned) {
+            isGrey = true; // Apply grey filter for unowned omega
+          }
+        } else {
+          // Standard card: Color is in skin/[FILE], Grey is in skin/[FILE_grey]
+          if (isOwned) {
+            thumbUrl = `../skin/${m.file}`;
+          } else {
+            thumbUrl = `../skin/${m.file.replace('.jpg', '_grey.jpg')}`;
+            isGrey = true;
+          }
+        }
 
         let btnHtml = '';
         if (isEquipped) {
           btnHtml = `<button class="btn-equip-action btn-equipped" onclick="unequipSkin('${m.key}')">âœ“ TERPASANG</button>`;
         } else if (isOwned || m.type === 'number' || m.type === 'action') {
-          btnHtml = `<button class="btn-equip-action btn-equip-avail" onclick="equipSkin('${m.key}', '${m.code}')">PASANG SKIN</button>`;
+          const skinCodeToEquip = m.omega || m.code;
+          btnHtml = `<button class="btn-equip-action btn-equip-avail" onclick="equipSkin('${m.key}', '${skinCodeToEquip}')">PASANG SKIN</button>`;
         } else {
-          btnHtml = `<button class="btn-equip-action btn-equip-locked" disabled>ðŸ”’ BELUM DIMILIKI</button>`;
+          btnHtml = `<button class="btn-equip-action btn-equip-locked" disabled>ðŸ”’ BELUM DIMILIKI (GACHA)</button>`;
         }
 
         return `
-          <div class="equip-card-item">
-            <img src="${thumbUrl}" class="equip-card-thumb" onerror="this.src='../icon.png'" alt="${m.name}">
+          <div class="equip-card-item ${!isOwned ? 'locked' : ''}">
+            <img src="${thumbUrl}" class="equip-card-thumb ${isGrey ? 'card-grey-filter' : ''}" onerror="this.src='../icon.png'" alt="${m.name}">
             <div class="equip-card-name">${m.name}</div>
-            <div class="equip-card-role">${m.role}</div>
+            <div class="equip-card-role">${m.role} ${m.omega ? 'â€¢ ðŸ‘‘ Omega' : ''}</div>
             ${btnHtml}
           </div>
         `;
@@ -1120,13 +1245,23 @@
       const skin = card.skin || {};
       const valDisplay = card.value.toUpperCase().replace('_', ' ');
       const clickAttr = isPlayable ? `onclick="userClickCard('${card.id}', '${card.type}', this)"` : '';
-      const photoSrc = skin.avatar || `../skin/${card.skin_key || 'ANGELINA_CHRISTY'}_UNCOMMON.jpg`;
+      
+      // Determine card photo source based on equipped skin or default trainee
+      let photoSrc = skin.avatar;
+      if (!photoSrc || photoSrc.includes('i.ibb.co')) {
+        const equippedCode = equippedSkinMap[card.skin_key];
+        if (equippedCode && OMEGA_SKIN_MAP[equippedCode]) {
+          photoSrc = `../skin_jpg/${OMEGA_SKIN_MAP[equippedCode]}.jpg`;
+        } else {
+          photoSrc = `../skin/${card.skin_key || 'ANGELINA_CHRISTY'}_UNCOMMON.jpg`;
+        }
+      }
 
       return `
         <div class="uno-card ${card.color}" ${clickAttr} id="card_${card.id}">
           <div class="card-corner-top">${valDisplay}</div>
           <div class="card-center-photo">
-            <img src="${photoSrc}" onerror="this.src='../icon.png'" alt="${skin.name || 'Member'}">
+            <img src="${photoSrc}" onerror="this.src='../skin/ANGELINA_CHRISTY_UNCOMMON.jpg'" alt="${skin.name || 'Member'}">
           </div>
           <div class="card-tier-pill">${skin.name ? skin.name.substring(0, 10) : 'JKT48'}</div>
           <div class="card-corner-bot">${valDisplay}</div>
@@ -1236,7 +1371,6 @@
     }
 
     function appendChatMessage(chat) {
-      // Append to lounge chat
       const msgs = document.getElementById('chatMsgs');
       if (msgs) {
         const div = document.createElement('div');
@@ -1245,7 +1379,6 @@
         msgs.appendChild(div);
         msgs.scrollTop = msgs.scrollHeight;
       }
-      // Append to in-game chat
       const inMsgs = document.getElementById('ingameChatMsgs');
       if (inMsgs) {
         const div2 = document.createElement('div');
