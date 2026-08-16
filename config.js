@@ -21,7 +21,7 @@ const ALCSTA_CONFIG = {
     QUIZ_API_URL: "https://shinezzzz-gokgokgogkgokgok.hf.space",
     
     // Google OAuth Client ID (Dapatkan dari Google Cloud Console -> Credentials)
-    GOOGLE_CLIENT_ID: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+    GOOGLE_CLIENT_ID: "57074961539-i052cocuc2v41trgni243nu69ql20u3p.apps.googleusercontent.com",
 
     // Konfigurasi Default Assets
     DEFAULT_AVATAR: "https://i.ibb.co.com/Y4JdtfGH/download.png",
