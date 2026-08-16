@@ -4,29 +4,21 @@
 // ==============================================================================
 
 const ALCSTA_CONFIG = {
-    // URL Backend Utama (Core Engine - HuggingFace Space)
-    CORE_BACKEND_URL: "https://ashazeneca-botanalistiktl.hf.space",
+    // 1. URL Backend Utama Core (Login, Register, Chat, Gacha, Profil, PostgreSQL Sync)
+    CORE_BACKEND_URL: "https://shinezzzz-gokgokgogkgokgok.hf.space",
     
-    // URL Telegram Userbot Notifier & Live Sosmed Feed Aggregator
-    NOTIFIER_API_URL: "https://ashazeneca-botanalistiktl.hf.space",
-
-    // URL API Stream Tracker & Scraper (Live Stream Engine)
+    // 2. URL Live Stream Tracker & Room Engine (Showroom & IDN Live)
     STREAM_TRACKER_URL: "https://ashazeneca-botanalistiktl.hf.space",
     
-    // URL API Wrapped & Analytics
-    ANALYTICS_URL: "https://ashazeneca-botanalistiktl.hf.space",
-    
-    // URL API Media Saver & HD Processor
-    SAVER_API_URL: "https://ashazeneca-botanalistiktl.hf.space",
-
-    // URL API Teater Hub & Radio 24/7 Engine
-    STATION_API_URL: "https://ashazeneca-botanalistiktl.hf.space",
-
-    // URL API Kuis & Photocard Barter Engine
-    QUIZ_API_URL: "https://ashazeneca-botanalistiktl.hf.space",
-    
-    // URL Dedicated Backend Alcstify Stream Engine (HuggingFace Space Baru)
+    // 3. URL Dedicated Music & Video Streamer Proxy (Alcstify Google Drive Master)
     ALCSTIFY_STREAM_API_URL: "https://shinezzzz-gokgokgok.hf.space",
+
+    // URL Services Terkait
+    NOTIFIER_API_URL: "https://shinezzzz-gokgokgogkgokgok.hf.space",
+    ANALYTICS_URL: "https://shinezzzz-gokgokgogkgokgok.hf.space",
+    SAVER_API_URL: "https://shinezzzz-gokgokgogkgokgok.hf.space",
+    STATION_API_URL: "https://ashazeneca-botanalistiktl.hf.space",
+    QUIZ_API_URL: "https://shinezzzz-gokgokgogkgokgok.hf.space",
     
     // Konfigurasi Default Assets
     DEFAULT_AVATAR: "https://i.ibb.co.com/Y4JdtfGH/download.png",
@@ -38,8 +30,11 @@ const ALCSTA_CONFIG = {
 
 // Helper Resolver URL Pintar
 function getApiUrl(type) {
-    if (type === 'alcstify_stream' || type === 'stream') {
-        return ALCSTA_CONFIG.ALCSTIFY_STREAM_API_URL || ALCSTA_CONFIG.CORE_BACKEND_URL;
+    if (type === 'alcstify_stream' || type === 'music' || type === 'drive') {
+        return ALCSTA_CONFIG.ALCSTIFY_STREAM_API_URL;
+    }
+    if (type === 'live' || type === 'stream_tracker' || type === 'station') {
+        return ALCSTA_CONFIG.STREAM_TRACKER_URL;
     }
     return ALCSTA_CONFIG.CORE_BACKEND_URL;
 }
