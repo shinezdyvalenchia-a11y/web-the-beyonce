@@ -341,7 +341,7 @@
     }
     @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-6px); } }
 
-    /* LAYER 4: PLAYER HUDS (ORTHOGONAL / DIRECT FACING) */
+    /* LAYER 4: PLAYER HUDS */
     .hud-layer { position: absolute; inset: 0; z-index: 30; pointer-events: none; }
     .hud-player {
       position: absolute; pointer-events: auto; display: flex; align-items: center; gap: 10px;
@@ -503,19 +503,19 @@
       <img src="../icon.png" alt="Logo">
       <span>The Beyonce</span>
     </a>
-    <a href="../beranda/" class="na"><span class="ni">ðŸ’¬</span>Beranda</a>
-    <a href="../profil/" class="na"><span class="ni">ðŸ‘¤</span>Profil</a>
-    <a href="../gacha-skin/" class="na"><span class="ni">ðŸŽ</span>Gacha</a>
-    <a href="../live-jkt48/" class="na"><span class="ni">ðŸŽ¤</span>Live JKT</a>
-    <a href="../alcstify/" class="na"><span class="ni">ðŸŽµ</span>Alcstify</a>
-    <a href="#" class="na on"><span class="ni">ðŸŽ®</span>Mini Games</a>
-    <a href="https://thebeyonce48.my.id" target="_blank" rel="noopener noreferrer" class="na"><span class="ni">ðŸ•¹ï¸</span>Main Games</a>
+    <a href="../beranda/" class="na"><span class="ni">&#128172;</span>Beranda</a>
+    <a href="../profil/" class="na"><span class="ni">&#128100;</span>Profil</a>
+    <a href="../gacha-skin/" class="na"><span class="ni">&#127873;</span>Gacha</a>
+    <a href="../live-jkt48/" class="na"><span class="ni">&#127908;</span>Live JKT</a>
+    <a href="../alcstify/" class="na"><span class="ni">&#127925;</span>Alcstify</a>
+    <a href="#" class="na on"><span class="ni">&#127918;</span>Mini Games</a>
+    <a href="https://thebeyonce48.my.id" target="_blank" rel="noopener noreferrer" class="na"><span class="ni">&#128377;&#65039;</span>Main Games</a>
   </nav>
 
   <!-- TOP BAR WITH BERANDA COIN ICONS -->
   <header class="topbar">
     <div class="topbar-left">
-      <button class="menu-btn" onclick="toggleSidebar()">â˜°</button>
+      <button class="menu-btn" onclick="toggleSidebar()">&#9776;</button>
       <div class="page-title">Galery Alcsta48 - UNO Omega Card</div>
     </div>
     <div class="inventory-bar" id="inventoryBar">
@@ -533,8 +533,8 @@
     <div id="lobby-screen">
       <!-- SUB TABS -->
       <div class="main-subtabs">
-        <button class="subtab-btn active" id="tabBtnArena" onclick="switchSubTab('arena')">ðŸŸï¸ Arena Kamar UNO</button>
-        <button class="subtab-btn" id="tabBtnSkin" onclick="switchSubTab('skin')">ðŸŽ´ Galery Alcsta48 - UNO Omega Card</button>
+        <button class="subtab-btn active" id="tabBtnArena" onclick="switchSubTab('arena')">&#127967; Arena Kamar UNO</button>
+        <button class="subtab-btn" id="tabBtnSkin" onclick="switchSubTab('skin')">&#127188; Galery Alcsta48 - UNO Omega Card</button>
       </div>
 
       <!-- ARENA LOBBY VIEW -->
@@ -543,9 +543,9 @@
           <h1>UNO NO MERCY: JKT48 ACTION DECK</h1>
           <p>Adu taktik kartu Extreme dengan 78 Member Deck, efek Skin Omega Spesial, Stack Penalty +10, dan mode taruhan Sistem Gugur!</p>
           <div class="hero-actions">
-            <button class="btn-action btn-create" onclick="openCreateModal()">âž• Buat Kamar Baru</button>
-            <button class="btn-action btn-quick" onclick="quickMatch()">âš¡ Quick Match (Otomatis)</button>
-            <button class="btn-action btn-code" onclick="openCodeModal()">ðŸ”‘ Masukkan Kode Kamar</button>
+            <button class="btn-action btn-create" onclick="openCreateModal()">&#10133; Buat Kamar Baru</button>
+            <button class="btn-action btn-quick" onclick="quickMatch()">&#9889; Quick Match (Otomatis)</button>
+            <button class="btn-action btn-code" onclick="openCodeModal()">&#128273; Masukkan Kode Kamar</button>
           </div>
         </div>
 
@@ -571,7 +571,7 @@
         </div>
 
         <div class="skin-filter-bar">
-          <input type="text" class="skin-search-input" id="skinSearch" placeholder="ðŸ” Cari nama member atau skin..." oninput="renderMemberSkins()">
+          <input type="text" class="skin-search-input" id="skinSearch" placeholder="&#128269; Cari nama member atau skin..." oninput="renderMemberSkins()">
           <div class="filter-tabs">
             <div class="filter-tab active" onclick="filterMemberCategory('all', this)">Semua Member (78)</div>
             <div class="filter-tab" onclick="filterMemberCategory('wild', this)">Boss Wild Cards (10)</div>
@@ -591,10 +591,10 @@
       <div class="lounge-top">
         <div>
           <h2 id="loungeTitle" style="font-family: 'Outfit'; font-size: 24px;">Kamar Arena UNO #1</h2>
-          <p id="loungeSub" style="color: var(--text-muted); font-size: 13px;">Mode Classic â€¢ Host: Shani</p>
+          <p id="loungeSub" style="color: var(--text-muted); font-size: 13px;">Mode Classic &bull; Host: Shani</p>
         </div>
         <div class="lounge-code-badge" onclick="copyRoomCode()" title="Klik untuk Salin Kode">
-          KODE: <span id="loungeRoomCode">------</span> ðŸ“‹
+          KODE: <span id="loungeRoomCode">------</span> &#128203;
         </div>
       </div>
 
@@ -604,14 +604,14 @@
             <!-- Player Slots -->
           </div>
           <div style="margin-top: 24px; display: flex; gap: 12px;">
-            <button class="btn-action btn-create" id="btnReady" onclick="toggleReady()">ðŸ”¥ SIAP BERMAIN</button>
-            <button class="btn-action btn-code" onclick="leaveRoom()">ðŸšª Keluar Kamar</button>
+            <button class="btn-action btn-create" id="btnReady" onclick="toggleReady()">&#128293; SIAP BERMAIN</button>
+            <button class="btn-action btn-code" onclick="leaveRoom()">&#128682; Keluar Kamar</button>
           </div>
         </div>
 
         <!-- In-Room Temp Chat -->
         <div class="lounge-chat">
-          <div class="chat-header">ðŸ’¬ Obrolan Kamar (Sementara)</div>
+          <div class="chat-header">&#128172; Obrolan Kamar (Sementara)</div>
           <div class="chat-messages" id="chatMsgs">
             <div class="chat-bubble-wrap">
               <div class="chat-avatar-mini"><img src="../icon.png" alt="sys"></div>
@@ -638,20 +638,20 @@
 
     <!-- LAYER 2: CSS PAPER PLANES -->
     <div class="plane-container">
-      <div class="css-plane plane-1">âœˆï¸</div>
-      <div class="css-plane plane-2">âœˆï¸</div>
-      <div class="css-plane plane-3">âœˆï¸</div>
+      <div class="css-plane plane-1">&#9992;&#65039;</div>
+      <div class="css-plane plane-2">&#9992;&#65039;</div>
+      <div class="css-plane plane-3">&#9992;&#65039;</div>
     </div>
 
     <!-- LAYER 3: 3D ISOMETRIC GLASS TABLE -->
     <div class="table-viewport">
       <div id="center-table">
         <div class="color-ring red" id="tableColorRing"></div>
-        <div class="stack-badge" id="tableStackBadge" style="display:none;">ðŸ”¥ +4 STACK!</div>
+        <div class="stack-badge" id="tableStackBadge" style="display:none;">&#128293; +4 STACK!</div>
 
         <!-- DRAW PILE (DECK) -->
         <div class="deck-pile draw-deck" onclick="userDrawCard()" title="Ambil Kartu">
-          <div style="font-size: 20px;">ðŸŽ´</div>
+          <div style="font-size: 20px;">&#127188;</div>
           <div style="font-size: 11px; margin-top: 4px;">DRAW (<span id="drawCount">108</span>)</div>
         </div>
 
@@ -703,8 +703,8 @@
       <!-- Bottom User Hand Area -->
       <div class="hud-bottom">
         <div class="hud-controls">
-          <button class="btn-uno" onclick="userCallUno()">ðŸ“¢ CALL UNO!</button>
-          <button class="btn-arena-exit" onclick="exitArenaToLobby()">ðŸ³ï¸ Menyerah / Keluar</button>
+          <button class="btn-uno" onclick="userCallUno()">&#128226; CALL UNO!</button>
+          <button class="btn-arena-exit" onclick="exitArenaToLobby()">&#127987;&#65039; Menyerah / Keluar</button>
         </div>
         <div class="hand-carousel" id="userHandZone">
           <!-- User cards injected here -->
@@ -713,11 +713,11 @@
     </div>
 
     <!-- IN-GAME FLOATING CHAT DRAWER -->
-    <button class="ingame-chat-toggle" onclick="toggleIngameChat()">ðŸ’¬ Chat Kamar</button>
+    <button class="ingame-chat-toggle" onclick="toggleIngameChat()">&#128172; Chat Kamar</button>
     <div class="ingame-chat-drawer" id="ingameChatDrawer">
       <div class="chat-header" style="display: flex; justify-content: space-between;">
-        <span>ðŸ’¬ Obrolan Kamar</span>
-        <span style="cursor: pointer;" onclick="toggleIngameChat()">âœ•</span>
+        <span>&#128172; Obrolan Kamar</span>
+        <span style="cursor: pointer;" onclick="toggleIngameChat()">&#10005;</span>
       </div>
       <div class="chat-messages" id="ingameChatMsgs">
         <div class="chat-bubble-wrap">
@@ -736,7 +736,7 @@
 
     <!-- LAYER 5: VFX ENGINE OVERLAYS -->
     <div id="vfx-overlay">
-      <div id="jiko-banner">âœ¨ Peduli dan berbaik hati, siapakah dia? Christy! âœ¨</div>
+      <div id="jiko-banner">&#10024; Peduli dan berbaik hati, siapakah dia? Christy! &#10024;</div>
     </div>
   </div>
 
@@ -1204,11 +1204,11 @@
 
           let actionBtn = '';
           if (isActive) {
-            actionBtn = `<button class="btn-skin-action btn-skin-active" onclick="unequipMemberSkin('${m.key}')">âœ“ AKTIF (LEPAS)</button>`;
+            actionBtn = `<button class="btn-skin-action btn-skin-active" onclick="unequipMemberSkin('${m.key}')">&#10003; AKTIF (LEPAS)</button>`;
           } else if (isOwned) {
             actionBtn = `<button class="btn-skin-action btn-skin-equip" onclick="equipMemberSkin('${m.key}', '${s.code}')">PASANG</button>`;
           } else {
-            actionBtn = `<button class="btn-skin-action btn-skin-locked" disabled>ðŸ”’ TERKUNCI</button>`;
+            actionBtn = `<button class="btn-skin-action btn-skin-locked" disabled>&#128274; TERKUNCI</button>`;
           }
 
           return `
@@ -1248,7 +1248,7 @@
       equippedSkinMap[memberKey] = skinCode;
       localStorage.setItem('uno_equipped_skins', JSON.stringify(equippedSkinMap));
       renderMemberSkins();
-      showToast(`âœ¨ Skin ${skinCode} aktif untuk ${memberKey}! (Disimpan ke PostgreSQL)`);
+      showToast(`\u2728 Skin ${skinCode} aktif untuk ${memberKey}! (Disimpan ke PostgreSQL)`);
 
       // 1. POST to Backend Neon PostgreSQL
       try {
@@ -1326,7 +1326,7 @@
       if (!rooms.length) {
         container.innerHTML = `
           <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
-            Belum ada kamar aktif. Jadilah yang pertama membuat kamar! ðŸŽ´
+            Belum ada kamar aktif. Jadilah yang pertama membuat kamar! &#127188;
           </div>
         `;
         return;
@@ -1339,12 +1339,12 @@
               <div class="room-card-host">Host: ${r.host_name}</div>
             </div>
             <span class="badge-mode ${r.mode === 'bet_battle' ? 'badge-bet' : 'badge-classic'}">
-              ${r.mode === 'bet_battle' ? 'ðŸ’° ' + r.wager.amount + ' ' + r.wager.currency : 'ðŸŽ® Classic'}
+              ${r.mode === 'bet_battle' ? '&#128176; ' + r.wager.amount + ' ' + r.wager.currency : '&#127918; Classic'}
             </span>
           </div>
           <div class="room-meta">
-            <span>ðŸ‘¥ ${r.player_count}/${r.max_players} Pemain</span>
-            <span>ðŸ”’ ${r.room_type === 'private' ? 'Privat' : 'Publik'}</span>
+            <span>&#128101; ${r.player_count}/${r.max_players} Pemain</span>
+            <span>&#128274; ${r.room_type === 'private' ? 'Privat' : 'Publik'}</span>
           </div>
           <button class="btn-join" onclick="joinRoom('${r.room_id}')">Gabung Kamar</button>
         </div>
@@ -1437,11 +1437,11 @@
       if (msg.type === 'card_played') {
         if (msg.vfx) triggerSkinVFX(msg.vfx);
       } else if (msg.type === 'deck_recycled') {
-        showToast("ðŸ”€ Discard pile dikocok ulang ke Draw Pile!");
+        showToast("\uD83D\uDD00 Discard pile dikocok ulang ke Draw Pile!");
       } else if (msg.type === 'new_chat') {
         appendChatMessage(msg.chat);
       } else if (msg.type === 'player_knockout') {
-        showToast(`ðŸ’¥ ${msg.player_name} GUGUR (Mercy Limit 25+ Kartu)!`);
+        showToast(`\uD83D\uDCA5 ${msg.player_name} GUGUR (Mercy Limit 25+ Kartu)!`);
       } else if (msg.type === 'game_over') {
         showGameOverModal(msg.settlement);
       }
@@ -1451,7 +1451,7 @@
     function renderLoungeState() {
       if (!activeRoom) return;
       document.getElementById('loungeTitle').textContent = activeRoom.name;
-      document.getElementById('loungeSub').textContent = `Mode ${activeRoom.mode} â€¢ Host: ${activeRoom.host_name}`;
+      document.getElementById('loungeSub').textContent = `Mode ${activeRoom.mode} \u2022 Host: ${activeRoom.host_name}`;
       document.getElementById('loungeRoomCode').textContent = activeRoom.room_code || activeRoom.room_id.substring(4);
 
       const slots = document.getElementById('slotsContainer');
@@ -1466,7 +1466,7 @@
                 <img src="${p.avatar || '../kitty.png.png'}" class="slot-avatar" onerror="this.src='../kitty.png.png'" alt="avatar">
                 ${borderSrc ? `<img src="${borderSrc}" class="slot-border-frame" onerror="this.style.display='none'">` : ''}
               </div>
-              <div class="slot-name">${p.name} ${p.is_bot ? 'ðŸ¤–' : ''}</div>
+              <div class="slot-name">${p.name} ${p.is_bot ? '\uD83E\uDD16' : ''}</div>
               <span class="slot-status ${p.is_ready ? 'status-ready' : 'status-waiting'}">
                 ${p.is_ready ? 'SIAP' : 'MENUNGGU'}
               </span>
@@ -1475,7 +1475,7 @@
         } else {
           html += `
             <div class="slot-card slot-empty">
-              <div style="font-size: 24px; color: var(--text-muted);">âž•</div>
+              <div style="font-size: 24px; color: var(--text-muted);">&#10133;</div>
               <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Slot Kosong</div>
               <button class="btn-add-bot" onclick="addBotSlot()">+ Tambah Bot AI</button>
             </div>
@@ -1514,7 +1514,7 @@
       const stackBadge = document.getElementById('tableStackBadge');
       if (activeRoom.pending_draw_count > 0) {
         stackBadge.style.display = 'block';
-        stackBadge.textContent = `ðŸ”¥ +${activeRoom.pending_draw_count} PENALTY STACK!`;
+        stackBadge.textContent = `\uD83D\uDD25 +${activeRoom.pending_draw_count} PENALTY STACK!`;
       } else {
         stackBadge.style.display = 'none';
       }
@@ -1645,7 +1645,7 @@
     function userCallUno() {
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ action: 'call_uno' }));
-        showToast("ðŸ“¢ KAMU MEMANGGIL UNO!");
+        showToast("\uD83D\uDCE2 KAMU MEMANGGIL UNO!");
       }
     }
 
@@ -1656,7 +1656,7 @@
       const jiko = document.getElementById('jiko-banner');
 
       if (skin.jiko) {
-        jiko.textContent = `âœ¨ ${skin.name}: "${skin.jiko}" âœ¨`;
+        jiko.textContent = `\u2728 ${skin.name}: "${skin.jiko}" \u2728`;
         overlay.className = skin.tier === 'OMEGA_SPESIAL' ? 'vfx-active-omega' : 'vfx-active-fc';
         jiko.classList.add('jiko-show');
 
@@ -1761,7 +1761,7 @@
     }
 
     function showGameOverModal(settlement) {
-      alert("ðŸ† GAME SELESAI! Cek hasil akhir dan koinmu di menu profil.");
+      alert("\uD83C\uDFC6 GAME SELESAI! Cek hasil akhir dan koinmu di menu profil.");
       exitArenaToLobby();
     }
 
@@ -1781,7 +1781,7 @@
     function copyRoomCode() {
       const code = document.getElementById('loungeRoomCode').textContent;
       navigator.clipboard.writeText(code);
-      showToast("ðŸ“‹ Kode kamar berhasil disalin!");
+      showToast("\uD83D\uDCCB Kode kamar berhasil disalin!");
     }
 
     // Init App
