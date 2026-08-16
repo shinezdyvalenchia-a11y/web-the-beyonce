@@ -6,6 +6,7 @@
   <title>Galery Alcsta48 - UNO Omega Card | The Beyonce 48</title>
   <link rel="icon" href="../icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800;900&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <script src="../config.js?v=12.0"></script>
   <style>
     :root {
       --primary: #ec4899;
@@ -788,15 +789,44 @@
   </div>
 
   <script>
-    // ===== CONFIG & STATE =====
-    const API_BASE = "https://shinezzzz-gokgokgok.hf.space";
-    const WS_BASE = "wss://shinezzzz-gokgokgok.hf.space";
-    const CORE_BACKEND_URL = "https://shinezzzz-gokgokgogkgokgok.hf.space";
+    // ===== CONFIG & HELPER IDENTIK BERANDA & KOLEKSI KARTU =====
+    const CORE_BACKEND_URL = (typeof getApiUrl === "function") 
+      ? getApiUrl("core") 
+      : "https://shinezzzz-gokgokgogkgokgok.hf.space";
 
-    let currentSession = localStorage.getItem('user_session') || localStorage.getItem('beyonce_session') || 'sess_' + Math.random().toString(36).substring(2, 10);
-    localStorage.setItem('beyonce_session', currentSession);
-    let currentUserName = localStorage.getItem('beyonce_username') || 'Wota_' + currentSession.substring(5, 9);
-    let currentUserAvatar = "../kitty.png.png";
+    const GAME_ENGINE_URL = (typeof getApiUrl === "function")
+      ? getApiUrl("game")
+      : "https://shinezzzz-gokgokgok.hf.space";
+
+    const WS_BASE = GAME_ENGINE_URL.replace(/^http/i, 'ws');
+    const DEFAULT_TEMPLATE_PP = "https://i.ibb.co.com/Y4JdtfGH/download.png";
+
+    // Resolving Cookie persis seperti beranda / koleksi kartu
+    function getCookie(name) {
+      let nameEQ = name + "="; let ca = document.cookie.split(';');
+      for(let i=0; i < ca.length; i++) {
+        let c = ca[i]; while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+      } return null;
+    }
+
+    function getUserSession() {
+      return getCookie("user_session") || 
+             getCookie("session_key") || 
+             getCookie("sessionCookie") || 
+             getCookie("token") || 
+             localStorage.getItem("user_session") || 
+             localStorage.getItem("session_key") || 
+             localStorage.getItem("sessionCookie") || 
+             localStorage.getItem("beyonce_session") || 
+             sessionStorage.getItem("user_session") || 
+             sessionStorage.getItem("session_key") || 
+             "demo_user";
+    }
+
+    let currentSession = getUserSession();
+    let currentUserName = localStorage.getItem('beyonce_username') || 'Wota_' + currentSession.substring(0, 5);
+    let currentUserAvatar = DEFAULT_TEMPLATE_PP;
     let currentUserSkinCode = "";
     let currentUserBorderCode = "";
 
@@ -874,7 +904,7 @@
         ]
       },
       {
-        key: "MARSHA_LENATHEA", name: "Marsha Lenathea", role: "Wild Targeted Attack", type: "wild",
+        key: "MARSHA_LENATHEA", name: "Marsha LenatHEA", role: "Wild Targeted Attack", type: "wild",
         avatar: "../skin/MARSHA_LENATHEA_UNCOMMON.jpg",
         skins: [
           { code: "FMAR", name: "Full Color: Marsha", tier: "Full Color", isOmega: true, file: "FMAR.jpg" },
@@ -1109,15 +1139,99 @@
       document.getElementById('viewArenaLobby').style.display = tab === 'arena' ? 'block' : 'none';
       document.getElementById('viewSkinEquip').style.display = tab === 'skin' ? 'block' : 'none';
       if (tab === 'skin') {
-        loadUserSkinInventory();
+        loadCoreUserStatus();
         fetchEquippedSkinsFromPG();
       }
     }
 
-    // ===== FETCH EQUIPPED SKINS DIRECTLY FROM POSTGRESQL =====
+    // ===== 1. TEMBAK & AMBIL DATA ASLI DARI CORE BACKEND ENGINE (/statuschat & /statusskin) =====
+    async function loadCoreUserStatus() {
+      currentSession = getUserSession();
+      const payload = {
+        session_cookie: currentSession,
+        session_key: currentSession,
+        sessionCookie: currentSession
+      };
+
+      // 1. Ambil data Saldo Koin, Kristal & Profil dari /statuschat
+      try {
+        const res = await fetch(`${CORE_BACKEND_URL}/statuschat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const json = await res.json();
+          const p = json.data || json.profile;
+          if (p) {
+            // Update Balances
+            const k = (p.kristal !== undefined) ? p.kristal : (p.kristal_count || 0);
+            const c = (p.tbCoin !== undefined) ? p.tbCoin : (p.tb_coin !== undefined ? p.tb_coin : 0);
+            const t = (p.onceToken !== undefined) ? p.onceToken : (p.token_once !== undefined ? p.token_once : 0);
+            const ko = (p.kristalOmega !== undefined) ? p.kristalOmega : (p.kristal_omega !== undefined ? p.kristal_omega : 0);
+
+            document.getElementById('valKristal').textContent = Number(k).toLocaleString('id-ID');
+            document.getElementById('valGold').textContent = Number(c).toLocaleString('id-ID');
+            document.getElementById('valToken').textContent = Number(t).toLocaleString('id-ID');
+            document.getElementById('valKristalOmega').textContent = Number(ko).toLocaleString('id-ID');
+
+            // Profil Data
+            if (p.nama || p.username) currentUserName = p.nama || p.username;
+            if (p.photoProfile || p.linkProfil) currentUserAvatar = p.photoProfile || p.linkProfil;
+
+            // Chat & Border Skin
+            let rawSkin = p.skin || (p.skins ? p.skins.border_skin : "");
+            if (rawSkin) {
+              let baseCode = String(rawSkin).replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
+              currentUserSkinCode = "CHAT_" + baseCode;
+              currentUserBorderCode = "BORDER_" + baseCode;
+            }
+
+            // Tambahkan inventory ke userInventory Set
+            if (Array.isArray(p.inventory)) {
+              p.inventory.forEach(item => {
+                let code = String(item).toUpperCase().trim();
+                userInventory.add(code);
+                userInventory.add(code.replace(/^BORDER_/i, '').replace(/^CHAT_/i, ''));
+              });
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("Core Backend /statuschat fetch warning:", e);
+      }
+
+      // 2. Ambil seluruh list skin kartu milik user dari /statusskin (persis koleksi-kartu)
+      try {
+        const resSkin = await fetch(`${CORE_BACKEND_URL}/statusskin`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (resSkin.ok) {
+          const skinData = await resSkin.json();
+          const owned = skinData.owned_skins || skinData.skins || skinData.ownedSkins || skinData.data || [];
+          if (Array.isArray(owned)) {
+            owned.forEach(item => {
+              let code = String(item).toUpperCase().trim();
+              userInventory.add(code);
+              userInventory.add(code.replace(/^BORDER_/i, '').replace(/^CHAT_/i, ''));
+            });
+          }
+        }
+      } catch (e2) {
+        console.warn("Core Backend /statusskin fetch warning:", e2);
+      }
+
+      renderMemberSkins();
+    }
+
+    // ===== 2. FETCH EQUIPPED SKINS DARI POSTGRESQL GAME ENGINE =====
     async function fetchEquippedSkinsFromPG() {
       try {
-        const res = await fetch(`${API_BASE}/api/uno/skin/${currentSession}`);
+        const res = await fetch(`${GAME_ENGINE_URL}/api/uno/skin/${currentSession}`);
         if (res.ok) {
           const data = await res.json();
           if (data.equipped_skins) {
@@ -1129,41 +1243,6 @@
       } catch (e) {
         console.warn("Equipped skins PG sync fallback:", e);
       }
-    }
-
-    // ===== LOAD USER INVENTORY & SKINS FROM POSTGRESQL CORE BACKEND =====
-    async function loadUserSkinInventory() {
-      try {
-        const res = await fetch(`${CORE_BACKEND_URL}/statuschat`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ session_cookie: currentSession, session_key: currentSession })
-        });
-        if (res.ok) {
-          const data = await res.json();
-          const p = data.data || data.profile;
-          if (p) {
-            if (Array.isArray(p.inventory)) {
-              userInventory = new Set(p.inventory.map(x => String(x).toUpperCase()));
-            }
-            if (p.tb_coin !== undefined) document.getElementById('valGold').textContent = Number(p.tb_coin).toLocaleString('id-ID');
-            if (p.token_once !== undefined) document.getElementById('valToken').textContent = Number(p.token_once).toLocaleString('id-ID');
-            if (p.kristal !== undefined) document.getElementById('valKristal').textContent = Number(p.kristal).toLocaleString('id-ID');
-            if (p.kristal_omega !== undefined) document.getElementById('valKristalOmega').textContent = Number(p.kristal_omega).toLocaleString('id-ID');
-            if (p.username) currentUserName = p.nama || p.username;
-            if (p.link_profil) currentUserAvatar = p.link_profil;
-            if (p.skin) {
-              let rawSkin = String(p.skin);
-              let baseCode = rawSkin.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
-              currentUserSkinCode = "CHAT_" + baseCode;
-              currentUserBorderCode = "BORDER_" + baseCode;
-            }
-          }
-        }
-      } catch (e) {
-        console.warn("Skin inventory sync fallback:", e);
-      }
-      renderMemberSkins();
     }
 
     // ===== RENDER MEMBER-GROUPED SKIN COLLECTION WITH 1-ACTIVE-SKIN RULE =====
@@ -1185,7 +1264,11 @@
 
         const skinsHtml = m.skins.map(s => {
           const isActive = currentActiveCode === s.code;
-          const isOwned = s.tier === 'Uncommon' || userInventory.has(s.code.toUpperCase()) || userInventory.has(s.code.replace(`${m.key}_`, '').toUpperCase());
+          const isOwned = s.tier === 'Uncommon' || 
+                          userInventory.has(s.code.toUpperCase()) || 
+                          userInventory.has(s.code.replace(`${m.key}_`, '').toUpperCase()) ||
+                          userInventory.has(`BORDER_${s.code.toUpperCase()}`) ||
+                          userInventory.has(`CHAT_${s.code.toUpperCase()}`);
           
           let thumbSrc = '';
           let isGrey = false;
@@ -1250,9 +1333,9 @@
       renderMemberSkins();
       showToast(`\u2728 Skin ${skinCode} aktif untuk ${memberKey}! (Disimpan ke PostgreSQL)`);
 
-      // 1. POST to Backend Neon PostgreSQL
+      // 1. POST to Game Engine PostgreSQL
       try {
-        await fetch(`${API_BASE}/api/uno/skin/equip`, {
+        await fetch(`${GAME_ENGINE_URL}/api/uno/skin/equip`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1282,7 +1365,7 @@
 
       // POST unequip to Backend Neon PostgreSQL
       try {
-        await fetch(`${API_BASE}/api/uno/skin/equip`, {
+        await fetch(`${GAME_ENGINE_URL}/api/uno/skin/equip`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1313,7 +1396,7 @@
     // ===== LOBBY FETCHING =====
     async function fetchLobbyRooms() {
       try {
-        const res = await fetch(`${API_BASE}/api/uno/lobby`);
+        const res = await fetch(`${GAME_ENGINE_URL}/api/uno/lobby`);
         const data = await res.json();
         renderLobbyRooms(data.rooms || []);
       } catch(e) {
@@ -1372,7 +1455,7 @@
       const amount = parseInt(document.getElementById('inputWager').value) || 0;
 
       try {
-        const res = await fetch(`${API_BASE}/api/uno/create`, {
+        const res = await fetch(`${GAME_ENGINE_URL}/api/uno/create`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1463,7 +1546,7 @@
           html += `
             <div class="slot-card">
               <div class="avatar-wrapper">
-                <img src="${p.avatar || '../kitty.png.png'}" class="slot-avatar" onerror="this.src='../kitty.png.png'" alt="avatar">
+                <img src="${p.avatar || DEFAULT_TEMPLATE_PP}" class="slot-avatar" onerror="this.src='${DEFAULT_TEMPLATE_PP}'" alt="avatar">
                 ${borderSrc ? `<img src="${borderSrc}" class="slot-border-frame" onerror="this.style.display='none'">` : ''}
               </div>
               <div class="slot-name">${p.name} ${p.is_bot ? '\uD83E\uDD16' : ''}</div>
@@ -1530,21 +1613,21 @@
         document.getElementById('hudLeft').style.display = 'flex';
         document.getElementById('nameLeft').textContent = opponents[0].name;
         document.getElementById('cardsLeft').textContent = `${opponents[0].card_count} Kartu`;
-        document.getElementById('avatarLeft').src = opponents[0].avatar || '../kitty.png.png';
+        document.getElementById('avatarLeft').src = opponents[0].avatar || DEFAULT_TEMPLATE_PP;
         document.getElementById('hudLeft').classList.toggle('active-turn', opponents[0].is_turn);
       }
       if (opponents[1]) {
         document.getElementById('hudTop').style.display = 'flex';
         document.getElementById('nameTop').textContent = opponents[1].name;
         document.getElementById('cardsTop').textContent = `${opponents[1].card_count} Kartu`;
-        document.getElementById('avatarTop').src = opponents[1].avatar || '../kitty.png.png';
+        document.getElementById('avatarTop').src = opponents[1].avatar || DEFAULT_TEMPLATE_PP;
         document.getElementById('hudTop').classList.toggle('active-turn', opponents[1].is_turn);
       }
       if (opponents[2]) {
         document.getElementById('hudRight').style.display = 'flex';
         document.getElementById('nameRight').textContent = opponents[2].name;
         document.getElementById('cardsRight').textContent = `${opponents[2].card_count} Kartu`;
-        document.getElementById('avatarRight').src = opponents[2].avatar || '../kitty.png.png';
+        document.getElementById('avatarRight').src = opponents[2].avatar || DEFAULT_TEMPLATE_PP;
         document.getElementById('hudRight').classList.toggle('active-turn', opponents[2].is_turn);
       }
 
@@ -1725,7 +1808,7 @@
       const bubbleHtml = `
         <div class="chat-bubble-wrap">
           <div class="chat-avatar-mini">
-            <img src="${chat.avatar || '../kitty.png.png'}" onerror="this.src='../kitty.png.png'">
+            <img src="${chat.avatar || DEFAULT_TEMPLATE_PP}" onerror="this.src='${DEFAULT_TEMPLATE_PP}'">
             ${borderHtml}
           </div>
           <div class="chat-content-box" style="${bgStyle}">
@@ -1771,7 +1854,7 @@
       document.getElementById('lounge-screen').style.display = 'none';
       document.getElementById('lobby-screen').style.display = 'block';
       fetchLobbyRooms();
-      loadUserSkinInventory();
+      loadCoreUserStatus();
     }
 
     function quickMatch() {
@@ -1786,11 +1869,11 @@
 
     // Init App
     window.addEventListener('DOMContentLoaded', () => {
-      loadUserSkinInventory();
+      loadCoreUserStatus();
       fetchEquippedSkinsFromPG();
       fetchLobbyRooms();
       setInterval(fetchLobbyRooms, 8000);
-      setInterval(loadUserSkinInventory, 15000);
+      setInterval(loadCoreUserStatus, 15000);
     });
   </script>
 </body>
