@@ -604,8 +604,9 @@
           <div class="slots-container" id="slotsContainer">
             <!-- Player Slots -->
           </div>
-          <div style="margin-top: 24px; display: flex; gap: 12px;">
+          <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
             <button class="btn-action btn-create" id="btnReady" onclick="toggleReady()">&#128293; SIAP BERMAIN</button>
+            <button class="btn-action btn-quick" id="btnForceStart" onclick="forceStartGame()" style="display: none;">&#128640; MULAI MAIN SEKARANG</button>
             <button class="btn-action btn-code" onclick="leaveRoom()">&#128682; Keluar Kamar</button>
           </div>
         </div>
@@ -1537,12 +1538,35 @@
       document.getElementById('loungeSub').textContent = `Mode ${activeRoom.mode} \u2022 Host: ${activeRoom.host_name}`;
       document.getElementById('loungeRoomCode').textContent = activeRoom.room_code || activeRoom.room_id.substring(4);
 
+      // Check current user readiness & Host Controls
+      const me = activeRoom.players.find(p => p.session_id === currentSession);
+      const readyBtn = document.getElementById('btnReady');
+      const forceStartBtn = document.getElementById('btnForceStart');
+
+      if (readyBtn) {
+        if (me && me.is_ready) {
+          readyBtn.innerHTML = "&#10003; KAMU SUDAH SIAP";
+          readyBtn.style.background = "linear-gradient(135deg, #10b981, #059669)";
+        } else {
+          readyBtn.innerHTML = "&#128293; SIAP BERMAIN";
+          readyBtn.style.background = "linear-gradient(135deg, var(--primary), #f43f5e)";
+        }
+      }
+
+      if (forceStartBtn) {
+        if (activeRoom.host_session === currentSession) {
+          forceStartBtn.style.display = "flex";
+        } else {
+          forceStartBtn.style.display = "none";
+        }
+      }
+
       const slots = document.getElementById('slotsContainer');
       let html = '';
       for (let i = 0; i < activeRoom.max_players; i++) {
         const p = activeRoom.players[i];
         if (p) {
-          const borderSrc = currentUserBorderCode ? `../skin/${currentUserBorderCode}.png` : '';
+          const borderSrc = (p.session_id === currentSession && currentUserBorderCode) ? `../skin/${currentUserBorderCode}.png` : '';
           html += `
             <div class="slot-card">
               <div class="avatar-wrapper">
@@ -1572,9 +1596,28 @@
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({
           action: 'ready',
+          toggle: true,
           equipped_skins: equippedSkinMap
         }));
+        showToast("\uD83D\uDD25 Status SIAP dikirim ke kamar!");
       }
+    }
+
+    function forceStartGame() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+          action: 'start_game',
+          equipped_skins: equippedSkinMap
+        }));
+        showToast("\uD83D\uDE80 Memulai pertandingan!");
+      }
+    }
+
+    function leaveRoom() {
+      if (ws) ws.close();
+      document.getElementById('lounge-screen').style.display = 'none';
+      document.getElementById('lobby-screen').style.display = 'block';
+      fetchLobbyRooms();
     }
 
     function addBotSlot() {
