@@ -1,967 +1,991 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>JKT48 Multiplayer Mini-Games Arena &mdash; Alcsta48</title>
-<link rel="icon" type="image/png" href="../icon.png">
-<script src="../config.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JKT48 Multiplayer UNO No Mercy Arena | The Beyonce 48</title>
+  <link rel="icon" href="../icon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800;900&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ec4899;
+      --primary-glow: rgba(236, 72, 153, 0.4);
+      --accent: #00d2ff;
+      --accent-glow: rgba(0, 210, 255, 0.4);
+      --gold: #fbbf24;
+      --gold-glow: rgba(251, 191, 36, 0.4);
+      --bg-dark: #070913;
+      --card-bg: rgba(15, 23, 42, 0.85);
+      --border-glass: rgba(255, 255, 255, 0.12);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Rajdhani:wght@600;700;800;900&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body, html {
+      width: 100%; height: 100%; overflow: hidden;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-dark); color: var(--text);
+    }
 
-:root {
-  --primary: #00f2fe;
-  --accent: #ff007f;
-  --gold: #ffd700;
-  --kristal: #a855f7;
-  --green: #22c55e;
-  --bg-dark: #050811;
-  --card-bg: rgba(15, 23, 42, 0.78);
-  --card-hover: rgba(30, 41, 59, 0.85);
-  --border: rgba(255, 255, 255, 0.12);
-  --border-focus: rgba(0, 242, 254, 0.5);
-}
+    /* === SIDEBAR (DESKTOP / MOBILE) === */
+    .sb {
+      position: fixed; top: 0; left: 0; bottom: 0; width: 220px;
+      background: rgba(10, 15, 30, 0.95); backdrop-filter: blur(20px);
+      border-right: 1px solid var(--border-glass); z-index: 1000;
+      display: flex; flex-direction: column; padding: 20px 12px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .sb-logo { display: flex; align-items: center; gap: 10px; padding: 10px; margin-bottom: 20px; text-decoration: none; color: #fff; }
+    .sb-logo img { width: 36px; height: 36px; border-radius: 10px; }
+    .sb-logo span { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 16px; background: linear-gradient(135deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .na {
+      display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+      border-radius: 12px; color: var(--text-muted); text-decoration: none;
+      font-size: 14px; font-weight: 600; margin-bottom: 6px; transition: all 0.2s;
+    }
+    .na:hover { background: rgba(255,255,255,0.06); color: #fff; transform: translateX(4px); }
+    .na.on { background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(0, 210, 255, 0.2)); color: #fff; border: 1px solid var(--border-glass); }
+    .ni { font-size: 18px; }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-html, body { width: 100%; height: 100%; height: 100dvh; background: var(--bg-dark); color: #fff; overflow: hidden; display: flex; position: relative; }
+    /* === TOP BAR === */
+    .topbar {
+      position: fixed; top: 0; left: 220px; right: 0; height: 65px;
+      background: rgba(10, 15, 30, 0.7); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-glass); z-index: 500;
+      display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 14px; }
+    .menu-btn { display: none; background: transparent; border: none; color: #fff; font-size: 22px; cursor: pointer; }
+    .page-title { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; }
+    .topbar-wallet { display: flex; align-items: center; gap: 12px; }
+    .wallet-chip {
+      display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06);
+      padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border-glass);
+      font-size: 13px; font-weight: 700;
+    }
 
-/* AMBIENT BACKGROUND GLOW */
-.bg-glow { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; }
-.orb { position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.25; }
-.orb-1 { width: 55vw; height: 55vw; top: -20%; left: -10%; background: radial-gradient(circle, #00f2fe, transparent 70%); }
-.orb-2 { width: 60vw; height: 60vw; bottom: -20%; right: -10%; background: radial-gradient(circle, #ff007f, transparent 70%); }
-.orb-3 { width: 40vw; height: 40vw; top: 35%; left: 35%; background: radial-gradient(circle, #ffd700, transparent 70%); opacity: 0.15; }
+    /* === MAIN VIEW WRAPPER === */
+    .app-viewport {
+      position: fixed; top: 65px; left: 220px; right: 0; bottom: 0;
+      overflow-y: auto; overflow-x: hidden;
+    }
 
-/* SIDEBAR LEFT */
-.sb { width: 84px; background: rgba(10, 15, 29, 0.92); border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 16px 6px; gap: 8px; z-index: 100; overflow-y: auto; flex-shrink: 0; backdrop-filter: blur(30px); }
-.sb::-webkit-scrollbar { display: none; }
-.na { display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: #94a3b8; font-weight: 700; font-size: 9.5px; background: rgba(255,255,255,0.03); width: 68px; height: 54px; border-radius: 12px; border: 1px solid transparent; text-align: center; gap: 4px; flex-shrink: 0; transition: all .2s; }
-.na:hover { background: rgba(255,255,255,0.08); color: #fff; transform: translateY(-2px); }
-.na.on { background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.2); box-shadow: 0 4px 16px rgba(0,0,0,0.5); }
-.ni { font-size: 17px; }
+    /* === LOBBY SCREEN (MLBB / ESPORTS STYLE) === */
+    #lobby-screen {
+      padding: 24px 32px; min-height: 100%;
+      background: radial-gradient(circle at top right, rgba(0, 210, 255, 0.1), transparent 50%),
+                  radial-gradient(circle at bottom left, rgba(236, 72, 153, 0.1), transparent 50%);
+    }
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(15, 23, 42, 0.9)), url('bg_arena.jpg');
+      background-size: cover; background-position: center; border-radius: 20px;
+      padding: 32px; border: 1px solid var(--border-glass); margin-bottom: 28px;
+      position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .hero-banner h1 { font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 900; margin-bottom: 8px; }
+    .hero-banner p { color: var(--text-muted); font-size: 14px; max-width: 500px; margin-bottom: 20px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-action {
+      padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 14px;
+      border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;
+    }
+    .btn-create { background: linear-gradient(135deg, var(--primary), #f43f5e); color: #fff; box-shadow: 0 4px 20px var(--primary-glow); }
+    .btn-create:hover { transform: translateY(-2px); box-shadow: 0 6px 25px var(--primary-glow); }
+    .btn-quick { background: linear-gradient(135deg, var(--accent), #3b82f6); color: #fff; box-shadow: 0 4px 20px var(--accent-glow); }
+    .btn-quick:hover { transform: translateY(-2px); box-shadow: 0 6px 25px var(--accent-glow); }
+    .btn-code { background: rgba(255,255,255,0.08); border: 1px solid var(--border-glass); color: #fff; }
+    .btn-code:hover { background: rgba(255,255,255,0.14); }
 
-/* MAIN CONTAINER */
-.mn { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; z-index: 10; }
+    /* LOBBY ROOMS GRID */
+    .lobby-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .filter-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+    .filter-tab {
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass);
+      color: var(--text-muted); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .filter-tab.active { background: #fff; color: #000; border-color: #fff; }
+    .rooms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .room-card {
+      background: var(--card-bg); border: 1px solid var(--border-glass); border-radius: 16px;
+      padding: 18px; transition: all 0.2s; display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .room-card:hover { transform: translateY(-3px); border-color: rgba(0, 210, 255, 0.4); box-shadow: 0 8px 25px rgba(0, 210, 255, 0.15); }
+    .room-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .room-card-name { font-weight: 800; font-size: 16px; }
+    .room-card-host { font-size: 12px; color: var(--text-muted); }
+    .badge-mode { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+    .badge-classic { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .badge-bet { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); }
+    .room-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+    .btn-join {
+      width: 100%; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border-glass); color: #fff; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-join:hover { background: var(--primary); border-color: var(--primary); }
 
-/* TOP BAR WITH LIVE WALLET */
-.tb { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; border-bottom: 1px solid var(--border); background: rgba(10, 15, 29, 0.85); backdrop-filter: blur(20px); flex-shrink: 0; gap: 12px; flex-wrap: wrap; }
-.brand-wrap { display: flex; align-items: center; gap: 12px; }
-.brand-wrap img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--primary); box-shadow: 0 0 12px rgba(0, 242, 254, 0.3); }
-.brand-title { font-size: 16px; font-weight: 900; letter-spacing: -0.2px; background: linear-gradient(90deg, #fff, #00f2fe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    /* === WAITING LOUNGE SCREEN === */
+    #lounge-screen { display: none; padding: 24px 32px; min-height: 100%; }
+    .lounge-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .lounge-code-badge {
+      background: rgba(255,255,255,0.06); padding: 8px 16px; border-radius: 12px;
+      border: 1px dashed var(--accent); font-family: monospace; font-size: 16px; font-weight: 800;
+      color: var(--accent); cursor: pointer;
+    }
+    .lounge-grid { display: grid; grid-template-columns: 1fr 340px; gap: 24px; }
+    .slots-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+    .slot-card {
+      background: var(--card-bg); border: 1px solid var(--border-glass); border-radius: 16px;
+      padding: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 180px; position: relative;
+    }
+    .slot-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); margin-bottom: 8px; }
+    .slot-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+    .slot-status { font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 8px; }
+    .status-ready { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+    .status-waiting { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+    .slot-empty { border: 2px dashed rgba(255,255,255,0.1); }
+    .btn-add-bot { background: rgba(255,255,255,0.06); border: 1px solid var(--border-glass); color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-top: 8px; }
 
-/* WALLET PILLS BAR */
-.wallet-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.wallet-pill { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.06); border: 1px solid var(--border); padding: 5px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 800; backdrop-filter: blur(10px); }
-.wallet-pill img { width: 16px; height: 16px; object-fit: contain; }
-.w-gold { color: var(--gold); border-color: rgba(255, 215, 0, 0.3); background: rgba(255, 215, 0, 0.08); }
-.w-token { color: var(--primary); border-color: rgba(0, 242, 254, 0.3); background: rgba(0, 242, 254, 0.08); }
-.w-kristal { color: var(--kristal); border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.08); }
+    /* TEMP IN-ROOM CHAT */
+    .lounge-chat {
+      background: var(--card-bg); border: 1px solid var(--border-glass); border-radius: 16px;
+      display: flex; flex-direction: column; height: 420px; overflow: hidden;
+    }
+    .chat-header { padding: 14px 18px; border-bottom: 1px solid var(--border-glass); font-weight: 800; font-size: 14px; }
+    .chat-messages { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+    .chat-msg { font-size: 13px; line-height: 1.4; background: rgba(255,255,255,0.04); padding: 8px 12px; border-radius: 10px; }
+    .chat-msg strong { color: var(--accent); }
+    .chat-msg span { font-size: 10px; color: var(--text-muted); margin-left: 6px; }
+    .chat-input-bar { display: flex; padding: 10px; border-top: 1px solid var(--border-glass); gap: 8px; }
+    .chat-input { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 10px; padding: 8px 12px; color: #fff; font-size: 13px; outline: none; }
+    .btn-chat-send { background: var(--accent); border: none; color: #000; font-weight: 800; padding: 8px 14px; border-radius: 10px; cursor: pointer; }
 
-.live-pill { display: flex; align-items: center; gap: 6px; background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 20px; text-transform: uppercase; }
-.live-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 8px #22c55e; animation: blink 1.5s infinite; }
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    /* === 2.5D GAME ARENA (IN-GAME SCREEN) === */
+    #game-arena {
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      overflow: hidden; z-index: 2000; background-color: #000;
+    }
+    /* LAYER 1: STATIC BACKGROUND */
+    .arena-bg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      background-image: url('bg_arena.jpg'); background-size: cover; background-position: center;
+      z-index: 0;
+    }
+    /* LAYER 2: CSS PAPER PLANES CONTINUOUS LOOP */
+    .plane-container { position: absolute; inset: 0; z-index: 10; pointer-events: none; overflow: hidden; }
+    .css-plane {
+      position: absolute; font-size: 28px; opacity: 0.8;
+      animation: flyPlane linear infinite;
+    }
+    .plane-1 { top: 15%; animation-duration: 22s; animation-delay: 0s; }
+    .plane-2 { top: 30%; animation-duration: 28s; animation-delay: 6s; }
+    .plane-3 { top: 45%; animation-duration: 25s; animation-delay: 12s; }
+    @keyframes flyPlane {
+      0% { left: -10%; transform: translateY(0px) rotate(15deg) scale(0.6); }
+      50% { transform: translateY(-40px) rotate(10deg) scale(0.8); }
+      100% { left: 110%; transform: translateY(20px) rotate(20deg) scale(0.6); }
+    }
 
-/* STAGE CONTENT */
-.stage { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 20px 24px; display: flex; flex-direction: column; align-items: center; }
-.stage::-webkit-scrollbar { width: 6px; }
-.stage::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 6px; }
+    /* LAYER 3: 3D ISOMETRIC GLASS TABLE */
+    .table-viewport {
+      position: absolute; inset: 0; perspective: 1000px;
+      display: flex; align-items: center; justify-content: center; z-index: 20;
+    }
+    #center-table {
+      position: relative; width: 440px; height: 320px;
+      background: rgba(255, 255, 255, 0.08); border: 2px solid rgba(0, 210, 255, 0.4);
+      box-shadow: 0 0 50px rgba(0, 210, 255, 0.25), inset 0 0 30px rgba(255, 255, 255, 0.1);
+      border-radius: 24px; backdrop-filter: blur(10px);
+      transform: rotateX(52deg); display: flex; align-items: center; justify-content: center; gap: 40px;
+    }
+    .deck-pile {
+      width: 90px; height: 130px; border-radius: 10px; cursor: pointer;
+      position: relative; transition: transform 0.2s;
+    }
+    .draw-deck {
+      background: linear-gradient(135deg, #1e293b, #0f172a); border: 3px solid #ff4757;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.6), -4px -4px 0px #ff4757;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 900;
+    }
+    .draw-deck:hover { transform: translateY(-8px) scale(1.05); }
+    .discard-deck {
+      border: 2px dashed rgba(255,255,255,0.4); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .color-ring {
+      position: absolute; width: 140px; height: 140px; border-radius: 50%;
+      border: 4px solid var(--accent); animation: pulseGlow 1.5s infinite alternate;
+      pointer-events: none;
+    }
+    .color-ring.red { border-color: #ef4444; box-shadow: 0 0 30px #ef4444; }
+    .color-ring.blue { border-color: #3b82f6; box-shadow: 0 0 30px #3b82f6; }
+    .color-ring.green { border-color: #10b981; box-shadow: 0 0 30px #10b981; }
+    .color-ring.yellow { border-color: #f59e0b; box-shadow: 0 0 30px #f59e0b; }
+    @keyframes pulseGlow {
+      from { transform: scale(0.95); opacity: 0.7; }
+      to { transform: scale(1.05); opacity: 1; }
+    }
+    .stack-badge {
+      position: absolute; top: -20px; background: #ef4444; color: #fff;
+      padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 900;
+      box-shadow: 0 0 15px #ef4444; animation: bounce 0.6s infinite alternate;
+    }
+    @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-6px); } }
 
-/* NAVIGATION TABS */
-.nav-tab-container { display: flex; gap: 8px; background: rgba(255,255,255,0.05); padding: 5px 8px; border-radius: 30px; border: 1px solid var(--border); margin-bottom: 20px; }
-.n-tab-btn { background: transparent; border: none; color: #94a3b8; font-size: 12.5px; font-weight: 800; padding: 7px 18px; border-radius: 20px; cursor: pointer; transition: all .2s; }
-.n-tab-btn.active { background: linear-gradient(135deg, var(--primary), #0099ff); color: #000; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3); }
+    /* LAYER 4: PLAYER HUDS (ORTHOGONAL / DIRECT FACING) */
+    .hud-layer { position: absolute; inset: 0; z-index: 30; pointer-events: none; }
+    .hud-player {
+      position: absolute; pointer-events: auto; display: flex; align-items: center; gap: 10px;
+      background: rgba(10, 15, 30, 0.85); padding: 8px 14px; border-radius: 30px;
+      border: 1px solid var(--border-glass); backdrop-filter: blur(10px);
+    }
+    .hud-player.active-turn { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
+    .hud-top { top: 20px; left: 50%; transform: translateX(-50%); }
+    .hud-left { top: 45%; left: 30px; transform: translateY(-50%); }
+    .hud-right { top: 45%; right: 30px; transform: translateY(-50%); }
+    .hud-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+    .hud-info { font-size: 13px; }
+    .hud-cards-badge { background: var(--primary); padding: 2px 8px; border-radius: 10px; font-weight: 800; font-size: 11px; }
 
-/* QUICK JOIN / SEARCH BAR */
-.quick-join-bar { width: 100%; max-width: 980px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 24px; backdrop-filter: blur(25px); flex-wrap: wrap; }
-.q-title { font-size: 13.5px; font-weight: 800; color: #fff; }
-.q-input-wrap { display: flex; gap: 10px; flex: 1; max-width: 400px; }
-.q-input { flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 12px; padding: 8px 14px; color: #fff; font-size: 13px; font-weight: 700; text-transform: uppercase; outline: none; }
-.q-input:focus { border-color: var(--primary); box-shadow: 0 0 12px rgba(0, 242, 254, 0.25); }
-.btn-join { background: linear-gradient(135deg, var(--primary), #0099ff); color: #000; border: none; border-radius: 12px; padding: 8px 18px; font-weight: 800; font-size: 12.5px; cursor: pointer; transition: all .2s; }
-.btn-join:hover { transform: scale(1.03); box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4); }
+    /* BOTTOM HUD (MAIN USER HAND) */
+    .hud-bottom {
+      position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 900px; display: flex; flex-direction: column; align-items: center;
+      pointer-events: auto; z-index: 40;
+    }
+    .hand-carousel {
+      display: flex; gap: -25px; justify-content: center; align-items: flex-end;
+      padding: 10px 20px; overflow-x: auto; max-width: 95vw; scrollbar-width: none;
+    }
+    .hand-carousel::-webkit-scrollbar { display: none; }
 
-/* GAMES GRID */
-.games-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; width: 100%; max-width: 980px; }
-.game-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 22px; padding: 22px; backdrop-filter: blur(30px); display: flex; flex-direction: column; gap: 14px; transition: all .28s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; position: relative; overflow: hidden; }
-.game-card:hover { border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 16px 36px rgba(0, 242, 254, 0.18); background: var(--card-hover); }
-.game-badge-row { display: flex; justify-content: space-between; align-items: center; }
-.format-tag { font-size: 10.5px; font-weight: 800; padding: 4px 10px; border-radius: 14px; text-transform: uppercase; background: rgba(0, 242, 254, 0.12); color: var(--primary); border: 1px solid rgba(0, 242, 254, 0.3); }
-.game-icon-large { font-size: 42px; margin: 4px 0; }
-.game-name { font-size: 19px; font-weight: 900; color: #fff; font-family: 'Rajdhani', sans-serif; letter-spacing: 0.3px; }
-.game-summary { font-size: 12.5px; color: #94a3b8; line-height: 1.5; }
-.game-btn-group { display: flex; gap: 8px; margin-top: 6px; }
-.g-btn { flex: 1; border: none; border-radius: 10px; padding: 9px 0; font-weight: 800; font-size: 11.5px; cursor: pointer; transition: all .2s; text-align: center; }
-.g-btn-bot { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border); }
-.g-btn-bot:hover { background: rgba(255,255,255,0.15); color: #fff; }
-.g-btn-play { background: linear-gradient(135deg, var(--primary), #0099ff); color: #000; }
-.g-btn-play:hover { box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4); transform: translateY(-2px); }
-.g-btn-rank { background: linear-gradient(135deg, var(--gold), #f59e0b); color: #000; }
-.g-btn-rank:hover { box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); transform: translateY(-2px); }
+    /* CARD DESIGN WITH CORNER BORDERS & MEMBER PHOTO */
+    .uno-card {
+      width: 85px; height: 125px; border-radius: 12px; background: #fff;
+      border: 4px solid #ef4444; box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      position: relative; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0; overflow: hidden; margin: 0 -12px; display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .uno-card:hover { transform: translateY(-28px) scale(1.12); z-index: 100; margin: 0 4px; box-shadow: 0 15px 30px rgba(0,0,0,0.8); }
+    .uno-card.red { border-color: #ef4444; }
+    .uno-card.blue { border-color: #3b82f6; }
+    .uno-card.green { border-color: #10b981; }
+    .uno-card.yellow { border-color: #f59e0b; }
+    .uno-card.wild { border-color: #a855f7; background: linear-gradient(135deg, #1e1b4b, #312e81); color: #fff; }
+    .card-corner-top { font-weight: 900; font-size: 13px; padding: 4px 6px; }
+    .card-corner-bot { font-weight: 900; font-size: 13px; padding: 4px 6px; text-align: right; transform: rotate(180deg); }
+    .card-center-photo {
+      position: absolute; inset: 22px 10px; border-radius: 8px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center; background: #000;
+    }
+    .card-center-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .card-tier-pill {
+      position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+      font-size: 8px; font-weight: 800; padding: 1px 4px; border-radius: 4px;
+      background: rgba(0,0,0,0.8); color: #fff; white-space: nowrap;
+    }
 
-/* LOBBY ROOMS LIST */
-.lobby-rooms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; width: 100%; max-width: 980px; }
-.room-item-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px; padding: 18px; display: flex; justify-content: space-between; align-items: center; backdrop-filter: blur(25px); transition: all .2s; }
-.room-item-card:hover { border-color: var(--primary); transform: translateY(-2px); }
-.r-info { display: flex; flex-direction: column; gap: 4px; }
-.r-code { font-size: 16px; font-weight: 900; color: #fff; font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px; }
-.r-meta { font-size: 11.5px; color: #94a3b8; }
-.r-wager { font-size: 11px; font-weight: 800; color: var(--gold); }
+    /* CARD THROWN FLYING CLONE ANIMATION */
+    .card-thrown {
+      position: fixed !important; pointer-events: none !important; z-index: 9999 !important;
+      transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    }
 
-/* MODAL OVERLAYS */
-.modal-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0, 0, 0, 0.82); backdrop-filter: blur(30px); display: none; align-items: center; justify-content: center; padding: 20px; }
-.modal-overlay.active { display: flex; }
-.modal-card { width: 100%; max-width: 480px; background: rgba(15, 23, 42, 0.95); border: 1px solid var(--border); border-radius: 26px; padding: 28px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 18px; position: relative; }
-.modal-title { font-size: 22px; font-weight: 900; font-family: 'Rajdhani', sans-serif; color: #fff; text-transform: uppercase; }
-.modal-close { position: absolute; top: 20px; right: 20px; background: transparent; border: none; color: #94a3b8; font-size: 20px; cursor: pointer; font-weight: 900; }
+    /* === LAYER 5: VFX ENGINE & JIKO OVERLAYS === */
+    #vfx-overlay {
+      position: fixed; inset: 0; pointer-events: none; z-index: 3000;
+      opacity: 0; transition: opacity 0.3s;
+      display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+    }
+    #jiko-banner {
+      background: rgba(10, 15, 30, 0.9); color: #fff; padding: 14px 36px;
+      border-radius: 40px; border: 2px solid var(--accent);
+      font-size: 18px; font-weight: 800; text-align: center;
+      margin-bottom: 140px; opacity: 0; transform: translateY(30px); transition: all 0.4s;
+      box-shadow: 0 10px 40px rgba(0, 210, 255, 0.4);
+    }
+    .vfx-active-omega {
+      opacity: 1 !important;
+      box-shadow: inset 0 0 60px 20px rgba(255, 255, 255, 0.9), inset 0 0 120px rgba(0, 210, 255, 0.6) !important;
+      animation: flashWhite 0.5s ease-out;
+    }
+    .vfx-active-fc {
+      opacity: 1 !important;
+      animation: flashColor 0.5s ease-out;
+    }
+    .jiko-show { opacity: 1 !important; transform: translateY(0) !important; }
+    @keyframes flashWhite { 0% { background: rgba(255,255,255,0.9); } 100% { background: transparent; } }
+    @keyframes flashColor { 0% { background: rgba(236,72,153,0.7); } 100% { background: transparent; } }
 
-.mode-select-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 4px; }
-.mode-opt-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 4px; color: #fff; cursor: pointer; transition: all .2s; text-align: left; }
-.mode-opt-btn:hover, .mode-opt-btn.active { border-color: var(--primary); background: rgba(0, 242, 254, 0.12); box-shadow: 0 4px 15px rgba(0, 242, 254, 0.2); }
-.m-title { font-size: 13.5px; font-weight: 800; }
-.m-desc { font-size: 10.5px; color: #94a3b8; }
+    /* HUD ACTION BUTTONS */
+    .hud-controls { display: flex; gap: 12px; margin-bottom: 10px; }
+    .btn-uno {
+      background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff;
+      font-weight: 900; font-size: 14px; padding: 10px 24px; border-radius: 20px;
+      border: 2px solid #fff; cursor: pointer; box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+      transition: transform 0.2s;
+    }
+    .btn-uno:hover { transform: scale(1.1); }
+    .btn-arena-exit {
+      background: rgba(0,0,0,0.6); border: 1px solid var(--border-glass); color: #fff;
+      padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 700;
+    }
 
-.wager-box { background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.25); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.w-label { font-size: 12px; font-weight: 800; color: var(--gold); }
-.w-select-row { display: flex; gap: 8px; }
-.w-select { flex: 1; background: rgba(0,0,0,0.5); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; color: #fff; font-size: 12px; font-weight: 700; outline: none; }
-.w-chips-row { display: flex; gap: 6px; flex-wrap: wrap; }
-.w-chip { background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: #fff; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; cursor: pointer; }
-.w-chip.active { background: var(--gold); color: #000; border-color: var(--gold); }
+    /* COLOR PICKER MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+      z-index: 5000; display: none; align-items: center; justify-content: center;
+    }
+    .modal-content {
+      background: var(--card-bg); border: 1px solid var(--border-glass); border-radius: 20px;
+      padding: 28px; width: 100%; max-width: 420px; text-align: center;
+    }
+    .color-options { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+    .color-btn { height: 65px; border-radius: 14px; border: 3px solid #fff; cursor: pointer; font-weight: 900; font-size: 16px; color: #fff; }
+    .color-btn.r { background: #ef4444; }
+    .color-btn.b { background: #3b82f6; }
+    .color-btn.g { background: #10b981; }
+    .color-btn.y { background: #f59e0b; }
 
-/* ====== IN-GAME ARENA VIEW ====== */
-.arena-view { position: fixed; inset: 0; z-index: 600; background: rgba(5, 8, 17, 0.98); backdrop-filter: blur(45px); display: none; flex-direction: column; overflow: hidden; }
-.arena-view.active { display: flex; }
-.arena-topbar { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; border-bottom: 1px solid var(--border); background: rgba(10, 15, 29, 0.9); flex-shrink: 0; }
-.room-code-tag { font-size: 15px; font-weight: 900; background: rgba(0, 242, 254, 0.15); border: 1px solid rgba(0, 242, 254, 0.3); color: var(--primary); padding: 6px 14px; border-radius: 12px; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; cursor: pointer; }
-.btn-leave { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 7px 16px; border-radius: 12px; font-weight: 800; font-size: 12px; cursor: pointer; transition: all .2s; }
-.btn-leave:hover { background: #ef4444; color: #fff; }
-
-.arena-body { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-
-/* VERSUS HEADER WITH HEALTH BARS */
-.vs-header { width: 100%; max-width: 820px; display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
-.player-slot { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 42%; }
-.player-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); box-shadow: 0 0 20px rgba(0, 242, 254, 0.4); }
-.p2-avatar { border-color: var(--accent); box-shadow: 0 0 20px rgba(255, 0, 127, 0.4); }
-.player-name { font-size: 14px; font-weight: 800; color: #fff; text-align: center; }
-.hp-bar-bg { width: 100%; height: 12px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
-.hp-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #22c55e, var(--primary)); border-radius: 10px; transition: width .3s ease; }
-.hp-fill-p2 { background: linear-gradient(90deg, var(--accent), #ff758c); }
-.vs-badge { font-size: 26px; font-weight: 900; font-family: 'Rajdhani', sans-serif; color: var(--gold); text-shadow: 0 0 16px rgba(255, 215, 0, 0.6); }
-
-/* GAME BOARDS */
-/* 1. Janken */
-.janken-cards { display: flex; justify-content: center; gap: 16px; margin-top: 20px; flex-wrap: wrap; }
-.j-btn { width: 120px; height: 130px; background: rgba(255,255,255,0.05); border: 2px solid var(--border); border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; font-size: 38px; cursor: pointer; transition: all .2s; }
-.j-btn:hover { border-color: var(--primary); transform: translateY(-5px); background: rgba(0, 242, 254, 0.12); }
-.j-btn.selected { border-color: var(--gold); background: rgba(255, 215, 0, 0.2); transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
-.j-label { font-size: 12.5px; font-weight: 800; color: #fff; }
-
-/* 2. Tic Tac Toe */
-.ttt-grid { display: grid; grid-template-columns: repeat(3, 90px); grid-template-rows: repeat(3, 90px); gap: 10px; justify-content: center; margin: 20px auto; }
-.ttt-cell { width: 90px; height: 90px; background: rgba(255,255,255,0.06); border: 2px solid var(--border); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 38px; font-weight: 900; font-family: 'Rajdhani', sans-serif; cursor: pointer; transition: all .18s; }
-.ttt-cell:hover { border-color: var(--primary); background: rgba(0, 242, 254, 0.1); }
-.ttt-cell.X { color: var(--primary); text-shadow: 0 0 15px var(--primary); }
-.ttt-cell.O { color: var(--accent); text-shadow: 0 0 15px var(--accent); }
-
-/* 3. Memory Card */
-.memory-grid { display: grid; grid-template-columns: repeat(4, 75px); gap: 10px; justify-content: center; margin: 20px auto; }
-.mem-card { width: 75px; height: 85px; perspective: 600px; cursor: pointer; }
-.mem-inner { width: 100%; height: 100%; border-radius: 12px; background: rgba(255,255,255,0.06); border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 28px; transition: transform .3s; }
-.mem-card.flipped .mem-inner { background: rgba(0, 242, 254, 0.2); border-color: var(--primary); transform: rotateY(180deg); }
-.mem-card.matched .mem-inner { background: rgba(34, 197, 94, 0.25); border-color: #22c55e; }
-
-/* 4. Word Bomb */
-.bomb-container { text-align: center; max-width: 500px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
-.bomb-icon { font-size: 60px; animation: pulseBomb 1s infinite alternate; }
-@keyframes pulseBomb { 0% { transform: scale(1); } 100% { transform: scale(1.15); filter: drop-shadow(0 0 20px #ef4444); } }
-.bomb-prompt { font-size: 28px; font-weight: 900; font-family: 'Rajdhani', sans-serif; color: var(--gold); letter-spacing: 2px; }
-.bomb-input { width: 100%; background: rgba(0,0,0,0.5); border: 2px solid var(--border); border-radius: 14px; padding: 12px 18px; color: #fff; font-size: 16px; font-weight: 800; text-align: center; outline: none; }
-.bomb-input:focus { border-color: var(--primary); box-shadow: 0 0 20px rgba(0, 242, 254, 0.4); }
-
-/* 5. Number Duel */
-.number-duel-box { text-align: center; max-width: 480px; display: flex; flex-direction: column; gap: 14px; }
-.number-hint-text { font-size: 18px; font-weight: 800; color: var(--primary); margin: 10px 0; }
-
-/* 6. Trivia Smash */
-.trivia-box { width: 100%; max-width: 650px; text-align: center; display: flex; flex-direction: column; gap: 16px; }
-.trivia-qtext { font-size: 17px; font-weight: 800; line-height: 1.5; color: #fff; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 16px; padding: 18px; }
-.trivia-opts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-.t-opt-btn { background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: #fff; padding: 14px; border-radius: 14px; font-size: 13.5px; font-weight: 700; cursor: pointer; text-align: left; transition: all .2s; }
-.t-opt-btn:hover { border-color: var(--primary); background: rgba(0, 242, 254, 0.15); }
-.t-opt-btn.correct { background: #22c55e !important; color: #000 !important; font-weight: 900; }
-.t-opt-btn.wrong { background: #ef4444 !important; color: #fff !important; }
-
-/* 7. Connect 4 */
-.c4-grid { display: grid; grid-template-columns: repeat(7, 42px); grid-template-rows: repeat(6, 42px); gap: 6px; background: #0c1b33; padding: 12px; border-radius: 16px; border: 2px solid var(--border); margin: 0 auto; }
-.c4-cell { width: 42px; height: 42px; border-radius: 50%; background: rgba(255,255,255,0.1); cursor: pointer; transition: all .15s; }
-.c4-cell:hover { background: rgba(255,255,255,0.25); }
-.c4-cell.p1 { background: var(--primary); box-shadow: 0 0 12px var(--primary); }
-.c4-cell.p2 { background: var(--accent); box-shadow: 0 0 12px var(--accent); }
-
-/* 8. Reaction Tap */
-.reaction-arena { width: 100%; max-width: 480px; height: 260px; border-radius: 20px; background: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; font-family: 'Rajdhani', sans-serif; cursor: pointer; user-select: none; transition: background .1s; text-transform: uppercase; }
-.reaction-arena.ready { background: #22c55e; box-shadow: 0 0 40px #22c55e; }
-.reaction-arena.waiting { background: #1e293b; color: #94a3b8; }
-
-/* QUICK CHAT FLOATING BAR */
-.quick-chat-bar { display: flex; gap: 6px; margin-top: 20px; }
-.chat-pill { background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 700; cursor: pointer; transition: all .15s; }
-.chat-pill:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
-
-/* RESULT MODAL */
-.result-banner { font-size: 32px; font-weight: 900; font-family: 'Rajdhani', sans-serif; text-transform: uppercase; margin-bottom: 10px; }
-.win-color { color: #22c55e; text-shadow: 0 0 25px rgba(34, 197, 94, 0.7); }
-.lose-color { color: #ef4444; text-shadow: 0 0 25px rgba(239, 68, 68, 0.7); }
-.wager-settle-alert { background: rgba(255, 215, 0, 0.12); border: 1px solid rgba(255, 215, 0, 0.4); padding: 10px; border-radius: 12px; font-size: 13px; font-weight: 800; color: var(--gold); margin: 8px 0; }
-
-@media(max-width: 768px) {
-  .sb { display: none; }
-  .tb { padding: 10px 14px; }
-  .stage { padding: 14px; }
-  .trivia-opts { grid-template-columns: 1fr; }
-  .ttt-grid { grid-template-columns: repeat(3, 75px); grid-template-rows: repeat(3, 75px); }
-  .ttt-cell { width: 75px; height: 75px; font-size: 30px; }
-  .c4-grid { grid-template-columns: repeat(7, 34px); grid-template-rows: repeat(6, 34px); gap: 4px; }
-  .c4-cell { width: 34px; height: 34px; }
-}
-</style>
+    @media (max-width: 768px) {
+      .sb { transform: translateX(-100%); }
+      .sb.open { transform: translateX(0); }
+      .topbar { left: 0; }
+      .app-viewport { left: 0; }
+      .menu-btn { display: block; }
+      .lounge-grid { grid-template-columns: 1fr; }
+      .hud-left { left: 10px; }
+      .hud-right { right: 10px; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="bg-glow">
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
-</div>
+  <!-- SIDEBAR (7 CORE NAVIGATION ITEMS) -->
+  <nav class="sb" id="sidebar">
+    <a href="../beranda/" class="sb-logo">
+      <img src="../icon.png" alt="Logo">
+      <span>The Beyonce</span>
+    </a>
+    <a href="../beranda/" class="na"><span class="ni">ðŸ’¬</span>Beranda</a>
+    <a href="../profil/" class="na"><span class="ni">ðŸ‘¤</span>Profil</a>
+    <a href="../gacha-skin/" class="na"><span class="ni">ðŸŽ</span>Gacha</a>
+    <a href="../live-jkt48/" class="na"><span class="ni">ðŸŽ¤</span>Live JKT</a>
+    <a href="../alcstify/" class="na"><span class="ni">ðŸŽµ</span>Alcstify</a>
+    <a href="#" class="na on"><span class="ni">ðŸŽ®</span>Mini Games</a>
+    <a href="https://thebeyonce48.my.id" target="_blank" rel="noopener noreferrer" class="na"><span class="ni">ðŸ•¹ï¸</span>Main Games</a>
+  </nav>
 
-<!-- SIDEBAR LEFT -->
-<nav class="sb">
-  <a href="../beranda/" class="na"><span class="ni">&#128172;</span>Beranda</a>
-  <a href="../profil/" class="na"><span class="ni">&#128100;</span>Profil</a>
-  <a href="../gacha-skin/" class="na"><span class="ni">&#127873;</span>Gacha</a>
-  <a href="../live-jkt48/" class="na"><span class="ni">&#127908;</span>Live JKT</a>
-  <a href="../alcstify/" class="na"><span class="ni">&#127925;</span>Alcstify</a>
-  <a href="#" class="na on"><span class="ni">&#127918;</span>Mini Games</a>
-  <a href="https://thebeyonce48.my.id" target="_blank" rel="noopener noreferrer" class="na"><span class="ni">&#128377;</span>Main Games</a>
-</nav>
-
-<!-- MAIN CONTAINER -->
-<div class="mn">
-  <!-- TOP BAR WITH LIVE WALLET -->
-  <header class="tb">
-    <div class="brand-wrap">
-      <img src="../icon.png" alt="icon">
-      <span class="brand-title">JKT48 Multiplayer Arena</span>
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-btn" onclick="toggleSidebar()">â˜°</button>
+      <div class="page-title">ðŸŽ´ JKT48 Multiplayer UNO No Mercy</div>
     </div>
-
-    <!-- LIVE USER WALLET -->
-    <div class="wallet-bar">
-      <div class="wallet-pill w-token">
-        <span>🪙</span> <span id="valOnceToken">0</span> Token
-      </div>
-      <div class="wallet-pill w-gold">
-        <span>💰</span> <span id="valGold">0</span> Gold
-      </div>
-      <div class="wallet-pill w-kristal">
-        <span>💎</span> <span id="valKristal">0</span> Kristal
-      </div>
-      <div class="live-pill">
-        <div class="live-dot"></div>
-        <span>WebSocket Engine</span>
-      </div>
+    <div class="topbar-wallet">
+      <div class="wallet-chip">ðŸª™ <span id="valGold">1,000</span> Gold</div>
+      <div class="wallet-chip">ðŸŽ« <span id="valToken">50</span> Once</div>
+      <div class="wallet-chip">ðŸ’Ž <span id="valCrystal">10</span> Kristal</div>
     </div>
   </header>
 
-  <!-- STAGE CONTENT -->
-  <main class="stage">
-    <!-- NAVIGATION TABS -->
-    <div class="nav-tab-container">
-      <button class="n-tab-btn active" onclick="switchStageTab('games')">🎯 Pilih Permainan</button>
-      <button class="n-tab-btn" onclick="switchStageTab('lobby')">🏟️ Lobby Terbuka</button>
-      <button class="n-tab-btn" onclick="switchStageTab('guide')">🏆 Aturan Ranked</button>
-    </div>
-
-    <!-- QUICK ROOM JOIN BAR -->
-    <div class="quick-join-bar">
-      <div class="q-title">Masuk ke Room Teman dengan Kode:</div>
-      <div class="q-input-wrap">
-        <input type="text" id="quickRoomInput" class="q-input" placeholder="CONTOH: JKT-884A" maxlength="10">
-        <button class="btn-join" onclick="joinByCode()">GABUNG</button>
-      </div>
-    </div>
-
-    <!-- TAB 1: GAMES SELECTION GRID -->
-    <div id="tabGamesSection" class="games-grid">
-      <!-- 1. Janken -->
-      <div class="game-card" onclick="openModeSelect('janken', 'Janken Showdown', '1v1')">
-        <div class="game-badge-row">
-          <span class="format-tag">1 VS 1</span>
-        </div>
-        <div class="game-icon-large">✊✌️🖐️</div>
-        <div class="game-name">Janken Showdown</div>
-        <div class="game-summary">Suit batu gunting kertas klasik bertegangan tinggi dengan sistem HP bar per ronde.</div>
-        <div class="game-btn-group">
-          <button class="g-btn g-btn-bot">BOT AI</button>
-          <button class="g-btn g-btn-play">CASUAL</button>
-          <button class="g-btn g-btn-rank">RANKED 🏆</button>
+  <!-- MAIN APP VIEWPORT -->
+  <div class="app-viewport">
+    
+    <!-- 1. LOBBY SCREEN (ESPORTS STYLE) -->
+    <div id="lobby-screen">
+      <div class="hero-banner">
+        <h1>UNO NO MERCY: JKT48 ACTION DECK</h1>
+        <p>Adu taktik kartu Extreme dengan efek Skin Omega Spesial, Stack Penalty +10, dan mode taruhan Sistem Gugur!</p>
+        <div class="hero-actions">
+          <button class="btn-action btn-create" onclick="openCreateModal()">âž• Buat Kamar Baru</button>
+          <button class="btn-action btn-quick" onclick="quickMatch()">âš¡ Quick Match (Otomatis)</button>
+          <button class="btn-action btn-code" onclick="openCodeModal()">ðŸ”‘ Masukkan Kode Kamar</button>
         </div>
       </div>
 
-      <!-- 2. TicTacToe -->
-      <div class="game-card" onclick="openModeSelect('tictactoe', 'Tic-Tac-Toe Arena', '1v1')">
-        <div class="game-badge-row">
-          <span class="format-tag">1 VS 1</span>
-        </div>
-        <div class="game-icon-large">❌⭕</div>
-        <div class="game-name">Tic-Tac-Toe Arena</div>
-        <div class="game-summary">Duel strategi 3x3 cepat melawan pemain lain atau bot berotak cerdas.</div>
-        <div class="game-btn-group">
-          <button class="g-btn g-btn-bot">BOT AI</button>
-          <button class="g-btn g-btn-play">CASUAL</button>
-          <button class="g-btn g-btn-rank">RANKED 🏆</button>
+      <div class="lobby-header">
+        <h2 style="font-family: 'Outfit'; font-size: 20px;">Daftar Kamar Live</h2>
+        <div class="filter-tabs">
+          <div class="filter-tab active" onclick="filterLobby('all', this)">Semua Mode</div>
+          <div class="filter-tab" onclick="filterLobby('classic', this)">Classic (Casual)</div>
+          <div class="filter-tab" onclick="filterLobby('bet_battle', this)">Bet Battle (Taruhan)</div>
         </div>
       </div>
 
-      <!-- 3. Memory Card -->
-      <div class="game-card" onclick="openModeSelect('memory', 'Memory Card Match', '1v1 / 2v2')">
-        <div class="game-badge-row">
-          <span class="format-tag">1v1 &bull; 2v2 TIM</span>
-        </div>
-        <div class="game-icon-large">🃏✨</div>
-        <div class="game-name">Memory Card Match</div>
-        <div class="game-summary">Uji daya ingat dengan membalik 16 kartu bertema JKT48 secara bergiliran.</div>
-        <div class="game-btn-group">
-          <button class="g-btn g-btn-bot">BOT AI</button>
-          <button class="g-btn g-btn-play">CASUAL</button>
-          <button class="g-btn g-btn-rank">RANKED 🏆</button>
-        </div>
+      <div class="rooms-grid" id="roomsContainer">
+        <!-- Room Cards will be injected dynamically -->
       </div>
+    </div>
 
-      <!-- 4. Word Bomb -->
-      <div class="game-card" onclick="openModeSelect('wordbomb', 'Word Bomb Party', '1v1 / 2v2 / 4v4')">
-        <div class="game-badge-row">
-          <span class="format-tag">1v1 &bull; 2v2 &bull; 4v4</span>
+    <!-- 2. WAITING LOUNGE SCREEN -->
+    <div id="lounge-screen">
+      <div class="lounge-top">
+        <div>
+          <h2 id="loungeTitle" style="font-family: 'Outfit'; font-size: 24px;">Kamar Arena UNO #1</h2>
+          <p id="loungeSub" style="color: var(--text-muted); font-size: 13px;">Mode Classic â€¢ Host: Shani</p>
         </div>
-        <div class="game-icon-large">💣💥</div>
-        <div class="game-name">Word Bomb Party</div>
-        <div class="game-summary">Ketik kata yang mengandung huruf target sebelum bom meledak di tanganmu!</div>
-        <div class="game-btn-group">
-          <button class="g-btn g-btn-bot">BOT AI</button>
-          <button class="g-btn g-btn-play">CASUAL</button>
-          <button class="g-btn g-btn-rank">RANKED 🏆</button>
+        <div class="lounge-code-badge" onclick="copyRoomCode()" title="Klik untuk Salin Kode">
+          KODE: <span id="loungeRoomCode">------</span> ðŸ“‹
         </div>
       </div>
 
-      <!-- 5. Number Duel -->
-      <div class="game-card" onclick="openModeSelect('numberduel', 'Number Guess Duel', '1v1')">
-        <div class="game-badge-row">
-          <span class="format-tag">1 VS 1</span>
-        </div>
-        <div class="game-icon-large">🔢🎯</div>
-        <div class="game-name">Number Guess Duel</div>
-        <div class="game-summary">Tebak angka rahasia 1 - 100 lebih cepat dari lawan berdasarkan petunjuk.</div>
-        <div class="game-btn-group">
-          <button class="g-btn g-btn-bot">BOT AI</button>
-          <button class="g-btn g-btn-play">CASUAL</button>
-          <button class="g-btn g-btn-rank">RANKED 🏆</button>
-        </div>
-      </div>
-
-      <!-- 6. Trivia Smash -->
-      <div class="game-card" onclick="openModeSelect('trivia', 'Trivia Smash JKT48', '1v1 / 2v2 / 4v4')">
-        <div class="game-badge-row">
-          <span class="format-tag">1v1 &bull; 2v2 &bull; 4v4</span>
-        </div>
-        <div class="game-icon-large">🧠⚡</div>
-        <div class="game-name">Trivia Smash JKT48</div>
-        <div class="game-summary">Pertarungan kuis seputar single, teater, dan member JKT48 dengan poin tim.</div>
-        <div class="game-btn-group">
-          <button class="g-btn g-btn-bot">BOT AI</button>
-          <button class="g-btn g-btn-play">CASUAL</button>
-          <button class="g-btn g-btn-rank">RANKED 🏆</button>
-        </div>
-      </div>
-
-      <!-- 7. Connect 4 -->
-      <div class="game-card" onclick="openModeSelect('connect4', 'Connect Four Arena', '1v1 / 2v2')">
-        <div class="game-badge-row">
-          <span class="format-tag">1v1 &bull; 2v2 TIM</span>
-        </div>
-        <div class="game-icon-large">🟡🔴</div>
-        <div class="game-name">Connect Four Arena</div>
-        <div class="game-summary">Jatuhkan koin gravitasi dan susun 4 koin beruntun sebelum lawan menghalangi.</div>
-        <div class="game-btn-group">
-          <button class="g-btn g-btn-bot">BOT AI</button>
-          <button class="g-btn g-btn-play">CASUAL</button>
-          <button class="g-btn g-btn-rank">RANKED 🏆</button>
-        </div>
-      </div>
-
-      <!-- 8. Reaction Tap -->
-      <div class="game-card" onclick="openModeSelect('reaction', 'Lightning Reaction Tap', '1v1')">
-        <div class="game-badge-row">
-          <span class="format-tag">1 VS 1</span>
-        </div>
-        <div class="game-icon-large">⚡⏱️</div>
-        <div class="game-name">Lightning Reaction</div>
-        <div class="game-summary">Uji refleks secepat kilat saat layar berubah hijau. Rekor milidetik tercepat menang!</div>
-        <div class="game-btn-group">
-          <button class="g-btn g-btn-bot">BOT AI</button>
-          <button class="g-btn g-btn-play">CASUAL</button>
-          <button class="g-btn g-btn-rank">RANKED 🏆</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 2: LOBBY LIST -->
-    <div id="tabLobbySection" class="lobby-rooms-grid" style="display: none;">
-      <div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 20px;">Memuat daftar lobby terbuka...</div>
-    </div>
-
-    <!-- TAB 3: RANKED GUIDE -->
-    <div id="tabGuideSection" style="display: none; max-width: 800px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 24px; backdrop-filter: blur(25px);">
-      <h3 style="font-size: 20px; font-weight: 900; color: var(--gold); margin-bottom: 12px;">🏆 Sistem Mode Ranked & Taruhan</h3>
-      <p style="font-size: 13.5px; color: #cbd5e1; line-height: 1.6; margin-bottom: 14px;">
-        Mode Ranked memungkinkan Anda mempertaruhkan <b>Once Token</b>, <b>Gold (TB Coin)</b>, atau <b>Kristal</b> dengan pemain lain dalam pertandingan 1v1, 2v2, atau 4v4 secara adil dan otomatis.
-      </p>
-      <ul style="font-size: 13px; color: #94a3b8; line-height: 1.8; margin-left: 20px;">
-        <li><b>Aturan Taruhan:</b> Taruhan dipotong dari pemain yang kalah dan seluruh total pot diberikan langsung ke akun pemenang.</li>
-        <li><b>Poin Rank:</b> Setiap kemenangan di mode ranked memberikan bonus <b>+15 Poin Rank Score</b> untuk menaikkan tier profil Anda.</li>
-        <li><b>Fair Play Engine:</b> Backend secara otomatis memverifikasi saldo di server sebelum pertandingan dimulai.</li>
-      </ul>
-    </div>
-  </main>
-</div>
-
-<!-- MODE & WAGER SELECTION MODAL -->
-<div id="modeModal" class="modal-overlay">
-  <div class="modal-card">
-    <button class="modal-close" onclick="closeModeModal()">&times;</button>
-    <div class="modal-title" id="modalGameTitle">Pilih Mode Permainan</div>
-    <div style="font-size: 12.5px; color: #94a3b8;">Tentukan mode pertarungan yang ingin kamu mainkan:</div>
-
-    <div class="mode-select-grid">
-      <div class="mode-opt-btn active" onclick="selectMode('bot', this)">
-        <span class="m-title">🤖 vs Bot AI</span>
-        <span class="m-desc">Latihan solo santai</span>
-      </div>
-      <div class="mode-opt-btn" onclick="selectMode('normal_1v1', this)">
-        <span class="m-title">⚔️ 1 vs 1 Casual</span>
-        <span class="m-desc">Online tanpa taruhan</span>
-      </div>
-      <div class="mode-opt-btn" id="btnMode2v2" onclick="selectMode('normal_2v2', this)">
-        <span class="m-title">👥 2 vs 2 Tim</span>
-        <span class="m-desc">Relay 4 Pemain</span>
-      </div>
-      <div class="mode-opt-btn" id="btnMode4v4" onclick="selectMode('normal_4v4', this)">
-        <span class="m-title">🛡️ 4 vs 4 Tim</span>
-        <span class="m-desc">Relay 8 Pemain</span>
-      </div>
-      <div class="mode-opt-btn" style="grid-column: 1/-1;" onclick="selectMode('ranked_1v1', this)">
-        <span class="m-title">🏆 1 vs 1 RANKED (Taruhan)</span>
-        <span class="m-desc">Menangkan saldo & poin rank!</span>
-      </div>
-    </div>
-
-    <!-- WAGER CONFIG SECTION -->
-    <div id="wagerConfigBox" class="wager-box" style="display: none;">
-      <div class="w-label">PILIH MATA UANG & NOMINAL TARUHAN:</div>
-      <div class="w-select-row">
-        <select id="wagerCurrency" class="w-select">
-          <option value="once_token">🪙 Once Token</option>
-          <option value="tb_coin">💰 Gold (TB Coin)</option>
-          <option value="kristal">💎 Kristal</option>
-        </select>
-        <input type="number" id="wagerAmountInput" class="w-select" style="max-width: 120px;" value="10" min="1">
-      </div>
-      <div class="w-chips-row">
-        <span class="w-chip" onclick="setWagerVal(5)">5</span>
-        <span class="w-chip active" onclick="setWagerVal(10)">10</span>
-        <span class="w-chip" onclick="setWagerVal(25)">25</span>
-        <span class="w-chip" onclick="setWagerVal(50)">50</span>
-        <span class="w-chip" onclick="setWagerVal(100)">100</span>
-      </div>
-    </div>
-
-    <button class="g-btn g-btn-play" style="padding: 12px; font-size: 13.5px; border-radius: 14px;" onclick="startCreateRoom()">BUAT ROOM & MAIN SEKARANG</button>
-  </div>
-</div>
-
-<!-- FULLSCREEN IN-GAME ARENA VIEW -->
-<div id="arenaView" class="arena-view">
-  <div class="arena-topbar">
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <div class="room-code-tag" id="arenaRoomBadge" onclick="copyRoomCode()" title="Klik untuk Salin Kode">ROOM: JKT-0000 📋</div>
-      <span style="font-size: 12px; color: #94a3b8;" id="arenaGameTitle">Permainan</span>
-    </div>
-    <button class="btn-leave" onclick="leaveArena()">KELUAR ARENA</button>
-  </div>
-
-  <div class="arena-body">
-    <!-- VERSUS HEADER -->
-    <div class="vs-header">
-      <div class="player-slot">
-        <img src="../icon.png" class="player-avatar" id="p1Avatar" alt="P1">
-        <div class="player-name" id="p1Name">Pemain 1</div>
-        <div class="hp-bar-bg"><div class="hp-fill" id="p1Hp"></div></div>
-      </div>
-      <div class="vs-badge">VS</div>
-      <div class="player-slot">
-        <img src="../icon.png" class="player-avatar p2-avatar" id="p2Avatar" alt="P2">
-        <div class="player-name" id="p2Name">Pemain 2</div>
-        <div class="hp-bar-bg"><div class="hp-fill hp-fill-p2" id="p2Hp"></div></div>
-      </div>
-    </div>
-
-    <!-- 1. JANKEN BOX -->
-    <div id="boxJanken" style="display: none; text-align: center;">
-      <div style="font-size: 16px; font-weight: 800; color: var(--gold); margin-bottom: 12px;" id="jankenRoundText">PILIH SENJATA SUITMU!</div>
-      <div class="janken-cards">
-        <div class="j-btn" onclick="sendMove({choice: 'batu'})"><span>✊</span><span class="j-label">BATU</span></div>
-        <div class="j-btn" onclick="sendMove({choice: 'gunting'})"><span>✌️</span><span class="j-label">GUNTING</span></div>
-        <div class="j-btn" onclick="sendMove({choice: 'kertas'})"><span>🖐️</span><span class="j-label">KERTAS</span></div>
-      </div>
-    </div>
-
-    <!-- 2. TIC TAC TOE BOX -->
-    <div id="boxTictactoe" style="display: none;">
-      <div class="ttt-grid" id="tttGrid"></div>
-    </div>
-
-    <!-- 3. MEMORY CARD BOX -->
-    <div id="boxMemory" style="display: none;">
-      <div class="memory-grid" id="memoryGrid"></div>
-    </div>
-
-    <!-- 4. WORD BOMB BOX -->
-    <div id="boxWordbomb" class="bomb-container" style="display: none;">
-      <div class="bomb-icon">💣</div>
-      <div style="font-size: 13px; color: #94a3b8;">Ketik kata yang mengandung:</div>
-      <div class="bomb-prompt" id="bombPrompt">--</div>
-      <form onsubmit="submitWordBomb(event)" style="width: 100%;">
-        <input type="text" id="wordBombInput" class="bomb-input" placeholder="KETIK KATA DI SINI..." autocomplete="off">
-      </form>
-    </div>
-
-    <!-- 5. NUMBER DUEL BOX -->
-    <div id="boxNumberduel" class="number-duel-box" style="display: none;">
-      <div style="font-size: 14px; color: #94a3b8;">Tebak Angka Rahasia (1 - 100):</div>
-      <div class="number-hint-text" id="numberHint">Mulai menebak!</div>
-      <form onsubmit="submitNumberGuess(event)" style="display: flex; gap: 10px; justify-content: center;">
-        <input type="number" id="numberGuessInput" class="bomb-input" style="max-width: 160px;" min="1" max="100" placeholder="1-100">
-        <button type="submit" class="btn-join" style="padding: 0 20px;">TEBAK</button>
-      </form>
-    </div>
-
-    <!-- 6. TRIVIA SMASH BOX -->
-    <div id="boxTrivia" class="trivia-box" style="display: none;">
-      <div class="trivia-qtext" id="triviaQText">Memuat pertanyaan...</div>
-      <div class="trivia-opts" id="triviaOpts"></div>
-    </div>
-
-    <!-- 7. CONNECT 4 BOX -->
-    <div id="boxConnect4" style="display: none;">
-      <div class="c4-grid" id="c4Grid"></div>
-    </div>
-
-    <!-- 8. REACTION TAP BOX -->
-    <div id="boxReaction" style="display: none; text-align: center;">
-      <div id="reactionArena" class="reaction-arena waiting" onclick="handleReactionTap()">KLIK SAAT BERUBAH HIJAU!</div>
-      <div style="font-size: 13px; color: #94a3b8; margin-top: 10px;" id="reactionScoreText">Ronde 1 / 5</div>
-    </div>
-
-    <!-- QUICK CHAT PRESETS -->
-    <div class="quick-chat-bar">
-      <span class="chat-pill" onclick="sendChat('👍 GG!')">👍 GG!</span>
-      <span class="chat-pill" onclick="sendChat('🔥 Lets go!')">🔥 Lets go!</span>
-      <span class="chat-pill" onclick="sendChat('😂 Hahaha')">😂 Hahaha</span>
-      <span class="chat-pill" onclick="sendChat('😱 Nooo!')">😱 Nooo!</span>
-      <span class="chat-pill" onclick="sendChat('✨ Nice try')">✨ Nice try</span>
-    </div>
-
-    <!-- MATCH OVER RESULT BANNER -->
-    <div id="matchResultBox" style="display: none; margin-top: 20px; text-align: center;">
-      <div class="result-banner" id="matchResultTitle">VICTORY!</div>
-      <div id="wagerSettleText" class="wager-settle-alert" style="display: none;"></div>
-      <button class="btn-join" style="margin-top: 10px; padding: 10px 24px;" onclick="leaveArena()">KEMBALI KE LOBBY</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// ==============================================================================
-// FRONTEND MULTIPLAYER GAME CLIENT
-// ==============================================================================
-const CORE_API = ALCSTA_CONFIG.CORE_BACKEND_URL;
-const GAMES_API = ALCSTA_CONFIG.GAMES_API_URL || "https://shinezzzz-gokgokgok.hf.space";
-const GAMES_WS_BASE = GAMES_API.replace("http://", "ws://").replace("https://", "wss://");
-
-let selectedGameType = 'janken';
-let selectedMode = 'bot';
-let currentRoomId = '';
-let myPlayerIdx = 0;
-let myTeam = 0;
-let ws = null;
-let userBalance = { onceToken: 0, gold: 0, kristal: 0 };
-let lobbyInterval = null;
-
-// Get current logged-in session cookie
-function getSessionCookie() {
-  const keys = ['session_cookie', 'session', 'session_id', 'user_id', 'token', 'access_token', 'user_session', 'session_key'];
-  const params = new URLSearchParams(window.location.search);
-  for (let k of keys) { if (params.has(k) && params.get(k)) return params.get(k); }
-  for (let k of keys) { const v = localStorage.getItem(k); if (v) return v; }
-  for (let k of keys) { const v = sessionStorage.getItem(k); if (v) return v; }
-  return "guest_" + Math.floor(Math.random() * 100000);
-}
-
-// Fetch live balance from core backend
-async function fetchUserBalance() {
-  const session = getSessionCookie();
-  try {
-    const res = await fetch(`${CORE_API}/api/user/status`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ session_cookie: session, session_key: session })
-    });
-    const data = await res.json();
-    if (res.ok && data.status === 'success' && data.data) {
-      userBalance.onceToken = data.data.once_token ?? data.data.onceToken ?? 0;
-      userBalance.gold = data.data.tb_coin ?? data.data.tbCoin ?? 0;
-      userBalance.kristal = data.data.kristal ?? 0;
-      document.getElementById('valOnceToken').textContent = userBalance.onceToken;
-      document.getElementById('valGold').textContent = userBalance.gold;
-      document.getElementById('valKristal').textContent = userBalance.kristal;
-    }
-  } catch (e) {
-    console.log("Balance sync note:", e);
-  }
-}
-
-// Tab Switching (Games, Lobby, Guide)
-function switchStageTab(tab) {
-  document.querySelectorAll('.n-tab-btn').forEach((b, i) => b.classList.toggle('active', (tab === 'games' && i === 0) || (tab === 'lobby' && i === 1) || (tab === 'guide' && i === 2)));
-  document.getElementById('tabGamesSection').style.display = (tab === 'games') ? 'grid' : 'none';
-  document.getElementById('tabLobbySection').style.display = (tab === 'lobby') ? 'grid' : 'none';
-  document.getElementById('tabGuideSection').style.display = (tab === 'guide') ? 'block' : 'none';
-  if (tab === 'lobby') fetchLobbyRooms();
-}
-
-// Fetch Active Lobby Rooms
-async function fetchLobbyRooms() {
-  try {
-    const res = await fetch(`${GAMES_API}/api/game/lobby`);
-    const data = await res.json();
-    const container = document.getElementById('tabLobbySection');
-    if (data.status === 'ok' && data.rooms && data.rooms.length > 0) {
-      container.innerHTML = data.rooms.map(r => `
-        <div class="room-item-card">
-          <div class="r-info">
-            <div class="r-code">${r.game_id}</div>
-            <div class="r-meta">${r.game_type.toUpperCase()} &bull; ${r.mode.toUpperCase()} &bull; ${r.current_players}/${r.max_players} Pemain</div>
-            ${r.wager && r.wager.amount > 0 ? `<div class="r-wager">💰 Taruhan: ${r.wager.amount} ${r.wager.currency}</div>` : ''}
+      <div class="lounge-grid">
+        <div>
+          <div class="slots-container" id="slotsContainer">
+            <!-- Player Slots -->
           </div>
-          <button class="btn-join" onclick="joinRoom('${r.game_id}')">GABUNG</button>
+          <div style="margin-top: 24px; display: flex; gap: 12px;">
+            <button class="btn-action btn-create" id="btnReady" onclick="toggleReady()">ðŸ”¥ SIAP BERMAIN</button>
+            <button class="btn-action btn-code" onclick="leaveRoom()">ðŸšª Keluar Kamar</button>
+          </div>
+        </div>
+
+        <!-- In-Room Temp Chat -->
+        <div class="lounge-chat">
+          <div class="chat-header">ðŸ’¬ Obrolan Kamar (Sementara)</div>
+          <div class="chat-messages" id="chatMsgs">
+            <div class="chat-msg"><strong>Sistem:</strong> Selamat datang di arena UNO No Mercy!</div>
+          </div>
+          <div class="chat-input-bar">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Tulis pesan..." onkeypress="if(event.key==='Enter') sendChat()">
+            <button class="btn-chat-send" onclick="sendChat()">Kirim</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 3. 2.5D GAME ARENA (IN-GAME SCREEN) -->
+  <div id="game-arena">
+    <!-- LAYER 1: BACKGROUND -->
+    <div class="arena-bg"></div>
+
+    <!-- LAYER 2: CSS PAPER PLANES -->
+    <div class="plane-container">
+      <div class="css-plane plane-1">âœˆï¸</div>
+      <div class="css-plane plane-2">âœˆï¸</div>
+      <div class="css-plane plane-3">âœˆï¸</div>
+    </div>
+
+    <!-- LAYER 3: 3D ISOMETRIC GLASS TABLE -->
+    <div class="table-viewport">
+      <div id="center-table">
+        <div class="color-ring red" id="tableColorRing"></div>
+        <div class="stack-badge" id="tableStackBadge" style="display:none;">ðŸ”¥ +4 STACK!</div>
+
+        <!-- DRAW PILE (DECK) -->
+        <div class="deck-pile draw-deck" onclick="userDrawCard()" title="Ambil Kartu">
+          <div style="font-size: 20px;">ðŸŽ´</div>
+          <div style="font-size: 11px; margin-top: 4px;">DRAW (<span id="drawCount">108</span>)</div>
+        </div>
+
+        <!-- DISCARD PILE (TOP CARD) -->
+        <div class="deck-pile discard-deck" id="discardPileZone">
+          <!-- Top card rendered here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- LAYER 4: PLAYER HUDS -->
+    <div class="hud-layer">
+      <!-- Top Opponent -->
+      <div class="hud-player hud-top" id="hudTop">
+        <img src="../icon.png" class="hud-avatar" id="avatarTop" alt="avatar">
+        <div class="hud-info">
+          <div id="nameTop" style="font-weight: 800;">Lawan 2</div>
+          <span class="hud-cards-badge" id="cardsTop">7 Kartu</span>
+        </div>
+      </div>
+
+      <!-- Left Opponent -->
+      <div class="hud-player hud-left" id="hudLeft">
+        <img src="../icon.png" class="hud-avatar" id="avatarLeft" alt="avatar">
+        <div class="hud-info">
+          <div id="nameLeft" style="font-weight: 800;">Lawan 1</div>
+          <span class="hud-cards-badge" id="cardsLeft">7 Kartu</span>
+        </div>
+      </div>
+
+      <!-- Right Opponent -->
+      <div class="hud-player hud-right" id="hudRight">
+        <img src="../icon.png" class="hud-avatar" id="avatarRight" alt="avatar">
+        <div class="hud-info">
+          <div id="nameRight" style="font-weight: 800;">Lawan 3</div>
+          <span class="hud-cards-badge" id="cardsRight">7 Kartu</span>
+        </div>
+      </div>
+
+      <!-- Bottom User Hand Area -->
+      <div class="hud-bottom">
+        <div class="hud-controls">
+          <button class="btn-uno" onclick="userCallUno()">ðŸ“¢ CALL UNO!</button>
+          <button class="btn-arena-exit" onclick="exitArenaToLobby()">ðŸ³ï¸ Menyerah / Keluar</button>
+        </div>
+        <div class="hand-carousel" id="userHandZone">
+          <!-- User cards injected here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- LAYER 5: VFX ENGINE OVERLAYS -->
+    <div id="vfx-overlay">
+      <div id="jiko-banner">âœ¨ Peduli dan berbaik hati, siapakah dia? Christy! âœ¨</div>
+    </div>
+  </div>
+
+  <!-- COLOR PICKER MODAL (WILD CARDS) -->
+  <div class="modal-overlay" id="colorModal">
+    <div class="modal-content">
+      <h3 style="font-family: 'Outfit'; font-size: 20px;">PILIH WARNA BERIKUTNYA</h3>
+      <div class="color-options">
+        <button class="color-btn r" onclick="selectWildColor('red')">MERAH</button>
+        <button class="color-btn b" onclick="selectWildColor('blue')">BIRU</button>
+        <button class="color-btn g" onclick="selectWildColor('green')">HIJAU</button>
+        <button class="color-btn y" onclick="selectWildColor('yellow')">KUNING</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE ROOM MODAL -->
+  <div class="modal-overlay" id="createModal">
+    <div class="modal-content" style="text-align: left;">
+      <h3 style="font-family: 'Outfit'; font-size: 20px; margin-bottom: 16px;">BUAT KAMAR UNO BARU</h3>
+      <div style="margin-bottom: 12px;">
+        <label style="font-size: 12px; color: var(--text-muted);">Nama Kamar</label>
+        <input type="text" id="inputRoomName" value="Arena UNO No Mercy" class="chat-input" style="width: 100%; margin-top: 4px;">
+      </div>
+      <div style="margin-bottom: 12px;">
+        <label style="font-size: 12px; color: var(--text-muted);">Mode Permainan</label>
+        <select id="selectMode" class="chat-input" style="width: 100%; margin-top: 4px;" onchange="toggleBetSettings()">
+          <option value="classic">Classic (Santai / Gratis)</option>
+          <option value="bet_battle">Bet Battle (Taruhan Sistem Gugur)</option>
+        </select>
+      </div>
+      <div id="betConfigZone" style="display: none; margin-bottom: 12px;">
+        <label style="font-size: 12px; color: var(--text-muted);">Mata Uang Taruhan</label>
+        <select id="selectCurrency" class="chat-input" style="width: 100%; margin-top: 4px;">
+          <option value="tb_coin">Gold / TB Coin (Min. 20)</option>
+          <option value="once_token">Once Token (Min. 10)</option>
+          <option value="kristal">Kristal (Min. 5)</option>
+        </select>
+        <div style="margin-top: 8px;">
+          <label style="font-size: 12px; color: var(--text-muted);">Jumlah Taruhan</label>
+          <input type="number" id="inputWager" value="50" class="chat-input" style="width: 100%; margin-top: 4px;">
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button class="btn-action btn-create" style="flex: 1;" onclick="submitCreateRoom()">Buat Sekarang</button>
+        <button class="btn-action btn-code" onclick="closeModal('createModal')">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== GLOBAL STATE & API CONFIG =====
+    const API_BASE = "https://shinezzzz-gokgokgok.hf.space";
+    const WS_BASE = "wss://shinezzzz-gokgokgok.hf.space";
+    
+    let currentSession = localStorage.getItem('beyonce_session') || 'sess_' + Math.random().toString(36).substring(2, 10);
+    localStorage.setItem('beyonce_session', currentSession);
+    let currentUserName = localStorage.getItem('beyonce_username') || 'Wota_' + currentSession.substring(5, 9);
+
+    let activeRoom = null;
+    let ws = null;
+    let pendingWildCardId = null;
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    // ===== LOBBY FETCHING =====
+    async function fetchLobbyRooms() {
+      try {
+        const res = await fetch(`${API_BASE}/api/uno/lobby`);
+        const data = await res.json();
+        renderLobbyRooms(data.rooms || []);
+      } catch(e) {
+        console.warn("Lobby fetch fallback:", e);
+      }
+    }
+
+    function renderLobbyRooms(rooms) {
+      const container = document.getElementById('roomsContainer');
+      if (!rooms.length) {
+        container.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+            Belum ada kamar aktif. Jadilah yang pertama membuat kamar! ðŸŽ´
+          </div>
+        `;
+        return;
+      }
+      container.innerHTML = rooms.map(r => `
+        <div class="room-card">
+          <div class="room-card-top">
+            <div>
+              <div class="room-card-name">${r.name}</div>
+              <div class="room-card-host">Host: ${r.host_name}</div>
+            </div>
+            <span class="badge-mode ${r.mode === 'bet_battle' ? 'badge-bet' : 'badge-classic'}">
+              ${r.mode === 'bet_battle' ? 'ðŸ’° ' + r.wager.amount + ' ' + r.wager.currency : 'ðŸŽ® Classic'}
+            </span>
+          </div>
+          <div class="room-meta">
+            <span>ðŸ‘¥ ${r.player_count}/${r.max_players} Pemain</span>
+            <span>ðŸ”’ ${r.room_type === 'private' ? 'Privat' : 'Publik'}</span>
+          </div>
+          <button class="btn-join" onclick="joinRoom('${r.room_id}')">Gabung Kamar</button>
         </div>
       `).join('');
-    } else {
-      container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 24px;">Tidak ada room yang menunggu. Buat room baru sekarang!</div>';
     }
-  } catch (e) {
-    document.getElementById('tabLobbySection').innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #ef4444; padding: 24px;">Gagal terhubung ke server games.</div>';
-  }
-}
 
-// Open Mode Selection Modal
-function openModeSelect(gType, gTitle, formatTag) {
-  selectedGameType = gType;
-  document.getElementById('modalGameTitle').textContent = gTitle;
-  const isTeam = formatTag.includes('2v2') || formatTag.includes('4v4');
-  document.getElementById('btnMode2v2').style.display = isTeam ? 'flex' : 'none';
-  document.getElementById('btnMode4v4').style.display = formatTag.includes('4v4') ? 'flex' : 'none';
-  document.getElementById('modeModal').classList.add('active');
-}
+    function filterLobby(mode, el) {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      fetchLobbyRooms();
+    }
 
-function closeModeModal() {
-  document.getElementById('modeModal').classList.remove('active');
-}
+    // ===== ROOM CREATION =====
+    function openCreateModal() { document.getElementById('createModal').style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function toggleBetSettings() {
+      const isBet = document.getElementById('selectMode').value === 'bet_battle';
+      document.getElementById('betConfigZone').style.display = isBet ? 'block' : 'none';
+    }
 
-function selectMode(m, el) {
-  selectedMode = m;
-  document.querySelectorAll('.mode-opt-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('wagerConfigBox').style.display = m.includes('ranked') ? 'flex' : 'none';
-}
+    async function submitCreateRoom() {
+      const name = document.getElementById('inputRoomName').value.trim() || 'Arena UNO JKT48';
+      const mode = document.getElementById('selectMode').value;
+      const currency = document.getElementById('selectCurrency').value;
+      const amount = parseInt(document.getElementById('inputWager').value) || 0;
 
-function setWagerVal(v) {
-  document.getElementById('wagerAmountInput').value = v;
-  document.querySelectorAll('.w-chip').forEach(c => c.classList.toggle('active', parseInt(c.innerText) === v));
-}
+      try {
+        const res = await fetch(`${API_BASE}/api/uno/create`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name,
+            mode: mode,
+            room_type: 'public',
+            max_players: 4,
+            currency: currency,
+            wager_amount: amount,
+            host_session: currentSession,
+            host_name: currentUserName
+          })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          closeModal('createModal');
+          joinRoom(data.room_id);
+        }
+      } catch(e) {
+        alert("Gagal membuat room. Coba lagi!");
+      }
+    }
 
-// Create Room & Start
-async function startCreateRoom() {
-  const session = getSessionCookie();
-  const wagerAmt = parseInt(document.getElementById('wagerAmountInput').value || 0);
-  const wagerCurr = document.getElementById('wagerCurrency').value;
+    // ===== WEBSOCKET & ARENA SYNC =====
+    function joinRoom(roomId) {
+      if (ws) ws.close();
 
-  closeModeModal();
-  try {
-    const res = await fetch(`${GAMES_API}/api/game/create`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        game_type: selectedGameType,
-        mode: selectedMode,
-        wager_amount: selectedMode.includes('ranked') ? wagerAmt : 0,
-        wager_currency: wagerCurr,
-        player_name: "Pemain",
-        session_cookie: session
-      })
+      document.getElementById('lobby-screen').style.display = 'none';
+      document.getElementById('lounge-screen').style.display = 'block';
+
+      ws = new WebSocket(`${WS_BASE}/ws/uno/${roomId}/${currentSession}`);
+
+      ws.onopen = () => {
+        console.log("Connected to UNO room:", roomId);
+      };
+
+      ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        handleServerMessage(msg);
+      };
+
+      ws.onclose = () => {
+        console.log("Disconnected from room");
+      };
+    }
+
+    function handleServerMessage(msg) {
+      if (msg.room) {
+        activeRoom = msg.room;
+        renderLoungeState();
+        if (activeRoom.status === 'playing') {
+          renderArenaState();
+        }
+      }
+
+      if (msg.type === 'card_played') {
+        if (msg.vfx) triggerSkinVFX(msg.vfx);
+      } else if (msg.type === 'deck_recycled') {
+        showToast("ðŸ”€ Discard pile dikocok ulang ke Draw Pile!");
+      } else if (msg.type === 'new_chat') {
+        appendChatMessage(msg.chat);
+      } else if (msg.type === 'player_knockout') {
+        showToast(`ðŸ’¥ ${msg.player_name} GUGUR (Mercy Limit 25+ Kartu)!`);
+      } else if (msg.type === 'game_over') {
+        showGameOverModal(msg.settlement);
+      }
+    }
+
+    // ===== LOUNGE RENDERING =====
+    function renderLoungeState() {
+      if (!activeRoom) return;
+      document.getElementById('loungeTitle').textContent = activeRoom.name;
+      document.getElementById('loungeSub').textContent = `Mode ${activeRoom.mode} â€¢ Host: ${activeRoom.host_name}`;
+      document.getElementById('loungeRoomCode').textContent = activeRoom.room_code || activeRoom.room_id.substring(4);
+
+      const slots = document.getElementById('slotsContainer');
+      let html = '';
+      for (let i = 0; i < activeRoom.max_players; i++) {
+        const p = activeRoom.players[i];
+        if (p) {
+          html += `
+            <div class="slot-card">
+              <img src="${p.avatar}" class="slot-avatar" alt="avatar">
+              <div class="slot-name">${p.name} ${p.is_bot ? 'ðŸ¤–' : ''}</div>
+              <span class="slot-status ${p.is_ready ? 'status-ready' : 'status-waiting'}">
+                ${p.is_ready ? 'SIAP' : 'MENUNGGU'}
+              </span>
+            </div>
+          `;
+        } else {
+          html += `
+            <div class="slot-card slot-empty">
+              <div style="font-size: 24px; color: var(--text-muted);">âž•</div>
+              <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Slot Kosong</div>
+              <button class="btn-add-bot" onclick="addBotSlot()">+ Tambah Bot AI</button>
+            </div>
+          `;
+        }
+      }
+      slots.innerHTML = html;
+    }
+
+    function toggleReady() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ action: 'ready' }));
+      }
+    }
+
+    function addBotSlot() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ action: 'add_bot' }));
+      }
+    }
+
+    // ===== ARENA RENDERING =====
+    function renderArenaState() {
+      document.getElementById('lounge-screen').style.display = 'none';
+      document.getElementById('game-arena').style.display = 'block';
+
+      // 1. Color Ring & Draw Count
+      const colorRing = document.getElementById('tableColorRing');
+      colorRing.className = `color-ring ${activeRoom.current_color}`;
+      document.getElementById('drawCount').textContent = activeRoom.draw_pile_count || '0';
+
+      // 2. Pending Stack Badge
+      const stackBadge = document.getElementById('tableStackBadge');
+      if (activeRoom.pending_draw_count > 0) {
+        stackBadge.style.display = 'block';
+        stackBadge.textContent = `ðŸ”¥ +${activeRoom.pending_draw_count} PENALTY STACK!`;
+      } else {
+        stackBadge.style.display = 'none';
+      }
+
+      // 3. Render Top Card in Discard Pile
+      if (activeRoom.top_card) {
+        document.getElementById('discardPileZone').innerHTML = createCardHtml(activeRoom.top_card, false);
+      }
+
+      // 4. Opponents HUD (Left, Top, Right)
+      const opponents = activeRoom.players.filter(p => p.session_id !== currentSession);
+      if (opponents[0]) {
+        document.getElementById('hudLeft').style.display = 'flex';
+        document.getElementById('nameLeft').textContent = opponents[0].name;
+        document.getElementById('cardsLeft').textContent = `${opponents[0].card_count} Kartu`;
+        document.getElementById('avatarLeft').src = opponents[0].avatar;
+        document.getElementById('hudLeft').classList.toggle('active-turn', opponents[0].is_turn);
+      }
+      if (opponents[1]) {
+        document.getElementById('hudTop').style.display = 'flex';
+        document.getElementById('nameTop').textContent = opponents[1].name;
+        document.getElementById('cardsTop').textContent = `${opponents[1].card_count} Kartu`;
+        document.getElementById('avatarTop').src = opponents[1].avatar;
+        document.getElementById('hudTop').classList.toggle('active-turn', opponents[1].is_turn);
+      }
+      if (opponents[2]) {
+        document.getElementById('hudRight').style.display = 'flex';
+        document.getElementById('nameRight').textContent = opponents[2].name;
+        document.getElementById('cardsRight').textContent = `${opponents[2].card_count} Kartu`;
+        document.getElementById('avatarRight').src = opponents[2].avatar;
+        document.getElementById('hudRight').classList.toggle('active-turn', opponents[2].is_turn);
+      }
+
+      // 5. Render User Hand
+      const me = activeRoom.players.find(p => p.session_id === currentSession);
+      const handZone = document.getElementById('userHandZone');
+      if (me && me.hand) {
+        handZone.innerHTML = me.hand.map(c => createCardHtml(c, true)).join('');
+      }
+    }
+
+    function createCardHtml(card, isPlayable) {
+      const skin = card.skin || {};
+      const valDisplay = card.value.toUpperCase().replace('_', ' ');
+      const clickAttr = isPlayable ? `onclick="userClickCard('${card.id}', '${card.type}', this)"` : '';
+      return `
+        <div class="uno-card ${card.color}" ${clickAttr} id="card_${card.id}">
+          <div class="card-corner-top">${valDisplay}</div>
+          <div class="card-center-photo">
+            <img src="${skin.avatar || '../icon.png'}" alt="${skin.name || 'Member'}">
+          </div>
+          <div class="card-tier-pill">${skin.name ? skin.name.substring(0, 10) : 'JKT48'}</div>
+          <div class="card-corner-bot">${valDisplay}</div>
+        </div>
+      `;
+    }
+
+    // ===== CARD PLAY & 3D THROW ANIMATION =====
+    function userClickCard(cardId, cardType, el) {
+      if (cardType === 'wild') {
+        pendingWildCardId = cardId;
+        document.getElementById('colorModal').style.display = 'flex';
+        return;
+      }
+      animateAndPlayCard(cardId, el, '');
+    }
+
+    function selectWildColor(color) {
+      document.getElementById('colorModal').style.display = 'none';
+      if (pendingWildCardId) {
+        const el = document.getElementById(`card_${pendingWildCardId}`);
+        animateAndPlayCard(pendingWildCardId, el, color);
+        pendingWildCardId = null;
+      }
+    }
+
+    function animateAndPlayCard(cardId, cardElement, chosenColor) {
+      if (cardElement) {
+        const rect = cardElement.getBoundingClientRect();
+        const clone = cardElement.cloneNode(true);
+        clone.classList.add('card-thrown');
+        clone.style.left = rect.left + 'px';
+        clone.style.top = rect.top + 'px';
+        clone.style.margin = '0';
+        document.body.appendChild(clone);
+
+        cardElement.style.opacity = '0';
+        cardElement.style.pointerEvents = 'none';
+
+        requestAnimationFrame(() => {
+          clone.style.left = 'calc(50% - 42px)';
+          clone.style.top = 'calc(50% - 62px)';
+          clone.style.transform = 'scale(0.8) rotate(' + (Math.random()*20 - 10) + 'deg)';
+        });
+
+        setTimeout(() => {
+          clone.remove();
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+              action: 'play_card',
+              card_id: cardId,
+              chosen_color: chosenColor
+            }));
+          }
+        }, 500);
+      }
+    }
+
+    function userDrawCard() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ action: 'draw_card' }));
+      }
+    }
+
+    function userCallUno() {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ action: 'call_uno' }));
+        showToast("ðŸ“¢ KAMU MEMANGGIL UNO!");
+      }
+    }
+
+    // ===== SKIN VFX ENGINE =====
+    function triggerSkinVFX(vfxData) {
+      const skin = vfxData.skin || {};
+      const overlay = document.getElementById('vfx-overlay');
+      const jiko = document.getElementById('jiko-banner');
+
+      if (skin.jiko) {
+        jiko.textContent = `âœ¨ ${skin.name}: "${skin.jiko}" âœ¨`;
+        overlay.className = skin.tier === 'OMEGA_SPESIAL' ? 'vfx-active-omega' : 'vfx-active-fc';
+        jiko.classList.add('jiko-show');
+
+        setTimeout(() => {
+          overlay.className = '';
+          jiko.classList.remove('jiko-show');
+        }, 3500);
+      }
+    }
+
+    function sendChat() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (text && ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ action: 'chat', text: text }));
+        input.value = '';
+      }
+    }
+
+    function appendChatMessage(chat) {
+      const msgs = document.getElementById('chatMsgs');
+      const div = document.createElement('div');
+      div.className = 'chat-msg';
+      div.innerHTML = `<strong>${chat.name}:</strong> ${chat.text} <span>${chat.time}</span>`;
+      msgs.appendChild(div);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function showToast(text) {
+      const banner = document.getElementById('jiko-banner');
+      banner.textContent = text;
+      banner.classList.add('jiko-show');
+      setTimeout(() => banner.classList.remove('jiko-show'), 2500);
+    }
+
+    function showGameOverModal(settlement) {
+      alert("ðŸ† GAME SELESAI! Cek hasil akhir dan koinmu di menu profil.");
+      exitArenaToLobby();
+    }
+
+    function exitArenaToLobby() {
+      if (ws) ws.close();
+      document.getElementById('game-arena').style.display = 'none';
+      document.getElementById('lounge-screen').style.display = 'none';
+      document.getElementById('lobby-screen').style.display = 'block';
+      fetchLobbyRooms();
+    }
+
+    function quickMatch() {
+      // Find open public room or create one
+      openCreateModal();
+    }
+
+    function copyRoomCode() {
+      const code = document.getElementById('loungeRoomCode').textContent;
+      navigator.clipboard.writeText(code);
+      showToast("ðŸ“‹ Kode kamar berhasil disalin!");
+    }
+
+    // Init App
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchLobbyRooms();
+      setInterval(fetchLobbyRooms, 8000);
     });
-    const data = await res.json();
-    if (data.status === 'ok' && data.game_id) {
-      joinRoom(data.game_id);
-    }
-  } catch (e) {
-    alert("Gagal membuat room permainan.");
-  }
-}
-
-function joinByCode() {
-  const code = document.getElementById('quickRoomInput').value.trim().toUpperCase();
-  if (!code) return alert("Masukkan kode room terlebih dahulu!");
-  joinRoom(code);
-}
-
-// Connect to WebSocket Game Arena
-function joinRoom(gameId) {
-  currentRoomId = gameId;
-  const session = getSessionCookie();
-  const wsUrl = `${GAMES_WS_BASE}/ws/game/${gameId}/${session}?name=Pemain`;
-
-  if (ws) ws.close();
-  ws = new WebSocket(wsUrl);
-
-  ws.onopen = () => {
-    launchArenaView();
-  };
-
-  ws.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    handleServerMessage(data);
-  };
-
-  ws.onclose = () => {
-    console.log("WebSocket Disconnected");
-  };
-}
-
-function launchArenaView() {
-  document.getElementById('arenaView').classList.add('active');
-  document.getElementById('arenaRoomBadge').textContent = 'ROOM: ' + currentRoomId + ' 📋';
-  document.getElementById('matchResultBox').style.display = 'none';
-
-  // Hide all game boards
-  ['boxJanken', 'boxTictactoe', 'boxMemory', 'boxWordbomb', 'boxNumberduel', 'boxTrivia', 'boxConnect4', 'boxReaction'].forEach(id => {
-    document.getElementById(id).style.display = 'none';
-  });
-
-  // Show active game box
-  const mapBox = {
-    'janken': 'boxJanken', 'tictactoe': 'boxTictactoe', 'memory': 'boxMemory',
-    'wordbomb': 'boxWordbomb', 'numberduel': 'boxNumberduel', 'trivia': 'boxTrivia',
-    'connect4': 'boxConnect4', 'reaction': 'boxReaction'
-  };
-  const targetBox = mapBox[selectedGameType] || 'boxJanken';
-  document.getElementById(targetBox).style.display = 'block';
-
-  if (selectedGameType === 'tictactoe') initTttGrid();
-  if (selectedGameType === 'memory') initMemoryGrid();
-  if (selectedGameType === 'connect4') initC4Grid();
-}
-
-function copyRoomCode() {
-  navigator.clipboard.writeText(currentRoomId);
-  alert("Kode Room " + currentRoomId + " berhasil disalin ke clipboard!");
-}
-
-function leaveArena() {
-  if (ws) ws.close();
-  document.getElementById('arenaView').classList.remove('active');
-  fetchUserBalance();
-}
-
-function sendMove(moveData) {
-  if (ws && ws.readyState === WebSocket.OPEN) {
-    ws.send(JSON.stringify({ type: 'move', data: moveData }));
-  }
-}
-
-function sendChat(msg) {
-  if (ws && ws.readyState === WebSocket.OPEN) {
-    ws.send(JSON.stringify({ type: 'chat', msg: msg }));
-  }
-}
-
-// Server Message Handler
-function handleServerMessage(d) {
-  if (d.type === 'joined') {
-    myPlayerIdx = d.player_idx;
-    myTeam = d.team;
-    selectedGameType = d.game_type;
-    updatePlayersUI(d.players);
-  } else if (d.type === 'player_joined' || d.type === 'game_start') {
-    updatePlayersUI(d.players);
-  } else if (d.type === 'chat') {
-    showChatToast(d.sender, d.msg);
-  } else if (d.type === 'janken_reveal') {
-    updatePlayersUI(d.players);
-    document.getElementById('jankenRoundText').textContent = d.round_winner === 'draw' ? 'SERI / DRAW!' : (d.round_winner === myTeam ? 'KAMU MENANG RONDE INI! 🎉' : 'LAWAN MENANG RONDE INI! 💥');
-  } else if (d.type === 'ttt_update') {
-    renderTttBoard(d.board);
-  } else if (d.type === 'memory_flip') {
-    const card = document.getElementById(`memCard_${d.card_index}`);
-    if (card) { card.classList.add('flipped'); card.querySelector('.mem-inner').textContent = d.symbol; }
-  } else if (d.type === 'memory_match') {
-    d.indices.forEach(idx => { const c = document.getElementById(`memCard_${idx}`); if (c) c.classList.add('matched'); });
-  } else if (d.type === 'memory_unflip') {
-    d.indices.forEach(idx => { const c = document.getElementById(`memCard_${idx}`); if (c) { c.classList.remove('flipped'); c.querySelector('.mem-inner').textContent = ''; } });
-  } else if (d.type === 'wordbomb_success') {
-    document.getElementById('bombPrompt').textContent = d.next_prompt;
-    document.getElementById('wordBombInput').value = '';
-  } else if (d.type === 'number_hint') {
-    document.getElementById('numberHint').textContent = d.hint;
-  } else if (d.type === 'trivia_next_q') {
-    renderTriviaQ(d.question);
-  } else if (d.type === 'connect4_drop') {
-    const cell = document.getElementById(`c4Cell_${d.cell_idx}`);
-    if (cell) cell.className = `c4-cell p${d.player_sym}`;
-  } else if (d.type === 'game_over') {
-    showGameOver(d);
-  }
-}
-
-function updatePlayersUI(players) {
-  if (!players || players.length === 0) return;
-  document.getElementById('p1Name').textContent = players[0]?.name || 'Pemain 1';
-  document.getElementById('p2Name').textContent = players[1]?.name || (players.length > 1 ? 'Pemain 2' : 'Menunggu Lawan...');
-  document.getElementById('p1Hp').style.width = (players[0]?.hp ?? 100) + '%';
-  document.getElementById('p2Hp').style.width = (players[1]?.hp ?? 100) + '%';
-}
-
-function showChatToast(sender, msg) {
-  const badge = document.getElementById('arenaGameTitle');
-  badge.textContent = `💬 ${sender}: ${msg}`;
-  setTimeout(() => { badge.textContent = selectedGameType.toUpperCase(); }, 2500);
-}
-
-// 2. TicTacToe Helper
-function initTttGrid() {
-  const grid = document.getElementById('tttGrid');
-  grid.innerHTML = Array(9).fill(0).map((_, i) => `<div class="ttt-cell" id="tttCell_${i}" onclick="sendMove({pos: ${i}})"></div>`).join('');
-}
-function renderTttBoard(board) {
-  board.forEach((sym, i) => {
-    const c = document.getElementById(`tttCell_${i}`);
-    if (c) { c.textContent = sym; c.className = `ttt-cell ${sym}`; }
-  });
-}
-
-// 3. Memory Helper
-function initMemoryGrid() {
-  const grid = document.getElementById('memoryGrid');
-  grid.innerHTML = Array(16).fill(0).map((_, i) => `<div class="mem-card" id="memCard_${i}" onclick="sendMove({card_index: ${i}})"><div class="mem-inner"></div></div>`).join('');
-}
-
-// 4. WordBomb Helper
-function submitWordBomb(e) {
-  e.preventDefault();
-  const val = document.getElementById('wordBombInput').value.trim();
-  if (val) sendMove({ word: val });
-}
-
-// 5. NumberDuel Helper
-function submitNumberGuess(e) {
-  e.preventDefault();
-  const val = parseInt(document.getElementById('numberGuessInput').value);
-  if (val) sendMove({ guess: val });
-}
-
-// 6. Trivia Helper
-function renderTriviaQ(qObj) {
-  document.getElementById('triviaQText').textContent = qObj.q;
-  document.getElementById('triviaOpts').innerHTML = qObj.opts.map((opt, i) => `
-    <button class="t-opt-btn" onclick="sendMove({answer_idx: ${i}})">${String.fromCharCode(65+i)}. ${opt}</button>
-  `).join('');
-}
-
-// 7. Connect4 Helper
-function initC4Grid() {
-  const grid = document.getElementById('c4Grid');
-  grid.innerHTML = Array(42).fill(0).map((_, i) => `<div class="c4-cell" id="c4Cell_${i}" onclick="sendMove({col: ${i % 7}})"></div>`).join('');
-}
-
-// 8. Reaction Helper
-let reactionTimeout = null;
-let reactionStart = 0;
-function startReactionRound() {
-  const arena = document.getElementById('reactionArena');
-  arena.className = 'reaction-arena waiting';
-  arena.textContent = 'TUNGGU LAMPU HIJAU...';
-  const delay = Math.floor(1500 + Math.random() * 2500);
-  clearTimeout(reactionTimeout);
-  reactionTimeout = setTimeout(() => {
-    arena.className = 'reaction-arena ready';
-    arena.textContent = 'KLIK SEKARANG! ⚡';
-    reactionStart = Date.now();
-  }, delay);
-}
-function handleReactionTap() {
-  const arena = document.getElementById('reactionArena');
-  if (arena.classList.contains('ready')) {
-    const elapsed = Date.now() - reactionStart;
-    arena.className = 'reaction-arena waiting';
-    arena.textContent = `${elapsed} ms!`;
-    sendMove({ time_ms: elapsed });
-    setTimeout(startReactionRound, 1500);
-  } else if (arena.classList.contains('waiting')) {
-    clearTimeout(reactionTimeout);
-    arena.textContent = 'TERLALU CEPAT! +500ms';
-    sendMove({ time_ms: 500 });
-    setTimeout(startReactionRound, 1500);
-  }
-}
-
-// Game Over Display
-function showGameOver(d) {
-  const resBox = document.getElementById('matchResultBox');
-  const resTitle = document.getElementById('matchResultTitle');
-  const settleAlert = document.getElementById('wagerSettleText');
-  resBox.style.display = 'block';
-
-  const isWin = (d.winner_team === myTeam);
-  if (isWin) {
-    resTitle.textContent = '🏆 VICTORY! KAMU MENANG!';
-    resTitle.className = 'result-banner win-color';
-  } else {
-    resTitle.textContent = '💀 DEFEAT! KAMU KALAH!';
-    resTitle.className = 'result-banner lose-color';
-  }
-
-  if (d.settlement && d.settlement.status === 'success') {
-    settleAlert.style.display = 'block';
-    settleAlert.textContent = `💰 Transaksi Ranked Selesai: Total pot ${d.settlement.total_pot} ${d.settlement.currency} telah didistribusikan ke akun pemenang!`;
-  }
-  fetchUserBalance();
-}
-
-// Initial Load
-document.addEventListener('DOMContentLoaded', () => {
-  fetchUserBalance();
-  lobbyInterval = setInterval(fetchLobbyRooms, 4000);
-});
-</script>
+  </script>
 </body>
 </html>
