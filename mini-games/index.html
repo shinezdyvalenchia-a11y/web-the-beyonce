@@ -696,6 +696,7 @@
       .uno-card { width: 85px; height: 130px; margin: 0 -14px; }
       .card-corner { font-size: 16px; }
     }
+
     /* =========================================================================
        SPECIFIC CSS KEYFRAMES & CLASSES FOR EACH TIER & SUB-TIER
        ========================================================================= */
@@ -2950,8 +2951,6 @@
           const ry = (x / rect.width) * 15;
           el.style.setProperty('--rx', `${rx}deg`);
           el.style.setProperty('--ry', `${ry}deg`);
-        });
-
         el.addEventListener('mouseleave', () => {
           el.style.setProperty('--rx', `0deg`);
           el.style.setProperty('--ry', `0deg`);
@@ -2959,9 +2958,6 @@
       });
     }
 
-    // =========================================================================
-    // FLIP GPU HARDWARE ACCELERATED ANIMATION CONTROLLER
-    // =========================================================================
     function animateCardToCenter(cardElement, tierData, onComplete) {
       if (!cardElement) { if (onComplete) onComplete(); return; }
       const rect = cardElement.getBoundingClientRect();
@@ -3157,7 +3153,7 @@
       });
     }
 
-        // =========================================================================
+    // =========================================================================
     // STRICT SKIN VFX & SFX DISPATCHER (ZERO PARTICLES FOR UNCOMMON & RARE)
     // =========================================================================
     function getSkinVfxConfig(el) {
@@ -3229,7 +3225,7 @@
             trailClass: 'vfx-pink-love',
             trailColor: '#ff7675',
             hasParticles: true,
-            particleSymbol: 'ðŸ’–',
+            particleSymbol: '💖',
             particleColor: '#ff7675',
             screenFlash: 'vfx-pink-love-flash',
             throw_sfx: 'sfx_pink_charm.mp3',
@@ -3244,7 +3240,7 @@
             trailClass: 'vfx-yellow-fire',
             trailColor: '#f39c12',
             hasParticles: true,
-            particleSymbol: 'ðŸ”¥',
+            particleSymbol: '🔥',
             particleColor: '#e67e22',
             screenFlash: 'vfx-yellow-fire-flash',
             throw_sfx: 'sfx_fire_dash.mp3',
@@ -3259,7 +3255,7 @@
             trailClass: 'vfx-blue-moon',
             trailColor: '#3498db',
             hasParticles: true,
-            particleSymbol: 'âœ¨',
+            particleSymbol: '✨',
             particleColor: '#00d2ff',
             screenFlash: 'vfx-blue-moon-flash',
             throw_sfx: 'sfx_moon_magic.mp3',
@@ -3274,7 +3270,7 @@
             trailClass: 'vfx-black-flower',
             trailColor: '#2d3436',
             hasParticles: true,
-            particleSymbol: 'ðŸŒ¸',
+            particleSymbol: '🌸',
             particleColor: '#d63031',
             screenFlash: 'vfx-black-flower-flash',
             throw_sfx: 'sfx_dark_wind.mp3',
@@ -3292,7 +3288,7 @@
           trailClass: 'vfx-ssk-rainbow-trail',
           trailColor: 'rgba(168, 85, 247, 0.95)',
           hasParticles: true,
-          particleSymbols: ['â­', 'ðŸŒ™', 'ðŸ”¥', 'âœ¨'],
+          particleSymbols: ['⭐', '🌙', '🔥', '✨'],
           particleColors: ['#ff007f', '#00d2ff', '#ffd700', '#a855f7'],
           screenFlash: 'screen-flash-gold',
           throw_sfx: 'sfx_heavy_meteor_rainbow.mp3',
@@ -3342,6 +3338,189 @@
         throw_sfx: 'sfx_card_flip_normal.mp3',
         impact_sfx: 'sfx_card_hit_table.mp3'
       };
+    }
+
+    function triggerColorSupernovaWave(color) {
+      const colorsMap = { red: '#e74c3c', blue: '#0984e3', green: '#00b894', yellow: '#fbc531' };
+      const col = colorsMap[color] || '#00d2ff';
+      const wave = document.createElement('div');
+      wave.className = 'color-wave-blast';
+      wave.style.setProperty('--wave-col', col);
+      wave.style.left = 'calc(50% - 40px)';
+      wave.style.top = 'calc(50% - 40px)';
+      document.getElementById('game-arena').appendChild(wave);
+      setTimeout(() => wave.remove(), 850);
+    }
+
+    function applyCardRules(card, player, playerIdx) {
+      const v = card.value;
+      if (v === 'draw_2') activeRoom.pending_draw_count += 2;
+      else if (v === 'draw_4') activeRoom.pending_draw_count += 4;
+      else if (v === 'wild_draw_6') activeRoom.pending_draw_count += 6;
+      else if (v === 'wild_draw_10') activeRoom.pending_draw_count += 10;
+      else if (v === 'wild_reverse_4') {
+        localTurnDirection *= -1;
+        activeRoom.pending_draw_count += 4;
+        animateReverseScene();
+      }
+      else if (v === 'reverse') {
+        localTurnDirection *= -1;
+        animateReverseScene();
+      }
+      else if (v === 'skip' || v === 'skip_everyone') {
+        const nextIdx = (playerIdx + 1) % activeRoom.players.length;
+        const hudMap = ['hudLeft', 'hudTop', 'hudRight'];
+        animateSkipVictim(hudMap[nextIdx - 1] || 'hudLeft');
+      }
+      else if (v === 'wild_shuffle_hands') {
+        animateGlobalShuffle();
+      }
+      else if (v === 'discard_all') {
+        player.hand = player.hand.filter(c => c.color !== card.color);
+      }
+    }
+
+    function userDrawCard() {
+      if (activeRoom.current_turn_idx !== 0) return;
+      const me = activeRoom.players[0];
+      const targetEl = document.getElementById('userHandZone');
+
+      if (activeRoom.pending_draw_count > 0) {
+        animateDrawPunishment('userHandZone', activeRoom.pending_draw_count, () => {
+          for (let i = 0; i < activeRoom.pending_draw_count; i++) {
+            if (localDeck.length === 0) localDeck = buildFullUnoDeck();
+            me.hand.push(localDeck.pop());
+          }
+          activeRoom.pending_draw_count = 0;
+          renderArenaState();
+          triggerBotTurn();
+        });
+      } else {
+        animateCardDrawFlight(targetEl, () => {
+          if (localDeck.length === 0) localDeck = buildFullUnoDeck();
+          me.hand.push(localDeck.pop());
+          showToast("Kamu menarik 1 kartu dari Draw Deck!");
+          renderArenaState();
+          triggerBotTurn();
+        });
+      }
+    }
+
+    // ===== BOT TURN AI ENGINE WITH FLIGHT ANIMATION =====
+    function triggerBotTurn() {
+      startTurnTimer();
+
+      if (activeRoom.players.length === 2) {
+        activeRoom.current_turn_idx = 1;
+        renderArenaState();
+        setTimeout(() => {
+          runBotAction(1, () => {
+            activeRoom.current_turn_idx = 0;
+            renderArenaState();
+            startTurnTimer();
+            showToast("\uD83C\uDFB2 Giliran Kamu Sekarang!");
+          });
+        }, 1400);
+      } else {
+        activeRoom.current_turn_idx = 1;
+        renderArenaState();
+        setTimeout(() => {
+          runBotAction(1, () => {
+            activeRoom.current_turn_idx = 2;
+            renderArenaState();
+            setTimeout(() => {
+              runBotAction(2, () => {
+                activeRoom.current_turn_idx = 3;
+                renderArenaState();
+                setTimeout(() => {
+                  runBotAction(3, () => {
+                    activeRoom.current_turn_idx = 0;
+                    renderArenaState();
+                    startTurnTimer();
+                    showToast("\uD83C\uDFB2 Giliran Kamu Sekarang!");
+                  });
+                }, 1200);
+              });
+            }, 1200);
+          });
+        }, 1200);
+      }
+    }
+
+    function runBotAction(botIdx, callback) {
+      const bot = activeRoom.players[botIdx];
+      if (!bot) { callback(); return; }
+
+      const hudMap = ['hudLeft', 'hudTop', 'hudRight'];
+      const targetHudId = hudMap[botIdx - 1] || 'hudLeft';
+      const hudEl = document.getElementById(targetHudId);
+
+      const playableIdx = bot.hand.findIndex(c => 
+        c.color === activeRoom.current_color || 
+        c.color === 'wild' || 
+        c.value === activeRoom.top_card.value
+      );
+
+      if (playableIdx !== -1) {
+        const card = bot.hand.splice(playableIdx, 1)[0];
+        activeRoom.top_card = card;
+        localDiscardPile.push(card);
+
+        if (card.color !== 'wild') activeRoom.current_color = card.color;
+        else activeRoom.current_color = ['red', 'blue', 'green', 'yellow'][Math.floor(Math.random()*4)];
+
+        const botTierData = {
+          tier: 'UNCOMMON',
+          hasTrail: false,
+          hasParticles: false,
+          hasImpactVFX: false,
+          throw_sfx: 'sfx_card_flip_normal.mp3',
+          impact_sfx: 'sfx_card_hit_table.mp3'
+        };
+
+        triggerAudio(botTierData.throw_sfx);
+        animateCardToCenter(hudEl, botTierData, () => {
+          triggerSkinLandingVFX(card, botTierData);
+          applyCardRules(card, bot, botIdx);
+
+          if (bot.hand.length === 1) {
+            triggerAudio("sfx_white_explosion_birds.mp3");
+            showToast(`📢 ${bot.name} MEMANGGIL UNO!`);
+          } else if (bot.hand.length === 0) {
+            triggerTheatricalPostMatch(false);
+            return;
+          }
+
+          renderArenaState();
+          callback();
+        });
+      } else {
+        animateCardDrawFlight(hudEl, () => {
+          if (activeRoom.pending_draw_count > 0) {
+            for (let i = 0; i < activeRoom.pending_draw_count; i++) {
+              if (localDeck.length === 0) localDeck = buildFullUnoDeck();
+              bot.hand.push(localDeck.pop());
+            }
+            showToast(`${bot.name} terkena +${activeRoom.pending_draw_count} penalti kartu!`);
+            activeRoom.pending_draw_count = 0;
+          } else {
+            if (localDeck.length === 0) localDeck = buildFullUnoDeck();
+            bot.hand.push(localDeck.pop());
+            showToast(`${bot.name} menarik 1 kartu.`);
+          }
+          renderArenaState();
+          callback();
+        });
+      }
+    }
+
+    function userCallUno() {
+      const me = activeRoom.players[0];
+      me.uno_safe = true;
+      if (forgotUnoTimer) clearTimeout(forgotUnoTimer);
+      triggerAudio("sfx_white_explosion_birds.mp3");
+      showToast("\uD83D\uDCE2 KAMU MEMANGGIL UNO!");
+      triggerEmote('📣');
     }
 
     // =========================================================================
@@ -3445,7 +3624,7 @@
 
       // Jiko text display
       if (config.jiko) {
-        jiko.textContent = `âœ¨ ${config.name || card.member}: "${config.jiko}" âœ¨`;
+        jiko.textContent = `✨ ${config.name || card.member}: "${config.jiko}" ✨`;
         jiko.classList.add('jiko-show');
         setTimeout(() => jiko.classList.remove('jiko-show'), 3500);
       }
@@ -3474,65 +3653,6 @@
             p.color = config.particleColor || '#ffd700';
           }
 
-          p.alpha = 1;
-          p.decay = 0.02;
-          p.active = true;
-        }
-      }
-
-      runParticleLoop();
-    }
-
-    function triggerSkinLandingVFX(card, config) {
-      if (!config || !config.impact_sfx) return;
-      triggerAudio(config.impact_sfx);
-
-      initVFXCanvas();
-      const overlay = document.getElementById('vfx-overlay');
-      const jiko = document.getElementById('jiko-banner');
-      overlay.style.opacity = '1';
-
-      const cx = window.innerWidth / 2;
-      const cy = window.innerHeight / 2;
-
-      // Screen Flash
-      if (config.screenFlash) {
-        document.body.classList.add(config.screenFlash);
-        setTimeout(() => document.body.classList.remove(config.screenFlash), 600);
-      } else if (config.solidColor) {
-        document.documentElement.style.setProperty('--flash-color', config.solidColor);
-        document.body.classList.add('screen-flash-color');
-        setTimeout(() => document.body.classList.remove('screen-flash-color'), 600);
-      }
-
-      // 3D Extra Props (Wings, Ring, Bouquet, Choco, Water)
-      if (config.extraProp) {
-        const propEl = document.getElementById(config.extraProp);
-        if (propEl) {
-          propEl.classList.add('active');
-          setTimeout(() => propEl.classList.remove('active'), 2800);
-        }
-      }
-
-      // Jiko text display
-      if (config.jiko) {
-        jiko.textContent = `✨ ${config.name || card.member}: "${config.jiko}" ✨`;
-        jiko.classList.add('jiko-show');
-        setTimeout(() => jiko.classList.remove('jiko-show'), 3500);
-      }
-
-      // Spawn Object-Pooled Burst Particles
-      for (let i = 0; i < 60; i++) {
-        const p = particlePool.find(item => !item.active);
-        if (p) {
-          const angle = Math.random() * Math.PI * 2;
-          const speed = Math.random() * 8 + 2;
-          p.x = cx; p.y = cy;
-          p.vx = Math.cos(angle) * speed;
-          p.vy = Math.sin(angle) * speed;
-          p.size = Math.random() * 7 + 3;
-          p.color = config.particleColor || '#ffd700';
-          p.symbol = config.particleSymbol || '';
           p.alpha = 1;
           p.decay = 0.02;
           p.active = true;
