@@ -629,8 +629,11 @@ const SkinDatabase = {
     // 78-MEMBER STRICT 1-TO-1 UNO MASTER ROSTER (100% PRESERVED)
     // =========================================================================
 
-function getSkinVfxConfig(input, cardObj) {
-      if (!el) {
+// =========================================================================
+    // STRICT SKIN VFX & SFX DISPATCHER (ZERO PARTICLES FOR UNCOMMON & RARE)
+    // =========================================================================
+    function getSkinVfxConfig(input, cardObj) {
+      if (!input && !cardObj) {
         return {
           tier: 'UNCOMMON',
           hasTrail: false,
@@ -641,127 +644,49 @@ function getSkinVfxConfig(input, cardObj) {
         };
       }
 
-      const tier = el.getAttribute('data-tier') || 'UNCOMMON';
-      const subtier = el.getAttribute('data-subtier') || '';
-      const kode = el.getAttribute('data-kode') || '';
+      let kode = '';
+      let tier = '';
+      let subtier = '';
 
-      // 8. UNCOMMON: KARTU DEFAULT POLOS. VFX Lempar: TIDAK ADA. Efek Mendarat: TIDAK ADA.
-      if (tier === 'UNCOMMON' || (!kode && tier !== 'OMEGA_SPESIAL' && tier !== 'MYTH' && tier !== 'LEGEND' && tier !== 'RARE' && tier !== 'OMEGA_SSK')) {
-        return {
-          tier: 'UNCOMMON',
-          hasTrail: false,
-          hasParticles: false,
-          hasImpactVFX: false,
-          throw_sfx: 'sfx_card_flip_normal.mp3',
-          impact_sfx: 'sfx_card_hit_table.mp3'
-        };
+      if (cardObj) {
+        kode = cardObj.equippedCode || (typeof equippedSkinMap !== 'undefined' ? equippedSkinMap[cardObj.skin_key] : '') || '';
       }
 
-      // 7. RARE: SNOW AND GOLD. SUPER TIPIS. Partikel Melayang: TIDAK ADA. Efek Mendarat: TIDAK ADA.
-      if (tier === 'RARE') {
-        return {
-          tier: 'RARE',
-          hasTrail: true,
-          trailClass: 'vfx-rare-thin-trail',
-          trailColor: 'rgba(255, 255, 255, 0.4)',
-          hasParticles: false,
-          hasImpactVFX: false,
-          throw_sfx: 'sfx_thin_ice_slide.mp3',
-          impact_sfx: 'sfx_soft_card_place.mp3'
-        };
-      }
-
-      // 6. LEGEND: COSMOS NO KIOKU. Partikel Melayang: TIDAK ADA SPRINGKEL (Statis ngikutin kartu). Percikan aura hitam bintang kecil.
-      if (tier === 'LEGEND') {
-        return {
-          tier: 'LEGEND',
-          hasTrail: true,
-          trailClass: 'vfx-legend-cosmos',
-          trailColor: '#2c2c54',
-          hasParticles: false,
-          staticStars: true,
-          hasImpactVFX: true,
-          particleType: 'tiny_dots',
-          particleColors: ['#ff4757', '#00d2ff', '#ffd700', '#a855f7', '#ffffff'],
-          throw_sfx: 'sfx_void_glide.mp3',
-          impact_sfx: 'sfx_cosmic_shatter.mp3'
-        };
-      }
-
-      // 5. MYTH: 4 SUB-TIERS (LOVE_WAR, MY_PASSION, HIGH_DREAM, LAST_DRESS)
-      if (tier === 'MYTH') {
-        if (subtier === 'LOVE_WAR' || kode.includes('FIONY')) {
-          return {
-            tier: 'MYTH',
-            subtier: 'LOVE_WAR',
-            hasTrail: true,
-            trailClass: 'vfx-pink-love',
-            trailColor: '#ff7675',
-            hasParticles: true,
-            particleSymbol: '💖',
-            particleColor: '#ff7675',
-            screenFlash: 'vfx-pink-love-flash',
-            throw_sfx: 'sfx_pink_charm.mp3',
-            impact_sfx: 'sfx_heart_splash.mp3',
-            hasImpactVFX: true
-          };
-        } else if (subtier === 'MY_PASSION' || kode.includes('FENI')) {
-          return {
-            tier: 'MYTH',
-            subtier: 'MY_PASSION',
-            hasTrail: true,
-            trailClass: 'vfx-yellow-fire',
-            trailColor: '#f39c12',
-            hasParticles: true,
-            particleSymbol: '🔥',
-            particleColor: '#e67e22',
-            screenFlash: 'vfx-yellow-fire-flash',
-            throw_sfx: 'sfx_fire_dash.mp3',
-            impact_sfx: 'sfx_fire_ember_hit.mp3',
-            hasImpactVFX: true
-          };
-        } else if (subtier === 'HIGH_DREAM' || kode.includes('ADELINE') || kode.includes('MARSHA') || kode.includes('FREYA') || kode.includes('GITA')) {
-          return {
-            tier: 'MYTH',
-            subtier: 'HIGH_DREAM',
-            hasTrail: true,
-            trailClass: 'vfx-blue-moon',
-            trailColor: '#3498db',
-            hasParticles: true,
-            particleSymbol: '✨',
-            particleColor: '#00d2ff',
-            screenFlash: 'vfx-blue-moon-flash',
-            throw_sfx: 'sfx_moon_magic.mp3',
-            impact_sfx: 'sfx_star_shatter.mp3',
-            hasImpactVFX: true
-          };
-        } else {
-          return {
-            tier: 'MYTH',
-            subtier: 'LAST_DRESS',
-            hasTrail: true,
-            trailClass: 'vfx-black-flower',
-            trailColor: '#2d3436',
-            hasParticles: true,
-            particleSymbol: '🌸',
-            particleColor: '#d63031',
-            screenFlash: 'vfx-black-flower-flash',
-            throw_sfx: 'sfx_dark_wind.mp3',
-            impact_sfx: 'sfx_black_petal_drop.mp3',
-            hasImpactVFX: true
-          };
+      if (!kode && input) {
+        if (typeof input.getAttribute === 'function') {
+          kode = input.getAttribute('data-kode') || input.getAttribute('data-skin') || '';
+          tier = input.getAttribute('data-tier') || '';
+          subtier = input.getAttribute('data-subtier') || '';
+        } else if (typeof input === 'object') {
+          kode = input.equippedCode || input.kode || input.code || input.skin_code || '';
+          tier = input.tier || '';
+          subtier = input.subtier || '';
         }
       }
 
-      // 4. OMEGA (SSK EDITION)
-      if (tier === 'OMEGA_SSK' || kode.startsWith('S')) {
+      // 1. OMEGA SPESIAL (BASE / FULL_COLOR / PRIME)
+      if (kode in SkinDatabase.OMEGA_SPESIAL) {
+        const item = SkinDatabase.OMEGA_SPESIAL[kode];
+        return {
+          ...item,
+          tier: 'OMEGA_SPESIAL',
+          hasTrail: true,
+          trailClass: item.subtier === 'FULL_COLOR' ? 'vfx-full-color-trail' : (item.subtier === 'PRIME' ? 'vfx-prime-gold-trail' : 'vfx-holy-white-trail'),
+          hasParticles: item.subtier !== 'FULL_COLOR',
+          hasImpactVFX: true,
+          screenFlash: item.subtier === 'FULL_COLOR' ? 'screen-flash-color' : (item.subtier === 'PRIME' ? 'screen-flash-gold' : 'screen-flash-white')
+        };
+      }
+
+      // 2. OMEGA (SSK EDITION)
+      if (kode.startsWith('S') && kode.length === 4) {
         return {
           tier: 'OMEGA_SSK',
           hasTrail: true,
           trailClass: 'vfx-ssk-rainbow-trail',
           trailColor: 'rgba(168, 85, 247, 0.95)',
           hasParticles: true,
-          particleSymbols: ['⭐', '🌙', '🔥', '✨'],
+          particleSymbols: ['â­', 'ðŸŒ™', 'ðŸ”¥', 'âœ¨'],
           particleColors: ['#ff007f', '#00d2ff', '#ffd700', '#a855f7'],
           screenFlash: 'screen-flash-gold',
           throw_sfx: 'sfx_heavy_meteor_rainbow.mp3',
@@ -770,39 +695,54 @@ function getSkinVfxConfig(input, cardObj) {
         };
       }
 
-      // 1-3. OMEGA_SPESIAL (BASE / FULL_COLOR / PRIME)
-      if (tier === 'OMEGA_SPESIAL' && kode in SkinDatabase.OMEGA_SPESIAL) {
-        const item = SkinDatabase.OMEGA_SPESIAL[kode];
-        if (item.subtier === 'SPESIAL') {
+      // 3. MYTH (4 SUB-TIERS)
+      if (kode.includes('MYTH') || tier === 'MYTH') {
+        if (kode.includes('LOVE') || kode.includes('FIONY') || subtier === 'LOVE_WAR') {
           return {
-            ...item,
-            hasTrail: true,
-            trailClass: 'vfx-holy-white-trail',
-            hasParticles: true,
-            hasImpactVFX: true,
-            screenFlash: 'screen-flash-white'
+            tier: 'MYTH', subtier: 'LOVE_WAR', hasTrail: true, trailClass: 'vfx-pink-love', trailColor: '#ff7675',
+            hasParticles: true, particleSymbol: 'ðŸ’–', particleColor: '#ff7675', screenFlash: 'vfx-pink-love-flash',
+            throw_sfx: 'sfx_pink_charm.mp3', impact_sfx: 'sfx_heart_splash.mp3', hasImpactVFX: true
           };
-        } else if (item.subtier === 'FULL_COLOR') {
+        } else if (kode.includes('PASSION') || kode.includes('FENI') || subtier === 'MY_PASSION') {
           return {
-            ...item,
-            hasTrail: true,
-            trailClass: 'vfx-full-color-trail',
-            hasParticles: false,
-            hasImpactVFX: true,
-            screenFlash: 'screen-flash-color'
+            tier: 'MYTH', subtier: 'MY_PASSION', hasTrail: true, trailClass: 'vfx-yellow-fire', trailColor: '#f39c12',
+            hasParticles: true, particleSymbol: 'ðŸ”¥', particleColor: '#e67e22', screenFlash: 'vfx-yellow-fire-flash',
+            throw_sfx: 'sfx_fire_dash.mp3', impact_sfx: 'sfx_fire_ember_hit.mp3', hasImpactVFX: true
           };
-        } else if (item.subtier === 'PRIME') {
+        } else if (kode.includes('DREAM') || kode.includes('FREYA') || kode.includes('ADELINE') || kode.includes('MARSHA') || kode.includes('GITA') || subtier === 'HIGH_DREAM') {
           return {
-            ...item,
-            hasTrail: true,
-            trailClass: 'vfx-prime-gold-trail',
-            hasParticles: true,
-            isRGBBurst: true,
-            hasImpactVFX: true
+            tier: 'MYTH', subtier: 'HIGH_DREAM', hasTrail: true, trailClass: 'vfx-blue-moon', trailColor: '#3498db',
+            hasParticles: true, particleSymbol: 'âœ¨', particleColor: '#00d2ff', screenFlash: 'vfx-blue-moon-flash',
+            throw_sfx: 'sfx_moon_magic.mp3', impact_sfx: 'sfx_star_shatter.mp3', hasImpactVFX: true
+          };
+        } else {
+          return {
+            tier: 'MYTH', subtier: 'LAST_DRESS', hasTrail: true, trailClass: 'vfx-black-flower', trailColor: '#2d3436',
+            hasParticles: true, particleSymbol: 'ðŸŒ¸', particleColor: '#d63031', screenFlash: 'vfx-black-flower-flash',
+            throw_sfx: 'sfx_dark_wind.mp3', impact_sfx: 'sfx_black_petal_drop.mp3', hasImpactVFX: true
           };
         }
       }
 
+      // 4. LEGEND (COSMOS NO KIOKU)
+      if (kode.includes('LEGEND') || tier === 'LEGEND') {
+        return {
+          tier: 'LEGEND', hasTrail: true, trailClass: 'vfx-legend-cosmos', trailColor: '#2c2c54',
+          hasParticles: false, staticStars: true, hasImpactVFX: true, particleType: 'tiny_dots',
+          particleColors: ['#ff4757', '#00d2ff', '#ffd700', '#a855f7', '#ffffff'],
+          throw_sfx: 'sfx_void_glide.mp3', impact_sfx: 'sfx_cosmic_shatter.mp3'
+        };
+      }
+
+      // 5. RARE (SNOW & GOLD)
+      if (kode.includes('RARE') || tier === 'RARE') {
+        return {
+          tier: 'RARE', hasTrail: true, trailClass: 'vfx-rare-thin-trail', trailColor: 'rgba(255, 255, 255, 0.4)',
+          hasParticles: false, hasImpactVFX: false, throw_sfx: 'sfx_thin_ice_slide.mp3', impact_sfx: 'sfx_soft_card_place.mp3'
+        };
+      }
+
+      // 6. DEFAULT UNCOMMON (NO CUSTOM SKIN) -> 0% TRAIL, 0% PARTICLES, 0% IMPACT
       return {
         tier: 'UNCOMMON',
         hasTrail: false,

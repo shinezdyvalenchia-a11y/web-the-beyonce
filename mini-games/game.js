@@ -1,4 +1,4 @@
-﻿/* =========================================================================
+/* =========================================================================
    GAME ENGINE (Master Registry 78 Cards, Catalog 300+ Skins, Inventory, Local Match Engine, Bot AI)
    ========================================================================= */
 
@@ -1045,15 +1045,48 @@ const MASTER_UNO_REGISTRY = {
       });
     }
 
-    function animateCardToCenter(cardElement, tierData, onComplete) {
-      if (!cardElement) { if (onComplete) onComplete(); return; }
-      const rect = cardElement.getBoundingClientRect();
-      const centerTable = document.getElementById('center-table').getBoundingClientRect();
-      
-      const targetX = (centerTable.left + centerTable.width / 2) - (rect.left + rect.width / 2);
-      const targetY = (centerTable.top + centerTable.height / 2) - (rect.top + rect.height / 2);
+    function animateCardToCenter(sourceEl, cardObj, tierData, onComplete) {
+      if (typeof cardObj === 'function') {
+        onComplete = cardObj;
+        cardObj = null;
+        tierData = null;
+      } else if (typeof tierData === 'function') {
+        onComplete = tierData;
+        tierData = cardObj;
+        cardObj = null;
+      }
 
-      const clone = cardElement.cloneNode(true);
+      if (!sourceEl) {
+        if (typeof onComplete === 'function') onComplete();
+        return;
+      }
+
+      const rect = sourceEl.getBoundingClientRect();
+      const centerTable = document.getElementById('center-table');
+      const tableRect = centerTable ? centerTable.getBoundingClientRect() : { left: window.innerWidth / 2 - 50, top: window.innerHeight / 2 - 70, width: 100, height: 140 };
+
+      const targetX = (tableRect.left + tableRect.width / 2) - (rect.left + rect.width / 2);
+      const targetY = (tableRect.top + tableRect.height / 2) - (rect.top + rect.height / 2);
+
+      let clone;
+      if (sourceEl.classList && sourceEl.classList.contains('uno-card')) {
+        clone = sourceEl.cloneNode(true);
+        sourceEl.style.opacity = '0';
+      } else {
+        // Source is a player HUD wrapper -> NEVER HIDE and NEVER CLONE the HUD element!
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = createRealUnoCardHtml(cardObj || {
+          id: 'thrown_' + Math.random().toString(36).substring(2, 6),
+          color: 'red',
+          value: '0',
+          display: '0',
+          member: 'Member',
+          photo: 'ANGELINA_CHRISTY_UNCOMMON.jpg',
+          skin_key: ''
+        }, false, cardObj ? (cardObj.equippedCode || '') : '');
+        clone = tempDiv.firstElementChild;
+      }
+
       clone.classList.add('card-thrown-gpu');
       if (tierData && tierData.trailClass) {
         clone.classList.add(tierData.trailClass);
@@ -1063,24 +1096,29 @@ const MASTER_UNO_REGISTRY = {
         starFrame.className = 'legend-static-stars';
         clone.appendChild(starFrame);
       }
+
       clone.style.left = rect.left + 'px';
       clone.style.top = rect.top + 'px';
+      clone.style.zIndex = '999999';
+      clone.style.position = 'fixed';
+      clone.style.pointerEvents = 'none';
       clone.style.willChange = 'transform';
       document.body.appendChild(clone);
-      cardElement.style.opacity = '0';
 
       if (tierData && tierData.hasTrail) {
-        spawnFlightTrailVFX(rect.left + rect.width / 2, rect.top + rect.height / 2, centerTable.left + centerTable.width / 2, centerTable.top + centerTable.height / 2, tierData);
+        spawnFlightTrailVFX(rect.left + rect.width / 2, rect.top + rect.height / 2, tableRect.left + tableRect.width / 2, tableRect.top + tableRect.height / 2, tierData);
       }
 
       requestAnimationFrame(() => {
-        clone.style.transform = `translate3d(${targetX}px, ${targetY}px, 0) scale(0.9) rotate(${Math.random()*16-8}deg)`;
+        clone.style.transform = `translate3d(${targetX}px, ${targetY}px, 0) scale(0.9) rotate(${Math.random() * 16 - 8}deg)`;
       });
 
       setTimeout(() => {
-        clone.remove();
-        if (onComplete) onComplete();
-      }, 600);
+        try { clone.remove(); } catch(e) {}
+        if (typeof onComplete === 'function') {
+          onComplete();
+        }
+      }, 550);
     }
 
     function animateCardDrawFlight(targetElement, onComplete) {
@@ -1203,7 +1241,7 @@ const MASTER_UNO_REGISTRY = {
       const tierData = getSkinVfxConfig(cardElement, card);
       triggerAudio(tierData.throw_sfx);
 
-      animateCardToCenter(cardElement, tierData, () => {
+      animateCardToCenter(cardElement, card, tierData, () => {
         me.hand = me.hand.filter(c => c.id !== cardId);
         activeRoom.top_card = card;
         localDiscardPile.push(card);
