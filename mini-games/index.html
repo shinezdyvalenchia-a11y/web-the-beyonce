@@ -6,7 +6,7 @@
   <title>Galery Alcsta48 - UNO Omega Card | The Beyonce 48</title>
   <link rel="icon" href="../icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800;900&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <script src="../config.js?v=14.0"></script>
+  <script src="../config.js?v=15.0"></script>
   <style>
     :root {
       --primary: #ec4899;
@@ -196,14 +196,17 @@
       width: 165px; flex-shrink: 0; background: rgba(0, 0, 0, 0.45); border: 1px solid var(--border-glass);
       backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       border-radius: 14px; padding: 12px; display: flex; flex-direction: column; align-items: center;
-      text-align: center; position: relative; transition: all 0.2s;
+      text-align: center; position: relative; transition: all 0.2s; overflow: hidden;
     }
     .skin-variant-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 6px 20px var(--accent-glow); }
     .skin-variant-card.active-skin { border-color: #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.08); }
-    .skin-variant-thumb {
-      width: 100%; height: 125px; border-radius: 10px; object-fit: cover; margin-bottom: 8px;
-      border: 1px solid rgba(255,255,255,0.1); background: #000;
+    
+    .skin-variant-media-wrap {
+      width: 100%; height: 125px; border-radius: 10px; overflow: hidden; margin-bottom: 8px;
+      border: 1px solid rgba(255,255,255,0.1); background: #000; position: relative;
     }
+    .skin-variant-thumb { width: 100%; height: 100%; object-fit: cover; }
+    .skin-variant-video { width: 100%; height: 100%; object-fit: cover; }
     .card-grey-filter { filter: grayscale(100%) contrast(1.1) brightness(0.65); opacity: 0.6; }
     .skin-variant-name { font-weight: 800; font-size: 12px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
     .skin-variant-tier { font-size: 10px; color: var(--gold); font-weight: 700; margin-bottom: 8px; text-transform: uppercase; }
@@ -272,7 +275,7 @@
     .chat-input { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 10px; padding: 8px 12px; color: #fff; font-size: 13px; outline: none; }
     .btn-chat-send { background: var(--accent); border: none; color: #000; font-weight: 800; padding: 8px 14px; border-radius: 10px; cursor: pointer; }
 
-    /* === 2.5D GAME ARENA WITH TWINKLING STARDUST === */
+    /* === 2.5D GAME ARENA === */
     #game-arena {
       display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       overflow: hidden; z-index: 2000; background-color: #000;
@@ -323,7 +326,7 @@
     .color-ring {
       position: absolute; width: 140px; height: 140px; border-radius: 50%;
       border: 4px solid var(--accent); animation: pulseGlow 1.5s infinite alternate;
-      pointer-events: none;
+      pointer-events: none; transition: border-color 0.4s, box-shadow 0.4s;
     }
     .color-ring.red { border-color: #e74c3c; box-shadow: 0 0 35px #e74c3c; }
     .color-ring.blue { border-color: #0984e3; box-shadow: 0 0 35px #0984e3; }
@@ -331,6 +334,17 @@
     .color-ring.yellow { border-color: #fbc531; box-shadow: 0 0 35px #fbc531; }
     .color-ring.wild { border-color: #a855f7; box-shadow: 0 0 35px #a855f7; }
     @keyframes pulseGlow { from { transform: scale(0.95); opacity: 0.7; } to { transform: scale(1.05); opacity: 1; } }
+
+    /* SUPERNOVA COLOR CHANGE WAVE BLAST */
+    .color-wave-blast {
+      position: absolute; width: 80px; height: 80px; border-radius: 50%;
+      pointer-events: none; z-index: 25;
+      animation: colorWaveExpand 0.8s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+    }
+    @keyframes colorWaveExpand {
+      0% { transform: scale(0.5); opacity: 1; border: 8px solid var(--wave-col, #00d2ff); box-shadow: 0 0 40px var(--wave-col, #00d2ff); }
+      100% { transform: scale(7); opacity: 0; border: 2px solid var(--wave-col, #00d2ff); box-shadow: 0 0 100px var(--wave-col, #00d2ff); }
+    }
 
     .stack-badge {
       position: absolute; top: -20px; background: #ef4444; color: #fff;
@@ -457,9 +471,14 @@
     .card-corner-top { top: 5px; left: 7px; }
     .card-corner-bot { bottom: 5px; right: 7px; transform: rotate(180deg); }
 
-    .card-thrown, .card-flying-draw {
+    /* SMOOTH FLUID THROW & DRAW ANIMATIONS */
+    .card-thrown {
       position: fixed !important; pointer-events: none !important; z-index: 9999 !important;
-      transition: all 0.55s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      transition: all 0.65s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .card-flying-draw {
+      position: fixed !important; pointer-events: none !important; z-index: 9999 !important;
+      transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1) !important;
     }
 
     /* MASTER VFX OVERLAYS */
@@ -1209,7 +1228,6 @@
     function sfxCardPlay() {
       try {
         const ctx = getAudioContext();
-        // Layer 1: Air whoosh
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sine';
@@ -1220,7 +1238,6 @@
         osc.connect(gain); gain.connect(ctx.destination);
         osc.start(); osc.stop(ctx.currentTime + 0.14);
 
-        // Layer 2: Crisp card slap
         const slap = ctx.createOscillator();
         const slapGain = ctx.createGain();
         slap.type = 'triangle';
@@ -1251,7 +1268,6 @@
     function sfxWildExplosion() {
       try {
         const ctx = getAudioContext();
-        // Sub-bass impact
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sawtooth';
@@ -1262,7 +1278,6 @@
         osc.connect(gain); gain.connect(ctx.destination);
         osc.start(); osc.stop(ctx.currentTime + 0.5);
 
-        // Shimmer chime
         [880, 1174.66, 1760].forEach((freq, i) => {
           const chime = ctx.createOscillator();
           const chimeGain = ctx.createGain();
@@ -1448,9 +1463,26 @@
                           userInventory.has(`BORDER_${s.code.toUpperCase()}`) ||
                           userInventory.has(`CHAT_${s.code.toUpperCase()}`);
           
-          let thumbSrc = isOwned ? `../skin/${s.file}` : `../skin/${s.file.replace('.jpg', '_grey.jpg')}`;
-          if (s.code.length === 4) {
-            thumbSrc = isOwned ? `../skin_jpg/${s.code}.jpg` : `../skin_grey/${s.code}_grey.jpg`;
+          let mediaHtml = '';
+          const isOmegaTier = s.code.length === 4;
+
+          if (isOmegaTier && isOwned) {
+            // Live Video Preview for owned Omega / Omega Special
+            mediaHtml = `
+              <video src="../gacha-skin/preview_${s.code}.webm" autoplay loop muted playsinline class="skin-variant-video" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></video>
+              <img src="../skin_jpg/${s.code}.jpg" class="skin-variant-thumb" style="display:none;" onerror="this.src='../skin/ANGELINA_CHRISTY_UNCOMMON.jpg'">
+              <div class="holo-sheen"></div>
+            `;
+          } else if (isOmegaTier && !isOwned) {
+            // Unowned Omega from skin_jpg with grey filter
+            mediaHtml = `<img src="../skin_jpg/${s.code}.jpg" class="skin-variant-thumb card-grey-filter" onerror="this.src='../skin/ANGELINA_CHRISTY_UNCOMMON.jpg'">`;
+          } else {
+            // Regular tiers
+            let thumbSrc = isOwned ? `../skin/${s.file}` : `../skin/${s.file.replace('.jpg', '_grey.jpg')}`;
+            mediaHtml = `
+              <img src="${thumbSrc}" class="skin-variant-thumb ${!isOwned ? 'card-grey-filter' : ''}" onerror="this.src='../skin/ANGELINA_CHRISTY_UNCOMMON.jpg'">
+              ${(isOwned && (s.tier === 'Mythic' || s.tier === 'Legend')) ? '<div class="holo-sheen"></div>' : ''}
+            `;
           }
 
           let actionBtn = '';
@@ -1464,7 +1496,9 @@
 
           return `
             <div class="skin-variant-card ${isActive ? 'active-skin' : ''}">
-              <img src="${thumbSrc}" class="skin-variant-thumb ${!isOwned ? 'card-grey-filter' : ''}" onerror="this.src='../skin/ANGELINA_CHRISTY_UNCOMMON.jpg'" alt="${s.name}">
+              <div class="skin-variant-media-wrap">
+                ${mediaHtml}
+              </div>
               <div class="skin-variant-name" title="${s.name}">${s.name}</div>
               <div class="skin-variant-tier">${s.tier}</div>
               ${actionBtn}
@@ -1925,6 +1959,7 @@
       }
 
       if (equippedCode.length === 4) {
+        // Live looping portrait video for Omega / Omega Spesial
         mediaHtml = `<video src="../gacha-skin/preview_${equippedCode}.webm" autoplay loop muted playsinline class="card-member-video" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></video>
                      <img src="../skin_jpg/${equippedCode}.jpg" class="card-member-photo" style="display:none;" onerror="this.src='../skin/${card.photo || 'ANGELINA_CHRISTY_UNCOMMON.jpg'}'">`;
       } else if (equippedCode) {
@@ -2020,16 +2055,23 @@
         cardElement.style.opacity = '0';
         cardElement.style.pointerEvents = 'none';
 
+        // Target center discard pile precisely in 2D space
+        const centerTableEl = document.getElementById('center-table');
+        const centerRect = centerTableEl.getBoundingClientRect();
+        const targetX = centerRect.left + centerRect.width / 2 - 52;
+        const targetY = centerRect.top + centerRect.height / 2 - 77;
+
         // Spawn ML-Style Ribbon Flight Trail
         const equippedCode = equippedSkinMap[card.skin_key] || '';
-        spawnFlightTrailVFX(rect.left + 50, rect.top + 75, window.innerWidth / 2, window.innerHeight / 2, equippedCode);
+        spawnFlightTrailVFX(rect.left + 50, rect.top + 75, targetX + 52, targetY + 77, equippedCode);
 
         requestAnimationFrame(() => {
-          clone.style.left = 'calc(50% - 52px)';
-          clone.style.top = 'calc(50% - 77px)';
-          clone.style.transform = 'scale(0.85) rotate(' + (Math.random()*20 - 10) + 'deg)';
+          clone.style.left = targetX + 'px';
+          clone.style.top = targetY + 'px';
+          clone.style.transform = 'scale(0.92) rotate(' + (Math.random()*16 - 8) + 'deg)';
         });
 
+        // Exact seamless transition synchronization (No Cutscene jump)
         setTimeout(() => {
           clone.remove();
           me.hand = me.hand.filter(c => c.id !== cardId);
@@ -2037,7 +2079,10 @@
           localDiscardPile.push(card);
 
           let newCol = chosenColor || card.color;
-          if (newCol !== 'wild') activeRoom.current_color = newCol;
+          if (newCol !== 'wild') {
+            activeRoom.current_color = newCol;
+            triggerColorSupernovaWave(newCol);
+          }
 
           // Trigger Landing Explosion & Special Props
           triggerSkinLandingVFX(card, equippedCode);
@@ -2057,8 +2102,20 @@
 
           renderArenaState();
           triggerBotTurn();
-        }, 550);
+        }, 650);
       }
+    }
+
+    function triggerColorSupernovaWave(color) {
+      const colorsMap = { red: '#e74c3c', blue: '#0984e3', green: '#00b894', yellow: '#fbc531' };
+      const col = colorsMap[color] || '#00d2ff';
+      const wave = document.createElement('div');
+      wave.className = 'color-wave-blast';
+      wave.style.setProperty('--wave-col', col);
+      wave.style.left = 'calc(50% - 40px)';
+      wave.style.top = 'calc(50% - 40px)';
+      document.getElementById('game-arena').appendChild(wave);
+      setTimeout(() => wave.remove(), 850);
     }
 
     function triggerHudBadge(playerIdx, text) {
@@ -2188,13 +2245,18 @@
           clone.innerHTML = `<div class="card-corner card-corner-top">${chosen.display}</div><div class="card-center-oval"><img src="../skin/${chosen.photo}" class="card-member-photo"></div><div class="card-corner card-corner-bot">${chosen.display}</div>`;
           document.body.appendChild(clone);
 
+          const centerTableEl = document.getElementById('center-table');
+          const centerRect = centerTableEl.getBoundingClientRect();
+          const targetX = centerRect.left + centerRect.width / 2 - 52;
+          const targetY = centerRect.top + centerRect.height / 2 - 77;
+
           const botEquippedCode = chosen.skin_key ? (equippedSkinMap[chosen.skin_key] || '') : '';
-          spawnFlightTrailVFX(rect.left + 50, rect.top + 50, window.innerWidth / 2, window.innerHeight / 2, botEquippedCode);
+          spawnFlightTrailVFX(rect.left + 50, rect.top + 50, targetX + 52, targetY + 77, botEquippedCode);
 
           requestAnimationFrame(() => {
-            clone.style.left = 'calc(50% - 52px)';
-            clone.style.top = 'calc(50% - 77px)';
-            clone.style.transform = 'scale(0.85) rotate(' + (Math.random()*20 - 10) + 'deg)';
+            clone.style.left = targetX + 'px';
+            clone.style.top = targetY + 'px';
+            clone.style.transform = 'scale(0.92) rotate(' + (Math.random()*16 - 8) + 'deg)';
           });
 
           setTimeout(() => {
@@ -2204,7 +2266,9 @@
 
             if (chosen.color === 'wild' || chosen.type === 'wild') {
               const colors = ['red', 'blue', 'green', 'yellow'];
-              activeRoom.current_color = colors[Math.floor(Math.random() * colors.length)];
+              const chosenNewColor = colors[Math.floor(Math.random() * colors.length)];
+              activeRoom.current_color = chosenNewColor;
+              triggerColorSupernovaWave(chosenNewColor);
             } else {
               activeRoom.current_color = chosen.color;
             }
@@ -2225,7 +2289,7 @@
 
             renderArenaState();
             callback();
-          }, 550);
+          }, 650);
         } else {
           activeRoom.top_card = chosen;
           localDiscardPile.push(chosen);
