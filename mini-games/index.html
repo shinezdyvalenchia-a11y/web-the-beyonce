@@ -150,7 +150,7 @@
     }
     .btn-join:hover { background: var(--primary); border-color: var(--primary); }
 
-    /* === GALERY ALCSTA48 - UNO OMEGA CARD (TRANSPARENT GLASSMORPHISM) === */
+    /* === GALERY ALCSTA48 - UNO OMEGA CARD === */
     #viewSkinEquip { display: none; padding: 10px 4px 40px 4px; }
     .gallery-header-box {
       background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
@@ -167,7 +167,6 @@
     }
     .skin-search-input:focus { border-color: var(--accent); }
 
-    /* MEMBER SECTION CARD */
     .member-group-container { display: flex; flex-direction: column; gap: 20px; }
     .member-section-card {
       background: rgba(15, 23, 42, 0.55); border: 1px solid var(--border-glass); border-radius: 20px;
@@ -190,7 +189,6 @@
       background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
-    /* SKIN VARIANTS HORIZONTAL SCROLLER */
     .skin-variants-scroll {
       display: flex; gap: 14px; overflow-x: auto; padding: 4px 2px 12px 2px; scrollbar-width: thin;
     }
@@ -251,7 +249,7 @@
     .status-ready { background: rgba(16, 185, 129, 0.2); color: #10b981; }
     .status-waiting { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
 
-    /* TEMP IN-ROOM CHAT WITH SKIN BUBBLES */
+    /* TEMP IN-ROOM CHAT */
     .lounge-chat {
       background: var(--card-glass); border: 1px solid var(--border-glass); border-radius: 16px;
       backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
@@ -366,9 +364,7 @@
     }
     .hand-carousel::-webkit-scrollbar { display: none; }
 
-    /* ========================================================================= */
-    /* REAL UNO CARD DESIGN (EXACT MATCH TO OFFICIAL PHOTO MEDIA_1786901843790) */
-    /* ========================================================================= */
+    /* REAL UNO CARD DESIGN (EXACT MATCH TO OFFICIAL PHOTO) */
     .uno-card {
       width: 105px; height: 155px; border-radius: 14px;
       position: relative; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -426,25 +422,37 @@
       transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1) !important;
     }
 
+    /* ========================================================================= */
+    /* MASTER ULTRA VFX ENGINE (PARTICLES, TRAILS, WINGS, RINGS, BLOOMS, JIKO)  */
+    /* ========================================================================= */
     #vfx-overlay {
-      position: fixed; inset: 0; pointer-events: none; z-index: 3000;
+      position: fixed; inset: 0; pointer-events: none; z-index: 4000;
       opacity: 0; transition: opacity 0.3s;
       display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
     }
+    #vfx-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    
     #jiko-banner {
-      background: rgba(10, 15, 30, 0.9); color: #fff; padding: 14px 36px;
+      background: rgba(10, 15, 30, 0.92); color: #fff; padding: 14px 40px;
       border-radius: 40px; border: 2px solid var(--accent);
-      font-size: 18px; font-weight: 800; text-align: center;
-      margin-bottom: 160px; opacity: 0; transform: translateY(30px); transition: all 0.4s;
-      box-shadow: 0 10px 40px rgba(0, 210, 255, 0.4);
-    }
-    .vfx-active-omega {
-      opacity: 1 !important;
-      box-shadow: inset 0 0 60px 20px rgba(255, 255, 255, 0.9), inset 0 0 120px rgba(0, 210, 255, 0.6) !important;
-      animation: flashWhite 0.5s ease-out;
+      font-size: 16px; font-weight: 800; text-align: center;
+      margin-bottom: 150px; opacity: 0; transform: translateY(30px); transition: all 0.4s;
+      box-shadow: 0 10px 40px rgba(0, 210, 255, 0.4); max-width: 85%;
+      z-index: 10;
     }
     .jiko-show { opacity: 1 !important; transform: translateY(0) !important; }
-    @keyframes flashWhite { 0% { background: rgba(255,255,255,0.9); } 100% { background: transparent; } }
+
+    /* SPECIAL UNIQUE 3D PROP SPAWNS (WINGS, GIANT RING, FLOWER BLOOM, ETC) */
+    .special-prop {
+      position: absolute; top: calc(50% - 40px); left: 50%; transform: translate(-50%, -50%) scale(0);
+      pointer-events: none; z-index: 4500; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .special-prop.active { transform: translate(-50%, -50%) scale(1); }
+
+    /* GLOBAL SCREEN PERIMETER FLASH */
+    .screen-flash-white { box-shadow: inset 0 0 60px 25px rgba(255, 255, 255, 0.95) !important; }
+    .screen-flash-gold { box-shadow: inset 0 0 60px 25px rgba(251, 191, 36, 0.85) !important; }
+    .screen-flash-color { box-shadow: inset 0 0 60px 25px var(--flash-color, #00d2ff) !important; }
 
     .ingame-chat-toggle {
       position: fixed; bottom: 20px; right: 20px; z-index: 3500;
@@ -514,7 +522,7 @@
     <div class="corner-glow glow-br"></div>
   </div>
 
-  <!-- SIDEBAR (7 CORE NAVIGATION ITEMS) -->
+  <!-- SIDEBAR -->
   <nav class="sb" id="sidebar">
     <a href="../beranda/" class="sb-logo">
       <img src="../icon.png" alt="Logo">
@@ -546,9 +554,8 @@
   <!-- MAIN APP VIEWPORT -->
   <div class="app-viewport">
     
-    <!-- 1. LOBBY SCREEN (ESPORTS STYLE) -->
+    <!-- 1. LOBBY SCREEN -->
     <div id="lobby-screen">
-      <!-- SUB TABS -->
       <div class="main-subtabs">
         <button class="subtab-btn active" id="tabBtnArena" onclick="switchSubTab('arena')">&#127967; Arena Kamar UNO</button>
         <button class="subtab-btn" id="tabBtnSkin" onclick="switchSubTab('skin')">&#127188; Galery Alcsta48 - UNO Omega Card</button>
@@ -577,12 +584,10 @@
           </div>
         </div>
 
-        <div class="rooms-grid" id="roomsContainer">
-          <!-- Room Cards injected dynamically -->
-        </div>
+        <div class="rooms-grid" id="roomsContainer"></div>
       </div>
 
-      <!-- SUB-TAB: GALERY ALCSTA48 - UNO OMEGA CARD (MEMBER GROUPED CATEGORY VIEW) -->
+      <!-- SUB-TAB: GALERY ALCSTA48 - UNO OMEGA CARD -->
       <div id="viewSkinEquip">
         <div class="gallery-header-box">
           <div class="gallery-title">Galery Alcsta48 - UNO Omega Card</div>
@@ -599,9 +604,7 @@
           </div>
         </div>
 
-        <div class="member-group-container" id="memberGroupContainer">
-          <!-- Grouped Member Skins rendered dynamically -->
-        </div>
+        <div class="member-group-container" id="memberGroupContainer"></div>
       </div>
     </div>
 
@@ -619,9 +622,7 @@
 
       <div class="lounge-grid">
         <div>
-          <div class="slots-container" id="slotsContainer">
-            <!-- Player Slots -->
-          </div>
+          <div class="slots-container" id="slotsContainer"></div>
           <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
             <button class="btn-action btn-create" id="btnReady" onclick="toggleReady()">&#128293; SIAP BERMAIN</button>
             <button class="btn-action btn-quick" id="btnForceStart" onclick="forceStartGame()">&#128640; MULAI MAIN SEKARANG</button>
@@ -653,17 +654,14 @@
 
   <!-- 3. 2.5D GAME ARENA (IN-GAME SCREEN) -->
   <div id="game-arena">
-    <!-- LAYER 1: BACKGROUND -->
     <div class="arena-bg"></div>
 
-    <!-- LAYER 2: CSS PAPER PLANES -->
     <div class="plane-container">
       <div class="css-plane plane-1">&#9992;&#65039;</div>
       <div class="css-plane plane-2">&#9992;&#65039;</div>
       <div class="css-plane plane-3">&#9992;&#65039;</div>
     </div>
 
-    <!-- LAYER 3: 3D ISOMETRIC GLASS TABLE -->
     <div class="table-viewport">
       <div id="center-table">
         <div class="color-ring red" id="tableColorRing"></div>
@@ -676,13 +674,11 @@
         </div>
 
         <!-- DISCARD PILE (TOP CARD) -->
-        <div class="deck-pile discard-deck" id="discardPileZone">
-          <!-- Top card rendered here -->
-        </div>
+        <div class="deck-pile discard-deck" id="discardPileZone"></div>
       </div>
     </div>
 
-    <!-- LAYER 4: PLAYER HUDS -->
+    <!-- PLAYER HUDS -->
     <div class="hud-layer">
       <!-- Top Opponent -->
       <div class="hud-player hud-top" id="hudTop">
@@ -726,9 +722,7 @@
           <button class="btn-uno" onclick="userCallUno()">&#128226; CALL UNO!</button>
           <button class="btn-arena-exit" onclick="exitArenaToLobby()">&#127987;&#65039; Menyerah / Keluar</button>
         </div>
-        <div class="hand-carousel" id="userHandZone">
-          <!-- User cards injected here -->
-        </div>
+        <div class="hand-carousel" id="userHandZone"></div>
       </div>
     </div>
 
@@ -754,9 +748,16 @@
       </div>
     </div>
 
-    <!-- LAYER 5: VFX ENGINE OVERLAYS -->
+    <!-- LAYER 5: MASTER VFX ENGINE OVERLAY -->
     <div id="vfx-overlay">
-      <div id="jiko-banner">&#10024; Peduli dan berbaik hati, siapakah dia? Christy! &#10024;</div>
+      <canvas id="vfx-canvas"></canvas>
+      <div id="jiko-banner"></div>
+      <!-- SPECIAL 3D ANIMATION PROPS -->
+      <div id="propWings" class="special-prop"><span style="font-size: 140px; filter: drop-shadow(0 0 35px #fff);">🪽✨🪽</span></div>
+      <div id="propRing" class="special-prop"><span style="font-size: 150px; filter: drop-shadow(0 0 45px #00d2ff);">💫🪐✨</span></div>
+      <div id="propFlower" class="special-prop"><span style="font-size: 140px; filter: drop-shadow(0 0 40px #ec4899);">🌸💐🌺</span></div>
+      <div id="propChoco" class="special-prop"><span style="font-size: 140px; filter: drop-shadow(0 0 40px #f59e0b);">🍫✨💖</span></div>
+      <div id="propWater" class="special-prop"><span style="font-size: 140px; filter: drop-shadow(0 0 40px #0984e3);">🌊💧🌊</span></div>
     </div>
   </div>
 
@@ -865,20 +866,20 @@
     let currentMemberFilter = 'all';
 
     // =========================================================================
-    // 78-MEMBER EXACT UNO MASTER ROSTER (1 MEMBER = STRICTLY 1 CARD ONLY)
+    // 78-MEMBER STRICT 1-TO-1 UNO MASTER ROSTER (MATCHING EXCEL EXACTLY)
     // =========================================================================
     const MASTER_UNO_REGISTRY = {
       // 1. Wild Extreme Boss Cards (10 Members)
       "WILD_DRAW_10": { value: "wild_draw_10", type: "wild", color: "wild", display: "+10", member: "Angelina Christy", key: "ANGELINA_CHRISTY", photo: "ANGELINA_CHRISTY_UNCOMMON.jpg", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!" },
-      "WILD_DRAW_6": { value: "wild_draw_6", type: "wild", color: "wild", display: "+6", member: "Azizi Assadel (Zee)", key: "AZIZI_ASSADEL", photo: "AZIZI_ASSADEL_UNCOMMON.jpg", jiko: "Si gadis tomboy yang semangat, namaku Zee!" },
-      "WILD_SWAP_HANDS": { value: "wild_swap_hands", type: "wild", color: "wild", display: "🔀", member: "Shani Indira Natio", key: "SHANI_INDIRA", photo: "SHANI_INDIRA_UNCOMMON.jpg", jiko: "Semanis cokelat, selembut sutra, halo semuanya aku Shani!" },
-      "WILD_SHUFFLE_HANDS": { value: "wild_shuffle_hands", type: "wild", color: "wild", display: "🎲", member: "Shania Gracia", key: "SHANIA_GRACIA", photo: "SHANIA_GRACIA_UNCOMMON.jpg", jiko: "Senyum manisku akan selalu menghiburmu, aku Gracia!" },
-      "WILD_ROULETTE": { value: "wild_roulette", type: "wild", color: "wild", display: "🎰", member: "Freya Jayawardana", key: "FREYA_JAYAWARDANA", photo: "FREYA_JAYAWARDANA_UNCOMMON.jpg", jiko: "Gadis yang manis dan pemberani, aku Freya!" },
-      "WILD_TARGET_ATTACK": { value: "wild_target_attack", type: "wild", color: "wild", display: "🎯", member: "Marsha Lenathea", key: "MARSHA_LENATHEA", photo: "MARSHA_LENATHEA_UNCOMMON.jpg", jiko: "Manis seperti permen, imut seperti boneka, halo aku Marsha!" },
-      "WILD_REVERSE_4": { value: "wild_reverse_4", type: "wild", color: "wild", display: "🔄+4", member: "Feni Fitriyanti", key: "FENI_FITRIYANTI", photo: "FENI_FITRIYANTI_UNCOMMON.jpg", jiko: "Si lincah yang penuh pesona, panggil aku Feni!" },
+      "WILD_DRAW_6": { value: "wild_draw_6", type: "wild", color: "wild", display: "+6", member: "Azizi Assadel (Zee)", key: "AZIZI_ASSADEL", photo: "AZIZI_ASSADEL_UNCOMMON.jpg", jiko: "Si gadis tomboy yang semangatnya meletup-letup. Halo semuanya, aku Zee!" },
+      "WILD_SWAP_HANDS": { value: "wild_swap_hands", type: "wild", color: "wild", display: "🔀", member: "Shani Indira Natio", key: "SHANI_INDIRA", photo: "SHANI_INDIRA_UNCOMMON.jpg", jiko: "Semanis cokelat, selembut sutra. Halo semuanya, aku Shani" },
+      "WILD_SHUFFLE_HANDS": { value: "wild_shuffle_hands", type: "wild", color: "wild", display: "🎲", member: "Shania Gracia", key: "SHANIA_GRACIA", photo: "SHANIA_GRACIA_UNCOMMON.jpg", jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!" },
+      "WILD_ROULETTE": { value: "wild_roulette", type: "wild", color: "wild", display: "🎰", member: "Freya Jayawardana", key: "FREYA_JAYAWARDANA", photo: "FREYA_JAYAWARDANA_UNCOMMON.jpg", jiko: "Gadis koleris yang suka berimajinasi, terangi harimu dengan senyuman karamelku. Halo, aku Freya!" },
+      "WILD_TARGET_ATTACK": { value: "wild_target_attack", type: "wild", color: "wild", display: "🎯", member: "Marsha Lenathea", key: "MARSHA_LENATHEA", photo: "MARSHA_LENATHEA_UNCOMMON.jpg", jiko: "Seperti pizza yang selalu dinanti-nantikan semua orang, selalu nantikan aku, ya? Halo, aku Marsha!" },
+      "WILD_REVERSE_4": { value: "wild_reverse_4", type: "wild", color: "wild", display: "🔄+4", member: "Feni Fitriyanti", key: "FENI_FITRIYANTI", photo: "FENI_FITRIYANTI_UNCOMMON.jpg", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!" },
       "WILD_DOUBLE_PLAY": { value: "wild_double_play", type: "wild", color: "wild", display: "⚡2x", member: "Sisca Saras", key: "SISCA_SARAS", photo: "SISCA_SARAS_UNCOMMON.jpg", jiko: "Vokal emas yang memukau, aku Sisca!" },
       "WILD_COUNTER_SHIELD": { value: "wild_counter_shield", type: "wild", color: "wild", display: "🛡️", member: "Adzana Ashel", key: "ADZANA_ASHEL", photo: "ADZANA_ASHEL_UNCOMMON.jpg", jiko: "Senyuman sehangat matahari, namaku Ashel!" },
-      "WILD_CLASSIC": { value: "wild_classic", type: "wild", color: "wild", display: "★", member: "Yesica Tamara (Chika)", key: "YESICA_TAMARA", photo: "YESICA_TAMARA_UNCOMMON.jpg", jiko: "Memberikan kebahagiaan untuk semua, aku Chika!" },
+      "WILD_CLASSIC": { value: "wild_classic", type: "wild", color: "wild", display: "★", member: "Yesica Tamara (Chika)", key: "YESICA_TAMARA", photo: "YESICA_TAMARA_UNCOMMON.jpg", jiko: "Meskipun kadang-kadang menyebalkan, tapi aku selalu dirindukan. Panggil aku Chika!" },
 
       // 2. No Mercy Action Cards (16 Members)
       "RED_DISCARD_ALL": { value: "discard_all", type: "action", color: "red", display: "🗑️", member: "Gabriela Abigail (Ella)", key: "GABRIELA_ABIGAIL", photo: "GABRIELA_ABIGAIL_UNCOMMON.jpg" },
@@ -903,7 +904,7 @@
       "RED_REVERSE": { value: "reverse", type: "action", color: "red", display: "🔄", member: "Cornelia Vanisa (Oniel)", key: "CORNELIA_VANISA", photo: "CORNELIA_VANISA_UNCOMMON.jpg" },
       "RED_SKIP": { value: "skip", type: "action", color: "red", display: "🚫", member: "Kathrina Irene", key: "KATHRINA_IRENE", photo: "KATHRINA_IRENE_UNCOMMON.jpg" },
       "BLUE_DRAW_2": { value: "draw_2", type: "action", color: "blue", display: "+2", member: "Gita Sekar Andarini", key: "GITA_SEKAR", photo: "GITA_SEKAR_UNCOMMON.jpg" },
-      "BLUE_REVERSE": { value: "reverse", type: "action", color: "blue", display: "🔄", member: "Febriola Sinambela (Olla)", key: "FEBRIOLA_SINAMBELA", photo: "FEBRIOLA_SINAMBELA_UNCOMMON.jpg" },
+      "BLUE_REVERSE": { value: "reverse", type: "action", color: "blue", display: "🔄", member: "Febriola Sinambela (Olla)", key: "FEBRIOLA_SINAMBELLA", photo: "FEBRIOLA_SINAMBELLA_UNCOMMON.jpg" },
       "BLUE_SKIP": { value: "skip", type: "action", color: "blue", display: "🚫", member: "Jessica Chandra (Jessi)", key: "JESSICA_CHANDRA", photo: "JESSICA_CHANDRA_UNCOMMON.jpg" },
       "GREEN_DRAW_2": { value: "draw_2", type: "action", color: "green", display: "+2", member: "Fiony Alveria", key: "FIONY_ALVERIA", photo: "FIONY_ALVERIA_UNCOMMON.jpg" },
       "GREEN_REVERSE": { value: "reverse", type: "action", color: "green", display: "🔄", member: "Helisma Putri (Eli)", key: "HELISMA_PUTRI", photo: "HELISMA_PUTRI_UNCOMMON.jpg" },
@@ -962,6 +963,44 @@
       "BLUE_9": { value: "9", type: "number", color: "blue", display: "9", member: "Humaira Ramadhani", key: "HUMAIRA_RAMADHANI", photo: "HUMAIRA_RAMADHANI_UNCOMMON.jpg" },
       "GREEN_9": { value: "9", type: "number", color: "green", display: "9", member: "Nayla Suji", key: "NAYLA_SUJI", photo: "NAYLA_SUJI_UNCOMMON.jpg" },
       "YELLOW_9": { value: "9", type: "number", color: "yellow", display: "9", member: "Victoria Kimberly (Kimmy)", key: "VICTORIA_KIMBERLY", photo: "VICTORIA_KIMBERLY_UNCOMMON.jpg" }
+    };
+
+    // =========================================================================
+    // SKIN METADATA WITH DETAILED TIER & SIGNATURE VISUALS
+    // =========================================================================
+    const FULL_COLOR_PALETTES = {
+      "FAAZ": { color: "#ff4757", name: "Zee", jiko: "Si gadis tomboy yang semangatnya meletup-letup. Halo semuanya, aku Zee!" },
+      "FFNI": { color: "#f1c40f", name: "Feni", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!" },
+      "FSHN": { color: "#9b59b6", name: "Shani", jiko: "Semanis cokelat, selembut sutra. Halo semuanya, aku Shani" },
+      "FJIN": { color: "#27ae60", name: "Jinan", jiko: "Seperti bintang kejora yang bersinar terang, halo aku Jinan!" },
+      "FGRC": { color: "#3498db", name: "Gracia", jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!" },
+      "FMAR": { color: "#fd79a8", name: "Marsha", jiko: "Seperti pizza yang selalu dinanti-nantikan semua orang, selalu nantikan aku, ya? Halo, aku Marsha!" },
+      "FFIO": { color: "#f8f9fa", name: "Fiony", jiko: "Seperti simfoni yang menenangkan hati. Halo, aku Fiony!" },
+      "FCHR": { color: "#e17055", name: "Christy", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!" },
+      "FCHK": { color: "#00cec9", name: "Chika", jiko: "Meskipun kadang-kadang menyebalkan, tapi aku selalu dirindukan. Panggil aku Chika!" }
+    };
+
+    const SPECIAL_SKIN_JIKOS = {
+      "DKTY": { prop: "propWings", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!" },
+      "CSHN": { prop: "propRing", jiko: "Semanis cokelat, selembut sutra. Halo semuanya, aku Shani" },
+      "CGRC": { prop: "propFlower", jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!" },
+      "CFNI": { prop: "propChoco", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!" },
+      "CELI": { prop: "propWater", jiko: "Bagai lembayung senja, dengan energi kegembiraanku, Aku akan menghangatkan suasana. Halo, aku Eli!" }
+    };
+
+    const PRIME_JIKOS = {
+      "PFNI": "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!",
+      "PCHR": "Peduli dan berbaik hati, siapakah dia? Christy!",
+      "PLLU": "Terang seperti bulan, bersinar seperti bintang. Halo, aku Lulu!",
+      "PGRC": "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!",
+      "PONL": "Seperti teka-teki, kalian akan selalu penasaran denganku. Halo, aku Oniel!",
+      "PFNY": "Seperti simfoni yang menenangkan hati. Halo, aku Fiony!",
+      "PMSH": "Seperti pizza yang selalu dinanti-nantikan semua orang, selalu nantikan aku, ya? Halo, aku Marsha!",
+      "PFYR": "Gadis koleris yang suka berimajinasi, terangi harimu dengan senyuman karamelku. Halo, aku Freya!",
+      "PGTS": "Diam bukan berarti tak memperhatikanmmu. Aku Gita!",
+      "PLAI": "Si social butterfly yang energik dan periang! Halo, aku Lia!",
+      "PJCC": "Suka menari dan akan selalu berusaha untuk menjadi sumber energimu. Halo, aku Jessi!",
+      "PMUT": "Dengan kelincahanku, Aku akan menari setiap hari. Panggil Aku, Mu mu mu mu-the!"
     };
 
     function toggleSidebar() {
@@ -1073,7 +1112,7 @@
       }
     }
 
-    // ===== RENDER MEMBER-GROUPED SKIN COLLECTION WITH 1-MEMBER-1-CARD IDENTITY =====
+    // ===== RENDER MEMBER-GROUPED SKIN COLLECTION =====
     function renderMemberSkins() {
       const container = document.getElementById('memberGroupContainer');
       const search = (document.getElementById('skinSearch').value || '').toLowerCase();
@@ -1089,10 +1128,10 @@
             type: c.type,
             avatar: `../skin/${c.photo}`,
             skins: [
-              { code: `${c.key}_LEGEND`, name: `${c.member.split(' ')[0]} Cosmos`, tier: 'Legend', isOmega: false, file: `${c.key}_LEGEND.jpg` },
-              { code: `${c.key}_MYTH`, name: `${c.member.split(' ')[0]} Mythic`, tier: 'Mythic', isOmega: false, file: `${c.key}_MYTH.jpg` },
-              { code: `${c.key}_RARE`, name: `${c.member.split(' ')[0]} Snow & Gold`, tier: 'Rare', isOmega: false, file: `${c.key}_RARE.jpg` },
-              { code: `${c.key}_UNCOMMON`, name: `${c.member.split(' ')[0]} Trainee (Default)`, tier: 'Uncommon', isOmega: false, file: c.photo }
+              { code: `${c.key}_LEGEND`, name: `${c.member.split(' ')[0]} Cosmos`, tier: 'Legend', file: `${c.key}_LEGEND.jpg` },
+              { code: `${c.key}_MYTH`, name: `${c.member.split(' ')[0]} Mythic`, tier: 'Mythic', file: `${c.key}_MYTH.jpg` },
+              { code: `${c.key}_RARE`, name: `${c.member.split(' ')[0]} Snow & Gold`, tier: 'Rare', file: `${c.key}_RARE.jpg` },
+              { code: `${c.key}_UNCOMMON`, name: `${c.member.split(' ')[0]} Trainee (Default)`, tier: 'Uncommon', file: c.photo }
             ]
           };
         }
@@ -1501,7 +1540,7 @@
     }
 
     // =========================================================================
-    // REAL UNO CARD HTML CREATOR (MIRRORING USER'S PHOTO MEDIA_1786901843790)
+    // REAL UNO CARD HTML CREATOR
     // =========================================================================
     function createRealUnoCardHtml(card, isPlayable) {
       const displayVal = card.display || card.value.toUpperCase();
@@ -1573,6 +1612,10 @@
         cardElement.style.opacity = '0';
         cardElement.style.pointerEvents = 'none';
 
+        // Trigger ML Flight Trail Particle VFX
+        const equippedCode = equippedSkinMap[card.skin_key] || '';
+        spawnFlightTrailVFX(rect.left + 50, rect.top + 75, window.innerWidth / 2, window.innerHeight / 2, equippedCode);
+
         requestAnimationFrame(() => {
           clone.style.left = 'calc(50% - 52px)';
           clone.style.top = 'calc(50% - 77px)';
@@ -1588,11 +1631,18 @@
           let newCol = chosenColor || card.color;
           if (newCol !== 'wild') activeRoom.current_color = newCol;
 
+          // Trigger Landing Explosion & Special Props
+          triggerSkinLandingVFX(card, equippedCode);
+
           applyCardRules(card, me);
 
           // Check win
           if (me.hand.length === 0) {
-            alert("\uD83C\uDFC6 SELAMAT! Kamu MEMENANGKAN pertandingan UNO No Mercy!");
+            if (activeRoom.team_format === 'duo' && me.team === 'red') {
+              alert("🎉 TIM MERAH (Kamu & Partner) MENANG DUO BATTLE!");
+            } else {
+              alert("🏆 SELAMAT! Kamu MEMENANGKAN pertandingan UNO No Mercy!");
+            }
             exitArenaToLobby();
             return;
           }
@@ -1616,10 +1666,6 @@
       else if (v === 'reverse') localTurnDirection *= -1;
       else if (v === 'discard_all') {
         player.hand = player.hand.filter(c => c.color !== card.color);
-      }
-
-      if (card.jiko) {
-        triggerSkinVFX({ member: card.member, jiko: card.jiko });
       }
     }
 
@@ -1709,6 +1755,9 @@
           activeRoom.current_color = chosen.color;
         }
 
+        const botEquippedCode = chosen.skin_key ? (equippedSkinMap[chosen.skin_key] || '') : '';
+        triggerSkinLandingVFX(chosen, botEquippedCode);
+
         applyCardRules(chosen, bot);
         showToast(`${bot.name} melempar ${chosen.member} (${chosen.display})!`);
 
@@ -1744,18 +1793,231 @@
       showToast("\uD83D\uDCE2 KAMU MEMANGGIL UNO!");
     }
 
-    function triggerSkinVFX(vfxData) {
+    // =========================================================================
+    // 4. MASTER ULTRA PARTICLE & VISUAL EFFECT ENGINE (CANVAS & CSS PROPS)
+    // =========================================================================
+    let particles = [];
+    let canvas, ctx, animFrameId;
+
+    function initVFXCanvas() {
+      canvas = document.getElementById('vfx-canvas');
+      if (canvas) {
+        ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+    }
+
+    function spawnFlightTrailVFX(x1, y1, x2, y2, code) {
+      initVFXCanvas();
+      const overlay = document.getElementById('vfx-overlay');
+      overlay.style.opacity = '1';
+
+      let particleColor = '#00f2fe';
+      let particleType = 'droplet';
+
+      if (code in SPECIAL_SKIN_JIKOS) {
+        particleColor = '#38ef7d';
+        particleType = 'sea_water';
+      } else if (code in FULL_COLOR_PALETTES) {
+        particleColor = FULL_COLOR_PALETTES[code].color;
+        particleType = 'color_glow';
+      } else if (code in PRIME_JIKOS) {
+        particleColor = '#ffd700';
+        particleType = 'gold_spark';
+      } else if (code.startsWith('S') && code.length === 4) {
+        particleColor = '#a855f7';
+        particleType = 'ssk_stars';
+      } else if (code.includes('MYTH') && code.includes('FIONY')) {
+        particleColor = '#ff7675';
+        particleType = 'love_hearts';
+      } else if (code.includes('LEGEND')) {
+        particleColor = '#6c5ce7';
+        particleType = 'cosmos';
+      }
+
+      // Generate 25 trajectory particles
+      for (let i = 0; i < 25; i++) {
+        const t = i / 25;
+        particles.push({
+          x: x1 + (x2 - x1) * t + (Math.random() * 30 - 15),
+          y: y1 + (y2 - y1) * t + (Math.random() * 30 - 15),
+          vx: (Math.random() - 0.5) * 4,
+          vy: (Math.random() - 0.5) * 4,
+          size: Math.random() * 6 + 3,
+          color: particleColor,
+          type: particleType,
+          alpha: 1,
+          decay: 0.03
+        });
+      }
+
+      runParticleLoop();
+    }
+
+    function triggerSkinLandingVFX(card, code) {
+      initVFXCanvas();
       const overlay = document.getElementById('vfx-overlay');
       const jiko = document.getElementById('jiko-banner');
-      if (vfxData.jiko) {
-        jiko.textContent = `\u2728 ${vfxData.member}: "${vfxData.jiko}" \u2728`;
-        overlay.className = 'vfx-active-omega';
+      overlay.style.opacity = '1';
+
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+
+      // 1. OMEGA SPESIAL (DKTY, CSHN, CGRC, CFNI, CELI)
+      if (code in SPECIAL_SKIN_JIKOS) {
+        const spec = SPECIAL_SKIN_JIKOS[code];
+        document.body.classList.add('screen-flash-white');
+        setTimeout(() => document.body.classList.remove('screen-flash-white'), 600);
+
+        // Spawn 80 flower explosion + birds particles
+        for (let i = 0; i < 80; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 8 + 3;
+          particles.push({
+            x: cx, y: cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            size: Math.random() * 8 + 4,
+            color: ['#ffffff', '#00f2fe', '#ffd700', '#ec4899'][Math.floor(Math.random() * 4)],
+            type: (i % 5 === 0) ? 'bird' : 'flower_petal',
+            alpha: 1,
+            decay: 0.015
+          });
+        }
+
+        // Trigger unique prop (wings, ring, bouquet, etc)
+        const propEl = document.getElementById(spec.prop);
+        if (propEl) {
+          propEl.classList.add('active');
+          setTimeout(() => propEl.classList.remove('active'), 2800);
+        }
+
+        // Show Jiko
+        jiko.textContent = `✨ ${card.member || 'Member'}: "${spec.jiko}" ✨`;
         jiko.classList.add('jiko-show');
-        setTimeout(() => {
-          overlay.className = '';
-          jiko.classList.remove('jiko-show');
-        }, 3500);
+        setTimeout(() => jiko.classList.remove('jiko-show'), 3500);
       }
+      // 2. FULL COLOR
+      else if (code in FULL_COLOR_PALETTES) {
+        const fc = FULL_COLOR_PALETTES[code];
+        document.documentElement.style.setProperty('--flash-color', fc.color);
+        document.body.classList.add('screen-flash-color');
+        setTimeout(() => document.body.classList.remove('screen-flash-color'), 600);
+
+        for (let i = 0; i < 60; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 7 + 2;
+          particles.push({
+            x: cx, y: cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            size: Math.random() * 7 + 3,
+            color: fc.color,
+            type: 'color_burst',
+            alpha: 1,
+            decay: 0.02
+          });
+        }
+
+        jiko.textContent = `🌈 ${fc.name} (Full Color): "${fc.jiko}" 🌈`;
+        jiko.classList.add('jiko-show');
+        setTimeout(() => jiko.classList.remove('jiko-show'), 3500);
+      }
+      // 3. PRIME
+      else if (code in PRIME_JIKOS) {
+        document.body.classList.add('screen-flash-gold');
+        setTimeout(() => document.body.classList.remove('screen-flash-gold'), 600);
+
+        const colors = ['#e74c3c', '#0984e3', '#00b894', '#fbc531', '#ffd700'];
+        for (let i = 0; i < 60; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 7 + 2;
+          particles.push({
+            x: cx, y: cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            size: Math.random() * 6 + 3,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            type: 'prime_burst',
+            alpha: 1,
+            decay: 0.02
+          });
+        }
+
+        jiko.textContent = `⭐ Prime: "${PRIME_JIKOS[code]}" ⭐`;
+        jiko.classList.add('jiko-show');
+        setTimeout(() => jiko.classList.remove('jiko-show'), 3500);
+      }
+      // 4. SSK OMEGA (Stars, Moons, Flames)
+      else if (code.startsWith('S') && code.length === 4) {
+        const symbols = ['⭐', '🌙', '🔥', '✨'];
+        for (let i = 0; i < 45; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 6 + 2;
+          particles.push({
+            x: cx, y: cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            size: 16,
+            symbol: symbols[Math.floor(Math.random() * symbols.length)],
+            type: 'emoji_particle',
+            alpha: 1,
+            decay: 0.02
+          });
+        }
+      }
+      // 5. DEFAULT JIKO (FROM CARD REGISTRY)
+      else if (card.jiko) {
+        jiko.textContent = `✨ ${card.member}: "${card.jiko}" ✨`;
+        jiko.classList.add('jiko-show');
+        setTimeout(() => jiko.classList.remove('jiko-show'), 3000);
+      }
+
+      runParticleLoop();
+    }
+
+    function runParticleLoop() {
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+
+      function loop() {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= p.decay;
+
+          if (p.alpha <= 0) {
+            particles.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          if (p.type === 'emoji_particle') {
+            ctx.font = `${p.size}px sans-serif`;
+            ctx.fillText(p.symbol, p.x, p.y);
+          } else {
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        }
+
+        if (particles.length > 0) {
+          animFrameId = requestAnimationFrame(loop);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          document.getElementById('vfx-overlay').style.opacity = '0';
+        }
+      }
+
+      loop();
     }
 
     function sendChat() {
@@ -1816,12 +2078,19 @@
       loadCoreUserStatus();
     }
 
-    // Init App
     window.addEventListener('DOMContentLoaded', () => {
+      initVFXCanvas();
       loadCoreUserStatus();
       fetchEquippedSkinsFromPG();
       fetchLobbyRooms();
       setInterval(loadCoreUserStatus, 15000);
+    });
+
+    window.addEventListener('resize', () => {
+      if (canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
     });
   </script>
 </body>
