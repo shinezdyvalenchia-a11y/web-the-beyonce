@@ -142,6 +142,7 @@
     .badge-mode { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
     .badge-classic { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); }
     .badge-bet { background: rgba(251, 191, 36, 0.2); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); }
+    .badge-team { background: rgba(168, 85, 247, 0.2); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.4); }
     .room-meta { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
     .btn-join {
       width: 100%; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.08);
@@ -183,7 +184,7 @@
     .member-avatar-badge { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); background: #000; }
     .member-title-box { display: flex; flex-direction: column; }
     .member-title-name { font-family: 'Outfit'; font-weight: 800; font-size: 17px; color: #fff; }
-    .member-title-role { font-size: 12px; color: var(--text-muted); }
+    .member-title-role { font-size: 12px; font-weight: 800; color: var(--gold); }
     .member-active-badge {
       padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800;
       background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);
@@ -233,6 +234,12 @@
       padding: 16px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;
       min-height: 180px; position: relative;
     }
+    .slot-team-tag {
+      position: absolute; top: 10px; left: 10px; padding: 2px 8px; border-radius: 6px;
+      font-size: 10px; font-weight: 900;
+    }
+    .tag-red { background: rgba(239, 68, 68, 0.3); color: #f87171; border: 1px solid #ef4444; }
+    .tag-blue { background: rgba(59, 130, 246, 0.3); color: #60a5fa; border: 1px solid #3b82f6; }
     .avatar-wrapper { position: relative; width: 64px; height: 64px; margin-bottom: 8px; }
     .slot-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
     .slot-border-frame {
@@ -243,8 +250,6 @@
     .slot-status { font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 8px; }
     .status-ready { background: rgba(16, 185, 129, 0.2); color: #10b981; }
     .status-waiting { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-    .slot-empty { border: 2px dashed rgba(255,255,255,0.1); }
-    .btn-add-bot { background: rgba(255,255,255,0.06); border: 1px solid var(--border-glass); color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; margin-top: 8px; }
 
     /* TEMP IN-ROOM CHAT WITH SKIN BUBBLES */
     .lounge-chat {
@@ -274,18 +279,13 @@
       display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       overflow: hidden; z-index: 2000; background-color: #000;
     }
-    /* LAYER 1: STATIC BACKGROUND */
     .arena-bg {
       position: absolute; inset: 0; width: 100%; height: 100%;
       background-image: url('last - Copy.jpg'), url('bg_arena.jpg');
       background-size: cover; background-position: center; z-index: 0;
     }
-    /* LAYER 2: CSS PAPER PLANES */
     .plane-container { position: absolute; inset: 0; z-index: 10; pointer-events: none; overflow: hidden; }
-    .css-plane {
-      position: absolute; font-size: 28px; opacity: 0.8;
-      animation: flyPlane linear infinite;
-    }
+    .css-plane { position: absolute; font-size: 28px; opacity: 0.8; animation: flyPlane linear infinite; }
     .plane-1 { top: 15%; animation-duration: 22s; animation-delay: 0s; }
     .plane-2 { top: 30%; animation-duration: 28s; animation-delay: 6s; }
     .plane-3 { top: 45%; animation-duration: 25s; animation-delay: 12s; }
@@ -295,7 +295,6 @@
       100% { left: 110%; transform: translateY(20px) rotate(20deg) scale(0.6); }
     }
 
-    /* LAYER 3: 3D ISOMETRIC GLASS TABLE */
     .table-viewport {
       position: absolute; inset: 0; perspective: 1000px;
       display: flex; align-items: center; justify-content: center; z-index: 20;
@@ -331,10 +330,8 @@
     .color-ring.green { border-color: #00b894; box-shadow: 0 0 35px #00b894; }
     .color-ring.yellow { border-color: #fbc531; box-shadow: 0 0 35px #fbc531; }
     .color-ring.wild { border-color: #a855f7; box-shadow: 0 0 35px #a855f7; }
-    @keyframes pulseGlow {
-      from { transform: scale(0.95); opacity: 0.7; }
-      to { transform: scale(1.05); opacity: 1; }
-    }
+    @keyframes pulseGlow { from { transform: scale(0.95); opacity: 0.7; } to { transform: scale(1.05); opacity: 1; } }
+
     .stack-badge {
       position: absolute; top: -20px; background: #ef4444; color: #fff;
       padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 900;
@@ -342,14 +339,13 @@
     }
     @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-6px); } }
 
-    /* LAYER 4: PLAYER HUDS */
     .hud-layer { position: absolute; inset: 0; z-index: 30; pointer-events: none; }
     .hud-player {
       position: absolute; pointer-events: auto; display: flex; align-items: center; gap: 10px;
       background: rgba(10, 15, 30, 0.85); padding: 8px 14px; border-radius: 30px;
       border: 1px solid var(--border-glass); backdrop-filter: blur(10px);
     }
-    .hud-player.active-turn { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
+    .hud-player.active-turn { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: scale(1.06); }
     .hud-top { top: 20px; left: 50%; transform: translateX(-50%); }
     .hud-left { top: 45%; left: 30px; transform: translateY(-50%); }
     .hud-right { top: 45%; right: 30px; transform: translateY(-50%); }
@@ -359,7 +355,6 @@
     .hud-info { font-size: 13px; }
     .hud-cards-badge { background: var(--primary); padding: 2px 8px; border-radius: 10px; font-weight: 800; font-size: 11px; }
 
-    /* BOTTOM HUD (MAIN USER HAND) */
     .hud-bottom {
       position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
       width: 100%; max-width: 960px; display: flex; flex-direction: column; align-items: center;
@@ -378,8 +373,7 @@
       width: 105px; height: 155px; border-radius: 14px;
       position: relative; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       flex-shrink: 0; overflow: hidden; margin: 0 -10px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-      user-select: none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6); user-select: none;
     }
     .uno-card:hover { transform: translateY(-32px) scale(1.15); z-index: 100; margin: 0 6px; box-shadow: 0 16px 36px rgba(0,0,0,0.9); }
     .uno-card.playable {
@@ -389,7 +383,6 @@
     }
     .uno-card.playable:hover { transform: translateY(-36px) scale(1.18); }
 
-    /* COLOR THEMES WITH INNER WHITE INSET */
     .uno-card.red { background: #e74c3c; box-shadow: inset 0 0 0 3px #ffffff, 0 8px 24px rgba(0,0,0,0.6); }
     .uno-card.blue { background: #0984e3; box-shadow: inset 0 0 0 3px #ffffff, 0 8px 24px rgba(0,0,0,0.6); }
     .uno-card.green { background: #00b894; box-shadow: inset 0 0 0 3px #ffffff, 0 8px 24px rgba(0,0,0,0.6); }
@@ -399,7 +392,6 @@
       box-shadow: inset 0 0 0 3px #ffffff, 0 8px 24px rgba(0,0,0,0.6);
     }
 
-    /* CENTER SLANTED WHITE OVAL */
     .card-center-oval {
       position: absolute; width: 88%; height: 72%; top: 14%; left: 6%;
       border-radius: 50%; transform: rotate(-28deg);
@@ -412,7 +404,6 @@
       transform: rotate(28deg) scale(1.18);
     }
 
-    /* CORNER VALUE NUMBERS WITH 3D BLACK SHADOW */
     .card-corner {
       position: absolute; z-index: 10;
       font-family: 'Arial Black', Impact, sans-serif;
@@ -423,7 +414,6 @@
     .card-corner-top { top: 5px; left: 7px; }
     .card-corner-bot { bottom: 5px; right: 7px; transform: rotate(180deg); }
 
-    /* MEMBER & ROLE BOTTOM BADGE */
     .card-member-tag {
       position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
       font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px;
@@ -431,13 +421,11 @@
       max-width: 90%; overflow: hidden; text-overflow: ellipsis; border: 1px solid rgba(255,255,255,0.2);
     }
 
-    /* CARD THROWN FLYING CLONE ANIMATION */
     .card-thrown {
       position: fixed !important; pointer-events: none !important; z-index: 9999 !important;
       transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1) !important;
     }
 
-    /* === LAYER 5: VFX ENGINE & JIKO OVERLAYS === */
     #vfx-overlay {
       position: fixed; inset: 0; pointer-events: none; z-index: 3000;
       opacity: 0; transition: opacity 0.3s;
@@ -458,7 +446,6 @@
     .jiko-show { opacity: 1 !important; transform: translateY(0) !important; }
     @keyframes flashWhite { 0% { background: rgba(255,255,255,0.9); } 100% { background: transparent; } }
 
-    /* IN-GAME FLOATING CHAT DRAWER */
     .ingame-chat-toggle {
       position: fixed; bottom: 20px; right: 20px; z-index: 3500;
       background: rgba(10, 15, 30, 0.9); border: 1px solid var(--border-glass);
@@ -472,7 +459,6 @@
       backdrop-filter: blur(16px); box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     }
 
-    /* HUD ACTION BUTTONS */
     .hud-controls { display: flex; gap: 12px; margin-bottom: 10px; }
     .btn-uno {
       background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff;
@@ -486,14 +472,13 @@
       padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 700;
     }
 
-    /* COLOR PICKER MODAL */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
       z-index: 5000; display: none; align-items: center; justify-content: center;
     }
     .modal-content {
       background: var(--card-glass); border: 1px solid var(--border-glass); border-radius: 20px;
-      padding: 28px; width: 100%; max-width: 420px; text-align: center; backdrop-filter: blur(16px);
+      padding: 28px; width: 100%; max-width: 440px; text-align: center; backdrop-filter: blur(16px);
     }
     .color-options { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
     .color-btn { height: 65px; border-radius: 14px; border: 3px solid #fff; cursor: pointer; font-weight: 900; font-size: 16px; color: #fff; }
@@ -573,7 +558,7 @@
       <div id="viewArenaLobby">
         <div class="hero-banner">
           <h1>UNO NO MERCY: JKT48 ACTION DECK</h1>
-          <p>Adu taktik kartu Extreme dengan 78 Member Deck, efek Skin Omega Spesial, Stack Penalty +10, dan mode taruhan Sistem Gugur!</p>
+          <p>Adu taktik kartu Extreme dengan 78 Member Deck, mode Solo FFA, Duo 2v2, Trio 3v3, Stack Penalty +10, dan efek Skin Omega Spesial!</p>
           <div class="hero-actions">
             <button class="btn-action btn-create" onclick="openCreateModal()">&#10133; Buat Kamar Baru</button>
             <button class="btn-action btn-quick" onclick="quickMatch()">&#9889; Quick Match (Langsung Main)</button>
@@ -585,8 +570,10 @@
           <h2 style="font-family: 'Outfit'; font-size: 20px;">Daftar Kamar Live</h2>
           <div class="filter-tabs">
             <div class="filter-tab active" onclick="filterLobby('all', this)">Semua Mode</div>
-            <div class="filter-tab" onclick="filterLobby('classic', this)">Classic (Casual)</div>
-            <div class="filter-tab" onclick="filterLobby('bet_battle', this)">Bet Battle (Taruhan)</div>
+            <div class="filter-tab" onclick="filterLobby('solo', this)">Solo (FFA)</div>
+            <div class="filter-tab" onclick="filterLobby('duo', this)">Duo (2v2)</div>
+            <div class="filter-tab" onclick="filterLobby('trio', this)">Trio (3v3)</div>
+            <div class="filter-tab" onclick="filterLobby('bet', this)">Bet Battle</div>
           </div>
         </div>
 
@@ -599,11 +586,11 @@
       <div id="viewSkinEquip">
         <div class="gallery-header-box">
           <div class="gallery-title">Galery Alcsta48 - UNO Omega Card</div>
-          <div class="gallery-sub">Koleksi seluruh varian skin kartu member JKT48 tersimpan otomatis ke PostgreSQL. <strong>Setiap 1 member hanya dapat mengaktifkan 1 skin</strong>. Skin yang dimiliki tampil berwarna penuh, sedangkan skin yang belum dimiliki tampil abu-abu.</div>
+          <div class="gallery-sub"><strong>1 Member = Tepat 1 Kartu UNO</strong> sesuai data Excel resmi. Setiap 1 member hanya dapat memasang 1 varian skin aktif. Skin yang dimiliki tampil berwarna, dan yang belum dimiliki tampil abu-abu.</div>
         </div>
 
         <div class="skin-filter-bar">
-          <input type="text" class="skin-search-input" id="skinSearch" placeholder="&#128269; Cari nama member atau skin..." oninput="renderMemberSkins()">
+          <input type="text" class="skin-search-input" id="skinSearch" placeholder="&#128269; Cari nama member, warna, atau angka kartu..." oninput="renderMemberSkins()">
           <div class="filter-tabs">
             <div class="filter-tab active" onclick="filterMemberCategory('all', this)">Semua Member (78)</div>
             <div class="filter-tab" onclick="filterMemberCategory('wild', this)">Boss Wild Cards (10)</div>
@@ -623,7 +610,7 @@
       <div class="lounge-top">
         <div>
           <h2 id="loungeTitle" style="font-family: 'Outfit'; font-size: 24px;">Kamar Arena UNO #1</h2>
-          <p id="loungeSub" style="color: var(--text-muted); font-size: 13px;">Mode Classic &bull; Host: Shani</p>
+          <p id="loungeSub" style="color: var(--text-muted); font-size: 13px;">Mode Solo FFA &bull; Host: Shani</p>
         </div>
         <div class="lounge-code-badge" onclick="copyRoomCode()" title="Klik untuk Salin Kode">
           KODE: <span id="loungeRoomCode">------</span> &#128203;
@@ -650,7 +637,7 @@
               <div class="chat-avatar-mini"><img src="../icon.png" alt="sys"></div>
               <div class="chat-content-box">
                 <strong>Sistem</strong>
-                Selamat datang di arena UNO No Mercy!
+                Selamat datang di arena UNO No Mercy JKT48!
               </div>
             </div>
           </div>
@@ -795,10 +782,19 @@
         <input type="text" id="inputRoomName" value="Arena UNO No Mercy" class="chat-input" style="width: 100%; margin-top: 4px;">
       </div>
       <div style="margin-bottom: 12px;">
-        <label style="font-size: 12px; color: var(--text-muted);">Mode Permainan</label>
+        <label style="font-size: 12px; color: var(--text-muted);">Mode Format Tim</label>
+        <select id="selectTeamMode" class="chat-input" style="width: 100%; margin-top: 4px;">
+          <option value="solo">Solo (4 Pemain - FFA Sistem Gugur)</option>
+          <option value="duo">Duo (2v2 Team Battle: Merah vs Biru)</option>
+          <option value="trio">Trio (3v3 Team Battle: 6 Pemain)</option>
+          <option value="duel">1v1 Duel Showdown</option>
+        </select>
+      </div>
+      <div style="margin-bottom: 12px;">
+        <label style="font-size: 12px; color: var(--text-muted);">Tipe Permainan</label>
         <select id="selectMode" class="chat-input" style="width: 100%; margin-top: 4px;" onchange="toggleBetSettings()">
-          <option value="classic">Classic (Santai / Gratis)</option>
-          <option value="bet_battle">Bet Battle (Taruhan Sistem Gugur)</option>
+          <option value="classic">Classic Casual (Gratis / Santai)</option>
+          <option value="bet_battle">Bet Battle (Taruhan Gold / Kristal)</option>
         </select>
       </div>
       <div id="betConfigZone" style="display: none; margin-bottom: 12px;">
@@ -814,7 +810,7 @@
         </div>
       </div>
       <div style="display: flex; gap: 10px; margin-top: 20px;">
-        <button class="btn-action btn-create" style="flex: 1;" onclick="submitCreateRoom()">Buat Sekarang</button>
+        <button class="btn-action btn-create" style="flex: 1;" onclick="submitCreateRoom()">Buat Kamar</button>
         <button class="btn-action btn-code" onclick="closeModal('createModal')">Batal</button>
       </div>
     </div>
@@ -833,7 +829,6 @@
     const WS_BASE = GAME_ENGINE_URL.replace(/^http/i, 'ws');
     const DEFAULT_TEMPLATE_PP = "https://i.ibb.co.com/Y4JdtfGH/download.png";
 
-    // Resolving Cookie persis seperti beranda / koleksi kartu
     function getCookie(name) {
       let nameEQ = name + "="; let ca = document.cookie.split(';');
       for(let i=0; i < ca.length; i++) {
@@ -869,7 +864,9 @@
     let equippedSkinMap = JSON.parse(localStorage.getItem('uno_equipped_skins') || '{}');
     let currentMemberFilter = 'all';
 
-    // ===== 78 MEMBER UNO MASTER ROSTER (MATCHING EXCEL EXACTLY) =====
+    // =========================================================================
+    // 78-MEMBER EXACT UNO MASTER ROSTER (1 MEMBER = STRICTLY 1 CARD ONLY)
+    // =========================================================================
     const MASTER_UNO_REGISTRY = {
       // 1. Wild Extreme Boss Cards (10 Members)
       "WILD_DRAW_10": { value: "wild_draw_10", type: "wild", color: "wild", display: "+10", member: "Angelina Christy", key: "ANGELINA_CHRISTY", photo: "ANGELINA_CHRISTY_UNCOMMON.jpg", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!" },
@@ -901,7 +898,7 @@
       "YELLOW_DRAW_4": { value: "draw_4", type: "action", color: "yellow", display: "+4", member: "Desy Natalia (Daisy)", key: "DESY_NATALIA", photo: "DESY_NATALIA_UNCOMMON.jpg" },
       "YELLOW_SHIELD": { value: "shield", type: "action", color: "yellow", display: "🛡️", member: "Gendis Mayrannisa", key: "GENDIS_MAYRANNISA", photo: "GENDIS_MAYRANNISA_UNCOMMON.jpg" },
 
-      # 3. Standard Action Cards (12 Members)
+      // 3. Standard Action Cards (12 Members)
       "RED_DRAW_2": { value: "draw_2", type: "action", color: "red", display: "+2", member: "Reva Fidela (Adel)", key: "REVA_FIDELA", photo: "REVA_FIDELA_UNCOMMON.jpg" },
       "RED_REVERSE": { value: "reverse", type: "action", color: "red", display: "🔄", member: "Cornelia Vanisa (Oniel)", key: "CORNELIA_VANISA", photo: "CORNELIA_VANISA_UNCOMMON.jpg" },
       "RED_SKIP": { value: "skip", type: "action", color: "red", display: "🚫", member: "Kathrina Irene", key: "KATHRINA_IRENE", photo: "KATHRINA_IRENE_UNCOMMON.jpg" },
@@ -915,7 +912,7 @@
       "YELLOW_REVERSE": { value: "reverse", type: "action", color: "yellow", display: "🔄", member: "Lulu Salsabila", key: "LULU_SALSABILA", photo: "LULU_SALSABILA_UNCOMMON.jpg" },
       "YELLOW_SKIP": { value: "skip", type: "action", color: "yellow", display: "🚫", member: "Indira Putri Seruni", key: "INDIRA_PUTRI", photo: "INDIRA_PUTRI_UNCOMMON.jpg" },
 
-      # 4. Number Cards 0-9 (40 Members)
+      // 4. Number Cards 0-9 (40 Members)
       "RED_0": { value: "0", type: "number", color: "red", display: "0", member: "Abigail Rachel (Aralie)", key: "ABIGAIL_RACHEL", photo: "ABIGAIL_RACHEL_UNCOMMON.jpg" },
       "BLUE_0": { value: "0", type: "number", color: "blue", display: "0", member: "Chelsea Devina", key: "CHELSEA_DEVINA", photo: "CHELSEA_DEVINA_UNCOMMON.jpg" },
       "GREEN_0": { value: "0", type: "number", color: "green", display: "0", member: "Jacqueline Immanuela", key: "JACQUELINE_IMMANUELA", photo: "JACQUELINE_IMMANUELA_UNCOMMON.jpg" },
@@ -971,7 +968,6 @@
       document.getElementById('sidebar').classList.toggle('open');
     }
 
-    // ===== SUB-TAB SWITCHER =====
     function switchSubTab(tab) {
       document.getElementById('tabBtnArena').classList.toggle('active', tab === 'arena');
       document.getElementById('tabBtnSkin').classList.toggle('active', tab === 'skin');
@@ -983,7 +979,7 @@
       }
     }
 
-    // ===== 1. TEMBAK & AMBIL DATA ASLI DARI CORE BACKEND ENGINE (/statuschat & /statusskin) =====
+    // ===== 1. TEMBAK & AMBIL DATA ASLI DARI CORE BACKEND ENGINE =====
     async function loadCoreUserStatus() {
       currentSession = getUserSession();
       const payload = {
@@ -1061,7 +1057,6 @@
       renderMemberSkins();
     }
 
-    // ===== 2. FETCH EQUIPPED SKINS DARI POSTGRESQL GAME ENGINE =====
     async function fetchEquippedSkinsFromPG() {
       try {
         const res = await fetch(`${GAME_ENGINE_URL}/api/uno/skin/${currentSession}`);
@@ -1078,7 +1073,7 @@
       }
     }
 
-    // ===== RENDER MEMBER-GROUPED SKIN COLLECTION WITH 1-ACTIVE-SKIN RULE =====
+    // ===== RENDER MEMBER-GROUPED SKIN COLLECTION WITH 1-MEMBER-1-CARD IDENTITY =====
     function renderMemberSkins() {
       const container = document.getElementById('memberGroupContainer');
       const search = (document.getElementById('skinSearch').value || '').toLowerCase();
@@ -1090,6 +1085,7 @@
             key: c.key,
             name: c.member,
             role: `${c.color.toUpperCase()} ${c.display}`,
+            cardTitle: `Kartu: ${c.color.toUpperCase()} [${c.display}]`,
             type: c.type,
             avatar: `../skin/${c.photo}`,
             skins: [
@@ -1104,7 +1100,7 @@
 
       const memberList = Object.values(uniqueMembersMap);
       let filtered = memberList.filter(m => {
-        const matchName = m.name.toLowerCase().includes(search) || m.role.toLowerCase().includes(search);
+        const matchName = m.name.toLowerCase().includes(search) || m.role.toLowerCase().includes(search) || m.cardTitle.toLowerCase().includes(search);
         if (!matchName) return false;
         if (currentMemberFilter === 'all') return true;
         return m.type === currentMemberFilter;
@@ -1151,7 +1147,7 @@
                 <img src="${m.avatar}" class="member-avatar-badge" onerror="this.src='../icon.png'" alt="${m.name}">
                 <div class="member-title-box">
                   <div class="member-title-name">${m.name}</div>
-                  <div class="member-title-role">${m.role}</div>
+                  <div class="member-title-role">&#127188; ${m.cardTitle}</div>
                 </div>
               </div>
               <div class="member-active-badge">
@@ -1185,13 +1181,6 @@
       } catch (e) {
         console.warn("Equip skin PG sync warning:", e);
       }
-
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({
-          action: 'sync_skins',
-          equipped_skins: equippedSkinMap
-        }));
-      }
     }
 
     async function unequipMemberSkin(memberKey) {
@@ -1213,13 +1202,6 @@
       } catch (e) {
         console.warn("Unequip skin PG sync warning:", e);
       }
-
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({
-          action: 'sync_skins',
-          equipped_skins: equippedSkinMap
-        }));
-      }
     }
 
     function filterMemberCategory(cat, el) {
@@ -1229,7 +1211,9 @@
       renderMemberSkins();
     }
 
-    // ===== 3. HYBRID GAME ENGINE (LOCAL + MULTIPLAYER ONLINE) =====
+    // =========================================================================
+    // 3. HYBRID GAME ENGINE (REAL-TIME ONLINE WS + HIGH-SPEED LOCAL ENGINE)
+    // =========================================================================
     let localDeck = [];
     let localDiscardPile = [];
     let isLocalMode = false;
@@ -1264,14 +1248,14 @@
       return deck;
     }
 
-    function initLocalMatch(roomName, mode) {
+    function initLocalMatch(roomName, mode, teamFormat) {
       isLocalMode = true;
       localDeck = buildFullUnoDeck();
       localDiscardPile = [];
       localPendingDraw = 0;
       localTurnDirection = 1;
+      teamFormat = teamFormat || 'solo';
 
-      // Draw initial valid number card for table
       let firstCard = localDeck.pop();
       while (firstCard.type !== 'number') {
         localDeck.unshift(firstCard);
@@ -1280,10 +1264,33 @@
       localDiscardPile.push(firstCard);
       localCurrentColor = firstCard.color;
 
+      let players = [];
+      if (teamFormat === 'duel') {
+        players = [
+          { session_id: currentSession, name: currentUserName, avatar: currentUserAvatar, is_bot: false, is_ready: true, team: 'red', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
+          { session_id: 'bot_1', name: 'Christy AI', avatar: '../skin/ANGELINA_CHRISTY_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'blue', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] }
+        ];
+      } else if (teamFormat === 'duo') {
+        players = [
+          { session_id: currentSession, name: currentUserName, avatar: currentUserAvatar, is_bot: false, is_ready: true, team: 'red', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
+          { session_id: 'bot_1', name: 'Freya AI (Musuh)', avatar: '../skin/FREYA_JAYAWARDANA_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'blue', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
+          { session_id: 'bot_2', name: 'Shani AI (Partner)', avatar: '../skin/SHANI_INDIRA_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'red', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
+          { session_id: 'bot_3', name: 'Zee AI (Musuh)', avatar: '../skin/AZIZI_ASSADEL_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'blue', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] }
+        ];
+      } else {
+        players = [
+          { session_id: currentSession, name: currentUserName, avatar: currentUserAvatar, is_bot: false, is_ready: true, team: 'solo', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
+          { session_id: 'bot_1', name: 'Freya AI', avatar: '../skin/FREYA_JAYAWARDANA_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'solo', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
+          { session_id: 'bot_2', name: 'Christy AI', avatar: '../skin/ANGELINA_CHRISTY_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'solo', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
+          { session_id: 'bot_3', name: 'Zee AI', avatar: '../skin/AZIZI_ASSADEL_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'solo', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] }
+        ];
+      }
+
       activeRoom = {
-        room_id: 'local_' + Math.random().toString(36).substring(2, 8),
+        room_id: 'room_' + Math.random().toString(36).substring(2, 8),
         name: roomName || 'Arena UNO No Mercy',
         mode: mode || 'classic',
+        team_format: teamFormat,
         status: 'waiting',
         host_session: currentSession,
         host_name: currentUserName,
@@ -1292,40 +1299,7 @@
         pending_draw_count: 0,
         draw_pile_count: localDeck.length,
         top_card: firstCard,
-        players: [
-          {
-            session_id: currentSession,
-            name: currentUserName,
-            avatar: currentUserAvatar,
-            is_bot: false,
-            is_ready: true,
-            hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()]
-          },
-          {
-            session_id: 'bot_1',
-            name: 'Freya AI',
-            avatar: '../skin/FREYA_JAYAWARDANA_UNCOMMON.jpg',
-            is_bot: true,
-            is_ready: true,
-            hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()]
-          },
-          {
-            session_id: 'bot_2',
-            name: 'Christy AI',
-            avatar: '../skin/ANGELINA_CHRISTY_UNCOMMON.jpg',
-            is_bot: true,
-            is_ready: true,
-            hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()]
-          },
-          {
-            session_id: 'bot_3',
-            name: 'Zee AI',
-            avatar: '../skin/AZIZI_ASSADEL_UNCOMMON.jpg',
-            is_bot: true,
-            is_ready: true,
-            hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()]
-          }
-        ]
+        players: players
       };
 
       document.getElementById('lobby-screen').style.display = 'none';
@@ -1344,10 +1318,10 @@
         }
       } catch(e) {}
       
-      // Default Rooms when offline
       renderLobbyRooms([
-        { room_id: 'room_no_mercy_1', name: 'Arena No Mercy JKT48 #1', host_name: 'Shani Natio', mode: 'classic', player_count: 3, max_players: 4, room_type: 'public', wager: { amount: 0, currency: 'gold' } },
-        { room_id: 'room_bet_arena_2', name: 'Bet Battle Sistem Gugur (50 Gold)', host_name: 'Freya', mode: 'bet_battle', player_count: 2, max_players: 4, room_type: 'public', wager: { amount: 50, currency: 'gold' } }
+        { room_id: 'room_solo_1', name: 'Arena No Mercy Solo (FFA)', host_name: 'Shani Natio', mode: 'classic', team_format: 'solo', player_count: 3, max_players: 4, room_type: 'public', wager: { amount: 0, currency: 'gold' } },
+        { room_id: 'room_duo_2', name: 'Duo 2v2 Team Battle (Merah vs Biru)', host_name: 'Freya', mode: 'bet_battle', team_format: 'duo', player_count: 2, max_players: 4, room_type: 'public', wager: { amount: 50, currency: 'gold' } },
+        { room_id: 'room_trio_3', name: 'Trio 3v3 All-Star Omega', host_name: 'Christy', mode: 'classic', team_format: 'trio', player_count: 4, max_players: 6, room_type: 'public', wager: { amount: 0, currency: 'gold' } }
       ]);
     }
 
@@ -1360,15 +1334,18 @@
               <div class="room-card-name">${r.name}</div>
               <div class="room-card-host">Host: ${r.host_name}</div>
             </div>
-            <span class="badge-mode ${r.mode === 'bet_battle' ? 'badge-bet' : 'badge-classic'}">
-              ${r.mode === 'bet_battle' ? '&#128176; ' + r.wager.amount + ' ' + r.wager.currency : '&#127918; Classic'}
-            </span>
+            <div style="display: flex; gap: 4px; flex-direction: column; align-items: flex-end;">
+              <span class="badge-mode badge-team">${(r.team_format || 'SOLO').toUpperCase()}</span>
+              <span class="badge-mode ${r.mode === 'bet_battle' ? 'badge-bet' : 'badge-classic'}">
+                ${r.mode === 'bet_battle' ? '&#128176; ' + r.wager.amount + ' ' + r.wager.currency : '&#127918; Classic'}
+              </span>
+            </div>
           </div>
           <div class="room-meta">
             <span>&#128101; ${r.player_count}/${r.max_players} Pemain</span>
             <span>&#128274; ${r.room_type === 'private' ? 'Privat' : 'Publik'}</span>
           </div>
-          <button class="btn-join" onclick="joinRoom('${r.room_id}')">Gabung Kamar</button>
+          <button class="btn-join" onclick="joinRoom('${r.room_id}', '${r.team_format || 'solo'}')">Gabung Kamar</button>
         </div>
       `).join('');
     }
@@ -1388,17 +1365,18 @@
 
     async function submitCreateRoom() {
       const name = document.getElementById('inputRoomName').value.trim() || 'Arena UNO No Mercy';
+      const teamMode = document.getElementById('selectTeamMode').value;
       const mode = document.getElementById('selectMode').value;
       closeModal('createModal');
-      initLocalMatch(name, mode);
+      initLocalMatch(name, mode, teamMode);
     }
 
     function quickMatch() {
-      initLocalMatch('Arena UNO Quick Match', 'classic');
+      initLocalMatch('Arena UNO Quick Match', 'classic', 'solo');
     }
 
-    function joinRoom(roomId) {
-      initLocalMatch('Arena UNO JKT48', 'classic');
+    function joinRoom(roomId, teamFormat) {
+      initLocalMatch('Arena UNO JKT48', 'classic', teamFormat || 'solo');
     }
 
     function copyRoomCode() {
@@ -1411,17 +1389,19 @@
     function renderLoungeState() {
       if (!activeRoom) return;
       document.getElementById('loungeTitle').textContent = activeRoom.name;
-      document.getElementById('loungeSub').textContent = `Mode ${activeRoom.mode} \u2022 Host: ${activeRoom.host_name}`;
+      document.getElementById('loungeSub').textContent = `Format ${(activeRoom.team_format || 'solo').toUpperCase()} \u2022 Mode ${activeRoom.mode} \u2022 Host: ${activeRoom.host_name}`;
       document.getElementById('loungeRoomCode').textContent = activeRoom.room_code || 'UNO48';
 
       const slots = document.getElementById('slotsContainer');
       let html = '';
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < activeRoom.players.length; i++) {
         const p = activeRoom.players[i];
         if (p) {
           const borderSrc = (p.session_id === currentSession && currentUserBorderCode) ? `../skin/${currentUserBorderCode}.png` : '';
+          const teamBadge = p.team === 'red' ? '<span class="slot-team-tag tag-red">🔴 TIM MERAH</span>' : (p.team === 'blue' ? '<span class="slot-team-tag tag-blue">🔵 TIM BIRU</span>' : '');
           html += `
             <div class="slot-card">
+              ${teamBadge}
               <div class="avatar-wrapper">
                 <img src="${p.avatar || DEFAULT_TEMPLATE_PP}" class="slot-avatar" onerror="this.src='${DEFAULT_TEMPLATE_PP}'" alt="avatar">
                 ${borderSrc ? `<img src="${borderSrc}" class="slot-border-frame" onerror="this.style.display='none'">` : ''}
@@ -1453,10 +1433,6 @@
       document.getElementById('game-arena').style.display = 'none';
       document.getElementById('lobby-screen').style.display = 'block';
       fetchLobbyRooms();
-    }
-
-    function addBotSlot() {
-      showToast("Bot AI sudah terisi penuh!");
     }
 
     // ===== ARENA RENDERING =====
@@ -1612,7 +1588,6 @@
           let newCol = chosenColor || card.color;
           if (newCol !== 'wild') activeRoom.current_color = newCol;
 
-          // Apply card effects
           applyCardRules(card, me);
 
           // Check win
@@ -1671,6 +1646,19 @@
 
     // ===== BOT TURN AI ENGINE =====
     function triggerBotTurn() {
+      if (activeRoom.players.length === 2) {
+        activeRoom.current_turn_idx = 1;
+        renderArenaState();
+        setTimeout(() => {
+          runBotAction(1, () => {
+            activeRoom.current_turn_idx = 0;
+            renderArenaState();
+            showToast("\uD83C\uDFB2 Giliran Kamu Sekarang!");
+          });
+        }, 1200);
+        return;
+      }
+
       activeRoom.current_turn_idx = 1;
       renderArenaState();
 
@@ -1725,7 +1713,11 @@
         showToast(`${bot.name} melempar ${chosen.member} (${chosen.display})!`);
 
         if (bot.hand.length === 0) {
-          alert(`💥 ${bot.name} Menghabiskan kartunya terlebih dahulu! Pertandingan Selesai.`);
+          if (activeRoom.team_format === 'duo' && bot.team === 'red') {
+            alert(`🎉 TIM MERAH (Kamu & ${bot.name}) MENANG DUO BATTLE!`);
+          } else {
+            alert(`💥 ${bot.name} Menghabiskan kartunya terlebih dahulu! Pertandingan Selesai.`);
+          }
           exitArenaToLobby();
           return;
         }
