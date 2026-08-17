@@ -813,7 +813,7 @@ function getSkinVfxConfig(el) {
       };
     }
 
-const PARTICLE_POOL_SIZE = 500;
+const PARTICLE_POOL_SIZE = 800;
     const particlePool = [];
     let trailRibbons = [];
     let canvas, ctx, animFrameId;

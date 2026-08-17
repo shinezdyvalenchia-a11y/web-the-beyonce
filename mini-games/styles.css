@@ -891,3 +891,103 @@
       0% { opacity: 0.4; }
       100% { opacity: 0.7; }
     }
+/* =========================================================================
+   BRUTAL TIER VFX & 3D GIANT PROP KEYFRAMES
+   ========================================================================= */
+
+.vfx-holy-white-trail {
+  box-shadow: 0 0 35px 12px rgba(255, 255, 255, 0.95), 0 0 65px 25px rgba(0, 242, 254, 0.85) !important;
+  animation: holyAuraGleam 0.4s infinite alternate ease-in-out;
+}
+@keyframes holyAuraGleam {
+  0% { filter: drop-shadow(0 0 15px #ffffff) brightness(1.2); }
+  100% { filter: drop-shadow(0 0 35px #00f2fe) brightness(1.7); }
+}
+
+.vfx-birds-overlay {
+  position: fixed; inset: 0; pointer-events: none; z-index: 99999;
+  display: flex; justify-content: center; align-items: center; overflow: hidden;
+}
+.bird-particle {
+  position: absolute; font-size: 32px; animation: flyUpwards 1.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+@keyframes flyUpwards {
+  0% { transform: translate(0, 100px) scale(0.3) rotate(-15deg); opacity: 0; }
+  30% { opacity: 1; transform: translate(var(--dx), -150px) scale(1.2) rotate(10deg); }
+  100% { transform: translate(calc(var(--dx) * 2), -600px) scale(1.8) rotate(-20deg); opacity: 0; }
+}
+
+#propWings, #propRing, #propFlower, #propChoco, #propWater {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+  pointer-events: none; z-index: 99998; opacity: 0;
+}
+.extra-wings {
+  font-size: 160px; text-shadow: 0 0 50px rgba(255, 255, 255, 1), 0 0 100px rgba(0, 210, 255, 0.9);
+  animation: wingFlapProp 2s ease-in-out forwards;
+}
+@keyframes wingFlapProp {
+  0% { transform: translate(-50%, -50%) scale(0.2) rotate(-10deg); opacity: 0; }
+  25% { transform: translate(-50%, -55%) scale(1.3) rotate(5deg); opacity: 1; }
+  60% { transform: translate(-50%, -50%) scale(1.1) rotate(0deg); opacity: 1; }
+  100% { transform: translate(-50%, -60%) scale(1.6) rotate(10deg); opacity: 0; }
+}
+
+.extra-giant-ring {
+  width: 220px; height: 220px; border-radius: 50%;
+  border: 12px solid #ffd700; box-shadow: 0 0 60px #ffd700, inset 0 0 40px #ffffff;
+  animation: ringSpinProp 2s ease-in-out forwards;
+}
+@keyframes ringSpinProp {
+  0% { transform: translate(-50%, -50%) scale(0.1) rotate(0deg); opacity: 0; }
+  30% { transform: translate(-50%, -50%) scale(1.2) rotate(180deg); opacity: 1; }
+  70% { transform: translate(-50%, -50%) scale(1.0) rotate(360deg); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1.5) rotate(540deg); opacity: 0; }
+}
+
+.extra-flower-bouquet {
+  font-size: 150px; filter: drop-shadow(0 0 45px #ff7675);
+  animation: flowerBloomProp 2s ease-in-out forwards;
+}
+@keyframes flowerBloomProp {
+  0% { transform: translate(-50%, -50%) scale(0) rotate(-45deg); opacity: 0; }
+  35% { transform: translate(-50%, -50%) scale(1.3) rotate(10deg); opacity: 1; }
+  70% { transform: translate(-50%, -50%) scale(1.0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(-50%, -40%) scale(1.6) rotate(20deg); opacity: 0; }
+}
+
+.extra-chocolate-burst {
+  font-size: 150px; filter: drop-shadow(0 0 45px #d63031);
+  animation: chocoPulseProp 2s ease-in-out forwards;
+}
+@keyframes chocoPulseProp {
+  0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+  30% { transform: translate(-50%, -50%) scale(1.4); opacity: 1; }
+  75% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1.7); opacity: 0; }
+}
+
+.extra-water-surge {
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 210, 255, 0.95), transparent 70%);
+  box-shadow: 0 0 80px #00d2ff; animation: waterRippleProp 2s ease-in-out forwards;
+}
+@keyframes waterRippleProp {
+  0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
+  40% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+}
+
+.hud-border-omega-glow {
+  box-shadow: 0 0 30px 8px #ffffff, 0 0 50px 15px rgba(0, 210, 255, 0.8) !important;
+  border-color: #ffffff !important; transition: all 0.3s ease;
+}
+
+.vfx-full-color-trail { box-shadow: 0 0 35px 10px var(--color-trail, #ff4757) !important; }
+.vfx-prime-gold-trail { box-shadow: 0 0 40px 12px #ffd700, 0 0 70px 20px #ffffff !important; animation: primeGoldGleam 0.3s infinite alternate ease-in-out; }
+.vfx-ssk-rainbow-trail { background: linear-gradient(135deg, #ff007f, #ff7675, #ffd700, #00d2ff, #a855f7) !important; box-shadow: 0 0 45px 15px rgba(255, 0, 127, 0.9), 0 0 80px 25px rgba(0, 210, 255, 0.9) !important; }
+.vfx-pink-love { box-shadow: 0 0 30px 8px #ff7675, 0 0 55px 15px #fd79a8 !important; }
+.vfx-yellow-fire { box-shadow: 0 0 30px 8px #f39c12, 0 0 55px 15px #e67e22 !important; }
+.vfx-blue-moon { box-shadow: 0 0 30px 8px #3498db, 0 0 55px 15px #00d2ff !important; }
+.vfx-black-flower { box-shadow: 0 0 30px 8px #2d3436, 0 0 55px 15px #636e72 !important; }
+.vfx-legend-cosmos { box-shadow: 0 0 15px 3px #2c2c54 !important; }
+.vfx-rare-thin-trail { box-shadow: 0 0 8px 1px rgba(255, 255, 255, 0.3) !important; }
