@@ -1418,7 +1418,7 @@ class UnoPlayer:
         }
 
 class UnoRoom:
-    def __init__(self, room_id: str, name: str, host_session: str, host_name: str, mode: str = "classic", team_format: str = "solo", wager_amount: int = 0, wager_currency: str = "tb_coin"):
+    def __init__(self, room_id: str, name: str, host_session: str, host_name: str, mode: str = "classic", team_format: str = "solo", wager_amount: int = 0, wager_currency: str = "tb_coin", map_theme: str = "basic"):
         self.room_id = room_id
         self.name = name
         self.host_session = host_session
@@ -1426,6 +1426,7 @@ class UnoRoom:
         self.mode = mode
         self.team_format = team_format
         self.wager = {"amount": wager_amount, "currency": wager_currency}
+        self.map_theme = map_theme
         self.status = "waiting"
         self.players: List[UnoPlayer] = []
         self.deck: List[Dict] = []
@@ -1455,6 +1456,7 @@ class UnoRoom:
             "mode": self.mode,
             "team_format": self.team_format,
             "wager": self.wager,
+            "map_theme": self.map_theme,
             "status": self.status,
             "current_turn_idx": self.current_turn_idx,
             "turn_direction": self.turn_direction,
@@ -1554,6 +1556,7 @@ def get_uno_lobby():
             "host_name": r.host_name,
             "mode": r.mode,
             "team_format": r.team_format,
+            "map_theme": r.map_theme,
             "player_count": len(r.players),
             "max_players": 4 if r.team_format != "trio" else 6,
             "room_type": "public",
@@ -1569,6 +1572,7 @@ class CreateUnoRoomRequest(BaseModel):
     room_name: str
     mode: str = "classic"
     team_format: str = "solo"
+    map_theme: str = "basic"
     wager_amount: int = 0
     wager_currency: str = "tb_coin"
 
@@ -1582,6 +1586,7 @@ def create_uno_room(req: CreateUnoRoomRequest):
         host_name=req.username,
         mode=req.mode,
         team_format=req.team_format,
+        map_theme=req.map_theme,
         wager_amount=req.wager_amount,
         wager_currency=req.wager_currency
     )
