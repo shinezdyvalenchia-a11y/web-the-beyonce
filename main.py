@@ -1,4 +1,4 @@
-﻿import os
+import os
 import re
 import json
 import time
@@ -1382,3 +1382,353 @@ def get_audio_stream(q: str = Query(..., description="Song title or search query
 
     # Fallback to soundcloud / open search if yt-dlp fails
     raise HTTPException(status_code=404, detail="Audio stream not found")
+
+
+# =========================================================================
+# UNO OMEGA NO MERCY: ENTERPRISE PYTHON MULTIPLAYER & ECONOMY ENGINE
+# =========================================================================
+import asyncio
+import random
+from fastapi import WebSocket, WebSocketDisconnect
+
+class UnoPlayer:
+    def __init__(self, session_id: str, name: str, avatar: str, is_bot: bool = False, team: str = "solo"):
+        self.session_id = session_id
+        self.name = name
+        self.avatar = avatar
+        self.is_bot = is_bot
+        self.is_ready = is_bot
+        self.team = team
+        self.hand: List[Dict] = []
+        self.uno_safe = False
+        self.is_online = True
+        self.afk_strikes = 0
+        self.websocket: Optional[WebSocket] = None
+
+    def to_dict(self):
+        return {
+            "session_id": self.session_id,
+            "name": self.name,
+            "avatar": self.avatar,
+            "is_bot": self.is_bot,
+            "is_ready": self.is_ready,
+            "team": self.team,
+            "hand_count": len(self.hand),
+            "is_online": self.is_online
+        }
+
+class UnoRoom:
+    def __init__(self, room_id: str, name: str, host_session: str, host_name: str, mode: str = "classic", team_format: str = "solo", wager_amount: int = 0, wager_currency: str = "tb_coin"):
+        self.room_id = room_id
+        self.name = name
+        self.host_session = host_session
+        self.host_name = host_name
+        self.mode = mode
+        self.team_format = team_format
+        self.wager = {"amount": wager_amount, "currency": wager_currency}
+        self.status = "waiting"
+        self.players: List[UnoPlayer] = []
+        self.deck: List[Dict] = []
+        self.discard_pile: List[Dict] = []
+        self.current_turn_idx = 0
+        self.turn_direction = 1
+        self.current_color = "red"
+        self.pending_draw_count = 0
+        self.timer_task: Optional[asyncio.Task] = None
+        self.lock = asyncio.Lock()
+        self.finish_rankings: List[UnoPlayer] = []
+        self.pot_distribution: Dict = {}
+
+    def to_dict(self, requester_session: str = ""):
+        players_data = []
+        for p in self.players:
+            p_dict = p.to_dict()
+            if p.session_id == requester_session:
+                p_dict["hand"] = p.hand
+            players_data.append(p_dict)
+            
+        return {
+            "room_id": self.room_id,
+            "name": self.name,
+            "host_session": self.host_session,
+            "host_name": self.host_name,
+            "mode": self.mode,
+            "team_format": self.team_format,
+            "wager": self.wager,
+            "status": self.status,
+            "current_turn_idx": self.current_turn_idx,
+            "turn_direction": self.turn_direction,
+            "current_color": self.current_color,
+            "pending_draw_count": self.pending_draw_count,
+            "draw_pile_count": len(self.deck),
+            "top_card": self.discard_pile[-1] if self.discard_pile else None,
+            "players": players_data,
+            "finish_rankings": [p.to_dict() for p in self.finish_rankings],
+            "pot_distribution": self.pot_distribution
+        }
+
+UNO_ROOMS: Dict[str, UnoRoom] = {}
+USER_EQUIPPED_SKINS: Dict[str, Dict[str, str]] = {}
+
+def calculate_prize_distribution(room: UnoRoom):
+    if room.mode != "bet_battle" or not room.wager or room.wager.get("amount", 0) <= 0:
+        return {}
+    
+    bet = room.wager.get("amount", 50)
+    curr = room.wager.get("currency", "tb_coin")
+    num_players = len(room.players)
+    total_pot = bet * num_players
+    
+    # 4 Players: Rank 1: 60% pot, Rank 2: 30% pot, Rank 3: 10% pot, Rank 4: -bet
+    if num_players == 4:
+        r1_prize = int(total_pot * 0.60)
+        r2_prize = int(total_pot * 0.30)
+        r3_prize = int(total_pot * 0.10)
+        r4_loss = -bet
+        return {
+            "total_pot": total_pot,
+            "currency": curr,
+            "rank_1": {"payout": r1_prize, "net": r1_prize - bet},
+            "rank_2": {"payout": r2_prize, "net": r2_prize - bet},
+            "rank_3": {"payout": r3_prize, "net": r3_prize - bet},
+            "rank_4": {"payout": 0, "net": r4_loss}
+        }
+    elif num_players == 2:
+        return {
+            "total_pot": total_pot,
+            "currency": curr,
+            "rank_1": {"payout": int(total_pot * 0.90), "net": int(total_pot * 0.90) - bet},
+            "rank_2": {"payout": 0, "net": -bet}
+        }
+    return {"total_pot": total_pot, "currency": curr}
+
+async def broadcast_game_event(room: UnoRoom, event_type: str, data: Dict):
+    payload = json.dumps({"event": event_type, "data": data, "timestamp": time.time()})
+    for p in room.players:
+        if p.websocket and p.is_online:
+            try:
+                await p.websocket.send_text(payload)
+            except Exception:
+                p.is_online = False
+
+async def turn_timer_countdown(room_id: str):
+    try:
+        await asyncio.sleep(16)
+        if room_id not in UNO_ROOMS:
+            return
+        room = UNO_ROOMS[room_id]
+        async with room.lock:
+            if room.status != "playing":
+                return
+            active_player = room.players[room.current_turn_idx]
+            active_player.afk_strikes += 1
+            if active_player.afk_strikes >= 3:
+                active_player.is_bot = True
+                
+            # Force 1 draw penalty
+            if room.deck:
+                forced_card = room.deck.pop()
+                active_player.hand.append(forced_card)
+                
+            # Next turn
+            room.current_turn_idx = (room.current_turn_idx + room.turn_direction) % len(room.players)
+            
+            await broadcast_game_event(room, "TURN_TIMEOUT", {
+                "player_id": active_player.session_id,
+                "player_name": active_player.name,
+                "current_turn_idx": room.current_turn_idx
+            })
+            
+            # Start next turn timer
+            room.timer_task = asyncio.create_task(turn_timer_countdown(room_id))
+    except asyncio.CancelledError:
+        pass
+
+@app.get("/api/uno/lobby")
+def get_uno_lobby():
+    rooms_list = []
+    for r in UNO_ROOMS.values():
+        rooms_list.append({
+            "room_id": r.room_id,
+            "name": r.name,
+            "host_name": r.host_name,
+            "mode": r.mode,
+            "team_format": r.team_format,
+            "player_count": len(r.players),
+            "max_players": 4 if r.team_format != "trio" else 6,
+            "room_type": "public",
+            "wager": r.wager,
+            "status": r.status
+        })
+    return {"status": "success", "rooms": rooms_list}
+
+class CreateUnoRoomRequest(BaseModel):
+    session_id: str
+    username: str
+    avatar: str
+    room_name: str
+    mode: str = "classic"
+    team_format: str = "solo"
+    wager_amount: int = 0
+    wager_currency: str = "tb_coin"
+
+@app.post("/api/uno/create")
+def create_uno_room(req: CreateUnoRoomRequest):
+    r_id = "room_" + str(int(time.time()))[-6:]
+    room = UnoRoom(
+        room_id=r_id,
+        name=req.room_name,
+        host_session=req.session_id,
+        host_name=req.username,
+        mode=req.mode,
+        team_format=req.team_format,
+        wager_amount=req.wager_amount,
+        wager_currency=req.wager_currency
+    )
+    host = UnoPlayer(session_id=req.session_id, name=req.username, avatar=req.avatar, team="red" if req.team_format in ["duo", "trio"] else "solo")
+    room.players.append(host)
+    UNO_ROOMS[r_id] = room
+    return {"status": "success", "room": room.to_dict(req.session_id)}
+
+class EquipSkinRequest(BaseModel):
+    session_id: str
+    member_key: str
+    skin_code: str
+
+@app.post("/api/uno/skin/equip")
+def equip_uno_skin(req: EquipSkinRequest):
+    if req.session_id not in USER_EQUIPPED_SKINS:
+        USER_EQUIPPED_SKINS[req.session_id] = {}
+    if req.skin_code:
+        USER_EQUIPPED_SKINS[req.session_id][req.member_key] = req.skin_code
+    else:
+        USER_EQUIPPED_SKINS[req.session_id].pop(req.member_key, None)
+    return {"status": "success", "equipped_skins": USER_EQUIPPED_SKINS[req.session_id]}
+
+@app.get("/api/uno/skin/{session_id}")
+def get_equipped_skins(session_id: str):
+    return {"status": "success", "equipped_skins": USER_EQUIPPED_SKINS.get(session_id, {})}
+
+@app.websocket("/ws/uno/{room_id}/{session_id}")
+async def uno_websocket_endpoint(websocket: WebSocket, room_id: str, session_id: str):
+    await websocket.accept()
+    if room_id not in UNO_ROOMS:
+        await websocket.send_text(json.dumps({"event": "ERROR", "message": "Room not found"}))
+        await websocket.close()
+        return
+
+    room = UNO_ROOMS[room_id]
+    player = next((p for p in room.players if p.session_id == session_id), None)
+    if not player:
+        await websocket.send_text(json.dumps({"event": "ERROR", "message": "Player not registered in room"}))
+        await websocket.close()
+        return
+
+    player.websocket = websocket
+    player.is_online = True
+
+    await websocket.send_text(json.dumps({"event": "SESSION_RESYNC", "room": room.to_dict(session_id)}))
+    await broadcast_game_event(room, "PLAYER_STATUS", {"session_id": session_id, "is_online": True})
+
+    try:
+        while True:
+            raw_data = await websocket.receive_text()
+            data = json.loads(raw_data)
+            action = data.get("action")
+
+            async with room.lock:
+                if action == "play_card":
+                    card_id = data.get("card_id")
+                    chosen_color = data.get("chosen_color", "")
+                    
+                    # Turn validation
+                    if room.players[room.current_turn_idx].session_id != session_id:
+                        await websocket.send_text(json.dumps({"event": "CHEAT_DETECTED", "message": "Bukan giliranmu!"}))
+                        continue
+
+                    # Card ownership validation
+                    card = next((c for c in player.hand if c.get("id") == card_id), None)
+                    if not card:
+                        await websocket.send_text(json.dumps({"event": "CHEAT_DETECTED", "message": "Kartu tidak ada di tangan!"}))
+                        continue
+
+                    # Execute move
+                    player.hand = [c for c in player.hand if c.get("id") != card_id]
+                    room.discard_pile.append(card)
+                    if chosen_color:
+                        room.current_color = chosen_color
+                    elif card.get("color") != "wild":
+                        room.current_color = card.get("color")
+
+                    # Handle Action Cards & Stacking
+                    c_val = card.get("value")
+                    if c_val == "draw_2":
+                        room.pending_draw_count += 2
+                    elif c_val == "draw_4":
+                        room.pending_draw_count += 4
+                    elif c_val == "wild_draw_6":
+                        room.pending_draw_count += 6
+                    elif c_val == "wild_draw_10":
+                        room.pending_draw_count += 10
+                    elif c_val == "wild_reverse_4":
+                        room.turn_direction *= -1
+                        room.pending_draw_count += 4
+                    elif c_val == "reverse":
+                        room.turn_direction *= -1
+                    elif c_val == "wild_counter_shield":
+                        # Bounce penalty back to previous player
+                        room.turn_direction *= -1
+                        prev_idx = (room.current_turn_idx + room.turn_direction) % len(room.players)
+                        prev_player = room.players[prev_idx]
+                        for _ in range(room.pending_draw_count):
+                            if room.deck:
+                                prev_player.hand.append(room.deck.pop())
+                        room.pending_draw_count = 0
+                        await broadcast_game_event(room, "SHIELD_BOUNCE", {"victim_id": prev_player.session_id})
+
+                    # Check Victory
+                    if len(player.hand) == 0:
+                        room.finish_rankings.append(player)
+                        room.status = "finished"
+                        room.pot_distribution = calculate_prize_distribution(room)
+                        await broadcast_game_event(room, "GAME_OVER", {
+                            "winner": player.to_dict(),
+                            "rankings": [p.to_dict() for p in room.finish_rankings],
+                            "pot": room.pot_distribution
+                        })
+                        continue
+
+                    # Next turn
+                    room.current_turn_idx = (room.current_turn_idx + room.turn_direction) % len(room.players)
+                    if room.timer_task:
+                        room.timer_task.cancel()
+                    room.timer_task = asyncio.create_task(turn_timer_countdown(room_id))
+
+                    await broadcast_game_event(room, "CARD_PLAYED", {
+                        "player_id": session_id,
+                        "card": card,
+                        "current_turn_idx": room.current_turn_idx,
+                        "current_color": room.current_color,
+                        "pending_draw_count": room.pending_draw_count
+                    })
+
+                elif action == "call_uno":
+                    player.uno_safe = True
+                    await broadcast_game_event(room, "UNO_CALLED", {"player_id": session_id})
+
+                elif action == "catch_uno":
+                    target_id = data.get("target_id")
+                    target = next((p for p in room.players if p.session_id == target_id), None)
+                    if target and len(target.hand) == 1 and not target.uno_safe:
+                        for _ in range(2):
+                            if room.deck:
+                                target.hand.append(room.deck.pop())
+                        await broadcast_game_event(room, "UNO_PENALTY", {"victim_id": target_id, "amount": 2})
+
+                elif action == "send_emote":
+                    emote_id = data.get("emote_id")
+                    await broadcast_game_event(room, "EMOTE_TRIGGERED", {"player_id": session_id, "emote_id": emote_id})
+
+    except WebSocketDisconnect:
+        player.is_online = False
+        await broadcast_game_event(room, "PLAYER_STATUS", {"session_id": session_id, "is_online": False})
