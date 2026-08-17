@@ -2951,6 +2951,8 @@
           const ry = (x / rect.width) * 15;
           el.style.setProperty('--rx', `${rx}deg`);
           el.style.setProperty('--ry', `${ry}deg`);
+        });
+
         el.addEventListener('mouseleave', () => {
           el.style.setProperty('--rx', `0deg`);
           el.style.setProperty('--ry', `0deg`);
