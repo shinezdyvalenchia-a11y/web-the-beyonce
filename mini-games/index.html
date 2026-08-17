@@ -6,7 +6,7 @@
   <title>Galery Alcsta48 - UNO Omega Card | The Beyonce 48</title>
   <link rel="icon" href="../icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800;900&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <script src="../config.js?v=16.0"></script>
+  <script src="../config.js?v=17.0"></script>
   <style>
     :root {
       --primary: #ec4899;
@@ -477,10 +477,7 @@
       transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1) !important;
     }
 
-    /* ========================================================================= */
-    /* DEDICATED CSS KEYFRAMES & CLASSES FOR ALL SKIN TIERS & SUB-TIERS         */
-    /* ========================================================================= */
-    /* 1. Omega Special Props */
+    /* 3D SPECIAL PROPS KEYFRAMES & CLASSES */
     .extra-wings { font-size: 140px; filter: drop-shadow(0 0 40px #fff); animation: wingFlap 1.2s infinite alternate ease-in-out; }
     @keyframes wingFlap { 0% { transform: scale(0.9) rotate(-4deg); } 100% { transform: scale(1.1) rotate(4deg); } }
 
@@ -901,6 +898,39 @@
   </div>
 
   <script>
+    const CORE_BACKEND_URL = (typeof getApiUrl === "function") 
+      ? getApiUrl("core") 
+      : "https://shinezzzz-gokgokgogkgokgok.hf.space";
+
+    const GAME_ENGINE_URL = (typeof getApiUrl === "function")
+      ? getApiUrl("game")
+      : "https://shinezzzz-gokgokgok.hf.space";
+
+    const WS_BASE = GAME_ENGINE_URL.replace(/^http/i, 'ws');
+    const DEFAULT_TEMPLATE_PP = "https://i.ibb.co.com/Y4JdtfGH/download.png";
+
+    function getCookie(name) {
+      let nameEQ = name + "="; let ca = document.cookie.split(';');
+      for(let i=0; i < ca.length; i++) {
+        let c = ca[i]; while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+      } return null;
+    }
+
+    function getUserSession() {
+      return getCookie("user_session") || 
+             getCookie("session_key") || 
+             getCookie("sessionCookie") || 
+             getCookie("token") || 
+             localStorage.getItem("user_session") || 
+             localStorage.getItem("session_key") || 
+             localStorage.getItem("sessionCookie") || 
+             localStorage.getItem("beyonce_session") || 
+             sessionStorage.getItem("user_session") || 
+             sessionStorage.getItem("session_key") || 
+             "demo_user";
+    }
+
     // =========================================================================
     // 1. DATABASE VFX & SFX SKIN JKT48 (100% SESUAI INSTRUKSI)
     // =========================================================================
@@ -1092,14 +1122,13 @@
           osc.start(); osc.stop(t + 0.18);
         }
         else if (sfx_name === "sfx_white_explosion_birds.mp3") {
-          // White explosion blast
           const osc = ctx.createOscillator(); const gain = ctx.createGain();
           osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, t);
           osc.frequency.exponentialRampToValueAtTime(30, t + 0.5);
           gain.gain.setValueAtTime(0.6, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
           osc.connect(gain); gain.connect(ctx.destination);
           osc.start(); osc.stop(t + 0.5);
-          // Bird chirp sweep
+
           [1200, 1800, 2400].forEach((freq, i) => {
             const b = ctx.createOscillator(); const bg = ctx.createGain();
             b.type = 'sine'; b.frequency.setValueAtTime(freq, t + 0.1 + i * 0.05);
@@ -1806,7 +1835,7 @@
     }
 
     // =========================================================================
-    // 4. GAME ENGINE WITH OPENING CARD DEALING ANIMATION
+    // 4. GAME ENGINE
     // =========================================================================
     let localDeck = [];
     let localDiscardPile = [];
@@ -1863,22 +1892,22 @@
       let players = [];
       if (teamFormat === 'duel') {
         players = [
-          { session_id: currentSession, name: currentUserName, avatar: currentUserAvatar, is_bot: false, is_ready: true, team: 'red', hand: [] },
-          { session_id: 'bot_1', name: 'Christy AI', avatar: '../skin/ANGELINA_CHRISTY_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'blue', hand: [] }
+          { session_id: currentSession, name: currentUserName, avatar: currentUserAvatar, is_bot: false, is_ready: true, team: 'red', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
+          { session_id: 'bot_1', name: 'Christy AI', avatar: '../skin/ANGELINA_CHRISTY_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'blue', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] }
         ];
       } else if (teamFormat === 'duo') {
         players = [
-          { session_id: currentSession, name: currentUserName, avatar: currentUserAvatar, is_bot: false, is_ready: true, team: 'red', hand: [] },
-          { session_id: 'bot_1', name: 'Freya AI (Musuh)', avatar: '../skin/FREYA_JAYAWARDANA_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'blue', hand: [] },
-          { session_id: 'bot_2', name: 'Shani AI (Partner)', avatar: '../skin/SHANI_INDIRA_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'red', hand: [] },
-          { session_id: 'bot_3', name: 'Zee AI (Musuh)', avatar: '../skin/AZIZI_ASSADEL_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'blue', hand: [] }
+          { session_id: currentSession, name: currentUserName, avatar: currentUserAvatar, is_bot: false, is_ready: true, team: 'red', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
+          { session_id: 'bot_1', name: 'Freya AI (Musuh)', avatar: '../skin/FREYA_JAYAWARDANA_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'blue', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
+          { session_id: 'bot_2', name: 'Shani AI (Partner)', avatar: '../skin/SHANI_INDIRA_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'red', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
+          { session_id: 'bot_3', name: 'Zee AI (Musuh)', avatar: '../skin/AZIZI_ASSADEL_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'blue', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] }
         ];
       } else {
         players = [
-          { session_id: currentSession, name: currentUserName, avatar: currentUserAvatar, is_bot: false, is_ready: true, team: 'solo', hand: [] },
-          { session_id: 'bot_1', name: 'Freya AI', avatar: '../skin/FREYA_JAYAWARDANA_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'solo', hand: [] },
-          { session_id: 'bot_2', name: 'Christy AI', avatar: '../skin/ANGELINA_CHRISTY_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'solo', hand: [] },
-          { session_id: 'bot_3', name: 'Zee AI', avatar: '../skin/AZIZI_ASSADEL_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'solo', hand: [] }
+          { session_id: currentSession, name: currentUserName, avatar: currentUserAvatar, is_bot: false, is_ready: true, team: 'solo', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
+          { session_id: 'bot_1', name: 'Freya AI', avatar: '../skin/FREYA_JAYAWARDANA_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'solo', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
+          { session_id: 'bot_2', name: 'Christy AI', avatar: '../skin/ANGELINA_CHRISTY_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'solo', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
+          { session_id: 'bot_3', name: 'Zee AI', avatar: '../skin/AZIZI_ASSADEL_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'solo', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] }
         ];
       }
 
@@ -1971,6 +2000,13 @@
       initLocalMatch('Arena UNO Quick Match', 'classic', 'solo');
     }
 
+    function openCodeModal() {
+      const code = prompt("Masukkan 6 Digit Kode Kamar UNO:");
+      if (code && code.trim()) {
+        joinRoom('room_' + code.trim().toLowerCase(), 'solo');
+      }
+    }
+
     function joinRoom(roomId, teamFormat) {
       initLocalMatch('Arena UNO JKT48', 'classic', teamFormat || 'solo');
     }
@@ -2020,42 +2056,9 @@
       document.getElementById('lounge-screen').style.display = 'none';
       document.getElementById('game-arena').style.display = 'block';
 
-      // 6. ANIMASI PEMBUKA PERMAINAN (Dealing 7 cards to all players smoothly from center deck)
-      animateOpeningCardDealing(() => {
-        renderArenaState();
-        startTurnTimer();
-        showToast("🎮 Pertandingan Dimulai! Giliran Kamu!");
-      });
-    }
-
-    function animateOpeningCardDealing(onComplete) {
-      let dealStep = 0;
-      const totalCards = 7;
-      const targets = [
-        document.getElementById('userHandZone'),
-        document.getElementById('hudLeft'),
-        document.getElementById('hudTop'),
-        document.getElementById('hudRight')
-      ];
-
-      function dealNext() {
-        if (dealStep < totalCards) {
-          activeRoom.players.forEach((p, pIdx) => {
-            if (localDeck.length === 0) localDeck = buildFullUnoDeck();
-            p.hand.push(localDeck.pop());
-            if (targets[pIdx]) {
-              animateCardDrawFlight(targets[pIdx]);
-            }
-          });
-          renderArenaState();
-          dealStep++;
-          setTimeout(dealNext, 250);
-        } else {
-          if (onComplete) onComplete();
-        }
-      }
-
-      dealNext();
+      renderArenaState();
+      startTurnTimer();
+      showToast("🎮 Pertandingan Dimulai! Giliran Kamu!");
     }
 
     function addBotSlot() {
@@ -2070,7 +2073,7 @@
           is_bot: true,
           is_ready: true,
           team: (idx % 2 === 1 ? 'red' : 'blue'),
-          hand: []
+          hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()]
         });
         renderLoungeState();
         showToast(`Bot ${botNames[idx - 1]} bergabung ke kamar!`);
@@ -2527,7 +2530,6 @@
         const chosen = playable[Math.floor(Math.random() * playable.length)];
         bot.hand = bot.hand.filter(c => c.id !== chosen.id);
 
-        // Bot default to Uncommon / Basic without equipped skin
         triggerAudio("sfx_card_flip_normal.mp3");
 
         if (hudEl) {
@@ -2643,7 +2645,6 @@
         width: 14
       });
 
-      // Spawn sprinkles only if specified (STRICT: Legend Cosmos & Rare Snow have NO spread sprinkles)
       if (config.particleType !== 'static_stardust' && config.particleColor) {
         for (let i = 0; i < 35; i++) {
           const t = i / 35;
