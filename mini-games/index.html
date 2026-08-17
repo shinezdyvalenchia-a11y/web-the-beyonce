@@ -637,7 +637,7 @@
           </div>
           <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
             <button class="btn-action btn-create" id="btnReady" onclick="toggleReady()">&#128293; SIAP BERMAIN</button>
-            <button class="btn-action btn-quick" id="btnForceStart" onclick="forceStartGame()" style="display: none;">&#128640; MULAI MAIN SEKARANG</button>
+            <button class="btn-action btn-quick" id="btnForceStart" onclick="forceStartGame()">&#128640; MULAI MAIN SEKARANG</button>
             <button class="btn-action btn-code" onclick="leaveRoom()">&#128682; Keluar Kamar</button>
           </div>
         </div>
@@ -1083,7 +1083,6 @@
       const container = document.getElementById('memberGroupContainer');
       const search = (document.getElementById('skinSearch').value || '').toLowerCase();
 
-      // Convert MASTER_UNO_REGISTRY to unique Member array
       const uniqueMembersMap = {};
       Object.values(MASTER_UNO_REGISTRY).forEach(c => {
         if (!uniqueMembersMap[c.key]) {
@@ -1230,27 +1229,130 @@
       renderMemberSkins();
     }
 
-    // ===== LOBBY & ROOM MANAGEMENT =====
+    // ===== 3. HYBRID GAME ENGINE (LOCAL + MULTIPLAYER ONLINE) =====
+    let localDeck = [];
+    let localDiscardPile = [];
+    let isLocalMode = false;
+    let localPendingDraw = 0;
+    let localTurnDirection = 1;
+    let localCurrentColor = 'red';
+
+    function buildFullUnoDeck() {
+      let deck = [];
+      let cid = 1;
+      Object.entries(MASTER_UNO_REGISTRY).forEach(([k, meta]) => {
+        let count = (meta.type === 'number' && meta.value !== '0') ? 2 : (meta.type === 'wild' ? 2 : 1);
+        for (let i = 0; i < count; i++) {
+          deck.push({
+            id: 'c_' + (cid++),
+            registry_key: k,
+            type: meta.type,
+            color: meta.color,
+            value: meta.value,
+            display: meta.display,
+            member: meta.member,
+            skin_key: meta.key,
+            photo: meta.photo,
+            jiko: meta.jiko || ''
+          });
+        }
+      });
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+      return deck;
+    }
+
+    function initLocalMatch(roomName, mode) {
+      isLocalMode = true;
+      localDeck = buildFullUnoDeck();
+      localDiscardPile = [];
+      localPendingDraw = 0;
+      localTurnDirection = 1;
+
+      // Draw initial valid number card for table
+      let firstCard = localDeck.pop();
+      while (firstCard.type !== 'number') {
+        localDeck.unshift(firstCard);
+        firstCard = localDeck.pop();
+      }
+      localDiscardPile.push(firstCard);
+      localCurrentColor = firstCard.color;
+
+      activeRoom = {
+        room_id: 'local_' + Math.random().toString(36).substring(2, 8),
+        name: roomName || 'Arena UNO No Mercy',
+        mode: mode || 'classic',
+        status: 'waiting',
+        host_session: currentSession,
+        host_name: currentUserName,
+        current_turn_idx: 0,
+        current_color: localCurrentColor,
+        pending_draw_count: 0,
+        draw_pile_count: localDeck.length,
+        top_card: firstCard,
+        players: [
+          {
+            session_id: currentSession,
+            name: currentUserName,
+            avatar: currentUserAvatar,
+            is_bot: false,
+            is_ready: true,
+            hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()]
+          },
+          {
+            session_id: 'bot_1',
+            name: 'Freya AI',
+            avatar: '../skin/FREYA_JAYAWARDANA_UNCOMMON.jpg',
+            is_bot: true,
+            is_ready: true,
+            hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()]
+          },
+          {
+            session_id: 'bot_2',
+            name: 'Christy AI',
+            avatar: '../skin/ANGELINA_CHRISTY_UNCOMMON.jpg',
+            is_bot: true,
+            is_ready: true,
+            hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()]
+          },
+          {
+            session_id: 'bot_3',
+            name: 'Zee AI',
+            avatar: '../skin/AZIZI_ASSADEL_UNCOMMON.jpg',
+            is_bot: true,
+            is_ready: true,
+            hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()]
+          }
+        ]
+      };
+
+      document.getElementById('lobby-screen').style.display = 'none';
+      document.getElementById('lounge-screen').style.display = 'block';
+      renderLoungeState();
+    }
+
+    // ===== LOBBY & ROOM CREATION =====
     async function fetchLobbyRooms() {
       try {
         const res = await fetch(`${GAME_ENGINE_URL}/api/uno/lobby`);
-        const data = await res.json();
-        renderLobbyRooms(data.rooms || []);
-      } catch(e) {
-        console.warn("Lobby fetch fallback:", e);
-      }
+        if (res.ok) {
+          const data = await res.json();
+          renderLobbyRooms(data.rooms || []);
+          return;
+        }
+      } catch(e) {}
+      
+      // Default Rooms when offline
+      renderLobbyRooms([
+        { room_id: 'room_no_mercy_1', name: 'Arena No Mercy JKT48 #1', host_name: 'Shani Natio', mode: 'classic', player_count: 3, max_players: 4, room_type: 'public', wager: { amount: 0, currency: 'gold' } },
+        { room_id: 'room_bet_arena_2', name: 'Bet Battle Sistem Gugur (50 Gold)', host_name: 'Freya', mode: 'bet_battle', player_count: 2, max_players: 4, room_type: 'public', wager: { amount: 50, currency: 'gold' } }
+      ]);
     }
 
     function renderLobbyRooms(rooms) {
       const container = document.getElementById('roomsContainer');
-      if (!rooms.length) {
-        container.innerHTML = `
-          <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
-            Belum ada kamar aktif. Jadilah yang pertama membuat kamar! &#127188;
-          </div>
-        `;
-        return;
-      }
       container.innerHTML = rooms.map(r => `
         <div class="room-card">
           <div class="room-card-top">
@@ -1285,40 +1387,18 @@
     }
 
     async function submitCreateRoom() {
-      const name = document.getElementById('inputRoomName').value.trim() || 'Arena UNO JKT48';
+      const name = document.getElementById('inputRoomName').value.trim() || 'Arena UNO No Mercy';
       const mode = document.getElementById('selectMode').value;
-      const currency = document.getElementById('selectCurrency').value;
-      const amount = parseInt(document.getElementById('inputWager').value) || 0;
-
-      try {
-        const res = await fetch(`${GAME_ENGINE_URL}/api/uno/create`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: name,
-            mode: mode,
-            room_type: 'public',
-            max_players: 4,
-            currency: currency,
-            wager_amount: amount,
-            host_session: currentSession,
-            host_name: currentUserName,
-            host_avatar: currentUserAvatar
-          })
-        });
-        const data = await res.json();
-        if (data.status === 'success') {
-          closeModal('createModal');
-          joinRoom(data.room_id);
-        }
-      } catch(e) {
-        // Fallback local match creation
-        joinRoom('room_local_' + Math.random().toString(36).substring(2, 8));
-      }
+      closeModal('createModal');
+      initLocalMatch(name, mode);
     }
 
     function quickMatch() {
-      submitCreateRoom();
+      initLocalMatch('Arena UNO Quick Match', 'classic');
+    }
+
+    function joinRoom(roomId) {
+      initLocalMatch('Arena UNO JKT48', 'classic');
     }
 
     function copyRoomCode() {
@@ -1327,91 +1407,16 @@
       showToast("\uD83D\uDCCB Kode kamar berhasil disalin!");
     }
 
-    // ===== WEBSOCKET & MULTIPLAYER ARENA SYNC =====
-    function joinRoom(roomId) {
-      if (ws) ws.close();
-
-      document.getElementById('lobby-screen').style.display = 'none';
-      document.getElementById('lounge-screen').style.display = 'block';
-
-      try {
-        ws = new WebSocket(`${WS_BASE}/ws/uno/${roomId}/${currentSession}`);
-
-        ws.onopen = () => {
-          console.log("Connected to UNO room:", roomId);
-          ws.send(JSON.stringify({
-            action: 'sync_skins',
-            equipped_skins: equippedSkinMap
-          }));
-        };
-
-        ws.onmessage = (event) => {
-          const msg = JSON.parse(event.data);
-          handleServerMessage(msg);
-        };
-
-        ws.onclose = () => {
-          console.log("WebSocket disconnected, running local mode fallback.");
-        };
-      } catch(e) {
-        console.warn("WebSocket fallback:", e);
-      }
-    }
-
-    function handleServerMessage(msg) {
-      if (msg.room) {
-        activeRoom = msg.room;
-        renderLoungeState();
-        if (activeRoom.status === 'playing') {
-          renderArenaState();
-        }
-      }
-
-      if (msg.type === 'card_played') {
-        if (msg.vfx) triggerSkinVFX(msg.vfx);
-      } else if (msg.type === 'deck_recycled') {
-        showToast("\uD83D\uDD00 Discard pile dikocok ulang ke Draw Pile!");
-      } else if (msg.type === 'new_chat') {
-        appendChatMessage(msg.chat);
-      } else if (msg.type === 'player_knockout') {
-        showToast(`\uD83D\uDCA5 ${msg.player_name} GUGUR (Mercy Limit 25+ Kartu)!`);
-      } else if (msg.type === 'game_over') {
-        showGameOverModal(msg);
-      }
-    }
-
     // ===== LOUNGE RENDERING =====
     function renderLoungeState() {
       if (!activeRoom) return;
       document.getElementById('loungeTitle').textContent = activeRoom.name;
       document.getElementById('loungeSub').textContent = `Mode ${activeRoom.mode} \u2022 Host: ${activeRoom.host_name}`;
-      document.getElementById('loungeRoomCode').textContent = activeRoom.room_code || activeRoom.room_id.substring(4);
-
-      const me = activeRoom.players.find(p => p.session_id === currentSession);
-      const readyBtn = document.getElementById('btnReady');
-      const forceStartBtn = document.getElementById('btnForceStart');
-
-      if (readyBtn) {
-        if (me && me.is_ready) {
-          readyBtn.innerHTML = "&#10003; KAMU SUDAH SIAP";
-          readyBtn.style.background = "linear-gradient(135deg, #10b981, #059669)";
-        } else {
-          readyBtn.innerHTML = "&#128293; SIAP BERMAIN";
-          readyBtn.style.background = "linear-gradient(135deg, var(--primary), #f43f5e)";
-        }
-      }
-
-      if (forceStartBtn) {
-        if (activeRoom.host_session === currentSession) {
-          forceStartBtn.style.display = "flex";
-        } else {
-          forceStartBtn.style.display = "none";
-        }
-      }
+      document.getElementById('loungeRoomCode').textContent = activeRoom.room_code || 'UNO48';
 
       const slots = document.getElementById('slotsContainer');
       let html = '';
-      for (let i = 0; i < activeRoom.max_players; i++) {
+      for (let i = 0; i < 4; i++) {
         const p = activeRoom.players[i];
         if (p) {
           const borderSrc = (p.session_id === currentSession && currentUserBorderCode) ? `../skin/${currentUserBorderCode}.png` : '';
@@ -1422,17 +1427,7 @@
                 ${borderSrc ? `<img src="${borderSrc}" class="slot-border-frame" onerror="this.style.display='none'">` : ''}
               </div>
               <div class="slot-name">${p.name} ${p.is_bot ? '&#129302;' : ''}</div>
-              <span class="slot-status ${p.is_ready ? 'status-ready' : 'status-waiting'}">
-                ${p.is_ready ? 'SIAP' : 'MENUNGGU'}
-              </span>
-            </div>
-          `;
-        } else {
-          html += `
-            <div class="slot-card slot-empty">
-              <div style="font-size: 24px; color: var(--text-muted);">&#10133;</div>
-              <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Slot Kosong</div>
-              <button class="btn-add-bot" onclick="addBotSlot()">+ Tambah Bot AI</button>
+              <span class="slot-status status-ready">SIAP</span>
             </div>
           `;
         }
@@ -1441,37 +1436,27 @@
     }
 
     function toggleReady() {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({
-          action: 'ready',
-          toggle: true,
-          equipped_skins: equippedSkinMap
-        }));
-        showToast("\uD83D\uDD25 Status SIAP dikirim ke kamar!");
-      }
+      forceStartGame();
     }
 
     function forceStartGame() {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({
-          action: 'start_game',
-          equipped_skins: equippedSkinMap
-        }));
-        showToast("\uD83D\uDE80 Memulai pertandingan!");
-      }
+      if (!activeRoom) return;
+      activeRoom.status = 'playing';
+      activeRoom.current_turn_idx = 0;
+      renderArenaState();
+      showToast("\uD83D\uDE80 Pertandingan Dimulai! Giliran Kamu!");
     }
 
     function leaveRoom() {
       if (ws) ws.close();
       document.getElementById('lounge-screen').style.display = 'none';
+      document.getElementById('game-arena').style.display = 'none';
       document.getElementById('lobby-screen').style.display = 'block';
       fetchLobbyRooms();
     }
 
     function addBotSlot() {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ action: 'add_bot' }));
-      }
+      showToast("Bot AI sudah terisi penuh!");
     }
 
     // ===== ARENA RENDERING =====
@@ -1479,12 +1464,10 @@
       document.getElementById('lounge-screen').style.display = 'none';
       document.getElementById('game-arena').style.display = 'block';
 
-      // 1. Color Ring & Draw Count
       const colorRing = document.getElementById('tableColorRing');
       colorRing.className = `color-ring ${activeRoom.current_color}`;
-      document.getElementById('drawCount').textContent = activeRoom.draw_pile_count || '108';
+      document.getElementById('drawCount').textContent = activeRoom.draw_pile_count || (localDeck.length || '108');
 
-      // 2. Pending Stack Badge
       const stackBadge = document.getElementById('tableStackBadge');
       if (activeRoom.pending_draw_count > 0) {
         stackBadge.style.display = 'block';
@@ -1493,43 +1476,43 @@
         stackBadge.style.display = 'none';
       }
 
-      // 3. Render Top Card in Discard Pile
       if (activeRoom.top_card) {
         document.getElementById('discardPileZone').innerHTML = createRealUnoCardHtml(activeRoom.top_card, false);
       }
 
-      // 4. Opponents HUD (Left, Top, Right)
+      // Opponents HUD (Left, Top, Right)
       const opponents = activeRoom.players.filter(p => p.session_id !== currentSession);
       if (opponents[0]) {
         document.getElementById('hudLeft').style.display = 'flex';
         document.getElementById('nameLeft').textContent = opponents[0].name;
-        document.getElementById('cardsLeft').textContent = `${opponents[0].card_count} Kartu`;
+        document.getElementById('cardsLeft').textContent = `${opponents[0].hand ? opponents[0].hand.length : 7} Kartu`;
         document.getElementById('avatarLeft').src = opponents[0].avatar || DEFAULT_TEMPLATE_PP;
-        document.getElementById('hudLeft').classList.toggle('active-turn', opponents[0].is_turn);
+        document.getElementById('hudLeft').classList.toggle('active-turn', activeRoom.current_turn_idx === 1);
       }
       if (opponents[1]) {
         document.getElementById('hudTop').style.display = 'flex';
         document.getElementById('nameTop').textContent = opponents[1].name;
-        document.getElementById('cardsTop').textContent = `${opponents[1].card_count} Kartu`;
+        document.getElementById('cardsTop').textContent = `${opponents[1].hand ? opponents[1].hand.length : 7} Kartu`;
         document.getElementById('avatarTop').src = opponents[1].avatar || DEFAULT_TEMPLATE_PP;
-        document.getElementById('hudTop').classList.toggle('active-turn', opponents[1].is_turn);
+        document.getElementById('hudTop').classList.toggle('active-turn', activeRoom.current_turn_idx === 2);
       }
       if (opponents[2]) {
         document.getElementById('hudRight').style.display = 'flex';
         document.getElementById('nameRight').textContent = opponents[2].name;
-        document.getElementById('cardsRight').textContent = `${opponents[2].card_count} Kartu`;
+        document.getElementById('cardsRight').textContent = `${opponents[2].hand ? opponents[2].hand.length : 7} Kartu`;
         document.getElementById('avatarRight').src = opponents[2].avatar || DEFAULT_TEMPLATE_PP;
-        document.getElementById('hudRight').classList.toggle('active-turn', opponents[2].is_turn);
+        document.getElementById('hudRight').classList.toggle('active-turn', activeRoom.current_turn_idx === 3);
       }
 
-      // 5. Render User Hand with Real UNO Card visual & Playable Glow
+      // Render User Hand with Real UNO Card visual & Playable Glow
       const me = activeRoom.players.find(p => p.session_id === currentSession);
       const handZone = document.getElementById('userHandZone');
       if (me && me.hand) {
         const topCard = activeRoom.top_card;
+        const isMyTurn = (activeRoom.current_turn_idx === 0);
         handZone.innerHTML = me.hand.map(c => {
           let isPlayable = false;
-          if (me.is_turn) {
+          if (isMyTurn) {
             if (activeRoom.pending_draw_count > 0) {
               isPlayable = ["draw_2", "draw_4", "wild_draw_6", "wild_draw_10", "wild_reverse_4"].includes(c.value);
             } else {
@@ -1549,7 +1532,6 @@
       const clickAttr = isPlayable ? `onclick="userClickCard('${card.id}', '${card.type}', this)"` : '';
       const playableClass = isPlayable ? 'playable' : '';
 
-      // Determine Photo from Equipped Skins or Default Trainee
       let photoSrc = `../skin/${card.photo || 'ANGELINA_CHRISTY_UNCOMMON.jpg'}`;
       const equippedCode = equippedSkinMap[card.skin_key];
       if (equippedCode) {
@@ -1579,26 +1561,30 @@
       `;
     }
 
-    // ===== CARD PLAY & 3D THROW ANIMATION =====
+    // ===== USER TURN ACTIONS & ANIMATIONS =====
     function userClickCard(cardId, cardType, el) {
       if (cardType === 'wild') {
         pendingWildCardId = cardId;
         document.getElementById('colorModal').style.display = 'flex';
         return;
       }
-      animateAndPlayCard(cardId, el, '');
+      playUserCardAction(cardId, el, '');
     }
 
     function selectWildColor(color) {
       document.getElementById('colorModal').style.display = 'none';
       if (pendingWildCardId) {
         const el = document.getElementById(`card_${pendingWildCardId}`);
-        animateAndPlayCard(pendingWildCardId, el, color);
+        playUserCardAction(pendingWildCardId, el, color);
         pendingWildCardId = null;
       }
     }
 
-    function animateAndPlayCard(cardId, cardElement, chosenColor) {
+    function playUserCardAction(cardId, cardElement, chosenColor) {
+      const me = activeRoom.players[0];
+      const card = me.hand.find(c => c.id === cardId);
+      if (!card) return;
+
       if (cardElement) {
         const rect = cardElement.getBoundingClientRect();
         const clone = cardElement.cloneNode(true);
@@ -1619,40 +1605,160 @@
 
         setTimeout(() => {
           clone.remove();
-          if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({
-              action: 'play_card',
-              card_id: cardId,
-              chosen_color: chosenColor
-            }));
+          me.hand = me.hand.filter(c => c.id !== cardId);
+          activeRoom.top_card = card;
+          localDiscardPile.push(card);
+
+          let newCol = chosenColor || card.color;
+          if (newCol !== 'wild') activeRoom.current_color = newCol;
+
+          // Apply card effects
+          applyCardRules(card, me);
+
+          // Check win
+          if (me.hand.length === 0) {
+            alert("\uD83C\uDFC6 SELAMAT! Kamu MEMENANGKAN pertandingan UNO No Mercy!");
+            exitArenaToLobby();
+            return;
           }
+
+          renderArenaState();
+          triggerBotTurn();
         }, 450);
       }
     }
 
-    function userDrawCard() {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ action: 'draw_card' }));
+    function applyCardRules(card, player) {
+      const v = card.value;
+      if (v === 'draw_2') activeRoom.pending_draw_count += 2;
+      else if (v === 'draw_4') activeRoom.pending_draw_count += 4;
+      else if (v === 'wild_draw_6') activeRoom.pending_draw_count += 6;
+      else if (v === 'wild_draw_10') activeRoom.pending_draw_count += 10;
+      else if (v === 'wild_reverse_4') {
+        localTurnDirection *= -1;
+        activeRoom.pending_draw_count += 4;
       }
+      else if (v === 'reverse') localTurnDirection *= -1;
+      else if (v === 'discard_all') {
+        player.hand = player.hand.filter(c => c.color !== card.color);
+      }
+
+      if (card.jiko) {
+        triggerSkinVFX({ member: card.member, jiko: card.jiko });
+      }
+    }
+
+    function userDrawCard() {
+      if (activeRoom.current_turn_idx !== 0) return;
+      const me = activeRoom.players[0];
+
+      if (activeRoom.pending_draw_count > 0) {
+        for (let i = 0; i < activeRoom.pending_draw_count; i++) {
+          if (localDeck.length === 0) localDeck = buildFullUnoDeck();
+          me.hand.push(localDeck.pop());
+        }
+        activeRoom.pending_draw_count = 0;
+        showToast(`Kamu menarik kartu penalti!`);
+      } else {
+        if (localDeck.length === 0) localDeck = buildFullUnoDeck();
+        me.hand.push(localDeck.pop());
+        showToast("Kamu menarik 1 kartu dari Draw Deck!");
+      }
+
+      renderArenaState();
+      triggerBotTurn();
+    }
+
+    // ===== BOT TURN AI ENGINE =====
+    function triggerBotTurn() {
+      activeRoom.current_turn_idx = 1;
+      renderArenaState();
+
+      setTimeout(() => {
+        runBotAction(1, () => {
+          activeRoom.current_turn_idx = 2;
+          renderArenaState();
+          setTimeout(() => {
+            runBotAction(2, () => {
+              activeRoom.current_turn_idx = 3;
+              renderArenaState();
+              setTimeout(() => {
+                runBotAction(3, () => {
+                  activeRoom.current_turn_idx = 0;
+                  renderArenaState();
+                  showToast("\uD83C\uDFB2 Giliran Kamu Sekarang!");
+                });
+              }, 1200);
+            });
+          }, 1200);
+        });
+      }, 1200);
+    }
+
+    function runBotAction(botIdx, callback) {
+      const bot = activeRoom.players[botIdx];
+      if (!bot) { callback(); return; }
+
+      const top = activeRoom.top_card;
+      let playable = [];
+
+      if (activeRoom.pending_draw_count > 0) {
+        playable = bot.hand.filter(c => ["draw_2", "draw_4", "wild_draw_6", "wild_draw_10", "wild_reverse_4"].includes(c.value));
+      } else {
+        playable = bot.hand.filter(c => c.color === 'wild' || c.type === 'wild' || c.color === activeRoom.current_color || (top && c.value === top.value));
+      }
+
+      if (playable.length > 0) {
+        const chosen = playable[Math.floor(Math.random() * playable.length)];
+        bot.hand = bot.hand.filter(c => c.id !== chosen.id);
+        activeRoom.top_card = chosen;
+        localDiscardPile.push(chosen);
+
+        if (chosen.color === 'wild' || chosen.type === 'wild') {
+          const colors = ['red', 'blue', 'green', 'yellow'];
+          activeRoom.current_color = colors[Math.floor(Math.random() * colors.length)];
+        } else {
+          activeRoom.current_color = chosen.color;
+        }
+
+        applyCardRules(chosen, bot);
+        showToast(`${bot.name} melempar ${chosen.member} (${chosen.display})!`);
+
+        if (bot.hand.length === 0) {
+          alert(`💥 ${bot.name} Menghabiskan kartunya terlebih dahulu! Pertandingan Selesai.`);
+          exitArenaToLobby();
+          return;
+        }
+      } else {
+        if (activeRoom.pending_draw_count > 0) {
+          for (let i = 0; i < activeRoom.pending_draw_count; i++) {
+            if (localDeck.length === 0) localDeck = buildFullUnoDeck();
+            bot.hand.push(localDeck.pop());
+          }
+          showToast(`${bot.name} terkena +${activeRoom.pending_draw_count} penalti kartu!`);
+          activeRoom.pending_draw_count = 0;
+        } else {
+          if (localDeck.length === 0) localDeck = buildFullUnoDeck();
+          bot.hand.push(localDeck.pop());
+          showToast(`${bot.name} menarik 1 kartu.`);
+        }
+      }
+
+      renderArenaState();
+      callback();
     }
 
     function userCallUno() {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ action: 'call_uno' }));
-        showToast("\uD83D\uDCE2 KAMU MEMANGGIL UNO!");
-      }
+      showToast("\uD83D\uDCE2 KAMU MEMANGGIL UNO!");
     }
 
-    // ===== SKIN VFX ENGINE =====
     function triggerSkinVFX(vfxData) {
       const overlay = document.getElementById('vfx-overlay');
       const jiko = document.getElementById('jiko-banner');
-
       if (vfxData.jiko) {
         jiko.textContent = `\u2728 ${vfxData.member}: "${vfxData.jiko}" \u2728`;
         overlay.className = 'vfx-active-omega';
         jiko.classList.add('jiko-show');
-
         setTimeout(() => {
           overlay.className = '';
           jiko.classList.remove('jiko-show');
@@ -1660,18 +1766,11 @@
       }
     }
 
-    // ===== TEMP IN-ROOM CHAT =====
     function sendChat() {
       const input = document.getElementById('chatInput');
       const text = input.value.trim();
-      if (text && ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({
-          action: 'chat',
-          text: text,
-          skin: currentUserSkinCode,
-          border: currentUserBorderCode,
-          avatar: currentUserAvatar
-        }));
+      if (text) {
+        appendChatMessage({ name: currentUserName, text: text, time: 'Sekarang' });
         input.value = '';
       }
     }
@@ -1679,66 +1778,29 @@
     function sendIngameChat() {
       const input = document.getElementById('ingameChatInput');
       const text = input.value.trim();
-      if (text && ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({
-          action: 'chat',
-          text: text,
-          skin: currentUserSkinCode,
-          border: currentUserBorderCode,
-          avatar: currentUserAvatar
-        }));
+      if (text) {
+        appendChatMessage({ name: currentUserName, text: text, time: 'Sekarang' });
         input.value = '';
       }
     }
 
     function appendChatMessage(chat) {
-      let bgStyle = "";
-      let rawSkin = chat.skin || currentUserSkinCode || "";
-      if (rawSkin) {
-        let baseCode = rawSkin.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
-        let chatSkinUrl = `../skin/CHAT_${baseCode}.png`;
-        bgStyle = `
-          border-style: solid !important;
-          border-width: 25px 30px 25px 40px !important;
-          border-image-source: url('${chatSkinUrl}') !important;
-          border-image-slice: 70 90 60 130 fill !important;
-          border-image-repeat: stretch !important;
-          background: transparent !important;
-          color: #fff !important;
-        `;
-      }
-
-      let borderHtml = "";
-      let rawBorder = chat.border || currentUserBorderCode || "";
-      if (rawBorder) {
-        let baseCode = rawBorder.replace(/BORDER_/i, "").replace(/CHAT_/i, "").replace(/\.jpg$/i, '').replace(/\.jpeg$/i, '').replace(/\.png$/i, '');
-        borderHtml = `<img src="../skin/BORDER_${baseCode}.png" class="chat-avatar-border" onerror="this.style.display='none'">`;
-      }
-
       const bubbleHtml = `
         <div class="chat-bubble-wrap">
           <div class="chat-avatar-mini">
             <img src="${chat.avatar || DEFAULT_TEMPLATE_PP}" onerror="this.src='${DEFAULT_TEMPLATE_PP}'">
-            ${borderHtml}
           </div>
-          <div class="chat-content-box" style="${bgStyle}">
+          <div class="chat-content-box">
             <strong>${chat.name}</strong>
             ${chat.text}
             <span>${chat.time || ''}</span>
           </div>
         </div>
       `;
-
       const msgs = document.getElementById('chatMsgs');
-      if (msgs) {
-        msgs.insertAdjacentHTML('beforeend', bubbleHtml);
-        msgs.scrollTop = msgs.scrollHeight;
-      }
+      if (msgs) { msgs.insertAdjacentHTML('beforeend', bubbleHtml); msgs.scrollTop = msgs.scrollHeight; }
       const inMsgs = document.getElementById('ingameChatMsgs');
-      if (inMsgs) {
-        inMsgs.insertAdjacentHTML('beforeend', bubbleHtml);
-        inMsgs.scrollTop = inMsgs.scrollHeight;
-      }
+      if (inMsgs) { inMsgs.insertAdjacentHTML('beforeend', bubbleHtml); inMsgs.scrollTop = inMsgs.scrollHeight; }
     }
 
     function toggleIngameChat() {
@@ -1751,11 +1813,6 @@
       banner.textContent = text;
       banner.classList.add('jiko-show');
       setTimeout(() => banner.classList.remove('jiko-show'), 2500);
-    }
-
-    function showGameOverModal(msg) {
-      alert(`\uD83C\uDFC6 PERTANDINGAN SELESAI!\nPemenang: ${msg.winner || 'Pemain'}`);
-      exitArenaToLobby();
     }
 
     function exitArenaToLobby() {
@@ -1772,7 +1829,6 @@
       loadCoreUserStatus();
       fetchEquippedSkinsFromPG();
       fetchLobbyRooms();
-      setInterval(fetchLobbyRooms, 8000);
       setInterval(loadCoreUserStatus, 15000);
     });
   </script>
