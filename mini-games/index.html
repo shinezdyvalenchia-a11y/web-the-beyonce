@@ -3860,45 +3860,66 @@
       '"Si gadis tomboy yang semangatnya meletup-letup. Halo semuanya, aku Zee!"'
     ];
 
-    window.addEventListener('DOMContentLoaded', () => {
-      initVFXCanvas();
-      initStardustBackground();
-      loadCoreUserStatus();
-      fetchEquippedSkinsFromPG();
-      fetchLobbyRooms();
-      setInterval(loadCoreUserStatus, 15000);
+    function initApp() {
+      try { initVFXCanvas(); } catch (e) { console.warn("VFX canvas init:", e); }
+      try { initStardustBackground(); } catch (e) { console.warn("Stardust init:", e); }
+      try { loadCoreUserStatus(); } catch (e) { console.warn("Core status init:", e); }
+      try { fetchEquippedSkinsFromPG(); } catch (e) { console.warn("Skins init:", e); }
+      try { fetchLobbyRooms(); } catch (e) { console.warn("Lobby rooms init:", e); }
+      try { setInterval(loadCoreUserStatus, 15000); } catch (e) {}
 
-      weatherEngineInstance = new WeatherEngine('weather-canvas');
+      try {
+        weatherEngineInstance = new WeatherEngine('weather-canvas');
+      } catch (e) { console.warn("WeatherEngine init:", e); }
 
-      // Asset Preloader Simulation
+      // Asset Preloader Simulation with failsafe dismissal
       let progress = 0;
       const fill = document.getElementById('loaderFill');
       const pct = document.getElementById('loaderPercent');
       const trivia = document.getElementById('loaderTrivia');
 
-      const triviaTimer = setInterval(() => {
-        trivia.textContent = TRIVIA_LIST[Math.floor(Math.random() * TRIVIA_LIST.length)];
-      }, 2200);
+      let triviaTimer = null;
+      if (trivia) {
+        triviaTimer = setInterval(() => {
+          trivia.textContent = TRIVIA_LIST[Math.floor(Math.random() * TRIVIA_LIST.length)];
+        }, 2000);
+      }
+
+      function dismissLoader() {
+        const ls = document.getElementById('loading-screen');
+        if (ls && ls.style.display !== 'none') {
+          if (fill) fill.style.width = '100%';
+          if (pct) pct.textContent = '100';
+          if (triviaTimer) clearInterval(triviaTimer);
+          ls.style.opacity = '0';
+          setTimeout(() => { ls.style.display = 'none'; }, 400);
+        }
+      }
 
       const loaderInterval = setInterval(() => {
-        progress += Math.floor(Math.random() * 15) + 5;
+        progress += Math.floor(Math.random() * 25) + 15;
         if (progress >= 100) {
           progress = 100;
           clearInterval(loaderInterval);
-          clearInterval(triviaTimer);
-          fill.style.width = '100%';
-          pct.textContent = '100';
-          setTimeout(() => {
-            const ls = document.getElementById('loading-screen');
-            ls.style.opacity = '0';
-            setTimeout(() => ls.style.display = 'none', 500);
-          }, 300);
+          if (triviaTimer) clearInterval(triviaTimer);
+          if (fill) fill.style.width = '100%';
+          if (pct) pct.textContent = '100';
+          setTimeout(dismissLoader, 200);
         } else {
-          fill.style.width = progress + '%';
-          pct.textContent = progress;
+          if (fill) fill.style.width = progress + '%';
+          if (pct) pct.textContent = progress;
         }
-      }, 90);
-    });
+      }, 60);
+
+      // Failsafe auto-dismiss after 1.2s max under any condition
+      setTimeout(dismissLoader, 1200);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
 
     window.addEventListener('resize', () => {
       if (canvas) {
