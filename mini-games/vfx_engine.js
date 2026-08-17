@@ -629,7 +629,7 @@ const SkinDatabase = {
     // 78-MEMBER STRICT 1-TO-1 UNO MASTER ROSTER (100% PRESERVED)
     // =========================================================================
 
-function getSkinVfxConfig(el) {
+function getSkinVfxConfig(input, cardObj) {
       if (!el) {
         return {
           tier: 'UNCOMMON',

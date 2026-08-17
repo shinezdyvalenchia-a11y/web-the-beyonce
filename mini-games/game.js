@@ -1200,7 +1200,7 @@ const MASTER_UNO_REGISTRY = {
       const userEquippedCode = equippedSkinMap[card.skin_key] || '';
       card.equippedCode = userEquippedCode;
 
-      const tierData = getSkinVfxConfig(cardElement);
+      const tierData = getSkinVfxConfig(cardElement, card);
       triggerAudio(tierData.throw_sfx);
 
       animateCardToCenter(cardElement, tierData, () => {
@@ -1373,14 +1373,9 @@ function triggerColorSupernovaWave(color) {
         if (card.color !== 'wild') activeRoom.current_color = card.color;
         else activeRoom.current_color = ['red', 'blue', 'green', 'yellow'][Math.floor(Math.random()*4)];
 
-        const botTierData = {
-          tier: 'UNCOMMON',
-          hasTrail: false,
-          hasParticles: false,
-          hasImpactVFX: false,
-          throw_sfx: 'sfx_card_flip_normal.mp3',
-          impact_sfx: 'sfx_card_hit_table.mp3'
-        };
+        const botEquippedCode = equippedSkinMap[card.skin_key] || '';
+        card.equippedCode = botEquippedCode;
+        const botTierData = getSkinVfxConfig(null, card);
 
         triggerAudio(botTierData.throw_sfx);
         animateCardToCenter(hudEl, card, botTierData, () => {
