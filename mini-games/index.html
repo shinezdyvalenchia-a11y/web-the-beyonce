@@ -6,7 +6,7 @@
   <title>Galery Alcsta48 - UNO Omega Card | The Beyonce 48</title>
   <link rel="icon" href="../icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800;900&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <script src="../config.js?v=15.0"></script>
+  <script src="../config.js?v=16.0"></script>
   <style>
     :root {
       --primary: #ec4899;
@@ -28,7 +28,7 @@
       background-color: var(--bg-dark); color: var(--text);
     }
 
-    /* GLOBAL ANIMATED BACKGROUND */
+    /* GLOBAL BACKGROUND */
     .global-bg-container {
       position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
       background: radial-gradient(circle at 10% 20%, rgba(236, 72, 153, 0.12), transparent 45%),
@@ -61,7 +61,7 @@
     .na.on { background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(0, 210, 255, 0.2)); color: #fff; border: 1px solid var(--border-glass); }
     .ni { font-size: 18px; }
 
-    /* TOP BAR & BERANDA COIN INVENTORY */
+    /* TOP BAR & INVENTORY */
     .topbar {
       position: fixed; top: 0; left: 220px; right: 0; height: 65px;
       background: rgba(10, 15, 30, 0.7); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
@@ -80,7 +80,7 @@
     .inv-item { display: flex; align-items: center; gap: 6px; color: #fff; font-size: 13px; font-weight: 800; }
     .inv-item img { width: 18px; height: 18px; object-fit: contain; }
 
-    /* MAIN VIEW WRAPPER */
+    /* MAIN VIEWPORT */
     .app-viewport {
       position: fixed; top: 65px; left: 220px; right: 0; bottom: 0;
       overflow-y: auto; overflow-x: hidden;
@@ -98,7 +98,7 @@
     .subtab-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
     .subtab-btn.active { background: linear-gradient(135deg, var(--primary), #a855f7); color: #fff; box-shadow: 0 4px 15px var(--primary-glow); }
 
-    /* LOBBY SCREEN */
+    /* LOBBY VIEW */
     #lobby-screen { padding: 24px 32px; min-height: 100%; }
     .hero-banner {
       background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(15, 23, 42, 0.9)), url('bg_arena.jpg');
@@ -120,7 +120,6 @@
     .btn-code { background: rgba(255,255,255,0.08); border: 1px solid var(--border-glass); color: #fff; }
     .btn-code:hover { background: rgba(255,255,255,0.14); }
 
-    /* LOBBY ROOMS GRID */
     .lobby-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .filter-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
     .filter-tab {
@@ -286,7 +285,6 @@
       background-size: cover; background-position: center; z-index: 0;
     }
     
-    /* TWINKLING STARDUST AMBIENT PARTICLES */
     .stardust-layer { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
     .star-dot {
       position: absolute; border-radius: 50%; background: #fff;
@@ -335,7 +333,6 @@
     .color-ring.wild { border-color: #a855f7; box-shadow: 0 0 35px #a855f7; }
     @keyframes pulseGlow { from { transform: scale(0.95); opacity: 0.7; } to { transform: scale(1.05); opacity: 1; } }
 
-    /* SUPERNOVA COLOR CHANGE WAVE BLAST */
     .color-wave-blast {
       position: absolute; width: 80px; height: 80px; border-radius: 50%;
       pointer-events: none; z-index: 25;
@@ -368,7 +365,7 @@
       font-size: 11px; font-weight: 800; color: #fff; text-shadow: 0 2px 4px #000;
     }
 
-    /* OPPONENTS HUD WITH BLOCK / SKIP EMOTE BADGE & CARD BACKS */
+    /* OPPONENTS HUD */
     .hud-layer { position: absolute; inset: 0; z-index: 30; pointer-events: none; }
     .hud-player {
       position: absolute; pointer-events: auto; display: flex; flex-direction: column; align-items: center;
@@ -393,7 +390,6 @@
     }
     .hud-action-badge.show { transform: translateX(-50%) scale(1); }
 
-    /* OPPONENT HAND OF CARD BACKS */
     .opponent-cards-fan {
       display: flex; gap: -14px; margin-top: 6px; justify-content: center;
     }
@@ -471,7 +467,7 @@
     .card-corner-top { top: 5px; left: 7px; }
     .card-corner-bot { bottom: 5px; right: 7px; transform: rotate(180deg); }
 
-    /* SMOOTH FLUID THROW & DRAW ANIMATIONS */
+    /* FLUID THROW & DRAW */
     .card-thrown {
       position: fixed !important; pointer-events: none !important; z-index: 9999 !important;
       transition: all 0.65s cubic-bezier(0.16, 1, 0.3, 1) !important;
@@ -481,7 +477,30 @@
       transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1) !important;
     }
 
-    /* MASTER VFX OVERLAYS */
+    /* ========================================================================= */
+    /* DEDICATED CSS KEYFRAMES & CLASSES FOR ALL SKIN TIERS & SUB-TIERS         */
+    /* ========================================================================= */
+    /* 1. Omega Special Props */
+    .extra-wings { font-size: 140px; filter: drop-shadow(0 0 40px #fff); animation: wingFlap 1.2s infinite alternate ease-in-out; }
+    @keyframes wingFlap { 0% { transform: scale(0.9) rotate(-4deg); } 100% { transform: scale(1.1) rotate(4deg); } }
+
+    .extra-giant-ring { font-size: 150px; filter: drop-shadow(0 0 50px #00d2ff); animation: ringSpin 4s infinite linear; }
+    @keyframes ringSpin { 0% { transform: rotate(0deg) scale(1); } 100% { transform: rotate(360deg) scale(1.05); } }
+
+    .extra-flower-bouquet { font-size: 140px; filter: drop-shadow(0 0 45px #ec4899); animation: flowerBloom 1.5s infinite alternate ease-in-out; }
+    @keyframes flowerBloom { 0% { transform: scale(0.85); opacity: 0.8; } 100% { transform: scale(1.15); opacity: 1; } }
+
+    .extra-chocolate-burst { font-size: 140px; filter: drop-shadow(0 0 45px #f59e0b); animation: chocoPulse 1.2s infinite alternate ease-in-out; }
+    @keyframes chocoPulse { 0% { transform: scale(0.9); } 100% { transform: scale(1.1); } }
+
+    .extra-water-surge { font-size: 140px; filter: drop-shadow(0 0 45px #0984e3); animation: waterRipple 1.4s infinite alternate ease-in-out; }
+    @keyframes waterRipple { 0% { transform: scale(0.9) translateY(4px); } 100% { transform: scale(1.15) translateY(-4px); } }
+
+    /* Screen Perimeters */
+    .screen-flash-white { box-shadow: inset 0 0 70px 30px rgba(255, 255, 255, 0.95) !important; }
+    .screen-flash-gold { box-shadow: inset 0 0 70px 30px rgba(251, 191, 36, 0.85) !important; }
+    .screen-flash-color { box-shadow: inset 0 0 70px 30px var(--flash-color, #00d2ff) !important; }
+
     #vfx-overlay {
       position: fixed; inset: 0; pointer-events: none; z-index: 4000;
       opacity: 0; transition: opacity 0.3s;
@@ -504,10 +523,6 @@
       pointer-events: none; z-index: 4500; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     .special-prop.active { transform: translate(-50%, -50%) scale(1); }
-
-    .screen-flash-white { box-shadow: inset 0 0 60px 25px rgba(255, 255, 255, 0.95) !important; }
-    .screen-flash-gold { box-shadow: inset 0 0 60px 25px rgba(251, 191, 36, 0.85) !important; }
-    .screen-flash-color { box-shadow: inset 0 0 60px 25px var(--flash-color, #00d2ff) !important; }
 
     .ingame-chat-toggle {
       position: fixed; bottom: 20px; right: 20px; z-index: 3500;
@@ -569,7 +584,6 @@
 </head>
 <body>
 
-  <!-- GLOBAL ANIMATED BACKGROUND -->
   <div class="global-bg-container">
     <div class="corner-glow glow-tl"></div>
     <div class="corner-glow glow-tr"></div>
@@ -592,7 +606,7 @@
     <a href="https://thebeyonce48.my.id" target="_blank" rel="noopener noreferrer" class="na"><span class="ni">&#128377;&#65039;</span>Main Games</a>
   </nav>
 
-  <!-- TOP BAR WITH BERANDA COIN ICONS -->
+  <!-- TOP BAR WITH COIN ICONS -->
   <header class="topbar">
     <div class="topbar-left">
       <button class="menu-btn" onclick="toggleSidebar()">&#9776;</button>
@@ -616,7 +630,6 @@
         <button class="subtab-btn" id="tabBtnSkin" onclick="switchSubTab('skin')">&#127188; Galery Alcsta48 - UNO Omega Card</button>
       </div>
 
-      <!-- ARENA LOBBY VIEW -->
       <div id="viewArenaLobby">
         <div class="hero-banner">
           <h1>UNO NO MERCY: JKT48 ACTION DECK</h1>
@@ -823,11 +836,11 @@
     <div id="vfx-overlay">
       <canvas id="vfx-canvas"></canvas>
       <div id="jiko-banner"></div>
-      <div id="propWings" class="special-prop"><span style="font-size: 140px; filter: drop-shadow(0 0 35px #fff);">🪽✨🪽</span></div>
-      <div id="propRing" class="special-prop"><span style="font-size: 150px; filter: drop-shadow(0 0 45px #00d2ff);">💫🪐✨</span></div>
-      <div id="propFlower" class="special-prop"><span style="font-size: 140px; filter: drop-shadow(0 0 40px #ec4899);">🌸💐🌺</span></div>
-      <div id="propChoco" class="special-prop"><span style="font-size: 140px; filter: drop-shadow(0 0 40px #f59e0b);">🍫✨💖</span></div>
-      <div id="propWater" class="special-prop"><span style="font-size: 140px; filter: drop-shadow(0 0 40px #0984e3);">🌊💧🌊</span></div>
+      <div id="propWings" class="special-prop"><span class="extra-wings">🪽✨🪽</span></div>
+      <div id="propRing" class="special-prop"><span class="extra-giant-ring">💫🪐✨</span></div>
+      <div id="propFlower" class="special-prop"><span class="extra-flower-bouquet">🌸💐🌺</span></div>
+      <div id="propChoco" class="special-prop"><span class="extra-chocolate-burst">🍫✨💖</span></div>
+      <div id="propWater" class="special-prop"><span class="extra-water-surge">🌊💧🌊</span></div>
     </div>
   </div>
 
@@ -888,51 +901,385 @@
   </div>
 
   <script>
-    const CORE_BACKEND_URL = (typeof getApiUrl === "function") 
-      ? getApiUrl("core") 
-      : "https://shinezzzz-gokgokgogkgokgok.hf.space";
+    // =========================================================================
+    // 1. DATABASE VFX & SFX SKIN JKT48 (100% SESUAI INSTRUKSI)
+    // =========================================================================
+    const SkinDatabase = {
+      // 1. TIER: OMEGA_SPESIAL (BASE / SPESIAL)
+      "OMEGA_SPESIAL": {
+        "DKTY": {
+          tier: "OMEGA_SPESIAL",
+          subtier: "SPESIAL",
+          kode: "DKTY",
+          name: "Dedek Kitty (Spesial)",
+          trailColor: "rgba(255, 255, 255, 0.95)",
+          particleType: "sea_water",
+          particleColor: "#00f2fe",
+          throw_sfx: "sfx_holy_trail_water.mp3",
+          impact_sfx: "sfx_white_explosion_birds.mp3",
+          screenFlash: "screen-flash-white",
+          extraProp: "propWings",
+          jiko: "Peduli dan berbaik hati, siapakah dia? Christy!"
+        },
+        "CSHN": {
+          tier: "OMEGA_SPESIAL",
+          subtier: "SPESIAL",
+          kode: "CSHN",
+          name: "Ci Shani (Spesial)",
+          trailColor: "rgba(255, 255, 255, 0.95)",
+          particleType: "sea_water",
+          particleColor: "#00f2fe",
+          throw_sfx: "sfx_holy_trail_water.mp3",
+          impact_sfx: "sfx_white_explosion_birds.mp3",
+          screenFlash: "screen-flash-white",
+          extraProp: "propRing",
+          jiko: "Semanis cokelat, selembut sutra. Halo semuanya, aku Shani"
+        },
+        "CGRC": {
+          tier: "OMEGA_SPESIAL",
+          subtier: "SPESIAL",
+          kode: "CGRC",
+          name: "Ci Gre (Spesial)",
+          trailColor: "rgba(255, 255, 255, 0.95)",
+          particleType: "sea_water",
+          particleColor: "#00f2fe",
+          throw_sfx: "sfx_holy_trail_water.mp3",
+          impact_sfx: "sfx_white_explosion_birds.mp3",
+          screenFlash: "screen-flash-white",
+          extraProp: "propFlower",
+          jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!"
+        },
+        "CFNI": {
+          tier: "OMEGA_SPESIAL",
+          subtier: "SPESIAL",
+          kode: "CFNI",
+          name: "Ci Feni (Spesial)",
+          trailColor: "rgba(255, 255, 255, 0.95)",
+          particleType: "sea_water",
+          particleColor: "#00f2fe",
+          throw_sfx: "sfx_holy_trail_water.mp3",
+          impact_sfx: "sfx_white_explosion_birds.mp3",
+          screenFlash: "screen-flash-white",
+          extraProp: "propChoco",
+          jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!"
+        },
+        "CELI": {
+          tier: "OMEGA_SPESIAL",
+          subtier: "SPESIAL",
+          kode: "CELI",
+          name: "Ci Eli (Spesial)",
+          trailColor: "rgba(255, 255, 255, 0.95)",
+          particleType: "sea_water",
+          particleColor: "#00f2fe",
+          throw_sfx: "sfx_holy_trail_water.mp3",
+          impact_sfx: "sfx_white_explosion_birds.mp3",
+          screenFlash: "screen-flash-white",
+          extraProp: "propWater",
+          jiko: "Bagai lembayung senja, dengan energi kegembiraanku, Aku akan menghangatkan suasana. Halo, aku Eli!"
+        },
 
-    const GAME_ENGINE_URL = (typeof getApiUrl === "function")
-      ? getApiUrl("game")
-      : "https://shinezzzz-gokgokgok.hf.space";
+        // 2. TIER: OMEGA_SPESIAL (FULL COLOR)
+        "FAAZ": { tier: "OMEGA_SPESIAL", subtier: "FULL_COLOR", kode: "FAAZ", solidColor: "#ff4757", trailColor: "#ff4757", particleColor: "#ff4757", throw_sfx: "sfx_color_swoosh.mp3", impact_sfx: "sfx_solid_color_burst.mp3", jiko: "Si gadis tomboy yang semangatnya meletup-letup. Halo semuanya, aku Zee!" },
+        "FFNI": { tier: "OMEGA_SPESIAL", subtier: "FULL_COLOR", kode: "FFNI", solidColor: "#f1c40f", trailColor: "#f1c40f", particleColor: "#f1c40f", throw_sfx: "sfx_color_swoosh.mp3", impact_sfx: "sfx_solid_color_burst.mp3", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!" },
+        "FSHN": { tier: "OMEGA_SPESIAL", subtier: "FULL_COLOR", kode: "FSHN", solidColor: "#9b59b6", trailColor: "#9b59b6", particleColor: "#9b59b6", throw_sfx: "sfx_color_swoosh.mp3", impact_sfx: "sfx_solid_color_burst.mp3", jiko: "Semanis cokelat, selembut sutra. Halo semuanya, aku Shani" },
+        "FJIN": { tier: "OMEGA_SPESIAL", subtier: "FULL_COLOR", kode: "FJIN", solidColor: "#27ae60", trailColor: "#27ae60", particleColor: "#27ae60", throw_sfx: "sfx_color_swoosh.mp3", impact_sfx: "sfx_solid_color_burst.mp3", jiko: "Seperti bintang kejora yang bersinar terang, halo aku Jinan!" },
+        "FGRC": { tier: "OMEGA_SPESIAL", subtier: "FULL_COLOR", kode: "FGRC", solidColor: "#3498db", trailColor: "#3498db", particleColor: "#3498db", throw_sfx: "sfx_color_swoosh.mp3", impact_sfx: "sfx_solid_color_burst.mp3", jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!" },
+        "FMAR": { tier: "OMEGA_SPESIAL", subtier: "FULL_COLOR", kode: "FMAR", solidColor: "#fd79a8", trailColor: "#fd79a8", particleColor: "#fd79a8", throw_sfx: "sfx_color_swoosh.mp3", impact_sfx: "sfx_solid_color_burst.mp3", jiko: "Seperti pizza yang selalu dinanti-nantikan semua orang, selalu nantikan aku, ya? Halo, aku Marsha!" },
+        "FFIO": { tier: "OMEGA_SPESIAL", subtier: "FULL_COLOR", kode: "FFIO", solidColor: "#f8f9fa", trailColor: "#f8f9fa", particleColor: "#f8f9fa", throw_sfx: "sfx_color_swoosh.mp3", impact_sfx: "sfx_solid_color_burst.mp3", jiko: "Seperti simfoni yang menenangkan hati. Halo, aku Fiony!" },
+        "FCHR": { tier: "OMEGA_SPESIAL", subtier: "FULL_COLOR", kode: "FCHR", solidColor: "#e17055", trailColor: "#e17055", particleColor: "#e17055", throw_sfx: "sfx_color_swoosh.mp3", impact_sfx: "sfx_solid_color_burst.mp3", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!" },
+        "FCHK": { tier: "OMEGA_SPESIAL", subtier: "FULL_COLOR", kode: "FCHK", solidColor: "#00cec9", trailColor: "#00cec9", particleColor: "#00cec9", throw_sfx: "sfx_color_swoosh.mp3", impact_sfx: "sfx_solid_color_burst.mp3", jiko: "Meskipun kadang-kadang menyebalkan, tapi aku selalu dirindukan. Panggil aku Chika!" },
 
-    const WS_BASE = GAME_ENGINE_URL.replace(/^http/i, 'ws');
-    const DEFAULT_TEMPLATE_PP = "https://i.ibb.co.com/Y4JdtfGH/download.png";
+        // 3. TIER: OMEGA_SPESIAL (PRIME)
+        "PFNI": { tier: "OMEGA_SPESIAL", subtier: "PRIME", kode: "PFNI", trailColor: "#ffd700", throw_sfx: "sfx_prime_gold_trail.mp3", impact_sfx: "sfx_random_rgb_burst.mp3", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!" },
+        "PCHR": { tier: "OMEGA_SPESIAL", subtier: "PRIME", kode: "PCHR", trailColor: "#ffd700", throw_sfx: "sfx_prime_gold_trail.mp3", impact_sfx: "sfx_random_rgb_burst.mp3", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!" },
+        "PLLU": { tier: "OMEGA_SPESIAL", subtier: "PRIME", kode: "PLLU", trailColor: "#ffd700", throw_sfx: "sfx_prime_gold_trail.mp3", impact_sfx: "sfx_random_rgb_burst.mp3", jiko: "Terang seperti bulan, bersinar seperti bintang. Halo, aku Lulu!" },
+        "PGRC": { tier: "OMEGA_SPESIAL", subtier: "PRIME", kode: "PGRC", trailColor: "#ffd700", throw_sfx: "sfx_prime_gold_trail.mp3", impact_sfx: "sfx_random_rgb_burst.mp3", jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!" },
+        "PONL": { tier: "OMEGA_SPESIAL", subtier: "PRIME", kode: "PONL", trailColor: "#ffd700", throw_sfx: "sfx_prime_gold_trail.mp3", impact_sfx: "sfx_random_rgb_burst.mp3", jiko: "Seperti teka-teki, kalian akan selalu penasaran denganku. Halo, aku Oniel!" },
+        "PFNY": { tier: "OMEGA_SPESIAL", subtier: "PRIME", kode: "PFNY", trailColor: "#ffd700", throw_sfx: "sfx_prime_gold_trail.mp3", impact_sfx: "sfx_random_rgb_burst.mp3", jiko: "Seperti simfoni yang menenangkan hati. Halo, aku Fiony!" },
+        "PMSH": { tier: "OMEGA_SPESIAL", subtier: "PRIME", kode: "PMSH", trailColor: "#ffd700", throw_sfx: "sfx_prime_gold_trail.mp3", impact_sfx: "sfx_random_rgb_burst.mp3", jiko: "Seperti pizza yang selalu dinanti-nantikan semua orang, selalu nantikan aku, ya? Halo, aku Marsha!" },
+        "PFYR": { tier: "OMEGA_SPESIAL", subtier: "PRIME", kode: "PFYR", trailColor: "#ffd700", throw_sfx: "sfx_prime_gold_trail.mp3", impact_sfx: "sfx_random_rgb_burst.mp3", jiko: "Gadis koleris yang suka berimajinasi, terangi harimu dengan senyuman karamelku. Halo, aku Freya!" },
+        "PGTS": { tier: "OMEGA_SPESIAL", subtier: "PRIME", kode: "PGTS", trailColor: "#ffd700", throw_sfx: "sfx_prime_gold_trail.mp3", impact_sfx: "sfx_random_rgb_burst.mp3", jiko: "Diam bukan berarti tak memperhatikanmmu. Aku Gita!" },
+        "PLAI": { tier: "OMEGA_SPESIAL", subtier: "PRIME", kode: "PLAI", trailColor: "#ffd700", throw_sfx: "sfx_prime_gold_trail.mp3", impact_sfx: "sfx_random_rgb_burst.mp3", jiko: "Si social butterfly yang energik dan periang! Halo, aku Lia!" },
+        "PJCC": { tier: "OMEGA_SPESIAL", subtier: "PRIME", kode: "PJCC", trailColor: "#ffd700", throw_sfx: "sfx_prime_gold_trail.mp3", impact_sfx: "sfx_random_rgb_burst.mp3", jiko: "Suka menari dan akan selalu berusaha untuk menjadi sumber energimu. Halo, aku Jessi!" },
+        "PMUT": { tier: "OMEGA_SPESIAL", subtier: "PRIME", kode: "PMUT", trailColor: "#ffd700", throw_sfx: "sfx_prime_gold_trail.mp3", impact_sfx: "sfx_random_rgb_burst.mp3", jiko: "Dengan kelincahanku, Aku akan menari setiap hari. Panggil Aku, Mu mu mu mu-the!" }
+      },
 
-    function getCookie(name) {
-      let nameEQ = name + "="; let ca = document.cookie.split(';');
-      for(let i=0; i < ca.length; i++) {
-        let c = ca[i]; while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-      } return null;
+      // 4. TIER: OMEGA (SSK EDITION)
+      "OMEGA_SSK": {
+        trailColor: "rgba(168, 85, 247, 0.95)",
+        particleSymbols: ['⭐', '🌙', '🔥', '✨'],
+        throw_sfx: "sfx_heavy_meteor_rainbow.mp3",
+        impact_sfx: "sfx_massive_ssk_explosion.mp3"
+      },
+
+      // 5. TIER: MYTH (4 SUB-TIERS)
+      "MYTH": {
+        "LOVE_WAR": {
+          trailColor: "#ff7675",
+          particleSymbol: '💖',
+          particleType: "love_hearts",
+          throw_sfx: "sfx_pink_charm.mp3",
+          impact_sfx: "sfx_heart_splash.mp3"
+        },
+        "MY_PASSION": {
+          trailColor: "#f39c12",
+          particleSymbol: '🔥',
+          particleType: "fire_embers",
+          throw_sfx: "sfx_fire_dash.mp3",
+          impact_sfx: "sfx_fire_ember_hit.mp3"
+        },
+        "HIGH_DREAM": {
+          trailColor: "#3498db",
+          particleSymbol: '✨',
+          particleType: "moon_stars",
+          throw_sfx: "sfx_moon_magic.mp3",
+          impact_sfx: "sfx_star_shatter.mp3"
+        },
+        "LAST_DRESS": {
+          trailColor: "#2d3436",
+          particleSymbol: '🌸',
+          particleType: "dark_petals",
+          throw_sfx: "sfx_dark_wind.mp3",
+          impact_sfx: "sfx_black_petal_drop.mp3"
+        }
+      },
+
+      // 6. TIER: LEGEND (COSMOS NO KIOKU)
+      "LEGEND": {
+        trailColor: "#2c2c54",
+        particleType: "static_stardust",
+        throw_sfx: "sfx_void_glide.mp3",
+        impact_sfx: "sfx_cosmic_shatter.mp3"
+      },
+
+      // 7. TIER: RARE (SNOW AND GOLD)
+      "RARE": {
+        trailColor: "rgba(255, 255, 255, 0.4)",
+        throw_sfx: "sfx_thin_ice_slide.mp3",
+        impact_sfx: "sfx_soft_card_place.mp3"
+      },
+
+      // 8. TIER: UNCOMMON (TRAINEE / BASIC)
+      "UNCOMMON": {
+        throw_sfx: "sfx_card_flip_normal.mp3",
+        impact_sfx: "sfx_card_hit_table.mp3"
+      }
+    };
+
+    // =========================================================================
+    // 2. TRIGGER AUDIO (SFX ENGINE)
+    // =========================================================================
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
     }
 
-    function getUserSession() {
-      return getCookie("user_session") || 
-             getCookie("session_key") || 
-             getCookie("sessionCookie") || 
-             getCookie("token") || 
-             localStorage.getItem("user_session") || 
-             localStorage.getItem("session_key") || 
-             localStorage.getItem("sessionCookie") || 
-             localStorage.getItem("beyonce_session") || 
-             sessionStorage.getItem("user_session") || 
-             sessionStorage.getItem("session_key") || 
-             "demo_user";
+    function triggerAudio(sfx_name) {
+      try {
+        const ctx = getAudioContext();
+        const t = ctx.currentTime;
+
+        if (sfx_name === "sfx_holy_trail_water.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'sine'; osc.frequency.setValueAtTime(650, t);
+          osc.frequency.exponentialRampToValueAtTime(200, t + 0.18);
+          gain.gain.setValueAtTime(0.4, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.18);
+        }
+        else if (sfx_name === "sfx_white_explosion_birds.mp3") {
+          // White explosion blast
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, t);
+          osc.frequency.exponentialRampToValueAtTime(30, t + 0.5);
+          gain.gain.setValueAtTime(0.6, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.5);
+          // Bird chirp sweep
+          [1200, 1800, 2400].forEach((freq, i) => {
+            const b = ctx.createOscillator(); const bg = ctx.createGain();
+            b.type = 'sine'; b.frequency.setValueAtTime(freq, t + 0.1 + i * 0.05);
+            b.frequency.linearRampToValueAtTime(freq + 400, t + 0.2 + i * 0.05);
+            bg.gain.setValueAtTime(0.15, t + 0.1 + i * 0.05);
+            bg.gain.exponentialRampToValueAtTime(0.001, t + 0.25 + i * 0.05);
+            b.connect(bg); bg.connect(ctx.destination);
+            b.start(t + 0.1 + i * 0.05); b.stop(t + 0.25 + i * 0.05);
+          });
+        }
+        else if (sfx_name === "sfx_color_swoosh.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'triangle'; osc.frequency.setValueAtTime(500, t);
+          osc.frequency.exponentialRampToValueAtTime(180, t + 0.15);
+          gain.gain.setValueAtTime(0.35, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.15);
+        }
+        else if (sfx_name === "sfx_solid_color_burst.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'square'; osc.frequency.setValueAtTime(180, t);
+          osc.frequency.exponentialRampToValueAtTime(40, t + 0.35);
+          gain.gain.setValueAtTime(0.4, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.35);
+        }
+        else if (sfx_name === "sfx_prime_gold_trail.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'sine'; osc.frequency.setValueAtTime(800, t);
+          osc.frequency.exponentialRampToValueAtTime(350, t + 0.15);
+          gain.gain.setValueAtTime(0.3, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.15);
+        }
+        else if (sfx_name === "sfx_random_rgb_burst.mp3") {
+          [330, 440, 550, 660].forEach((freq, i) => {
+            const osc = ctx.createOscillator(); const gain = ctx.createGain();
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(freq, t + i * 0.04);
+            gain.gain.setValueAtTime(0.2, t + i * 0.04);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.04 + 0.3);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(t + i * 0.04); osc.stop(t + i * 0.04 + 0.3);
+          });
+        }
+        else if (sfx_name === "sfx_heavy_meteor_rainbow.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(300, t);
+          osc.frequency.exponentialRampToValueAtTime(80, t + 0.2);
+          gain.gain.setValueAtTime(0.4, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.2);
+        }
+        else if (sfx_name === "sfx_massive_ssk_explosion.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(160, t);
+          osc.frequency.exponentialRampToValueAtTime(25, t + 0.6);
+          gain.gain.setValueAtTime(0.7, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.6);
+        }
+        else if (sfx_name === "sfx_pink_charm.mp3") {
+          [880, 1174.66].forEach((freq, i) => {
+            const osc = ctx.createOscillator(); const gain = ctx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(freq, t + i * 0.06);
+            gain.gain.setValueAtTime(0.2, t + i * 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.06 + 0.2);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(t + i * 0.06); osc.stop(t + i * 0.06 + 0.2);
+          });
+        }
+        else if (sfx_name === "sfx_heart_splash.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'sine'; osc.frequency.setValueAtTime(450, t);
+          osc.frequency.linearRampToValueAtTime(750, t + 0.12);
+          gain.gain.setValueAtTime(0.3, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.15);
+        }
+        else if (sfx_name === "sfx_fire_dash.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(220, t);
+          osc.frequency.exponentialRampToValueAtTime(90, t + 0.14);
+          gain.gain.setValueAtTime(0.35, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.14);
+        }
+        else if (sfx_name === "sfx_fire_ember_hit.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'square'; osc.frequency.setValueAtTime(140, t);
+          osc.frequency.exponentialRampToValueAtTime(50, t + 0.25);
+          gain.gain.setValueAtTime(0.4, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.25);
+        }
+        else if (sfx_name === "sfx_moon_magic.mp3") {
+          [523.25, 783.99, 1046.50].forEach((freq, i) => {
+            const osc = ctx.createOscillator(); const gain = ctx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(freq, t + i * 0.05);
+            gain.gain.setValueAtTime(0.2, t + i * 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.05 + 0.25);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(t + i * 0.05); osc.stop(t + i * 0.05 + 0.25);
+          });
+        }
+        else if (sfx_name === "sfx_star_shatter.mp3") {
+          [1318.51, 1567.98, 2093.00].forEach((freq, i) => {
+            const osc = ctx.createOscillator(); const gain = ctx.createGain();
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(freq, t + i * 0.04);
+            gain.gain.setValueAtTime(0.15, t + i * 0.04);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.04 + 0.2);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(t + i * 0.04); osc.stop(t + i * 0.04 + 0.2);
+          });
+        }
+        else if (sfx_name === "sfx_dark_wind.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'sine'; osc.frequency.setValueAtTime(130, t);
+          osc.frequency.linearRampToValueAtTime(70, t + 0.2);
+          gain.gain.setValueAtTime(0.3, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.2);
+        }
+        else if (sfx_name === "sfx_black_petal_drop.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'triangle'; osc.frequency.setValueAtTime(110, t);
+          osc.frequency.exponentialRampToValueAtTime(40, t + 0.3);
+          gain.gain.setValueAtTime(0.35, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.3);
+        }
+        else if (sfx_name === "sfx_void_glide.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'sine'; osc.frequency.setValueAtTime(240, t);
+          osc.frequency.exponentialRampToValueAtTime(110, t + 0.15);
+          gain.gain.setValueAtTime(0.2, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.15);
+        }
+        else if (sfx_name === "sfx_cosmic_shatter.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'triangle'; osc.frequency.setValueAtTime(440, t);
+          osc.frequency.exponentialRampToValueAtTime(90, t + 0.25);
+          gain.gain.setValueAtTime(0.25, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.25);
+        }
+        else if (sfx_name === "sfx_thin_ice_slide.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'sine'; osc.frequency.setValueAtTime(500, t);
+          osc.frequency.exponentialRampToValueAtTime(220, t + 0.1);
+          gain.gain.setValueAtTime(0.15, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.1);
+        }
+        else if (sfx_name === "sfx_soft_card_place.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'triangle'; osc.frequency.setValueAtTime(160, t);
+          osc.frequency.exponentialRampToValueAtTime(70, t + 0.08);
+          gain.gain.setValueAtTime(0.2, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.08);
+        }
+        else if (sfx_name === "sfx_card_flip_normal.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'sine'; osc.frequency.setValueAtTime(450, t);
+          osc.frequency.exponentialRampToValueAtTime(150, t + 0.1);
+          gain.gain.setValueAtTime(0.25, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.1);
+        }
+        else if (sfx_name === "sfx_card_hit_table.mp3") {
+          const osc = ctx.createOscillator(); const gain = ctx.createGain();
+          osc.type = 'triangle'; osc.frequency.setValueAtTime(180, t);
+          osc.frequency.exponentialRampToValueAtTime(60, t + 0.1);
+          gain.gain.setValueAtTime(0.25, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(); osc.stop(t + 0.1);
+        }
+      } catch(e) {}
     }
-
-    let currentSession = getUserSession();
-    let currentUserName = localStorage.getItem('beyonce_username') || 'Wota_' + currentSession.substring(0, 5);
-    let currentUserAvatar = DEFAULT_TEMPLATE_PP;
-    let currentUserSkinCode = "";
-    let currentUserBorderCode = "";
-
-    let activeRoom = null;
-    let ws = null;
-    let pendingWildCardId = null;
-    let userInventory = new Set();
-    let equippedSkinMap = JSON.parse(localStorage.getItem('uno_equipped_skins') || '{}');
-    let currentMemberFilter = 'all';
 
     // =========================================================================
     // 78-MEMBER STRICT 1-TO-1 UNO MASTER ROSTER
@@ -1035,7 +1382,7 @@
     };
 
     // =========================================================================
-    // COMPLETE SKIN DICTIONARY (OMEGA SPESIAL, FULL COLOR, PRIME, SSK OMEGA, ETC)
+    // COMPLETE ALL-MEMBER SKIN CATALOGUE
     // =========================================================================
     const ALL_SKINS_BY_MEMBER = {
       "ANGELINA_CHRISTY": [
@@ -1178,135 +1525,6 @@
       ]
     };
 
-    const FULL_COLOR_PALETTES = {
-      "FAAZ": { color: "#ff4757", name: "Zee", jiko: "Si gadis tomboy yang semangatnya meletup-letup. Halo semuanya, aku Zee!" },
-      "FFNI": { color: "#f1c40f", name: "Feni", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!" },
-      "FSHN": { color: "#9b59b6", name: "Shani", jiko: "Semanis cokelat, selembut sutra. Halo semuanya, aku Shani" },
-      "FJIN": { color: "#27ae60", name: "Jinan", jiko: "Seperti bintang kejora yang bersinar terang, halo aku Jinan!" },
-      "FGRC": { color: "#3498db", name: "Gracia", jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!" },
-      "FMAR": { color: "#fd79a8", name: "Marsha", jiko: "Seperti pizza yang selalu dinanti-nantikan semua orang, selalu nantikan aku, ya? Halo, aku Marsha!" },
-      "FFIO": { color: "#f8f9fa", name: "Fiony", jiko: "Seperti simfoni yang menenangkan hati. Halo, aku Fiony!" },
-      "FCHR": { color: "#e17055", name: "Christy", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!" },
-      "FCHK": { color: "#00cec9", name: "Chika", jiko: "Meskipun kadang-kadang menyebalkan, tapi aku selalu dirindukan. Panggil aku Chika!" }
-    };
-
-    const SPECIAL_SKIN_JIKOS = {
-      "DKTY": { prop: "propWings", jiko: "Peduli dan berbaik hati, siapakah dia? Christy!" },
-      "CSHN": { prop: "propRing", jiko: "Semanis cokelat, selembut sutra. Halo semuanya, aku Shani" },
-      "CGRC": { prop: "propFlower", jiko: "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!" },
-      "CFNI": { prop: "propChoco", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!" },
-      "CELI": { prop: "propWater", jiko: "Bagai lembayung senja, dengan energi kegembiraanku, Aku akan menghangatkan suasana. Halo, aku Eli!" }
-    };
-
-    const PRIME_JIKOS = {
-      "PFNI": "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!",
-      "PCHR": "Peduli dan berbaik hati, siapakah dia? Christy!",
-      "PLLU": "Terang seperti bulan, bersinar seperti bintang. Halo, aku Lulu!",
-      "PGRC": "Senyumku terekam jelas dalam ingatanmu seperti foto dengan sejuta warna. Namaku Gracia, always smile! Sekali lagi? Gracia!",
-      "PONL": "Seperti teka-teki, kalian akan selalu penasaran denganku. Halo, aku Oniel!",
-      "PFNY": "Seperti simfoni yang menenangkan hati. Halo, aku Fiony!",
-      "PMSH": "Seperti pizza yang selalu dinanti-nantikan semua orang, selalu nantikan aku, ya? Halo, aku Marsha!",
-      "PFYR": "Gadis koleris yang suka berimajinasi, terangi harimu dengan senyuman karamelku. Halo, aku Freya!",
-      "PGTS": "Diam bukan berarti tak memperhatikanmmu. Aku Gita!",
-      "PLAI": "Si social butterfly yang energik dan periang! Halo, aku Lia!",
-      "PJCC": "Suka menari dan akan selalu berusaha untuk menjadi sumber energimu. Halo, aku Jessi!",
-      "PMUT": "Dengan kelincahanku, Aku akan menari setiap hari. Panggil Aku, Mu mu mu mu-the!"
-    };
-
-    // =========================================================================
-    // MODERN ESPORTS WEB AUDIO SYNTHESIZER
-    // =========================================================================
-    let audioCtx = null;
-    function getAudioContext() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      return audioCtx;
-    }
-
-    function sfxCardPlay() {
-      try {
-        const ctx = getAudioContext();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(600, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.14);
-        gain.gain.setValueAtTime(0.35, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.14);
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.start(); osc.stop(ctx.currentTime + 0.14);
-
-        const slap = ctx.createOscillator();
-        const slapGain = ctx.createGain();
-        slap.type = 'triangle';
-        slap.frequency.setValueAtTime(320, ctx.currentTime + 0.04);
-        slap.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.14);
-        slapGain.gain.setValueAtTime(0.4, ctx.currentTime + 0.04);
-        slapGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.14);
-        slap.connect(slapGain); slapGain.connect(ctx.destination);
-        slap.start(ctx.currentTime + 0.04); slap.stop(ctx.currentTime + 0.14);
-      } catch(e) {}
-    }
-
-    function sfxDrawCard() {
-      try {
-        const ctx = getAudioContext();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(180, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(420, ctx.currentTime + 0.12);
-        gain.gain.setValueAtTime(0.25, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.start(); osc.stop(ctx.currentTime + 0.12);
-      } catch(e) {}
-    }
-
-    function sfxWildExplosion() {
-      try {
-        const ctx = getAudioContext();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(140, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 0.5);
-        gain.gain.setValueAtTime(0.6, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.start(); osc.stop(ctx.currentTime + 0.5);
-
-        [880, 1174.66, 1760].forEach((freq, i) => {
-          const chime = ctx.createOscillator();
-          const chimeGain = ctx.createGain();
-          chime.type = 'sine';
-          chime.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.08);
-          chimeGain.gain.setValueAtTime(0.2, ctx.currentTime + i * 0.08);
-          chimeGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.08 + 0.35);
-          chime.connect(chimeGain); chimeGain.connect(ctx.destination);
-          chime.start(ctx.currentTime + i * 0.08); chime.stop(ctx.currentTime + i * 0.08 + 0.35);
-        });
-      } catch(e) {}
-    }
-
-    function sfxUnoCall() {
-      try {
-        const ctx = getAudioContext();
-        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.06);
-          gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.06);
-          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.06 + 0.25);
-          osc.connect(gain); gain.connect(ctx.destination);
-          osc.start(ctx.currentTime + i * 0.06); osc.stop(ctx.currentTime + i * 0.06 + 0.25);
-        });
-      } catch(e) {}
-    }
-
     function toggleSidebar() {
       document.getElementById('sidebar').classList.toggle('open');
     }
@@ -1322,7 +1540,20 @@
       }
     }
 
-    // ===== 1. TEMBAK & AMBIL DATA ASLI DARI CORE BACKEND ENGINE =====
+    // ===== 3. STATUS & INVENTORY INTEGRATION =====
+    let currentSession = getUserSession();
+    let currentUserName = localStorage.getItem('beyonce_username') || 'Wota_' + currentSession.substring(0, 5);
+    let currentUserAvatar = DEFAULT_TEMPLATE_PP;
+    let currentUserSkinCode = "";
+    let currentUserBorderCode = "";
+
+    let activeRoom = null;
+    let ws = null;
+    let pendingWildCardId = null;
+    let userInventory = new Set();
+    let equippedSkinMap = JSON.parse(localStorage.getItem('uno_equipped_skins') || '{}');
+    let currentMemberFilter = 'all';
+
     async function loadCoreUserStatus() {
       currentSession = getUserSession();
       const payload = {
@@ -1416,7 +1647,7 @@
       }
     }
 
-    // ===== RENDER MEMBER-GROUPED SKIN COLLECTION WITH ALL OMEGA TIERS =====
+    // ===== RENDER MEMBER-GROUPED SKIN COLLECTION =====
     function renderMemberSkins() {
       const container = document.getElementById('memberGroupContainer');
       const search = (document.getElementById('skinSearch').value || '').toLowerCase();
@@ -1467,17 +1698,14 @@
           const isOmegaTier = s.code.length === 4;
 
           if (isOmegaTier && isOwned) {
-            // Live Video Preview for owned Omega / Omega Special
             mediaHtml = `
               <video src="../gacha-skin/preview_${s.code}.webm" autoplay loop muted playsinline class="skin-variant-video" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></video>
               <img src="../skin_jpg/${s.code}.jpg" class="skin-variant-thumb" style="display:none;" onerror="this.src='../skin/ANGELINA_CHRISTY_UNCOMMON.jpg'">
               <div class="holo-sheen"></div>
             `;
           } else if (isOmegaTier && !isOwned) {
-            // Unowned Omega from skin_jpg with grey filter
             mediaHtml = `<img src="../skin_jpg/${s.code}.jpg" class="skin-variant-thumb card-grey-filter" onerror="this.src='../skin/ANGELINA_CHRISTY_UNCOMMON.jpg'">`;
           } else {
-            // Regular tiers
             let thumbSrc = isOwned ? `../skin/${s.file}` : `../skin/${s.file.replace('.jpg', '_grey.jpg')}`;
             mediaHtml = `
               <img src="${thumbSrc}" class="skin-variant-thumb ${!isOwned ? 'card-grey-filter' : ''}" onerror="this.src='../skin/ANGELINA_CHRISTY_UNCOMMON.jpg'">
@@ -1578,7 +1806,7 @@
     }
 
     // =========================================================================
-    // 3. HYBRID GAME ENGINE (REAL-TIME ONLINE WS + HIGH-SPEED LOCAL ENGINE)
+    // 4. GAME ENGINE WITH OPENING CARD DEALING ANIMATION
     // =========================================================================
     let localDeck = [];
     let localDiscardPile = [];
@@ -1635,22 +1863,22 @@
       let players = [];
       if (teamFormat === 'duel') {
         players = [
-          { session_id: currentSession, name: currentUserName, avatar: currentUserAvatar, is_bot: false, is_ready: true, team: 'red', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
-          { session_id: 'bot_1', name: 'Christy AI', avatar: '../skin/ANGELINA_CHRISTY_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'blue', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] }
+          { session_id: currentSession, name: currentUserName, avatar: currentUserAvatar, is_bot: false, is_ready: true, team: 'red', hand: [] },
+          { session_id: 'bot_1', name: 'Christy AI', avatar: '../skin/ANGELINA_CHRISTY_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'blue', hand: [] }
         ];
       } else if (teamFormat === 'duo') {
         players = [
-          { session_id: currentSession, name: currentUserName, avatar: currentUserAvatar, is_bot: false, is_ready: true, team: 'red', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
-          { session_id: 'bot_1', name: 'Freya AI (Musuh)', avatar: '../skin/FREYA_JAYAWARDANA_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'blue', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
-          { session_id: 'bot_2', name: 'Shani AI (Partner)', avatar: '../skin/SHANI_INDIRA_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'red', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
-          { session_id: 'bot_3', name: 'Zee AI (Musuh)', avatar: '../skin/AZIZI_ASSADEL_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'blue', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] }
+          { session_id: currentSession, name: currentUserName, avatar: currentUserAvatar, is_bot: false, is_ready: true, team: 'red', hand: [] },
+          { session_id: 'bot_1', name: 'Freya AI (Musuh)', avatar: '../skin/FREYA_JAYAWARDANA_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'blue', hand: [] },
+          { session_id: 'bot_2', name: 'Shani AI (Partner)', avatar: '../skin/SHANI_INDIRA_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'red', hand: [] },
+          { session_id: 'bot_3', name: 'Zee AI (Musuh)', avatar: '../skin/AZIZI_ASSADEL_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'blue', hand: [] }
         ];
       } else {
         players = [
-          { session_id: currentSession, name: currentUserName, avatar: currentUserAvatar, is_bot: false, is_ready: true, team: 'solo', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
-          { session_id: 'bot_1', name: 'Freya AI', avatar: '../skin/FREYA_JAYAWARDANA_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'solo', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
-          { session_id: 'bot_2', name: 'Christy AI', avatar: '../skin/ANGELINA_CHRISTY_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'solo', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] },
-          { session_id: 'bot_3', name: 'Zee AI', avatar: '../skin/AZIZI_ASSADEL_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'solo', hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()] }
+          { session_id: currentSession, name: currentUserName, avatar: currentUserAvatar, is_bot: false, is_ready: true, team: 'solo', hand: [] },
+          { session_id: 'bot_1', name: 'Freya AI', avatar: '../skin/FREYA_JAYAWARDANA_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'solo', hand: [] },
+          { session_id: 'bot_2', name: 'Christy AI', avatar: '../skin/ANGELINA_CHRISTY_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'solo', hand: [] },
+          { session_id: 'bot_3', name: 'Zee AI', avatar: '../skin/AZIZI_ASSADEL_UNCOMMON.jpg', is_bot: true, is_ready: true, team: 'solo', hand: [] }
         ];
       }
 
@@ -1753,7 +1981,6 @@
       showToast("\uD83D\uDCCB Kode kamar berhasil disalin!");
     }
 
-    // ===== LOUNGE RENDERING =====
     function renderLoungeState() {
       if (!activeRoom) return;
       document.getElementById('loungeTitle').textContent = activeRoom.name;
@@ -1783,17 +2010,52 @@
       slots.innerHTML = html;
     }
 
-    function toggleReady() {
-      forceStartGame();
-    }
+    function toggleReady() { forceStartGame(); }
 
     function forceStartGame() {
       if (!activeRoom) return;
       activeRoom.status = 'playing';
       activeRoom.current_turn_idx = 0;
-      renderArenaState();
-      startTurnTimer();
-      showToast("\uD83D\uDE80 Pertandingan Dimulai! Giliran Kamu!");
+
+      document.getElementById('lounge-screen').style.display = 'none';
+      document.getElementById('game-arena').style.display = 'block';
+
+      // 6. ANIMASI PEMBUKA PERMAINAN (Dealing 7 cards to all players smoothly from center deck)
+      animateOpeningCardDealing(() => {
+        renderArenaState();
+        startTurnTimer();
+        showToast("🎮 Pertandingan Dimulai! Giliran Kamu!");
+      });
+    }
+
+    function animateOpeningCardDealing(onComplete) {
+      let dealStep = 0;
+      const totalCards = 7;
+      const targets = [
+        document.getElementById('userHandZone'),
+        document.getElementById('hudLeft'),
+        document.getElementById('hudTop'),
+        document.getElementById('hudRight')
+      ];
+
+      function dealNext() {
+        if (dealStep < totalCards) {
+          activeRoom.players.forEach((p, pIdx) => {
+            if (localDeck.length === 0) localDeck = buildFullUnoDeck();
+            p.hand.push(localDeck.pop());
+            if (targets[pIdx]) {
+              animateCardDrawFlight(targets[pIdx]);
+            }
+          });
+          renderArenaState();
+          dealStep++;
+          setTimeout(dealNext, 250);
+        } else {
+          if (onComplete) onComplete();
+        }
+      }
+
+      dealNext();
     }
 
     function addBotSlot() {
@@ -1808,7 +2070,7 @@
           is_bot: true,
           is_ready: true,
           team: (idx % 2 === 1 ? 'red' : 'blue'),
-          hand: [localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop(), localDeck.pop()]
+          hand: []
         });
         renderLoungeState();
         showToast(`Bot ${botNames[idx - 1]} bergabung ke kamar!`);
@@ -1888,10 +2150,9 @@
       }
 
       if (activeRoom.top_card) {
-        document.getElementById('discardPileZone').innerHTML = createRealUnoCardHtml(activeRoom.top_card, false);
+        document.getElementById('discardPileZone').innerHTML = createRealUnoCardHtml(activeRoom.top_card, false, activeRoom.top_card.equippedCode || '');
       }
 
-      // Opponents HUD with Fan of Back Cover Cards
       const opponents = activeRoom.players.filter(p => p.session_id !== currentSession);
       const fanPositions = ['fanLeft', 'fanTop', 'fanRight'];
       const hudPositions = ['hudLeft', 'hudTop', 'hudRight'];
@@ -1922,7 +2183,6 @@
         }
       }
 
-      // Render User Hand with Real UNO Card visual & Playable Glow
       const me = activeRoom.players.find(p => p.session_id === currentSession);
       const handZone = document.getElementById('userHandZone');
       if (me && me.hand) {
@@ -1937,49 +2197,59 @@
               isPlayable = (c.color === "wild" || c.type === "wild" || c.color === activeRoom.current_color || (topCard && c.value === topCard.value));
             }
           }
-          return createRealUnoCardHtml(c, isPlayable);
+          const userEquipped = equippedSkinMap[c.skin_key] || '';
+          return createRealUnoCardHtml(c, isPlayable, userEquipped);
         }).join('');
       }
     }
 
     // =========================================================================
-    // REAL UNO CARD HTML CREATOR WITH HOLOGRAPHIC SHIMMER & VIDEO SUPPORT
+    // 5. DOM ATTRIBUTES & CARD CREATOR (STRICT SKIN OWNERSHIP BINDING)
     // =========================================================================
-    function createRealUnoCardHtml(card, isPlayable) {
+    function createRealUnoCardHtml(card, isPlayable, equippedCode) {
       const displayVal = card.display || card.value.toUpperCase();
       const clickAttr = isPlayable ? `onclick="userClickCard('${card.id}', '${card.type}', this)"` : '';
       const playableClass = isPlayable ? 'playable' : '';
 
-      const equippedCode = card.skin_key ? (equippedSkinMap[card.skin_key] || '') : '';
+      let tier = "UNCOMMON";
+      let subtier = "TRAINEE";
       let isHolo = false;
       let mediaHtml = '';
 
-      if (equippedCode.length === 4 || equippedCode.includes('MYTH') || equippedCode.includes('LEGEND')) {
+      if (equippedCode && equippedCode.length === 4) {
+        tier = "OMEGA_SPESIAL";
+        subtier = (equippedCode in SkinDatabase.OMEGA_SPESIAL) ? SkinDatabase.OMEGA_SPESIAL[equippedCode].subtier : "SSK";
         isHolo = true;
-      }
-
-      if (equippedCode.length === 4) {
-        // Live looping portrait video for Omega / Omega Spesial
         mediaHtml = `<video src="../gacha-skin/preview_${equippedCode}.webm" autoplay loop muted playsinline class="card-member-video" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></video>
                      <img src="../skin_jpg/${equippedCode}.jpg" class="card-member-photo" style="display:none;" onerror="this.src='../skin/${card.photo || 'ANGELINA_CHRISTY_UNCOMMON.jpg'}'">`;
-      } else if (equippedCode) {
+      } else if (equippedCode && equippedCode.includes('MYTH')) {
+        tier = "MYTH";
+        if (equippedCode.includes('FIONY')) subtier = "LOVE_WAR";
+        else if (equippedCode.includes('FENI')) subtier = "MY_PASSION";
+        else if (equippedCode.includes('ADELINE')) subtier = "HIGH_DREAM";
+        else subtier = "LAST_DRESS";
+        isHolo = true;
+        mediaHtml = `<img src="../skin/${equippedCode}.jpg" class="card-member-photo" onerror="this.src='../skin/${card.photo || 'ANGELINA_CHRISTY_UNCOMMON.jpg'}'" alt="${card.member}">`;
+      } else if (equippedCode && equippedCode.includes('LEGEND')) {
+        tier = "LEGEND";
+        subtier = "COSMOS";
+        isHolo = true;
+        mediaHtml = `<img src="../skin/${equippedCode}.jpg" class="card-member-photo" onerror="this.src='../skin/${card.photo || 'ANGELINA_CHRISTY_UNCOMMON.jpg'}'" alt="${card.member}">`;
+      } else if (equippedCode && equippedCode.includes('RARE')) {
+        tier = "RARE";
+        subtier = "SNOW_GOLD";
         mediaHtml = `<img src="../skin/${equippedCode}.jpg" class="card-member-photo" onerror="this.src='../skin/${card.photo || 'ANGELINA_CHRISTY_UNCOMMON.jpg'}'" alt="${card.member}">`;
       } else {
         mediaHtml = `<img src="../skin/${card.photo || 'ANGELINA_CHRISTY_UNCOMMON.jpg'}" class="card-member-photo" onerror="this.src='../skin/ANGELINA_CHRISTY_UNCOMMON.jpg'" alt="${card.member}">`;
       }
 
       return `
-        <div class="uno-card ${card.color} ${playableClass}" ${clickAttr} id="card_${card.id}" title="${card.member || 'Member'} (${displayVal})">
+        <div class="uno-card ${card.color} ${playableClass}" ${clickAttr} id="card_${card.id}" data-tier="${tier}" data-subtier="${subtier}" data-kode="${equippedCode || ''}" title="${card.member || 'Member'} (${displayVal})">
           ${isHolo ? '<div class="holo-sheen"></div>' : ''}
-          <!-- TOP-LEFT CORNER VALUE -->
           <div class="card-corner card-corner-top">${displayVal}</div>
-
-          <!-- CENTER TILTED WHITE OVAL WITH MEMBER MEDIA -->
           <div class="card-center-oval">
             ${mediaHtml}
           </div>
-
-          <!-- BOTTOM-RIGHT INVERTED CORNER VALUE -->
           <div class="card-corner card-corner-bot">${displayVal}</div>
         </div>
       `;
@@ -1987,7 +2257,7 @@
 
     // ===== CARD DRAW FLIGHT ANIMATION FROM DECK =====
     function animateCardDrawFlight(targetElement, onComplete) {
-      sfxDrawCard();
+      triggerAudio("sfx_card_flip_normal.mp3");
       const deckEl = document.getElementById('drawDeckPile');
       if (!deckEl || !targetElement) {
         if (onComplete) onComplete();
@@ -2017,7 +2287,7 @@
       }, 550);
     }
 
-    // ===== USER TURN ACTIONS & ANIMATIONS =====
+    // ===== USER TURN ACTIONS & SEAMLESS FLUID THROW =====
     function userClickCard(cardId, cardType, el) {
       if (cardType === 'wild') {
         pendingWildCardId = cardId;
@@ -2041,7 +2311,12 @@
       const card = me.hand.find(c => c.id === cardId);
       if (!card) return;
 
-      sfxCardPlay();
+      const userEquippedCode = equippedSkinMap[card.skin_key] || '';
+      card.equippedCode = userEquippedCode;
+
+      // Trigger throw sound from SkinDatabase
+      const tierData = getSkinVfxConfig(cardElement);
+      triggerAudio(tierData.throw_sfx);
 
       if (cardElement) {
         const rect = cardElement.getBoundingClientRect();
@@ -2055,15 +2330,13 @@
         cardElement.style.opacity = '0';
         cardElement.style.pointerEvents = 'none';
 
-        // Target center discard pile precisely in 2D space
         const centerTableEl = document.getElementById('center-table');
         const centerRect = centerTableEl.getBoundingClientRect();
         const targetX = centerRect.left + centerRect.width / 2 - 52;
         const targetY = centerRect.top + centerRect.height / 2 - 77;
 
-        // Spawn ML-Style Ribbon Flight Trail
-        const equippedCode = equippedSkinMap[card.skin_key] || '';
-        spawnFlightTrailVFX(rect.left + 50, rect.top + 75, targetX + 52, targetY + 77, equippedCode);
+        // Spawn Flight Trail
+        spawnFlightTrailVFX(rect.left + 50, rect.top + 75, targetX + 52, targetY + 77, tierData);
 
         requestAnimationFrame(() => {
           clone.style.left = targetX + 'px';
@@ -2071,7 +2344,6 @@
           clone.style.transform = 'scale(0.92) rotate(' + (Math.random()*16 - 8) + 'deg)';
         });
 
-        // Exact seamless transition synchronization (No Cutscene jump)
         setTimeout(() => {
           clone.remove();
           me.hand = me.hand.filter(c => c.id !== cardId);
@@ -2085,11 +2357,10 @@
           }
 
           // Trigger Landing Explosion & Special Props
-          triggerSkinLandingVFX(card, equippedCode);
+          triggerSkinLandingVFX(card, tierData);
 
           applyCardRules(card, me, 0);
 
-          // Check win
           if (me.hand.length === 0) {
             if (activeRoom.team_format === 'duo' && me.team === 'red') {
               alert("🎉 TIM MERAH (Kamu & Partner) MENANG DUO BATTLE!");
@@ -2104,6 +2375,27 @@
           triggerBotTurn();
         }, 650);
       }
+    }
+
+    function getSkinVfxConfig(el) {
+      if (!el) return SkinDatabase.UNCOMMON;
+      const tier = el.getAttribute('data-tier') || 'UNCOMMON';
+      const subtier = el.getAttribute('data-subtier') || '';
+      const kode = el.getAttribute('data-kode') || '';
+
+      if (tier === 'OMEGA_SPESIAL' && kode in SkinDatabase.OMEGA_SPESIAL) {
+        return SkinDatabase.OMEGA_SPESIAL[kode];
+      }
+      if (tier === 'OMEGA_SSK') {
+        return SkinDatabase.OMEGA_SSK;
+      }
+      if (tier === 'MYTH' && subtier in SkinDatabase.MYTH) {
+        return SkinDatabase.MYTH[subtier];
+      }
+      if (tier in SkinDatabase) {
+        return SkinDatabase[tier];
+      }
+      return SkinDatabase.UNCOMMON;
     }
 
     function triggerColorSupernovaWave(color) {
@@ -2172,7 +2464,7 @@
       });
     }
 
-    // ===== BOT TURN AI ENGINE WITH FLIGHT ANIMATION FROM AVATAR =====
+    // ===== BOT TURN AI ENGINE WITH FLIGHT ANIMATION =====
     function triggerBotTurn() {
       startTurnTimer();
 
@@ -2234,7 +2526,9 @@
       if (playable.length > 0) {
         const chosen = playable[Math.floor(Math.random() * playable.length)];
         bot.hand = bot.hand.filter(c => c.id !== chosen.id);
-        sfxCardPlay();
+
+        // Bot default to Uncommon / Basic without equipped skin
+        triggerAudio("sfx_card_flip_normal.mp3");
 
         if (hudEl) {
           const rect = hudEl.getBoundingClientRect();
@@ -2249,9 +2543,6 @@
           const centerRect = centerTableEl.getBoundingClientRect();
           const targetX = centerRect.left + centerRect.width / 2 - 52;
           const targetY = centerRect.top + centerRect.height / 2 - 77;
-
-          const botEquippedCode = chosen.skin_key ? (equippedSkinMap[chosen.skin_key] || '') : '';
-          spawnFlightTrailVFX(rect.left + 50, rect.top + 50, targetX + 52, targetY + 77, botEquippedCode);
 
           requestAnimationFrame(() => {
             clone.style.left = targetX + 'px';
@@ -2273,7 +2564,7 @@
               activeRoom.current_color = chosen.color;
             }
 
-            triggerSkinLandingVFX(chosen, botEquippedCode);
+            triggerAudio("sfx_card_hit_table.mp3");
             applyCardRules(chosen, bot, botIdx);
             showToast(`${bot.name} melempar ${chosen.member} (${chosen.display})!`);
 
@@ -2317,12 +2608,12 @@
     }
 
     function userCallUno() {
-      sfxUnoCall();
+      triggerAudio("sfx_white_explosion_birds.mp3");
       showToast("\uD83D\uDCE2 KAMU MEMANGGIL UNO!");
     }
 
     // =========================================================================
-    // 4. MASTER ML-STYLE GLORIOUS TRAIL & MULTI-TIER VFX ENGINE
+    // 6. MASTER PARTICLE & VFX ENGINE (TRAIL & IMPACT)
     // =========================================================================
     let particles = [];
     let trailRibbons = [];
@@ -2337,88 +2628,86 @@
       }
     }
 
-    function spawnFlightTrailVFX(x1, y1, x2, y2, code) {
+    function spawnFlightTrailVFX(x1, y1, x2, y2, config) {
+      if (!config || !config.trailColor) return;
       initVFXCanvas();
       const overlay = document.getElementById('vfx-overlay');
       overlay.style.opacity = '1';
-
-      let ribbonColor = 'rgba(0, 242, 254, 0.85)';
-      let particleColor = '#00f2fe';
-      let particleType = 'sea_water';
-
-      if (code in SPECIAL_SKIN_JIKOS) {
-        ribbonColor = 'rgba(255, 255, 255, 0.95)';
-        particleColor = '#38ef7d';
-        particleType = 'sea_water';
-      } else if (code in FULL_COLOR_PALETTES) {
-        ribbonColor = FULL_COLOR_PALETTES[code].color;
-        particleColor = FULL_COLOR_PALETTES[code].color;
-        particleType = 'color_glow';
-      } else if (code in PRIME_JIKOS) {
-        ribbonColor = '#ffd700';
-        particleColor = '#ffd700';
-        particleType = 'gold_spark';
-      } else if (code.startsWith('S') && code.length === 4) {
-        ribbonColor = 'rgba(168, 85, 247, 0.85)';
-        particleColor = '#a855f7';
-        particleType = 'ssk_stars';
-      } else if (code.includes('MYTH') && code.includes('FIONY')) {
-        ribbonColor = '#ff7675';
-        particleColor = '#fd79a8';
-        particleType = 'love_hearts';
-      } else if (code.includes('LEGEND')) {
-        ribbonColor = '#6c5ce7';
-        particleColor = '#a29bfe';
-        particleType = 'cosmos';
-      }
 
       trailRibbons.push({
         p1: { x: x1, y: y1 },
         p2: { x: (x1 + x2) / 2 + (Math.random() * 60 - 30), y: (y1 + y2) / 2 - 40 },
         p3: { x: x2, y: y2 },
-        color: ribbonColor,
+        color: config.trailColor,
         alpha: 1,
         width: 14
       });
 
-      for (let i = 0; i < 35; i++) {
-        const t = i / 35;
-        const cx = (1 - t) * (1 - t) * x1 + 2 * (1 - t) * t * ((x1 + x2) / 2) + t * t * x2;
-        const cy = (1 - t) * (1 - t) * y1 + 2 * (1 - t) * t * ((y1 + y2) / 2 - 40) + t * t * y2;
+      // Spawn sprinkles only if specified (STRICT: Legend Cosmos & Rare Snow have NO spread sprinkles)
+      if (config.particleType !== 'static_stardust' && config.particleColor) {
+        for (let i = 0; i < 35; i++) {
+          const t = i / 35;
+          const cx = (1 - t) * (1 - t) * x1 + 2 * (1 - t) * t * ((x1 + x2) / 2) + t * t * x2;
+          const cy = (1 - t) * (1 - t) * y1 + 2 * (1 - t) * t * ((y1 + y2) / 2 - 40) + t * t * y2;
 
-        particles.push({
-          x: cx + (Math.random() * 24 - 12),
-          y: cy + (Math.random() * 24 - 12),
-          vx: (Math.random() - 0.5) * 3,
-          vy: (Math.random() - 0.5) * 3,
-          size: Math.random() * 6 + 3,
-          color: particleColor,
-          type: particleType,
-          alpha: 1,
-          decay: 0.025
-        });
+          particles.push({
+            x: cx + (Math.random() * 24 - 12),
+            y: cy + (Math.random() * 24 - 12),
+            vx: (Math.random() - 0.5) * 3,
+            vy: (Math.random() - 0.5) * 3,
+            size: Math.random() * 6 + 3,
+            color: config.particleColor,
+            symbol: config.particleSymbol || '',
+            type: config.particleType || 'dot',
+            alpha: 1,
+            decay: 0.025
+          });
+        }
       }
 
       runParticleLoop();
     }
 
-    function triggerSkinLandingVFX(card, code) {
+    function triggerSkinLandingVFX(card, config) {
+      if (!config || !config.impact_sfx) return;
+      triggerAudio(config.impact_sfx);
+
       initVFXCanvas();
       const overlay = document.getElementById('vfx-overlay');
       const jiko = document.getElementById('jiko-banner');
       overlay.style.opacity = '1';
 
-      sfxWildExplosion();
-
       const cx = window.innerWidth / 2;
       const cy = window.innerHeight / 2;
 
-      // 1. OMEGA SPESIAL (DKTY, CSHN, CGRC, CFNI, CELI)
-      if (code in SPECIAL_SKIN_JIKOS) {
-        const spec = SPECIAL_SKIN_JIKOS[code];
-        document.body.classList.add('screen-flash-white');
-        setTimeout(() => document.body.classList.remove('screen-flash-white'), 600);
+      // Screen Flash
+      if (config.screenFlash) {
+        document.body.classList.add(config.screenFlash);
+        setTimeout(() => document.body.classList.remove(config.screenFlash), 600);
+      } else if (config.solidColor) {
+        document.documentElement.style.setProperty('--flash-color', config.solidColor);
+        document.body.classList.add('screen-flash-color');
+        setTimeout(() => document.body.classList.remove('screen-flash-color'), 600);
+      }
 
+      // 3D Extra Props (Wings, Ring, Bouquet, Choco, Water)
+      if (config.extraProp) {
+        const propEl = document.getElementById(config.extraProp);
+        if (propEl) {
+          propEl.classList.add('active');
+          setTimeout(() => propEl.classList.remove('active'), 2800);
+        }
+      }
+
+      // Jiko text display
+      if (config.jiko) {
+        jiko.textContent = `✨ ${config.name || card.member}: "${config.jiko}" ✨`;
+        jiko.classList.add('jiko-show');
+        setTimeout(() => jiko.classList.remove('jiko-show'), 3500);
+      }
+
+      // Particle Bursts
+      if (config.subtier === 'SPESIAL') {
         for (let i = 0; i < 90; i++) {
           const angle = Math.random() * Math.PI * 2;
           const speed = Math.random() * 9 + 3;
@@ -2433,24 +2722,7 @@
             decay: 0.015
           });
         }
-
-        const propEl = document.getElementById(spec.prop);
-        if (propEl) {
-          propEl.classList.add('active');
-          setTimeout(() => propEl.classList.remove('active'), 2800);
-        }
-
-        jiko.textContent = `✨ ${card.member || 'Member'}: "${spec.jiko}" ✨`;
-        jiko.classList.add('jiko-show');
-        setTimeout(() => jiko.classList.remove('jiko-show'), 3500);
-      }
-      // 2. FULL COLOR
-      else if (code in FULL_COLOR_PALETTES) {
-        const fc = FULL_COLOR_PALETTES[code];
-        document.documentElement.style.setProperty('--flash-color', fc.color);
-        document.body.classList.add('screen-flash-color');
-        setTimeout(() => document.body.classList.remove('screen-flash-color'), 600);
-
+      } else if (config.subtier === 'FULL_COLOR') {
         for (let i = 0; i < 70; i++) {
           const angle = Math.random() * Math.PI * 2;
           const speed = Math.random() * 8 + 2;
@@ -2459,22 +2731,13 @@
             vx: Math.cos(angle) * speed,
             vy: Math.sin(angle) * speed,
             size: Math.random() * 7 + 3,
-            color: fc.color,
+            color: config.solidColor,
             type: 'color_burst',
             alpha: 1,
             decay: 0.02
           });
         }
-
-        jiko.textContent = `🌈 ${fc.name} (Full Color): "${fc.jiko}" 🌈`;
-        jiko.classList.add('jiko-show');
-        setTimeout(() => jiko.classList.remove('jiko-show'), 3500);
-      }
-      // 3. PRIME
-      else if (code in PRIME_JIKOS) {
-        document.body.classList.add('screen-flash-gold');
-        setTimeout(() => document.body.classList.remove('screen-flash-gold'), 600);
-
+      } else if (config.subtier === 'PRIME') {
         const colors = ['#e74c3c', '#0984e3', '#00b894', '#fbc531', '#ffd700'];
         for (let i = 0; i < 70; i++) {
           const angle = Math.random() * Math.PI * 2;
@@ -2490,34 +2753,6 @@
             decay: 0.02
           });
         }
-
-        jiko.textContent = `⭐ Prime: "${PRIME_JIKOS[code]}" ⭐`;
-        jiko.classList.add('jiko-show');
-        setTimeout(() => jiko.classList.remove('jiko-show'), 3500);
-      }
-      // 4. SSK OMEGA (Stars, Moons, Flames)
-      else if (code.startsWith('S') && code.length === 4) {
-        const symbols = ['⭐', '🌙', '🔥', '✨'];
-        for (let i = 0; i < 50; i++) {
-          const angle = Math.random() * Math.PI * 2;
-          const speed = Math.random() * 7 + 2;
-          particles.push({
-            x: cx, y: cy,
-            vx: Math.cos(angle) * speed,
-            vy: Math.sin(angle) * speed,
-            size: 18,
-            symbol: symbols[Math.floor(Math.random() * symbols.length)],
-            type: 'emoji_particle',
-            alpha: 1,
-            decay: 0.02
-          });
-        }
-      }
-      // 5. DEFAULT JIKO
-      else if (card.jiko) {
-        jiko.textContent = `✨ ${card.member}: "${card.jiko}" ✨`;
-        jiko.classList.add('jiko-show');
-        setTimeout(() => jiko.classList.remove('jiko-show'), 3000);
       }
 
       runParticleLoop();
@@ -2568,7 +2803,7 @@
 
           ctx.save();
           ctx.globalAlpha = p.alpha;
-          if (p.type === 'emoji_particle') {
+          if (p.symbol) {
             ctx.font = `${p.size}px sans-serif`;
             ctx.fillText(p.symbol, p.x, p.y);
           } else {
