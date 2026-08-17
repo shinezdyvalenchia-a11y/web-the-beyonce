@@ -6,7 +6,7 @@
   <title>Galery Alcsta48 - UNO Omega Card | The Beyonce 48</title>
   <link rel="icon" href="../icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800;900&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <script src="../config.js?v=12.0"></script>
+  <script src="../config.js?v=14.0"></script>
   <style>
     :root {
       --primary: #ec4899;
@@ -272,7 +272,7 @@
     .chat-input { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 10px; padding: 8px 12px; color: #fff; font-size: 13px; outline: none; }
     .btn-chat-send { background: var(--accent); border: none; color: #000; font-weight: 800; padding: 8px 14px; border-radius: 10px; cursor: pointer; }
 
-    /* === 2.5D GAME ARENA === */
+    /* === 2.5D GAME ARENA WITH TWINKLING STARDUST === */
     #game-arena {
       display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
       overflow: hidden; z-index: 2000; background-color: #000;
@@ -282,15 +282,17 @@
       background-image: url('last - Copy.jpg'), url('bg_arena.jpg'), url('bg.jpg');
       background-size: cover; background-position: center; z-index: 0;
     }
-    .plane-container { position: absolute; inset: 0; z-index: 10; pointer-events: none; overflow: hidden; }
-    .css-plane { position: absolute; font-size: 28px; opacity: 0.8; animation: flyPlane linear infinite; }
-    .plane-1 { top: 15%; animation-duration: 22s; animation-delay: 0s; }
-    .plane-2 { top: 30%; animation-duration: 28s; animation-delay: 6s; }
-    .plane-3 { top: 45%; animation-duration: 25s; animation-delay: 12s; }
-    @keyframes flyPlane {
-      0% { left: -10%; transform: translateY(0px) rotate(15deg) scale(0.6); }
-      50% { transform: translateY(-40px) rotate(10deg) scale(0.8); }
-      100% { left: 110%; transform: translateY(20px) rotate(20deg) scale(0.6); }
+    
+    /* TWINKLING STARDUST AMBIENT PARTICLES */
+    .stardust-layer { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+    .star-dot {
+      position: absolute; border-radius: 50%; background: #fff;
+      box-shadow: 0 0 10px #fff, 0 0 20px var(--accent);
+      animation: twinklePulse var(--dur, 3s) infinite alternate ease-in-out;
+    }
+    @keyframes twinklePulse {
+      0% { opacity: 0.15; transform: scale(0.6); }
+      100% { opacity: 0.95; transform: scale(1.3); }
     }
 
     .table-viewport {
@@ -352,7 +354,7 @@
       font-size: 11px; font-weight: 800; color: #fff; text-shadow: 0 2px 4px #000;
     }
 
-    /* OPPONENTS HUD WITH FAN OF CARD BACKS */
+    /* OPPONENTS HUD WITH BLOCK / SKIP EMOTE BADGE & CARD BACKS */
     .hud-layer { position: absolute; inset: 0; z-index: 30; pointer-events: none; }
     .hud-player {
       position: absolute; pointer-events: auto; display: flex; flex-direction: column; align-items: center;
@@ -363,12 +365,20 @@
     .hud-top { top: 15px; left: 50%; transform: translateX(-50%); }
     .hud-left { top: 40%; left: 20px; transform: translateY(-50%); }
     .hud-right { top: 40%; right: 20px; transform: translateY(-50%); }
-    .hud-header-row { display: flex; align-items: center; gap: 10px; }
+    .hud-header-row { display: flex; align-items: center; gap: 10px; position: relative; }
     .hud-avatar-box { position: relative; width: 44px; height: 44px; }
     .hud-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
     .hud-border { position: absolute; inset: -6px; width: 56px; height: 56px; pointer-events: none; z-index: 2; }
     .hud-info { font-size: 13px; text-align: left; }
     
+    .hud-action-badge {
+      position: absolute; top: -18px; left: 50%; transform: translateX(-50%) scale(0);
+      background: #ef4444; color: #fff; font-size: 14px; font-weight: 900;
+      padding: 4px 10px; border-radius: 20px; border: 2px solid #fff;
+      box-shadow: 0 0 20px #ef4444; z-index: 30; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .hud-action-badge.show { transform: translateX(-50%) scale(1); }
+
     /* OPPONENT HAND OF CARD BACKS */
     .opponent-cards-fan {
       display: flex; gap: -14px; margin-top: 6px; justify-content: center;
@@ -393,9 +403,7 @@
     }
     .hand-carousel::-webkit-scrollbar { display: none; }
 
-    /* ========================================================================= */
-    /* REAL UNO CARD DESIGN & HOLOGRAPHIC SHIMMER OVERLAY                       */
-    /* ========================================================================= */
+    /* REAL UNO CARD DESIGN & HOLOGRAPHIC SHIMMER OVERLAY */
     .uno-card {
       width: 105px; height: 155px; border-radius: 14px;
       position: relative; cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -449,14 +457,12 @@
     .card-corner-top { top: 5px; left: 7px; }
     .card-corner-bot { bottom: 5px; right: 7px; transform: rotate(180deg); }
 
-    .card-thrown {
+    .card-thrown, .card-flying-draw {
       position: fixed !important; pointer-events: none !important; z-index: 9999 !important;
-      transition: all 0.55s cubic-bezier(0.22, 1, 0.36, 1) !important;
+      transition: all 0.55s cubic-bezier(0.16, 1, 0.3, 1) !important;
     }
 
-    /* ========================================================================= */
-    /* MASTER ULTRA VFX ENGINE (PARTICLES, ML TRAILS, WINGS, RINGS, BLOOMS)      */
-    /* ========================================================================= */
+    /* MASTER VFX OVERLAYS */
     #vfx-overlay {
       position: fixed; inset: 0; pointer-events: none; z-index: 4000;
       opacity: 0; transition: opacity 0.3s;
@@ -621,7 +627,7 @@
       <div id="viewSkinEquip">
         <div class="gallery-header-box">
           <div class="gallery-title">Galery Alcsta48 - UNO Omega Card</div>
-          <div class="gallery-sub"><strong>1 Member = Tepat 1 Kartu UNO</strong> sesuai data Excel resmi. Setiap 1 member hanya dapat memasang 1 varian skin aktif. Skin yang dimiliki tampil berwarna penuh dan dapat dipasang di arena!</div>
+          <div class="gallery-sub"><strong>1 Member = Tepat 1 Kartu UNO</strong> sesuai data Excel resmi. Termasuk seluruh tier: <strong>Omega Spesial, Full Color, Prime, SSK Omega, Mythic, Legend, Rare, dan Trainee</strong>.</div>
         </div>
 
         <div class="skin-filter-bar">
@@ -683,15 +689,12 @@
 
   </div>
 
-  <!-- 3. 2.5D GAME ARENA -->
+  <!-- 3. 2.5D GAME ARENA WITH AMBIENT TWINKLING STARDUST -->
   <div id="game-arena">
     <div class="arena-bg"></div>
 
-    <div class="plane-container">
-      <div class="css-plane plane-1">&#9992;&#65039;</div>
-      <div class="css-plane plane-2">&#9992;&#65039;</div>
-      <div class="css-plane plane-3">&#9992;&#65039;</div>
-    </div>
+    <!-- TWINKLING STARDUST PARTICLES -->
+    <div class="stardust-layer" id="stardustContainer"></div>
 
     <!-- 16-SECOND TURN TIMER BAR -->
     <div class="turn-timer-container">
@@ -705,7 +708,7 @@
         <div class="stack-badge" id="tableStackBadge" style="display:none;">&#128293; +4 STACK!</div>
 
         <!-- DRAW PILE (DECK) -->
-        <div class="deck-pile draw-deck" onclick="userDrawCard()" title="Ambil Kartu">
+        <div class="deck-pile draw-deck" id="drawDeckPile" onclick="userDrawCard()" title="Ambil Kartu">
           <div style="font-size: 24px; font-family: 'Arial Black', sans-serif;">UNO</div>
           <div style="font-size: 11px; margin-top: 4px; font-weight: 800;">DRAW (<span id="drawCount">108</span>)</div>
         </div>
@@ -715,11 +718,12 @@
       </div>
     </div>
 
-    <!-- PLAYER HUDS WITH OPPONENT CARD FANS -->
+    <!-- PLAYER HUDS WITH OPPONENT CARD FANS & SKIP/BLOCK BADGE -->
     <div class="hud-layer">
       <!-- Top Opponent -->
       <div class="hud-player hud-top" id="hudTop">
         <div class="hud-header-row">
+          <div class="hud-action-badge" id="badgeTop">🚫 SKIP!</div>
           <div class="hud-avatar-box">
             <img src="../icon.png" class="hud-avatar" id="avatarTop" alt="avatar">
             <img src="" class="hud-border" id="borderTop" style="display:none;">
@@ -735,6 +739,7 @@
       <!-- Left Opponent -->
       <div class="hud-player hud-left" id="hudLeft">
         <div class="hud-header-row">
+          <div class="hud-action-badge" id="badgeLeft">🚫 SKIP!</div>
           <div class="hud-avatar-box">
             <img src="../icon.png" class="hud-avatar" id="avatarLeft" alt="avatar">
             <img src="" class="hud-border" id="borderLeft" style="display:none;">
@@ -750,6 +755,7 @@
       <!-- Right Opponent -->
       <div class="hud-player hud-right" id="hudRight">
         <div class="hud-header-row">
+          <div class="hud-action-badge" id="badgeRight">🚫 SKIP!</div>
           <div class="hud-avatar-box">
             <img src="../icon.png" class="hud-avatar" id="avatarRight" alt="avatar">
             <img src="" class="hud-border" id="borderRight" style="display:none;">
@@ -863,7 +869,6 @@
   </div>
 
   <script>
-    // ===== CONFIG & HELPER IDENTIK BERANDA & KOLEKSI KARTU =====
     const CORE_BACKEND_URL = (typeof getApiUrl === "function") 
       ? getApiUrl("core") 
       : "https://shinezzzz-gokgokgogkgokgok.hf.space";
@@ -911,7 +916,7 @@
     let currentMemberFilter = 'all';
 
     // =========================================================================
-    // 78-MEMBER STRICT 1-TO-1 UNO MASTER ROSTER (MATCHING EXCEL EXACTLY)
+    // 78-MEMBER STRICT 1-TO-1 UNO MASTER ROSTER
     // =========================================================================
     const MASTER_UNO_REGISTRY = {
       // 1. Wild Extreme Boss Cards (10 Members)
@@ -1011,8 +1016,149 @@
     };
 
     // =========================================================================
-    // SKIN METADATA WITH FULL COLOR & JIKOS
+    // COMPLETE SKIN DICTIONARY (OMEGA SPESIAL, FULL COLOR, PRIME, SSK OMEGA, ETC)
     // =========================================================================
+    const ALL_SKINS_BY_MEMBER = {
+      "ANGELINA_CHRISTY": [
+        { code: "DKTY", name: "Dedek Kitty (Spesial)", tier: "Omega Spesial", file: "DKTY.jpg", isSpecial: true },
+        { code: "FCHR", name: "Full Color: Christy", tier: "Omega Spesial", file: "FCHR.jpg", isFullColor: true },
+        { code: "PCHR", name: "Prime: Christy", tier: "Omega Spesial", file: "PCHR.jpg", isPrime: true },
+        { code: "SCHR", name: "SSK: Angelina Christy", tier: "Omega", file: "SCHR.jpg", isSSK: true },
+        { code: "ANGELINA_CHRISTY_MYTH", name: "My Passion: Christy", tier: "Mythic", file: "ANGELINA_CHRISTY_MYTH.jpg" },
+        { code: "ANGELINA_CHRISTY_LEGEND", name: "Cosmos: Christy", tier: "Legend", file: "ANGELINA_CHRISTY_LEGEND.jpg" },
+        { code: "ANGELINA_CHRISTY_RARE", name: "Snow & Gold: Christy", tier: "Rare", file: "ANGELINA_CHRISTY_RARE.jpg" },
+        { code: "ANGELINA_CHRISTY_UNCOMMON", name: "Trainee: Christy (Default)", tier: "Uncommon", file: "ANGELINA_CHRISTY_UNCOMMON.jpg" }
+      ],
+      "SHANI_INDIRA": [
+        { code: "CSHN", name: "Ci Shani (Spesial)", tier: "Omega Spesial", file: "CSHN.jpg", isSpecial: true },
+        { code: "FSHN", name: "Full Color: Shani", tier: "Omega Spesial", file: "FSHN.jpg", isFullColor: true },
+        { code: "SHANI_INDIRA_MYTH", name: "Last Dress: Shani", tier: "Mythic", file: "SHANI_INDIRA_MYTH.jpg" },
+        { code: "SHANI_INDIRA_LEGEND", name: "Cosmos: Shani", tier: "Legend", file: "SHANI_INDIRA_LEGEND.jpg" },
+        { code: "SHANI_INDIRA_RARE", name: "Snow & Gold: Shani", tier: "Rare", file: "SHANI_INDIRA_RARE.jpg" },
+        { code: "SHANI_INDIRA_UNCOMMON", name: "Trainee: Shani (Default)", tier: "Uncommon", file: "SHANI_INDIRA_UNCOMMON.jpg" }
+      ],
+      "SHANIA_GRACIA": [
+        { code: "CGRC", name: "Ci Gre (Spesial)", tier: "Omega Spesial", file: "CGRC.jpg", isSpecial: true },
+        { code: "FGRC", name: "Full Color: Gracia", tier: "Omega Spesial", file: "FGRC.jpg", isFullColor: true },
+        { code: "PGRC", name: "Prime: Gracia", tier: "Omega Spesial", file: "PGRC.jpg", isPrime: true },
+        { code: "SGRA", name: "SSK: Shania Gracia", tier: "Omega", file: "SGRA.jpg", isSSK: true },
+        { code: "SHANIA_GRACIA_MYTH", name: "Last Dress: Gracia", tier: "Mythic", file: "SHANIA_GRACIA_MYTH.jpg" },
+        { code: "SHANIA_GRACIA_LEGEND", name: "Cosmos: Gracia", tier: "Legend", file: "SHANIA_GRACIA_LEGEND.jpg" },
+        { code: "SHANIA_GRACIA_RARE", name: "Snow & Gold: Gracia", tier: "Rare", file: "SHANIA_GRACIA_RARE.jpg" },
+        { code: "SHANIA_GRACIA_UNCOMMON", name: "Trainee: Gracia (Default)", tier: "Uncommon", file: "SHANIA_GRACIA_UNCOMMON.jpg" }
+      ],
+      "FENI_FITRIYANTI": [
+        { code: "CFNI", name: "Ci Feni (Spesial)", tier: "Omega Spesial", file: "CFNI.jpg", isSpecial: true },
+        { code: "FFNI", name: "Full Color: Feni", tier: "Omega Spesial", file: "FFNI.jpg", isFullColor: true },
+        { code: "PFNI", name: "Prime: Feni", tier: "Omega Spesial", file: "PFNI.jpg", isPrime: true },
+        { code: "SFEN", name: "SSK: Feni Fitriyanti", tier: "Omega", file: "SFEN.jpg", isSSK: true },
+        { code: "FENI_FITRIYANTI_MYTH", name: "My Passion: Feni", tier: "Mythic", file: "FENI_FITRIYANTI_MYTH.jpg" },
+        { code: "FENI_FITRIYANTI_LEGEND", name: "Cosmos: Feni", tier: "Legend", file: "FENI_FITRIYANTI_LEGEND.jpg" },
+        { code: "FENI_FITRIYANTI_RARE", name: "Snow & Gold: Feni", tier: "Rare", file: "FENI_FITRIYANTI_RARE.jpg" },
+        { code: "FENI_FITRIYANTI_UNCOMMON", name: "Trainee: Feni (Default)", tier: "Uncommon", file: "FENI_FITRIYANTI_UNCOMMON.jpg" }
+      ],
+      "HELISMA_PUTRI": [
+        { code: "CELI", name: "Ci Eli (Spesial)", tier: "Omega Spesial", file: "CELI.jpg", isSpecial: true },
+        { code: "SELI", name: "SSK: Helisma Putri", tier: "Omega", file: "SELI.jpg", isSSK: true },
+        { code: "HELISMA_PUTRI_MYTH", name: "High Dream: Eli", tier: "Mythic", file: "HELISMA_PUTRI_MYTH.jpg" },
+        { code: "HELISMA_PUTRI_LEGEND", name: "Cosmos: Eli", tier: "Legend", file: "HELISMA_PUTRI_LEGEND.jpg" },
+        { code: "HELISMA_PUTRI_RARE", name: "Snow & Gold: Eli", tier: "Rare", file: "HELISMA_PUTRI_RARE.jpg" },
+        { code: "HELISMA_PUTRI_UNCOMMON", name: "Trainee: Eli (Default)", tier: "Uncommon", file: "HELISMA_PUTRI_UNCOMMON.jpg" }
+      ],
+      "AZIZI_ASSADEL": [
+        { code: "FAAZ", name: "Full Color: Zee", tier: "Omega Spesial", file: "FAAZ.jpg", isFullColor: true },
+        { code: "AZIZI_ASSADEL_MYTH", name: "Last Dress: Zee", tier: "Mythic", file: "AZIZI_ASSADEL_MYTH.jpg" },
+        { code: "AZIZI_ASSADEL_LEGEND", name: "Cosmos: Zee", tier: "Legend", file: "AZIZI_ASSADEL_LEGEND.jpg" },
+        { code: "AZIZI_ASSADEL_RARE", name: "Snow & Gold: Zee", tier: "Rare", file: "AZIZI_ASSADEL_RARE.jpg" },
+        { code: "AZIZI_ASSADEL_UNCOMMON", name: "Trainee: Zee (Default)", tier: "Uncommon", file: "AZIZI_ASSADEL_UNCOMMON.jpg" }
+      ],
+      "MARSHA_LENATHEA": [
+        { code: "FMAR", name: "Full Color: Marsha", tier: "Omega Spesial", file: "FMAR.jpg", isFullColor: true },
+        { code: "PMSH", name: "Prime: Marsha", tier: "Omega Spesial", file: "PMSH.jpg", isPrime: true },
+        { code: "SMAR", name: "SSK: Marsha Lenathea", tier: "Omega", file: "SMAR.jpg", isSSK: true },
+        { code: "MARSHA_LENATHEA_MYTH", name: "High Dream: Marsha", tier: "Mythic", file: "MARSHA_LENATHEA_MYTH.jpg" },
+        { code: "MARSHA_LENATHEA_LEGEND", name: "Cosmos: Marsha", tier: "Legend", file: "MARSHA_LENATHEA_LEGEND.jpg" },
+        { code: "MARSHA_LENATHEA_RARE", name: "Snow & Gold: Marsha", tier: "Rare", file: "MARSHA_LENATHEA_RARE.jpg" },
+        { code: "MARSHA_LENATHEA_UNCOMMON", name: "Trainee: Marsha (Default)", tier: "Uncommon", file: "MARSHA_LENATHEA_UNCOMMON.jpg" }
+      ],
+      "FIONY_ALVERIA": [
+        { code: "FFIO", name: "Full Color: Fiony", tier: "Omega Spesial", file: "FFIO.jpg", isFullColor: true },
+        { code: "PFNY", name: "Prime: Fiony", tier: "Omega Spesial", file: "PFNY.jpg", isPrime: true },
+        { code: "SFIO", name: "SSK: Fiony Alveria", tier: "Omega", file: "SFIO.jpg", isSSK: true },
+        { code: "FIONY_ALVERIA_MYTH", name: "Love War: Fiony", tier: "Mythic", file: "FIONY_ALVERIA_MYTH.jpg" },
+        { code: "FIONY_ALVERIA_LEGEND", name: "Cosmos: Fiony", tier: "Legend", file: "FIONY_ALVERIA_LEGEND.jpg" },
+        { code: "FIONY_ALVERIA_RARE", name: "Snow & Gold: Fiony", tier: "Rare", file: "FIONY_ALVERIA_RARE.jpg" },
+        { code: "FIONY_ALVERIA_UNCOMMON", name: "Trainee: Fiony (Default)", tier: "Uncommon", file: "FIONY_ALVERIA_UNCOMMON.jpg" }
+      ],
+      "YESICA_TAMARA": [
+        { code: "FCHK", name: "Full Color: Chika", tier: "Omega Spesial", file: "FCHK.jpg", isFullColor: true },
+        { code: "YESICA_TAMARA_MYTH", name: "Last Dress: Chika", tier: "Mythic", file: "YESICA_TAMARA_MYTH.jpg" },
+        { code: "YESICA_TAMARA_LEGEND", name: "Cosmos: Chika", tier: "Legend", file: "YESICA_TAMARA_LEGEND.jpg" },
+        { code: "YESICA_TAMARA_RARE", name: "Snow & Gold: Chika", tier: "Rare", file: "YESICA_TAMARA_RARE.jpg" },
+        { code: "YESICA_TAMARA_UNCOMMON", name: "Trainee: Chika (Default)", tier: "Uncommon", file: "YESICA_TAMARA_UNCOMMON.jpg" }
+      ],
+      "JINAN": [
+        { code: "FJIN", name: "Full Color: Jinan", tier: "Omega Spesial", file: "FJIN.jpg", isFullColor: true },
+        { code: "JINAN_UNCOMMON", name: "Trainee: Jinan (Default)", tier: "Uncommon", file: "JINAN_UNCOMMON.jpg" }
+      ],
+      "FREYA_JAYAWARDANA": [
+        { code: "PFYR", name: "Prime: Freya", tier: "Omega Spesial", file: "PFYR.jpg", isPrime: true },
+        { code: "SFRE", name: "SSK: Freya Jayawardana", tier: "Omega", file: "SFRE.jpg", isSSK: true },
+        { code: "FREYA_JAYAWARDANA_MYTH", name: "High Dream: Freya", tier: "Mythic", file: "FREYA_JAYAWARDANA_MYTH.jpg" },
+        { code: "FREYA_JAYAWARDANA_LEGEND", name: "Cosmos: Freya", tier: "Legend", file: "FREYA_JAYAWARDANA_LEGEND.jpg" },
+        { code: "FREYA_JAYAWARDANA_RARE", name: "Snow & Gold: Freya", tier: "Rare", file: "FREYA_JAYAWARDANA_RARE.jpg" },
+        { code: "FREYA_JAYAWARDANA_UNCOMMON", name: "Trainee: Freya (Default)", tier: "Uncommon", file: "FREYA_JAYAWARDANA_UNCOMMON.jpg" }
+      ],
+      "GITA_SEKAR": [
+        { code: "PGTS", name: "Prime: Gita", tier: "Omega Spesial", file: "PGTS.jpg", isPrime: true },
+        { code: "SGIT", name: "SSK: Gita Sekar", tier: "Omega", file: "SGIT.jpg", isSSK: true },
+        { code: "GITA_SEKAR_MYTH", name: "High Dream: Gita", tier: "Mythic", file: "GITA_SEKAR_MYTH.jpg" },
+        { code: "GITA_SEKAR_LEGEND", name: "Cosmos: Gita", tier: "Legend", file: "GITA_SEKAR_LEGEND.jpg" },
+        { code: "GITA_SEKAR_RARE", name: "Snow & Gold: Gita", tier: "Rare", file: "GITA_SEKAR_RARE.jpg" },
+        { code: "GITA_SEKAR_UNCOMMON", name: "Trainee: Gita (Default)", tier: "Uncommon", file: "GITA_SEKAR_UNCOMMON.jpg" }
+      ],
+      "LULU_SALSABILA": [
+        { code: "PLLU", name: "Prime: Lulu", tier: "Omega Spesial", file: "PLLU.jpg", isPrime: true },
+        { code: "SLUL", name: "SSK: Lulu Salsabila", tier: "Omega", file: "SLUL.jpg", isSSK: true },
+        { code: "LULU_SALSABILA_MYTH", name: "My Passion: Lulu", tier: "Mythic", file: "LULU_SALSABILA_MYTH.jpg" },
+        { code: "LULU_SALSABILA_LEGEND", name: "Cosmos: Lulu", tier: "Legend", file: "LULU_SALSABILA_LEGEND.jpg" },
+        { code: "LULU_SALSABILA_RARE", name: "Snow & Gold: Lulu", tier: "Rare", file: "LULU_SALSABILA_RARE.jpg" },
+        { code: "LULU_SALSABILA_UNCOMMON", name: "Trainee: Lulu (Default)", tier: "Uncommon", file: "LULU_SALSABILA_UNCOMMON.jpg" }
+      ],
+      "CORNELIA_VANISA": [
+        { code: "PONL", name: "Prime: Oniel", tier: "Omega Spesial", file: "PONL.jpg", isPrime: true },
+        { code: "SONI", name: "SSK: Cornelia Vanisa", tier: "Omega", file: "SONI.jpg", isSSK: true },
+        { code: "CORNELIA_VANISA_MYTH", name: "My Passion: Oniel", tier: "Mythic", file: "CORNELIA_VANISA_MYTH.jpg" },
+        { code: "CORNELIA_VANISA_LEGEND", name: "Cosmos: Oniel", tier: "Legend", file: "CORNELIA_VANISA_LEGEND.jpg" },
+        { code: "CORNELIA_VANISA_RARE", name: "Snow & Gold: Oniel", tier: "Rare", file: "CORNELIA_VANISA_RARE.jpg" },
+        { code: "CORNELIA_VANISA_UNCOMMON", name: "Trainee: Oniel (Default)", tier: "Uncommon", file: "CORNELIA_VANISA_UNCOMMON.jpg" }
+      ],
+      "AURELLIA_LIA": [
+        { code: "PLAI", name: "Prime: Aurelia", tier: "Omega Spesial", file: "PLAI.jpg", isPrime: true },
+        { code: "SLIA", name: "SSK: Aurellia", tier: "Omega", file: "SLIA.jpg", isSSK: true },
+        { code: "AURELLIA_LIA_MYTH", name: "Love War: Lia", tier: "Mythic", file: "AURELLIA_LIA_MYTH.jpg" },
+        { code: "AURELLIA_LIA_LEGEND", name: "Cosmos: Lia", tier: "Legend", file: "AURELLIA_LIA_LEGEND.jpg" },
+        { code: "AURELLIA_LIA_RARE", name: "Snow & Gold: Lia", tier: "Rare", file: "AURELLIA_LIA_RARE.jpg" },
+        { code: "AURELLIA_LIA_UNCOMMON", name: "Trainee: Lia (Default)", tier: "Uncommon", file: "AURELLIA_LIA_UNCOMMON.jpg" }
+      ],
+      "JESSICA_CHANDRA": [
+        { code: "PJCC", name: "Prime: Jessi", tier: "Omega Spesial", file: "PJCC.jpg", isPrime: true },
+        { code: "SJES", name: "SSK: Jessica Chandra", tier: "Omega", file: "SJES.jpg", isSSK: true },
+        { code: "JESSICA_CHANDRA_MYTH", name: "My Passion: Jessi", tier: "Mythic", file: "JESSICA_CHANDRA_MYTH.jpg" },
+        { code: "JESSICA_CHANDRA_LEGEND", name: "Cosmos: Jessi", tier: "Legend", file: "JESSICA_CHANDRA_LEGEND.jpg" },
+        { code: "JESSICA_CHANDRA_RARE", name: "Snow & Gold: Jessi", tier: "Rare", file: "JESSICA_CHANDRA_RARE.jpg" },
+        { code: "JESSICA_CHANDRA_UNCOMMON", name: "Trainee: Jessi (Default)", tier: "Uncommon", file: "JESSICA_CHANDRA_UNCOMMON.jpg" }
+      ],
+      "MUTIARA_AZZAHRA": [
+        { code: "PMUT", name: "Prime: Muthe", tier: "Omega Spesial", file: "PMUT.jpg", isPrime: true },
+        { code: "SMUT", name: "SSK: Mutiara Azzahra", tier: "Omega", file: "SMUT.jpg", isSSK: true },
+        { code: "MUTIARA_AZZAHRA_MYTH", name: "My Passion: Muthe", tier: "Mythic", file: "MUTIARA_AZZAHRA_MYTH.jpg" },
+        { code: "MUTIARA_AZZAHRA_LEGEND", name: "Cosmos: Muthe", tier: "Legend", file: "MUTIARA_AZZAHRA_LEGEND.jpg" },
+        { code: "MUTIARA_AZZAHRA_RARE", name: "Snow & Gold: Muthe", tier: "Rare", file: "MUTIARA_AZZAHRA_RARE.jpg" },
+        { code: "MUTIARA_AZZAHRA_UNCOMMON", name: "Trainee: Muthe (Default)", tier: "Uncommon", file: "MUTIARA_AZZAHRA_UNCOMMON.jpg" }
+      ]
+    };
+
     const FULL_COLOR_PALETTES = {
       "FAAZ": { color: "#ff4757", name: "Zee", jiko: "Si gadis tomboy yang semangatnya meletup-letup. Halo semuanya, aku Zee!" },
       "FFNI": { color: "#f1c40f", name: "Feni", jiko: "Matahari yang indah yang akan selalu memberikan kehangatan setiap harinya. Halo, aku Feni!" },
@@ -1049,7 +1195,7 @@
     };
 
     // =========================================================================
-    // WEB AUDIO API AUTHENTIC UNO SOUND SYNTHESIZER
+    // MODERN ESPORTS WEB AUDIO SYNTHESIZER
     // =========================================================================
     let audioCtx = null;
     function getAudioContext() {
@@ -1063,17 +1209,27 @@
     function sfxCardPlay() {
       try {
         const ctx = getAudioContext();
+        // Layer 1: Air whoosh
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(450, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.12);
-        gain.gain.setValueAtTime(0.3, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.12);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.14);
+        gain.gain.setValueAtTime(0.35, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.14);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(); osc.stop(ctx.currentTime + 0.14);
+
+        // Layer 2: Crisp card slap
+        const slap = ctx.createOscillator();
+        const slapGain = ctx.createGain();
+        slap.type = 'triangle';
+        slap.frequency.setValueAtTime(320, ctx.currentTime + 0.04);
+        slap.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.14);
+        slapGain.gain.setValueAtTime(0.4, ctx.currentTime + 0.04);
+        slapGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.14);
+        slap.connect(slapGain); slapGain.connect(ctx.destination);
+        slap.start(ctx.currentTime + 0.04); slap.stop(ctx.currentTime + 0.14);
       } catch(e) {}
     }
 
@@ -1083,31 +1239,40 @@
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(220, ctx.currentTime);
-        osc.frequency.linearRampToValueAtTime(360, ctx.currentTime + 0.08);
-        gain.gain.setValueAtTime(0.2, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.08);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.08);
+        osc.frequency.setValueAtTime(180, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(420, ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.25, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(); osc.stop(ctx.currentTime + 0.12);
       } catch(e) {}
     }
 
     function sfxWildExplosion() {
       try {
         const ctx = getAudioContext();
+        // Sub-bass impact
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(120, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.4);
-        gain.gain.setValueAtTime(0.5, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.4);
+        osc.frequency.setValueAtTime(140, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 0.5);
+        gain.gain.setValueAtTime(0.6, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(); osc.stop(ctx.currentTime + 0.5);
+
+        // Shimmer chime
+        [880, 1174.66, 1760].forEach((freq, i) => {
+          const chime = ctx.createOscillator();
+          const chimeGain = ctx.createGain();
+          chime.type = 'sine';
+          chime.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.08);
+          chimeGain.gain.setValueAtTime(0.2, ctx.currentTime + i * 0.08);
+          chimeGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.08 + 0.35);
+          chime.connect(chimeGain); chimeGain.connect(ctx.destination);
+          chime.start(ctx.currentTime + i * 0.08); chime.stop(ctx.currentTime + i * 0.08 + 0.35);
+        });
       } catch(e) {}
     }
 
@@ -1119,12 +1284,10 @@
           const gain = ctx.createGain();
           osc.type = 'sine';
           osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.06);
-          gain.gain.setValueAtTime(0.25, ctx.currentTime + i * 0.06);
-          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.06 + 0.2);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(ctx.currentTime + i * 0.06);
-          osc.stop(ctx.currentTime + i * 0.06 + 0.2);
+          gain.gain.setValueAtTime(0.3, ctx.currentTime + i * 0.06);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.06 + 0.25);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + i * 0.06); osc.stop(ctx.currentTime + i * 0.06 + 0.25);
         });
       } catch(e) {}
     }
@@ -1238,7 +1401,7 @@
       }
     }
 
-    // ===== RENDER MEMBER-GROUPED SKIN COLLECTION =====
+    // ===== RENDER MEMBER-GROUPED SKIN COLLECTION WITH ALL OMEGA TIERS =====
     function renderMemberSkins() {
       const container = document.getElementById('memberGroupContainer');
       const search = (document.getElementById('skinSearch').value || '').toLowerCase();
@@ -1246,6 +1409,13 @@
       const uniqueMembersMap = {};
       Object.values(MASTER_UNO_REGISTRY).forEach(c => {
         if (!uniqueMembersMap[c.key]) {
+          const skinList = ALL_SKINS_BY_MEMBER[c.key] || [
+            { code: `${c.key}_LEGEND`, name: `${c.member.split(' ')[0]} Cosmos`, tier: 'Legend', file: `${c.key}_LEGEND.jpg` },
+            { code: `${c.key}_MYTH`, name: `${c.member.split(' ')[0]} Mythic`, tier: 'Mythic', file: `${c.key}_MYTH.jpg` },
+            { code: `${c.key}_RARE`, name: `${c.member.split(' ')[0]} Snow & Gold`, tier: 'Rare', file: `${c.key}_RARE.jpg` },
+            { code: `${c.key}_UNCOMMON`, name: `${c.member.split(' ')[0]} Trainee (Default)`, tier: 'Uncommon', file: c.photo }
+          ];
+
           uniqueMembersMap[c.key] = {
             key: c.key,
             name: c.member,
@@ -1253,12 +1423,7 @@
             cardTitle: `Kartu: ${c.color.toUpperCase()} [${c.display}]`,
             type: c.type,
             avatar: `../skin/${c.photo}`,
-            skins: [
-              { code: `${c.key}_LEGEND`, name: `${c.member.split(' ')[0]} Cosmos`, tier: 'Legend', file: `${c.key}_LEGEND.jpg` },
-              { code: `${c.key}_MYTH`, name: `${c.member.split(' ')[0]} Mythic`, tier: 'Mythic', file: `${c.key}_MYTH.jpg` },
-              { code: `${c.key}_RARE`, name: `${c.member.split(' ')[0]} Snow & Gold`, tier: 'Rare', file: `${c.key}_RARE.jpg` },
-              { code: `${c.key}_UNCOMMON`, name: `${c.member.split(' ')[0]} Trainee (Default)`, tier: 'Uncommon', file: c.photo }
-            ]
+            skins: skinList
           };
         }
       });
@@ -1284,7 +1449,9 @@
                           userInventory.has(`CHAT_${s.code.toUpperCase()}`);
           
           let thumbSrc = isOwned ? `../skin/${s.file}` : `../skin/${s.file.replace('.jpg', '_grey.jpg')}`;
-          let isGrey = !isOwned;
+          if (s.code.length === 4) {
+            thumbSrc = isOwned ? `../skin_jpg/${s.code}.jpg` : `../skin_grey/${s.code}_grey.jpg`;
+          }
 
           let actionBtn = '';
           if (isActive) {
@@ -1297,7 +1464,7 @@
 
           return `
             <div class="skin-variant-card ${isActive ? 'active-skin' : ''}">
-              <img src="${thumbSrc}" class="skin-variant-thumb ${isGrey ? 'card-grey-filter' : ''}" onerror="this.src='../skin/ANGELINA_CHRISTY_UNCOMMON.jpg'" alt="${s.name}">
+              <img src="${thumbSrc}" class="skin-variant-thumb ${!isOwned ? 'card-grey-filter' : ''}" onerror="this.src='../skin/ANGELINA_CHRISTY_UNCOMMON.jpg'" alt="${s.name}">
               <div class="skin-variant-name" title="${s.name}">${s.name}</div>
               <div class="skin-variant-tier">${s.tier}</div>
               ${actionBtn}
@@ -1655,7 +1822,6 @@
     function autoPlayOnTimeout() {
       if (activeRoom && activeRoom.status === 'playing') {
         if (activeRoom.current_turn_idx === 0) {
-          // Find first playable card
           const me = activeRoom.players[0];
           const top = activeRoom.top_card;
           let playable = me.hand.filter(c => c.color === 'wild' || c.type === 'wild' || c.color === activeRoom.current_color || (top && c.value === top.value));
@@ -1710,7 +1876,6 @@
           document.getElementById(avatarPositions[i]).src = opp.avatar || DEFAULT_TEMPLATE_PP;
           hudEl.classList.toggle('active-turn', activeRoom.current_turn_idx === (i + 1));
 
-          // Render overlapping fan of card backs
           const fanEl = document.getElementById(fanPositions[i]);
           let fanHtml = '';
           const showCount = Math.min(count, 8);
@@ -1755,12 +1920,10 @@
       let isHolo = false;
       let mediaHtml = '';
 
-      // Check if equipped skin is Omega / Mythic / Legend for Holographic Effect
       if (equippedCode.length === 4 || equippedCode.includes('MYTH') || equippedCode.includes('LEGEND')) {
         isHolo = true;
       }
 
-      // Check if there is an animated video preview in gacha-skin/ for this skin
       if (equippedCode.length === 4) {
         mediaHtml = `<video src="../gacha-skin/preview_${equippedCode}.webm" autoplay loop muted playsinline class="card-member-video" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"></video>
                      <img src="../skin_jpg/${equippedCode}.jpg" class="card-member-photo" style="display:none;" onerror="this.src='../skin/${card.photo || 'ANGELINA_CHRISTY_UNCOMMON.jpg'}'">`;
@@ -1785,6 +1948,38 @@
           <div class="card-corner card-corner-bot">${displayVal}</div>
         </div>
       `;
+    }
+
+    // ===== CARD DRAW FLIGHT ANIMATION FROM DECK =====
+    function animateCardDrawFlight(targetElement, onComplete) {
+      sfxDrawCard();
+      const deckEl = document.getElementById('drawDeckPile');
+      if (!deckEl || !targetElement) {
+        if (onComplete) onComplete();
+        return;
+      }
+
+      const deckRect = deckEl.getBoundingClientRect();
+      const targetRect = targetElement.getBoundingClientRect();
+
+      const flyingCard = document.createElement('div');
+      flyingCard.className = 'mini-card-back card-flying-draw';
+      flyingCard.style.left = (deckRect.left + 20) + 'px';
+      flyingCard.style.top = (deckRect.top + 30) + 'px';
+      flyingCard.style.transform = 'scale(1.2)';
+      document.body.appendChild(flyingCard);
+
+      requestAnimationFrame(() => {
+        flyingCard.style.left = (targetRect.left + targetRect.width / 2 - 12) + 'px';
+        flyingCard.style.top = (targetRect.top + targetRect.height / 2 - 18) + 'px';
+        flyingCard.style.transform = 'scale(0.8) rotate(15deg)';
+        flyingCard.style.opacity = '0.5';
+      });
+
+      setTimeout(() => {
+        flyingCard.remove();
+        if (onComplete) onComplete();
+      }, 550);
     }
 
     // ===== USER TURN ACTIONS & ANIMATIONS =====
@@ -1847,7 +2042,7 @@
           // Trigger Landing Explosion & Special Props
           triggerSkinLandingVFX(card, equippedCode);
 
-          applyCardRules(card, me);
+          applyCardRules(card, me, 0);
 
           // Check win
           if (me.hand.length === 0) {
@@ -1866,7 +2061,17 @@
       }
     }
 
-    function applyCardRules(card, player) {
+    function triggerHudBadge(playerIdx, text) {
+      const badgeIds = ['', 'badgeLeft', 'badgeTop', 'badgeRight'];
+      const badge = document.getElementById(badgeIds[playerIdx]);
+      if (badge) {
+        badge.textContent = text;
+        badge.classList.add('show');
+        setTimeout(() => badge.classList.remove('show'), 2000);
+      }
+    }
+
+    function applyCardRules(card, player, playerIdx) {
       const v = card.value;
       if (v === 'draw_2') activeRoom.pending_draw_count += 2;
       else if (v === 'draw_4') activeRoom.pending_draw_count += 4;
@@ -1877,6 +2082,10 @@
         activeRoom.pending_draw_count += 4;
       }
       else if (v === 'reverse') localTurnDirection *= -1;
+      else if (v === 'skip' || v === 'skip_everyone') {
+        const nextIdx = (playerIdx + 1) % activeRoom.players.length;
+        triggerHudBadge(nextIdx, '🚫 SKIP!');
+      }
       else if (v === 'discard_all') {
         player.hand = player.hand.filter(c => c.color !== card.color);
       }
@@ -1885,24 +2094,25 @@
     function userDrawCard() {
       if (activeRoom.current_turn_idx !== 0) return;
       const me = activeRoom.players[0];
+      const targetEl = document.getElementById('userHandZone');
 
-      sfxDrawCard();
-
-      if (activeRoom.pending_draw_count > 0) {
-        for (let i = 0; i < activeRoom.pending_draw_count; i++) {
+      animateCardDrawFlight(targetEl, () => {
+        if (activeRoom.pending_draw_count > 0) {
+          for (let i = 0; i < activeRoom.pending_draw_count; i++) {
+            if (localDeck.length === 0) localDeck = buildFullUnoDeck();
+            me.hand.push(localDeck.pop());
+          }
+          activeRoom.pending_draw_count = 0;
+          showToast(`Kamu menarik kartu penalti!`);
+        } else {
           if (localDeck.length === 0) localDeck = buildFullUnoDeck();
           me.hand.push(localDeck.pop());
+          showToast("Kamu menarik 1 kartu dari Draw Deck!");
         }
-        activeRoom.pending_draw_count = 0;
-        showToast(`Kamu menarik kartu penalti!`);
-      } else {
-        if (localDeck.length === 0) localDeck = buildFullUnoDeck();
-        me.hand.push(localDeck.pop());
-        showToast("Kamu menarik 1 kartu dari Draw Deck!");
-      }
 
-      renderArenaState();
-      triggerBotTurn();
+        renderArenaState();
+        triggerBotTurn();
+      });
     }
 
     // ===== BOT TURN AI ENGINE WITH FLIGHT ANIMATION FROM AVATAR =====
@@ -1961,14 +2171,14 @@
         playable = bot.hand.filter(c => c.color === 'wild' || c.type === 'wild' || c.color === activeRoom.current_color || (top && c.value === top.value));
       }
 
+      const hudPositions = ['hudLeft', 'hudTop', 'hudRight'];
+      const hudEl = document.getElementById(hudPositions[botIdx - 1]);
+
       if (playable.length > 0) {
         const chosen = playable[Math.floor(Math.random() * playable.length)];
         bot.hand = bot.hand.filter(c => c.id !== chosen.id);
         sfxCardPlay();
 
-        // Animate flying card from Bot's avatar to center table
-        const hudPositions = ['hudLeft', 'hudTop', 'hudRight'];
-        const hudEl = document.getElementById(hudPositions[botIdx - 1]);
         if (hudEl) {
           const rect = hudEl.getBoundingClientRect();
           const clone = document.createElement('div');
@@ -2000,7 +2210,7 @@
             }
 
             triggerSkinLandingVFX(chosen, botEquippedCode);
-            applyCardRules(chosen, bot);
+            applyCardRules(chosen, bot, botIdx);
             showToast(`${bot.name} melempar ${chosen.member} (${chosen.display})!`);
 
             if (bot.hand.length === 0) {
@@ -2023,21 +2233,22 @@
           callback();
         }
       } else {
-        sfxDrawCard();
-        if (activeRoom.pending_draw_count > 0) {
-          for (let i = 0; i < activeRoom.pending_draw_count; i++) {
+        animateCardDrawFlight(hudEl, () => {
+          if (activeRoom.pending_draw_count > 0) {
+            for (let i = 0; i < activeRoom.pending_draw_count; i++) {
+              if (localDeck.length === 0) localDeck = buildFullUnoDeck();
+              bot.hand.push(localDeck.pop());
+            }
+            showToast(`${bot.name} terkena +${activeRoom.pending_draw_count} penalti kartu!`);
+            activeRoom.pending_draw_count = 0;
+          } else {
             if (localDeck.length === 0) localDeck = buildFullUnoDeck();
             bot.hand.push(localDeck.pop());
+            showToast(`${bot.name} menarik 1 kartu.`);
           }
-          showToast(`${bot.name} terkena +${activeRoom.pending_draw_count} penalti kartu!`);
-          activeRoom.pending_draw_count = 0;
-        } else {
-          if (localDeck.length === 0) localDeck = buildFullUnoDeck();
-          bot.hand.push(localDeck.pop());
-          showToast(`${bot.name} menarik 1 kartu.`);
-        }
-        renderArenaState();
-        callback();
+          renderArenaState();
+          callback();
+        });
       }
     }
 
@@ -2067,7 +2278,7 @@
       const overlay = document.getElementById('vfx-overlay');
       overlay.style.opacity = '1';
 
-      let ribbonColor = 'rgba(0, 242, 254, 0.8)';
+      let ribbonColor = 'rgba(0, 242, 254, 0.85)';
       let particleColor = '#00f2fe';
       let particleType = 'sea_water';
 
@@ -2097,7 +2308,6 @@
         particleType = 'cosmos';
       }
 
-      // Add ML-style luminous ribbon trail segments
       trailRibbons.push({
         p1: { x: x1, y: y1 },
         p2: { x: (x1 + x2) / 2 + (Math.random() * 60 - 30), y: (y1 + y2) / 2 - 40 },
@@ -2107,7 +2317,6 @@
         width: 14
       });
 
-      // Generate 35 sparkling trail particles along the flight curve
       for (let i = 0; i < 35; i++) {
         const t = i / 35;
         const cx = (1 - t) * (1 - t) * x1 + 2 * (1 - t) * t * ((x1 + x2) / 2) + t * t * x2;
@@ -2257,7 +2466,6 @@
         if (!ctx) return;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Draw ML-Style Luminous Ribbon Trails
         for (let i = trailRibbons.length - 1; i >= 0; i--) {
           const r = trailRibbons[i];
           r.alpha -= 0.03;
@@ -2283,7 +2491,6 @@
           ctx.restore();
         }
 
-        // Draw Particles
         for (let i = particles.length - 1; i >= 0; i--) {
           const p = particles[i];
           p.x += p.vx;
@@ -2320,6 +2527,21 @@
       }
 
       loop();
+    }
+
+    function initStardustBackground() {
+      const container = document.getElementById('stardustContainer');
+      if (!container) return;
+      let html = '';
+      for (let i = 0; i < 45; i++) {
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+        const size = Math.random() * 3 + 1.5;
+        const dur = (Math.random() * 3 + 2).toFixed(1);
+        const delay = (Math.random() * 4).toFixed(1);
+        html += `<div class="star-dot" style="left:${x}%; top:${y}%; width:${size}px; height:${size}px; --dur:${dur}s; animation-delay:${delay}s;"></div>`;
+      }
+      container.innerHTML = html;
     }
 
     function sendChat() {
@@ -2383,6 +2605,7 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       initVFXCanvas();
+      initStardustBackground();
       loadCoreUserStatus();
       fetchEquippedSkinsFromPG();
       fetchLobbyRooms();
