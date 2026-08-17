@@ -696,6 +696,210 @@
       .uno-card { width: 85px; height: 130px; margin: 0 -14px; }
       .card-corner { font-size: 16px; }
     }
+    /* =========================================================================
+       SPECIFIC CSS KEYFRAMES & CLASSES FOR EACH TIER & SUB-TIER
+       ========================================================================= */
+
+    /* 1. TIER: OMEGA_SPESIAL (BASE / SPESIAL) */
+    .vfx-holy-white-trail {
+      filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 30px #00f2fe);
+      animation: holyAuraGleam 0.6s ease-in-out infinite alternate;
+    }
+    @keyframes holyAuraGleam {
+      0% { opacity: 0.8; filter: drop-shadow(0 0 10px #fff); }
+      100% { opacity: 1; filter: drop-shadow(0 0 25px #00f2fe) drop-shadow(0 0 40px #fff); }
+    }
+    .vfx-sea-water-particle {
+      color: #00f2fe; text-shadow: 0 0 12px #00f2fe, 0 0 20px #fff;
+      animation: waterSplashFloat 0.8s ease-out forwards;
+    }
+    @keyframes waterSplashFloat {
+      0% { transform: scale(0.5) translate(0, 0); opacity: 1; }
+      100% { transform: scale(1.4) translate(var(--tx, 10px), var(--ty, -20px)); opacity: 0; }
+    }
+    .vfx-birds-explosion {
+      animation: birdsFlyOut 1s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+    }
+    @keyframes birdsFlyOut {
+      0% { transform: scale(0.2); opacity: 1; }
+      100% { transform: scale(2.5); opacity: 0; }
+    }
+
+    /* 2. TIER: OMEGA_SPESIAL (FULL COLOR) */
+    .vfx-full-color-trail {
+      filter: drop-shadow(0 0 20px var(--flash-color, #ff4757));
+      animation: solidColorSwoosh 0.5s ease-in-out;
+    }
+    @keyframes solidColorSwoosh {
+      0% { opacity: 0.7; transform: scale(0.95); }
+      100% { opacity: 1; transform: scale(1.05); }
+    }
+
+    /* 3. TIER: OMEGA_SPESIAL (PRIME) */
+    .vfx-prime-gold-trail {
+      filter: drop-shadow(0 0 18px #ffd700) drop-shadow(0 0 35px #ffffff);
+      animation: primeGoldGleam 0.6s infinite alternate;
+    }
+    @keyframes primeGoldGleam {
+      0% { opacity: 0.85; filter: drop-shadow(0 0 12px #ffd700); }
+      100% { opacity: 1; filter: drop-shadow(0 0 28px #fff) drop-shadow(0 0 45px #ffd700); }
+    }
+    .vfx-rgb-burst {
+      animation: rgbBurstWave 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes rgbBurstWave {
+      0% { transform: scale(0.3); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.9; }
+      100% { transform: scale(2.8); opacity: 0; }
+    }
+
+    /* 4. TIER: OMEGA (SSK EDITION) */
+    .vfx-ssk-rainbow-trail {
+      filter: drop-shadow(0 0 25px rgba(168, 85, 247, 0.95)) drop-shadow(0 0 40px #ff007f);
+      animation: rainbowMeteor 0.8s linear infinite;
+    }
+    @keyframes rainbowMeteor {
+      0% { filter: drop-shadow(0 0 20px #ff007f) drop-shadow(0 0 35px #00d2ff); }
+      50% { filter: drop-shadow(0 0 25px #ffd700) drop-shadow(0 0 40px #a855f7); }
+      100% { filter: drop-shadow(0 0 20px #ff007f) drop-shadow(0 0 35px #00d2ff); }
+    }
+    .vfx-ssk-particle {
+      animation: sskParticleFly 0.9s ease-out forwards;
+    }
+    @keyframes sskParticleFly {
+      0% { transform: scale(0.4) rotate(0deg); opacity: 1; }
+      100% { transform: scale(1.6) rotate(360deg) translate(var(--tx, 30px), var(--ty, -30px)); opacity: 0; }
+    }
+
+    /* 5. TIER: MYTH (4 SUB-TIERS) */
+    /* Sub: LOVE_WAR */
+    .vfx-pink-love {
+      filter: drop-shadow(0 0 20px #ff7675) drop-shadow(0 0 35px #fd79a8);
+      animation: loveTrailPulse 0.6s infinite alternate;
+    }
+    @keyframes loveTrailPulse {
+      0% { filter: drop-shadow(0 0 12px #ff7675); }
+      100% { filter: drop-shadow(0 0 28px #fd79a8); }
+    }
+    .vfx-love-particle {
+      color: #ff7675; text-shadow: 0 0 15px #ff7675;
+      animation: loveFloat 0.8s ease-out forwards;
+    }
+    @keyframes loveFloat {
+      0% { transform: scale(0.6) translateY(0); opacity: 1; }
+      100% { transform: scale(1.5) translateY(-40px); opacity: 0; }
+    }
+    .vfx-love-splash {
+      animation: loveSplash 0.7s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+    }
+    @keyframes loveSplash {
+      0% { transform: scale(0.3); opacity: 1; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+    .vfx-pink-love-flash { box-shadow: inset 0 0 80px 30px rgba(255, 118, 117, 0.85) !important; }
+
+    /* Sub: MY_PASSION */
+    .vfx-yellow-fire {
+      filter: drop-shadow(0 0 20px #f39c12) drop-shadow(0 0 35px #e67e22);
+      animation: fireTrailFlicker 0.4s infinite alternate;
+    }
+    @keyframes fireTrailFlicker {
+      0% { filter: drop-shadow(0 0 14px #f39c12); }
+      100% { filter: drop-shadow(0 0 30px #e67e22) drop-shadow(0 0 45px #d35400); }
+    }
+    .vfx-fire-particle {
+      color: #f39c12; text-shadow: 0 0 18px #e67e22;
+      animation: fireFlicker 0.7s ease-out forwards;
+    }
+    @keyframes fireFlicker {
+      0% { transform: scale(0.5) rotate(0deg); opacity: 1; }
+      100% { transform: scale(1.6) rotate(45deg) translateY(-35px); opacity: 0; }
+    }
+    .vfx-fire-burst {
+      animation: fireBurst 0.75s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+    }
+    @keyframes fireBurst {
+      0% { transform: scale(0.4); opacity: 1; }
+      100% { transform: scale(2.4); opacity: 0; }
+    }
+    .vfx-yellow-fire-flash { box-shadow: inset 0 0 80px 30px rgba(243, 156, 18, 0.85) !important; }
+
+    /* Sub: HIGH_DREAM */
+    .vfx-blue-moon {
+      filter: drop-shadow(0 0 20px #3498db) drop-shadow(0 0 35px #00d2ff);
+      animation: moonTrailGlide 0.7s infinite alternate;
+    }
+    @keyframes moonTrailGlide {
+      0% { filter: drop-shadow(0 0 12px #3498db); }
+      100% { filter: drop-shadow(0 0 30px #00d2ff) drop-shadow(0 0 45px #fff); }
+    }
+    .vfx-star-particle {
+      color: #00d2ff; text-shadow: 0 0 15px #00d2ff, 0 0 25px #fff;
+      animation: moonGlide 0.85s ease-out forwards;
+    }
+    @keyframes moonGlide {
+      0% { transform: scale(0.5) rotate(0deg); opacity: 1; }
+      100% { transform: scale(1.5) rotate(180deg) translate(var(--tx, 20px), var(--ty, -25px)); opacity: 0; }
+    }
+    .vfx-star-shatter {
+      animation: starShatter 0.8s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+    }
+    @keyframes starShatter {
+      0% { transform: scale(0.3); opacity: 1; }
+      100% { transform: scale(2.6); opacity: 0; }
+    }
+    .vfx-blue-moon-flash { box-shadow: inset 0 0 80px 30px rgba(52, 152, 219, 0.85) !important; }
+
+    /* Sub: LAST_DRESS */
+    .vfx-black-flower {
+      filter: drop-shadow(0 0 18px #2d3436) drop-shadow(0 0 30px #636e72);
+      animation: darkPetalTrail 0.8s infinite alternate;
+    }
+    @keyframes darkPetalTrail {
+      0% { filter: drop-shadow(0 0 10px #2d3436); }
+      100% { filter: drop-shadow(0 0 25px #000) drop-shadow(0 0 35px #636e72); }
+    }
+    .vfx-petal-particle {
+      color: #d63031; text-shadow: 0 0 12px #2d3436;
+      animation: petalSway 0.9s ease-out forwards;
+    }
+    @keyframes petalSway {
+      0% { transform: scale(0.6) rotate(0deg); opacity: 1; }
+      100% { transform: scale(1.4) rotate(120deg) translateY(-30px); opacity: 0; }
+    }
+    .vfx-dark-bloom {
+      animation: darkBloom 0.8s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+    }
+    @keyframes darkBloom {
+      0% { transform: scale(0.4); opacity: 1; }
+      100% { transform: scale(2.3); opacity: 0; }
+    }
+    .vfx-black-flower-flash { box-shadow: inset 0 0 80px 35px rgba(45, 52, 54, 0.95) !important; }
+
+    /* 6. TIER: LEGEND (COSMOS NO KIOKU) */
+    .vfx-legend-cosmos {
+      filter: drop-shadow(0 0 14px #2c2c54) drop-shadow(0 0 24px #00d2ff);
+      animation: cosmicVoid 0.9s infinite alternate;
+    }
+    @keyframes cosmicVoid {
+      0% { filter: drop-shadow(0 0 8px #2c2c54); }
+      100% { filter: drop-shadow(0 0 20px #00d2ff) drop-shadow(0 0 30px #2c2c54); }
+    }
+    .legend-static-stars {
+      position: absolute; inset: -4px; border: 1px dashed rgba(0, 210, 255, 0.6);
+      border-radius: 14px; pointer-events: none;
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.4), inset 0 0 15px rgba(44, 44, 84, 0.8);
+    }
+
+    /* 7. TIER: RARE (SNOW AND GOLD) */
+    .vfx-rare-thin-trail {
+      filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
+      animation: thinIceGleam 0.8s infinite alternate;
+    }
+    @keyframes thinIceGleam {
+      0% { opacity: 0.4; }
+      100% { opacity: 0.7; }
+    }
   </style>
 </head>
 <body>
@@ -2758,7 +2962,7 @@
     // =========================================================================
     // FLIP GPU HARDWARE ACCELERATED ANIMATION CONTROLLER
     // =========================================================================
-    function animateCardToCenter(cardElement, onComplete) {
+    function animateCardToCenter(cardElement, tierData, onComplete) {
       if (!cardElement) { if (onComplete) onComplete(); return; }
       const rect = cardElement.getBoundingClientRect();
       const centerTable = document.getElementById('center-table').getBoundingClientRect();
@@ -2768,11 +2972,23 @@
 
       const clone = cardElement.cloneNode(true);
       clone.classList.add('card-thrown-gpu');
+      if (tierData && tierData.trailClass) {
+        clone.classList.add(tierData.trailClass);
+      }
+      if (tierData && tierData.staticStars) {
+        const starFrame = document.createElement('div');
+        starFrame.className = 'legend-static-stars';
+        clone.appendChild(starFrame);
+      }
       clone.style.left = rect.left + 'px';
       clone.style.top = rect.top + 'px';
       clone.style.willChange = 'transform';
       document.body.appendChild(clone);
       cardElement.style.opacity = '0';
+
+      if (tierData && tierData.hasTrail) {
+        spawnFlightTrailVFX(rect.left + rect.width / 2, rect.top + rect.height / 2, centerTable.left + centerTable.width / 2, centerTable.top + centerTable.height / 2, tierData);
+      }
 
       requestAnimationFrame(() => {
         clone.style.transform = `translate3d(${targetX}px, ${targetY}px, 0) scale(0.9) rotate(${Math.random()*16-8}deg)`;
@@ -2904,7 +3120,7 @@
       const tierData = getSkinVfxConfig(cardElement);
       triggerAudio(tierData.throw_sfx);
 
-      animateCardToCenter(cardElement, () => {
+      animateCardToCenter(cardElement, tierData, () => {
         me.hand = me.hand.filter(c => c.id !== cardId);
         activeRoom.top_card = card;
         localDiscardPile.push(card);
@@ -2941,235 +3157,191 @@
       });
     }
 
+        // =========================================================================
+    // STRICT SKIN VFX & SFX DISPATCHER (ZERO PARTICLES FOR UNCOMMON & RARE)
+    // =========================================================================
     function getSkinVfxConfig(el) {
-      if (!el) return SkinDatabase.UNCOMMON;
+      if (!el) {
+        return {
+          tier: 'UNCOMMON',
+          hasTrail: false,
+          hasParticles: false,
+          hasImpactVFX: false,
+          throw_sfx: 'sfx_card_flip_normal.mp3',
+          impact_sfx: 'sfx_card_hit_table.mp3'
+        };
+      }
+
       const tier = el.getAttribute('data-tier') || 'UNCOMMON';
       const subtier = el.getAttribute('data-subtier') || '';
       const kode = el.getAttribute('data-kode') || '';
 
-      if (tier === 'OMEGA_SPESIAL' && kode in SkinDatabase.OMEGA_SPESIAL) {
-        return SkinDatabase.OMEGA_SPESIAL[kode];
-      }
-      if (tier === 'OMEGA_SSK') {
-        return SkinDatabase.OMEGA_SSK;
-      }
-      if (tier === 'MYTH' && subtier in SkinDatabase.MYTH) {
-        return SkinDatabase.MYTH[subtier];
-      }
-      if (tier in SkinDatabase) {
-        return SkinDatabase[tier];
-      }
-      return SkinDatabase.UNCOMMON;
-    }
-
-    function triggerColorSupernovaWave(color) {
-      const colorsMap = { red: '#e74c3c', blue: '#0984e3', green: '#00b894', yellow: '#fbc531' };
-      const col = colorsMap[color] || '#00d2ff';
-      const wave = document.createElement('div');
-      wave.className = 'color-wave-blast';
-      wave.style.setProperty('--wave-col', col);
-      wave.style.left = 'calc(50% - 40px)';
-      wave.style.top = 'calc(50% - 40px)';
-      document.getElementById('game-arena').appendChild(wave);
-      setTimeout(() => wave.remove(), 850);
-    }
-
-    function applyCardRules(card, player, playerIdx) {
-      const v = card.value;
-      if (v === 'draw_2') activeRoom.pending_draw_count += 2;
-      else if (v === 'draw_4') activeRoom.pending_draw_count += 4;
-      else if (v === 'wild_draw_6') activeRoom.pending_draw_count += 6;
-      else if (v === 'wild_draw_10') activeRoom.pending_draw_count += 10;
-      else if (v === 'wild_reverse_4') {
-        localTurnDirection *= -1;
-        activeRoom.pending_draw_count += 4;
-        animateReverseScene();
-      }
-      else if (v === 'reverse') {
-        localTurnDirection *= -1;
-        animateReverseScene();
-      }
-      else if (v === 'skip' || v === 'skip_everyone') {
-        const nextIdx = (playerIdx + 1) % activeRoom.players.length;
-        const hudMap = ['hudLeft', 'hudTop', 'hudRight'];
-        animateSkipVictim(hudMap[nextIdx - 1] || 'hudLeft');
-      }
-      else if (v === 'wild_shuffle_hands') {
-        animateGlobalShuffle();
-      }
-      else if (v === 'discard_all') {
-        player.hand = player.hand.filter(c => c.color !== card.color);
-      }
-    }
-
-    function userDrawCard() {
-      if (activeRoom.current_turn_idx !== 0) return;
-      const me = activeRoom.players[0];
-      const targetEl = document.getElementById('userHandZone');
-
-      if (activeRoom.pending_draw_count > 0) {
-        animateDrawPunishment('userHandZone', activeRoom.pending_draw_count, () => {
-          for (let i = 0; i < activeRoom.pending_draw_count; i++) {
-            if (localDeck.length === 0) localDeck = buildFullUnoDeck();
-            me.hand.push(localDeck.pop());
-          }
-          activeRoom.pending_draw_count = 0;
-          renderArenaState();
-          triggerBotTurn();
-        });
-      } else {
-        animateCardDrawFlight(targetEl, () => {
-          if (localDeck.length === 0) localDeck = buildFullUnoDeck();
-          me.hand.push(localDeck.pop());
-          showToast("Kamu menarik 1 kartu dari Draw Deck!");
-          renderArenaState();
-          triggerBotTurn();
-        });
-      }
-    }
-
-    // ===== BOT TURN AI ENGINE WITH FLIGHT ANIMATION =====
-    function triggerBotTurn() {
-      startTurnTimer();
-
-      if (activeRoom.players.length === 2) {
-        activeRoom.current_turn_idx = 1;
-        renderArenaState();
-        setTimeout(() => {
-          runBotAction(1, () => {
-            activeRoom.current_turn_idx = 0;
-            renderArenaState();
-            startTurnTimer();
-            showToast("\uD83C\uDFB2 Giliran Kamu Sekarang!");
-          });
-        }, 1400);
-        return;
+      // 8. UNCOMMON: KARTU DEFAULT POLOS. VFX Lempar: TIDAK ADA. Efek Mendarat: TIDAK ADA.
+      if (tier === 'UNCOMMON' || (!kode && tier !== 'OMEGA_SPESIAL' && tier !== 'MYTH' && tier !== 'LEGEND' && tier !== 'RARE' && tier !== 'OMEGA_SSK')) {
+        return {
+          tier: 'UNCOMMON',
+          hasTrail: false,
+          hasParticles: false,
+          hasImpactVFX: false,
+          throw_sfx: 'sfx_card_flip_normal.mp3',
+          impact_sfx: 'sfx_card_hit_table.mp3'
+        };
       }
 
-      activeRoom.current_turn_idx = 1;
-      renderArenaState();
-
-      setTimeout(() => {
-        runBotAction(1, () => {
-          activeRoom.current_turn_idx = 2;
-          renderArenaState();
-          setTimeout(() => {
-            runBotAction(2, () => {
-              activeRoom.current_turn_idx = 3;
-              renderArenaState();
-              setTimeout(() => {
-                runBotAction(3, () => {
-                  activeRoom.current_turn_idx = 0;
-                  renderArenaState();
-                  startTurnTimer();
-                  showToast("\uD83C\uDFB2 Giliran Kamu Sekarang!");
-                });
-              }, 1400);
-            });
-          }, 1400);
-        });
-      }, 1400);
-    }
-
-    function runBotAction(botIdx, callback) {
-      const bot = activeRoom.players[botIdx];
-      if (!bot) { callback(); return; }
-
-      const top = activeRoom.top_card;
-      let playable = [];
-
-      if (activeRoom.pending_draw_count > 0) {
-        playable = bot.hand.filter(c => ["draw_2", "draw_4", "wild_draw_6", "wild_draw_10", "wild_reverse_4"].includes(c.value));
-      } else {
-        playable = bot.hand.filter(c => c.color === 'wild' || c.type === 'wild' || c.color === activeRoom.current_color || (top && c.value === top.value));
+      // 7. RARE: SNOW AND GOLD. SUPER TIPIS. Partikel Melayang: TIDAK ADA. Efek Mendarat: TIDAK ADA.
+      if (tier === 'RARE') {
+        return {
+          tier: 'RARE',
+          hasTrail: true,
+          trailClass: 'vfx-rare-thin-trail',
+          trailColor: 'rgba(255, 255, 255, 0.4)',
+          hasParticles: false,
+          hasImpactVFX: false,
+          throw_sfx: 'sfx_thin_ice_slide.mp3',
+          impact_sfx: 'sfx_soft_card_place.mp3'
+        };
       }
 
-      const hudPositions = ['hudLeft', 'hudTop', 'hudRight'];
-      const hudEl = document.getElementById(hudPositions[botIdx - 1]);
+      // 6. LEGEND: COSMOS NO KIOKU. Partikel Melayang: TIDAK ADA SPRINGKEL (Statis ngikutin kartu). Percikan aura hitam bintang kecil.
+      if (tier === 'LEGEND') {
+        return {
+          tier: 'LEGEND',
+          hasTrail: true,
+          trailClass: 'vfx-legend-cosmos',
+          trailColor: '#2c2c54',
+          hasParticles: false,
+          staticStars: true,
+          hasImpactVFX: true,
+          particleType: 'tiny_dots',
+          particleColors: ['#ff4757', '#00d2ff', '#ffd700', '#a855f7', '#ffffff'],
+          throw_sfx: 'sfx_void_glide.mp3',
+          impact_sfx: 'sfx_cosmic_shatter.mp3'
+        };
+      }
 
-      if (playable.length > 0) {
-        const chosen = playable[Math.floor(Math.random() * playable.length)];
-        bot.hand = bot.hand.filter(c => c.id !== chosen.id);
-
-        triggerAudio("sfx_card_flip_normal.mp3");
-
-        if (hudEl) {
-          const rect = hudEl.getBoundingClientRect();
-          const clone = document.createElement('div');
-          clone.className = 'uno-card ' + chosen.color + ' card-thrown-gpu';
-          clone.style.left = rect.left + 'px';
-          clone.style.top = rect.top + 'px';
-          clone.innerHTML = `<div class="card-corner card-corner-top">${chosen.display}</div><div class="card-center-oval"><img src="../skin/${chosen.photo}" class="card-member-photo"></div><div class="card-corner card-corner-bot">${chosen.display}</div>`;
-          document.body.appendChild(clone);
-
-          const centerTableEl = document.getElementById('center-table');
-          const centerRect = centerTableEl.getBoundingClientRect();
-          const targetX = centerRect.left + centerRect.width / 2 - (rect.left + 52);
-          const targetY = centerRect.top + centerRect.height / 2 - (rect.top + 77);
-
-          requestAnimationFrame(() => {
-            clone.style.transform = `translate3d(${targetX}px, ${targetY}px, 0) scale(0.92) rotate(${(Math.random()*16 - 8)}deg)`;
-          });
-
-          setTimeout(() => {
-            clone.remove();
-            activeRoom.top_card = chosen;
-            localDiscardPile.push(chosen);
-
-            if (chosen.color === 'wild' || chosen.type === 'wild') {
-              const colors = ['red', 'blue', 'green', 'yellow'];
-              const chosenNewColor = colors[Math.floor(Math.random() * colors.length)];
-              activeRoom.current_color = chosenNewColor;
-              triggerColorSupernovaWave(chosenNewColor);
-            } else {
-              activeRoom.current_color = chosen.color;
-            }
-
-            triggerAudio("sfx_card_hit_table.mp3");
-            applyCardRules(chosen, bot, botIdx);
-            showToast(`${bot.name} melempar ${chosen.member} (${chosen.display})!`);
-
-            if (bot.hand.length === 0) {
-              triggerTheatricalPostMatch(false);
-              return;
-            }
-
-            renderArenaState();
-            callback();
-          }, 600);
+      // 5. MYTH: 4 SUB-TIERS (LOVE_WAR, MY_PASSION, HIGH_DREAM, LAST_DRESS)
+      if (tier === 'MYTH') {
+        if (subtier === 'LOVE_WAR' || kode.includes('FIONY')) {
+          return {
+            tier: 'MYTH',
+            subtier: 'LOVE_WAR',
+            hasTrail: true,
+            trailClass: 'vfx-pink-love',
+            trailColor: '#ff7675',
+            hasParticles: true,
+            particleSymbol: 'ðŸ’–',
+            particleColor: '#ff7675',
+            screenFlash: 'vfx-pink-love-flash',
+            throw_sfx: 'sfx_pink_charm.mp3',
+            impact_sfx: 'sfx_heart_splash.mp3',
+            hasImpactVFX: true
+          };
+        } else if (subtier === 'MY_PASSION' || kode.includes('FENI')) {
+          return {
+            tier: 'MYTH',
+            subtier: 'MY_PASSION',
+            hasTrail: true,
+            trailClass: 'vfx-yellow-fire',
+            trailColor: '#f39c12',
+            hasParticles: true,
+            particleSymbol: 'ðŸ”¥',
+            particleColor: '#e67e22',
+            screenFlash: 'vfx-yellow-fire-flash',
+            throw_sfx: 'sfx_fire_dash.mp3',
+            impact_sfx: 'sfx_fire_ember_hit.mp3',
+            hasImpactVFX: true
+          };
+        } else if (subtier === 'HIGH_DREAM' || kode.includes('ADELINE') || kode.includes('MARSHA') || kode.includes('FREYA') || kode.includes('GITA')) {
+          return {
+            tier: 'MYTH',
+            subtier: 'HIGH_DREAM',
+            hasTrail: true,
+            trailClass: 'vfx-blue-moon',
+            trailColor: '#3498db',
+            hasParticles: true,
+            particleSymbol: 'âœ¨',
+            particleColor: '#00d2ff',
+            screenFlash: 'vfx-blue-moon-flash',
+            throw_sfx: 'sfx_moon_magic.mp3',
+            impact_sfx: 'sfx_star_shatter.mp3',
+            hasImpactVFX: true
+          };
         } else {
-          activeRoom.top_card = chosen;
-          localDiscardPile.push(chosen);
-          renderArenaState();
-          callback();
+          return {
+            tier: 'MYTH',
+            subtier: 'LAST_DRESS',
+            hasTrail: true,
+            trailClass: 'vfx-black-flower',
+            trailColor: '#2d3436',
+            hasParticles: true,
+            particleSymbol: 'ðŸŒ¸',
+            particleColor: '#d63031',
+            screenFlash: 'vfx-black-flower-flash',
+            throw_sfx: 'sfx_dark_wind.mp3',
+            impact_sfx: 'sfx_black_petal_drop.mp3',
+            hasImpactVFX: true
+          };
         }
-      } else {
-        animateCardDrawFlight(hudEl, () => {
-          if (activeRoom.pending_draw_count > 0) {
-            for (let i = 0; i < activeRoom.pending_draw_count; i++) {
-              if (localDeck.length === 0) localDeck = buildFullUnoDeck();
-              bot.hand.push(localDeck.pop());
-            }
-            showToast(`${bot.name} terkena +${activeRoom.pending_draw_count} penalti kartu!`);
-            activeRoom.pending_draw_count = 0;
-          } else {
-            if (localDeck.length === 0) localDeck = buildFullUnoDeck();
-            bot.hand.push(localDeck.pop());
-            showToast(`${bot.name} menarik 1 kartu.`);
-          }
-          renderArenaState();
-          callback();
-        });
       }
-    }
 
-    function userCallUno() {
-      const me = activeRoom.players[0];
-      me.uno_safe = true;
-      if (forgotUnoTimer) clearTimeout(forgotUnoTimer);
-      triggerAudio("sfx_white_explosion_birds.mp3");
-      showToast("\uD83D\uDCE2 KAMU MEMANGGIL UNO!");
-      triggerEmote('📣');
+      // 4. OMEGA (SSK EDITION)
+      if (tier === 'OMEGA_SSK' || kode.startsWith('S')) {
+        return {
+          tier: 'OMEGA_SSK',
+          hasTrail: true,
+          trailClass: 'vfx-ssk-rainbow-trail',
+          trailColor: 'rgba(168, 85, 247, 0.95)',
+          hasParticles: true,
+          particleSymbols: ['â­', 'ðŸŒ™', 'ðŸ”¥', 'âœ¨'],
+          particleColors: ['#ff007f', '#00d2ff', '#ffd700', '#a855f7'],
+          screenFlash: 'screen-flash-gold',
+          throw_sfx: 'sfx_heavy_meteor_rainbow.mp3',
+          impact_sfx: 'sfx_massive_ssk_explosion.mp3',
+          hasImpactVFX: true
+        };
+      }
+
+      // 1-3. OMEGA_SPESIAL (BASE / FULL_COLOR / PRIME)
+      if (tier === 'OMEGA_SPESIAL' && kode in SkinDatabase.OMEGA_SPESIAL) {
+        const item = SkinDatabase.OMEGA_SPESIAL[kode];
+        if (item.subtier === 'SPESIAL') {
+          return {
+            ...item,
+            hasTrail: true,
+            trailClass: 'vfx-holy-white-trail',
+            hasParticles: true,
+            hasImpactVFX: true,
+            screenFlash: 'screen-flash-white'
+          };
+        } else if (item.subtier === 'FULL_COLOR') {
+          return {
+            ...item,
+            hasTrail: true,
+            trailClass: 'vfx-full-color-trail',
+            hasParticles: false,
+            hasImpactVFX: true,
+            screenFlash: 'screen-flash-color'
+          };
+        } else if (item.subtier === 'PRIME') {
+          return {
+            ...item,
+            hasTrail: true,
+            trailClass: 'vfx-prime-gold-trail',
+            hasParticles: true,
+            isRGBBurst: true,
+            hasImpactVFX: true
+          };
+        }
+      }
+
+      return {
+        tier: 'UNCOMMON',
+        hasTrail: false,
+        hasParticles: false,
+        hasImpactVFX: false,
+        throw_sfx: 'sfx_card_flip_normal.mp3',
+        impact_sfx: 'sfx_card_hit_table.mp3'
+      };
     }
 
     // =========================================================================
@@ -3194,7 +3366,7 @@
     }
 
     function spawnFlightTrailVFX(x1, y1, x2, y2, config) {
-      if (!config || !config.trailColor) return;
+      if (!config || !config.hasTrail || !config.trailColor) return;
       initVFXCanvas();
       const overlay = document.getElementById('vfx-overlay');
       overlay.style.opacity = '1';
@@ -3205,28 +3377,106 @@
         p3: { x: x2, y: y2 },
         color: config.trailColor,
         alpha: 1,
-        width: 14
+        width: (config.tier === 'RARE') ? 4 : 14
       });
 
-      if (config.particleType !== 'static_stardust' && config.particleColor) {
-        for (let i = 0; i < 35; i++) {
-          const t = i / 35;
+      // Spawn sprinkles ONLY if config has particles
+      if (config.hasParticles) {
+        for (let i = 0; i < 30; i++) {
+          const t = i / 30;
           const cx = (1 - t) * (1 - t) * x1 + 2 * (1 - t) * t * ((x1 + x2) / 2) + t * t * x2;
           const cy = (1 - t) * (1 - t) * y1 + 2 * (1 - t) * t * ((y1 + y2) / 2 - 40) + t * t * y2;
 
           const p = particlePool.find(item => !item.active);
           if (p) {
-            p.x = cx + (Math.random() * 24 - 12);
-            p.y = cy + (Math.random() * 24 - 12);
+            p.x = cx + (Math.random() * 20 - 10);
+            p.y = cy + (Math.random() * 20 - 10);
             p.vx = (Math.random() - 0.5) * 3;
             p.vy = (Math.random() - 0.5) * 3;
             p.size = Math.random() * 6 + 3;
-            p.color = config.particleColor;
-            p.symbol = config.particleSymbol || '';
+            
+            if (config.particleSymbols && config.particleSymbols.length > 0) {
+              p.symbol = config.particleSymbols[Math.floor(Math.random() * config.particleSymbols.length)];
+              p.color = config.particleColors ? config.particleColors[Math.floor(Math.random() * config.particleColors.length)] : '#ffd700';
+            } else {
+              p.symbol = config.particleSymbol || '';
+              p.color = config.particleColor || '#00f2fe';
+            }
+            
             p.alpha = 1;
             p.decay = 0.025;
             p.active = true;
           }
+        }
+      }
+
+      runParticleLoop();
+    }
+
+    function triggerSkinLandingVFX(card, config) {
+      if (!config || !config.hasImpactVFX) return;
+      if (config.impact_sfx) triggerAudio(config.impact_sfx);
+
+      initVFXCanvas();
+      const overlay = document.getElementById('vfx-overlay');
+      const jiko = document.getElementById('jiko-banner');
+      overlay.style.opacity = '1';
+
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+
+      // Screen Flash
+      if (config.screenFlash) {
+        if (config.solidColor) {
+          document.documentElement.style.setProperty('--flash-color', config.solidColor);
+        }
+        document.body.classList.add(config.screenFlash);
+        setTimeout(() => document.body.classList.remove(config.screenFlash), 600);
+      }
+
+      // 3D Extra Props (Wings, Ring, Bouquet, Choco, Water)
+      if (config.extraProp) {
+        const propEl = document.getElementById(config.extraProp);
+        if (propEl) {
+          propEl.classList.add('active');
+          setTimeout(() => propEl.classList.remove('active'), 2800);
+        }
+      }
+
+      // Jiko text display
+      if (config.jiko) {
+        jiko.textContent = `âœ¨ ${config.name || card.member}: "${config.jiko}" âœ¨`;
+        jiko.classList.add('jiko-show');
+        setTimeout(() => jiko.classList.remove('jiko-show'), 3500);
+      }
+
+      // Spawn Object-Pooled Burst Particles (ONLY if hasImpactVFX is true)
+      const burstCount = (config.tier === 'OMEGA_SSK' || config.subtier === 'SPESIAL') ? 60 : 35;
+      for (let i = 0; i < burstCount; i++) {
+        const p = particlePool.find(item => !item.active);
+        if (p) {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 8 + 2;
+          p.x = cx; p.y = cy;
+          p.vx = Math.cos(angle) * speed;
+          p.vy = Math.sin(angle) * speed;
+          p.size = (config.particleType === 'tiny_dots') ? (Math.random() * 3 + 1.5) : (Math.random() * 7 + 3);
+
+          if (config.isRGBBurst) {
+            const rgbColors = ['#ff4757', '#00d2ff', '#f1c40f', '#27ae60'];
+            p.color = rgbColors[Math.floor(Math.random() * rgbColors.length)];
+            p.symbol = '';
+          } else if (config.particleSymbols && config.particleSymbols.length > 0) {
+            p.symbol = config.particleSymbols[Math.floor(Math.random() * config.particleSymbols.length)];
+            p.color = config.particleColors ? config.particleColors[Math.floor(Math.random() * config.particleColors.length)] : '#ffd700';
+          } else {
+            p.symbol = config.particleSymbol || '';
+            p.color = config.particleColor || '#ffd700';
+          }
+
+          p.alpha = 1;
+          p.decay = 0.02;
+          p.active = true;
         }
       }
 
